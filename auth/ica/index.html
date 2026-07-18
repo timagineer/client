@@ -1,38 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ICA Prototypes</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 54rem; margin: 0 auto; color: #1a1a1a; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5e5e5; }
-    td a { color: #0969da; text-decoration: none; }
-    td a:hover { text-decoration: underline; }
-    .code { font-family: ui-monospace, monospace; font-size: 1rem; white-space: nowrap; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --font-size: 100%;
+      --text-body: 1rem;
+      font-size: var(--font-size);
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      font-size: var(--text-body);
+      max-width: 54rem;
+      margin: 0 auto;
+      color: #1a1a1a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    td a {
+      color: #0969da;
+      text-decoration: none;
+    }
+
+    td a:hover {
+      text-decoration: underline;
+    }
+
+    .code {
+      font-family: ui-monospace, monospace;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 576px) {
+      :root {
+        --font-size: 106.25%;
+      }
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --font-size: 112.5%;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        --font-size: 118.75%;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      :root {
+        --font-size: 125%;
+      }
+    }
+
+    @media (min-width: 1536px) {
+      :root {
+        --font-size: 131.25%;
+      }
+    }
   </style>
 </head>
+
 <body>
   <table>
     <tbody>
-      <tr><td class="code"><a href="DO-11000/">DO-11000</a></td><td>AI-suggested Diagnosis Codes (AIDx)</td></tr>
-      <tr><td class="code"><a href="CLIN-3687/">CLIN-3687</a></td><td>Calendar Appointments Color System</td></tr>
-      <tr><td class="code"><a href="DO-10884/">DO-10884</a></td><td>Notifications Center</td></tr>
-      <tr><td class="code"><a href="BT-2704/">BT-2704</a></td><td>Account Ledger</td></tr>
-      <tr><td class="code"><a href="DO-10995/">DO-10995</a></td><td>Documents & Fax Tables</td></tr>
-      <tr><td class="code"><a href="kno2/">kno2</a></td><td>Universal Inbox</td></tr>
-      <tr><td class="code"><a href="DO-8383/">DO-8383</a></td><td>Portal v3: Demographics</td></tr>
-      <tr><td class="code"><a href="frmsys/">frmsys</a></td><td>Mobile-first Forms Sytem</td></tr>
-      <tr><td class="code"><a href="DO-9187/">DO-9187</a></td><td>Create Chart</td></tr>
-      <tr><td class="code"><a href="DO-9203/">DO-9203</a></td><td>Data Requirements Settings</td></tr>
-      <tr><td class="code"><a href="CLN-3554/">CLN-3554</a></td><td>Billing Filters</td></tr>
-      <tr><td class="code"><a href="DO-10675/">DO-10675</a></td><td>Service Codes</td></tr>
-      <tr><td class="code"><a href="DO-11858/">DO-11858</a></td><td>Support Portal Kno2 Org Provisioning</td></tr>
-      <tr><td class="code"><a href="DO-12145/">DO-12145</a></td><td>Portal Documents Upload</td></tr>
-      <tr><td class="code"><a href="DO-12563/">DO-12563</a></td><td>Batch Signing of Notes</td></tr>
+      <tr>
+        <td class="code"><a href="DO-11000/">DO-11000</a></td>
+        <td>AI-suggested Diagnosis Codes (AIDx)</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="CLIN-3687/">CLIN-3687</a></td>
+        <td>Calendar Appointments Color System</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-10884/">DO-10884</a></td>
+        <td>Notifications Center</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="BT-2704/">BT-2704</a></td>
+        <td>Account Ledger</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-10995/">DO-10995</a></td>
+        <td>Documents & Fax Tables</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="kno2/">kno2</a></td>
+        <td>Universal Inbox</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-8383/">DO-8383</a></td>
+        <td>Portal v3: Demographics</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="frmsys/">frmsys</a></td>
+        <td>Mobile-first Forms Sytem</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-9187/">DO-9187</a></td>
+        <td>Create Chart</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-9203/">DO-9203</a></td>
+        <td>Data Requirements Settings</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="CLN-3554/">CLN-3554</a></td>
+        <td>Billing Filters</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-10675/">DO-10675</a></td>
+        <td>Service Codes</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-11858/">DO-11858</a></td>
+        <td>Support Portal Kno2 Org Provisioning</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-12145/">DO-12145</a></td>
+        <td>Portal Documents Upload</td>
+      </tr>
+      <tr>
+        <td class="code"><a href="DO-12563/">DO-12563</a></td>
+        <td>Batch Signing of Notes</td>
+      </tr>
     </tbody>
   </table>
 </body>
+
 </html>
