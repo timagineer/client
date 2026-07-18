@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="serviceCodeApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Code</title>
+    <meta name="view-transition" content="same-origin">
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <style>
+        @layer config, resets, components, utilities;
+
+        @layer config {
+            :root {
+                /* Primary Scale - Blue hue 216° */
+                --primary-50: hsl(216, 53%, 10%);
+                --primary-100: hsl(216, 53%, 15%);
+                --primary-150: hsl(216, 53%, 20%);
+                --primary-200: hsl(216, 53%, 25%);
+                --primary-250: hsl(216, 53%, 29%);
+                --primary-300: hsl(216, 53%, 35%);
+                --primary-350: hsl(216, 53%, 42%);
+                --primary-400: hsl(216, 53%, 52%);
+                --primary-450: hsl(216, 53%, 65%);
+                --primary-500: hsl(216, 53%, 80%);
+                --primary-550: hsl(216, 53%, 88%);
+                --primary-600: hsl(216, 53%, 90%);
+                --primary-650: hsl(216, 53%, 93%);
+                --primary-700: hsl(216, 53%, 80%);
+                --primary-750: hsl(216, 53%, 97%);
+                --primary-800: hsl(216, 53%, 99%);
+
+                /* Grayscale - Subtle primary hue tint */
+                --gray-50: hsl(216, 12%, 10%);
+                --gray-100: hsl(216, 12%, 15%);
+                --gray-150: hsl(216, 12%, 22%);
+                --gray-200: hsl(216, 12%, 32%);
+                --gray-250: hsl(216, 12%, 40%);
+                --gray-300: hsl(216, 12%, 38%);
+                --gray-350: hsl(216, 12%, 50%);
+                --gray-400: hsl(216, 12%, 55%);
+                --gray-450: hsl(216, 12%, 70%);
+                --gray-500: hsl(216, 10%, 81%);
+                --gray-550: hsl(216, 20%, 90%);
+                --gray-560: hsl(216, 20%, 65%);
+                --gray-600: hsl(213, 35%, 94%);
+                --gray-650: hsl(218, 48%, 95%);
+                --gray-700: hsl(218, 65%, 97%);
+                --gray-750: hsl(216, 50%, 98%);
+                --gray-800: hsl(216, 40%, 99%);
+                --gray-850: hsl(0, 0%, 100%);
+
+                /* Positive Scale - Green */
+                --positive-50: hsl(140, 65%, 10%);
+                --positive-100: hsl(140, 65%, 15%);
+                --positive-150: hsl(140, 65%, 20%);
+                --positive-200: hsl(140, 65%, 25%);
+                --positive-250: hsl(140, 65%, 30%);
+                --positive-300: hsl(140, 65%, 38%);
+                --positive-350: hsl(140, 65%, 45%);
+                --positive-400: hsl(140, 65%, 55%);
+                --positive-450: hsl(140, 65%, 70%);
+                --positive-500: hsl(140, 60%, 85%);
+                --positive-550: hsl(140, 60%, 92%);
+                --positive-600: hsl(140, 60%, 94%);
+
+                /* Warning Scale - Red */
+                --warning-50: hsl(352, 92%, 12%);
+                --warning-100: hsl(352, 92%, 18%);
+                --warning-200: hsl(352, 92%, 32%);
+                --warning-250: hsl(352, 92%, 38%);
+                --warning-300: hsl(352, 92%, 43%);
+                --warning-350: hsl(352, 92%, 52%);
+                --warning-400: hsl(352, 92%, 62%);
+
+                /* Semantic tokens */
+                --primary: var(--primary-300);
+                --primary-hover: var(--primary-250);
+                --bg: var(--gray-700);
+                --bg-elevated: var(--gray-850);
+                --border: var(--gray-550);
+                --border-control: var(--gray-560);
+                --text: var(--gray-100);
+                --text-muted: var(--gray-300);
+                --text-subtle: var(--gray-400);
+                --focus-color: var(--primary-400);
+
+                /* Animation */
+                --ease-quadratic: cubic-bezier(0.5, 0, 0.5, 1);
+                --ease-out-quadratic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                --duration: 240ms;
+            }
+        }
+
+        @layer resets {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: var(--bg);
+                min-block-size: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1.25rem;
+                color: var(--text);
+                line-height: 1.5;
+            }
+
+            button {
+                font: inherit;
+                cursor: pointer;
+            }
+
+            input,
+            select {
+                font: inherit;
+            }
+        }
+
+        @layer components {
+
+            /* Dialog backdrop */
+            dialog::backdrop {
+                background: hsl(0, 0%, 0%, 0.5);
+                transition: opacity var(--duration) var(--ease-quadratic);
+                transition-delay: 60ms;
+            }
+
+            dialog {
+                border: 1px solid var(--border);
+                border-radius: 0.5rem;
+                box-shadow: 0 0.5rem 2rem hsl(0, 0%, 0%, 0.25);
+                padding: 0;
+                max-inline-size: 35rem;
+                inline-size: 90%;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                margin: 0;
+                opacity: 0;
+                background: var(--bg-elevated);
+                transition:
+                    opacity var(--duration) var(--ease-out-quadratic),
+                    transform var(--duration) var(--ease-out-quadratic);
+            }
+
+            dialog[open] {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+
+            dialog[open]::backdrop {
+                opacity: 1;
+            }
+
+            dialog.closing {
+                opacity: 0;
+                transform: translate(-50%, calc(-50% + 0.3125rem)) scale(0.99);
+            }
+
+            dialog.closing::backdrop {
+                opacity: 0;
+            }
+
+            @starting-style {
+                dialog[open],
+                dialog[open]::backdrop {
+                    opacity: 0;
+                }
+
+                dialog[open] {
+                    transform: translate(-50%, calc(-50% + 0.3125rem)) scale(0.99);
+                }
+            }
+
+            /* Main window */
+            .service-window {
+                background: var(--bg-elevated);
+                border-radius: 0.5rem;
+                box-shadow: 0 0.25rem 1rem hsl(0, 0%, 0%, 0.15);
+                max-inline-size: 87.5rem;
+                inline-size: 100%;
+            }
+
+            /* Header */
+            header {
+                background: var(--bg-elevated);
+                border-block-end: 1px solid var(--border);
+                padding: 1rem 1.5rem;
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            /* Table */
+            table {
+                inline-size: 100%;
+                border-collapse: collapse;
+                margin-block-end: 1.25rem;
+                background: var(--bg-elevated);
+            }
+
+            thead th {
+                text-align: start;
+                padding: 0.75rem;
+                font-weight: 600;
+                color: var(--text-muted);
+                font-size: 0.8125rem;
+                text-transform: uppercase;
+                letter-spacing: 0.03125rem;
+                border-block-end: 1px solid var(--border);
+                background: var(--gray-750);
+            }
+
+            tbody td {
+                padding: 0.75rem;
+                border-block-end: 1px solid var(--border);
+                vertical-align: middle;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                tbody tr {
+                    transition: background 0.15s;
+                }
+            }
+
+            tbody tr:hover {
+                background: var(--gray-750);
+            }
+
+            /* Form controls */
+            input[type="number"],
+            input[type="text"] {
+                padding: 0.5rem 0.625rem;
+                border: 1px solid var(--border-control);
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                background: var(--bg-elevated);
+                color: var(--text);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+
+                input[type="number"],
+                input[type="text"] {
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                }
+            }
+
+            input[type="number"] {
+                inline-size: 3.75rem;
+                text-align: center;
+            }
+
+            input[type="number"]:focus-visible,
+            input[type="text"]:focus-visible {
+                outline: none;
+                border-color: var(--focus-color);
+                box-shadow: 0 0 0 3px var(--primary-700);
+            }
+
+            select {
+                padding: 0.5rem 2rem 0.5rem 0.625rem;
+                border: 1px solid var(--border-control);
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                background: var(--bg-elevated);
+                color: var(--text);
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 0.625rem center;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                select {
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                }
+            }
+
+            select:focus-visible {
+                outline: none;
+                border-color: var(--focus-color);
+                box-shadow: 0 0 0 3px var(--primary-700);
+            }
+
+            .modifier-group {
+                display: flex;
+                gap: 0.375rem;
+            }
+
+            .modifier-input {
+                inline-size: 3.125rem;
+                min-height: 2.75rem;
+                padding: 0.5rem;
+                border: 1px solid var(--border-control);
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                text-align: center;
+                background: var(--bg-elevated);
+                color: var(--text);
+            }
+
+            .charge-input {
+                inline-size: 7.5rem;
+                padding: 0.5rem 0.625rem;
+                border: 1px solid var(--border-control);
+                border-radius: 0.25rem;
+                font-size: 0.875rem;
+                background: var(--bg-elevated);
+                color: var(--text);
+            }
+
+            .delete-button {
+                color: var(--warning-350);
+                background: none;
+                border: none;
+                padding: 0.5rem;
+                line-height: 1;
+                min-width: 2.75rem;
+                min-height: 2.75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .delete-button svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .delete-button {
+                    transition: color 0.2s;
+                }
+            }
+
+            .delete-button:hover {
+                color: var(--warning-300);
+            }
+
+            .delete-button:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+                border-radius: 0.25rem;
+            }
+
+            /* Total section */
+            .total-section {
+                text-align: end;
+                margin-block: 1.25rem;
+                padding: 1rem 1.25rem;
+                background: var(--gray-750);
+                border-radius: 0.375rem;
+                border: 1px solid var(--border);
+            }
+
+            .total-label {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                margin-block-end: 0.25rem;
+                text-transform: uppercase;
+                letter-spacing: 0.03125rem;
+                font-weight: 600;
+            }
+
+            .total-amount {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--text);
+            }
+
+            /* Buttons */
+            .split-button-group {
+                display: inline-flex;
+                border-radius: 0.25rem;
+                overflow: visible;
+                position: relative;
+                border: 1px solid var(--primary);
+            }
+
+            .button-primary {
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 0.625rem 1.25rem;
+                font-size: 0.875rem;
+                font-weight: 600;
+                border-inline-end: 1px solid var(--primary-250);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .button-primary {
+                    transition: background 0.2s;
+                }
+            }
+
+            .button-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            .button-primary:active {
+                background: var(--primary-250);
+            }
+
+            .button-primary:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            .dropdown-toggle {
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 0.625rem 0.75rem;
+                display: flex;
+                align-items: center;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .dropdown-toggle {
+                    transition: background 0.2s;
+                }
+            }
+
+            .dropdown-toggle:hover {
+                background: var(--primary-hover);
+            }
+
+            .dropdown-toggle:active {
+                background: var(--primary-250);
+            }
+
+            .dropdown-toggle:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            .dropdown-toggle svg {
+                inline-size: 0.875rem;
+                block-size: 0.875rem;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .dropdown-toggle svg {
+                    transition: transform 0.2s;
+                }
+
+                .dropdown-toggle[aria-expanded="true"] svg {
+                    transform: rotate(180deg);
+                }
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                inset-block-start: calc(100% + 0.25rem);
+                inset-inline-end: 0;
+                background: var(--bg-elevated);
+                border-radius: 0.25rem;
+                box-shadow: 0 0.25rem 0.75rem hsl(0, 0%, 0%, 0.15);
+                border: 1px solid var(--border);
+                min-inline-size: 13.75rem;
+                z-index: 100;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .dropdown-menu {
+                    transition: opacity 0.2s, transform 0.2s;
+                }
+
+                .dropdown-menu[aria-hidden="true"] {
+                    opacity: 0;
+                    pointer-events: none;
+                    transform: translateY(-0.5rem);
+                }
+
+                .dropdown-menu[aria-hidden="false"] {
+                    opacity: 1;
+                    pointer-events: all;
+                    transform: translateY(0);
+                }
+            }
+
+            .dropdown-menu[aria-hidden="false"] {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .dropdown-menu[aria-hidden="true"] {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .dropdown-menu button {
+                display: block;
+                inline-size: 100%;
+                padding: 0.625rem 1rem;
+                background: none;
+                border: none;
+                border-block-end: 1px solid var(--border);
+                font-size: 0.875rem;
+                color: var(--text);
+                text-align: start;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .dropdown-menu button {
+                    transition: background 0.15s;
+                }
+            }
+
+            .dropdown-menu button:last-child {
+                border-block-end: none;
+            }
+
+            .dropdown-menu button:hover {
+                background: var(--gray-750);
+            }
+
+            .dropdown-menu button:active {
+                background: var(--gray-700);
+            }
+
+            .dropdown-menu button:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: -2px;
+            }
+
+            /* Timestamps */
+            .timestamps {
+                margin-block-start: 1.25rem;
+                padding-block-start: 1rem;
+                border-block-start: 1px solid var(--border);
+                font-size: 0.75rem;
+                color: var(--text-subtle);
+                text-align: end;
+            }
+
+            .timestamp-row {
+                margin-block: 0.375rem;
+            }
+
+            .timestamp-label {
+                font-weight: 600;
+                color: var(--text-muted);
+            }
+
+            .done-button {
+                background: var(--gray-600);
+                color: var(--text);
+                border: 1px solid var(--border-control);
+                padding: 0.625rem 1.5rem;
+                font-size: 0.875rem;
+                font-weight: 600;
+                border-radius: 0.25rem;
+                margin-block-start: 1.25rem;
+                display: block;
+                margin-inline: auto;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .done-button {
+                    transition: background 0.2s;
+                }
+            }
+
+            .done-button:hover {
+                background: var(--gray-550);
+            }
+
+            .done-button:active {
+                background: var(--gray-500);
+            }
+
+            .done-button:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            /* Confirmation Modal */
+            .success-icon {
+                inline-size: 4rem;
+                block-size: 4rem;
+                margin-inline: auto;
+                margin-block-end: 1.25rem;
+                background: var(--positive-350);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                @supports (view-transition-name: auto) {
+                    .success-icon {
+                        animation: scaleIn 0.3s ease-out;
+                    }
+                }
+            }
+
+            @keyframes scaleIn {
+                from {
+                    transform: scale(0);
+                }
+
+                to {
+                    transform: scale(1);
+                }
+            }
+
+            .success-icon svg {
+                inline-size: 2.25rem;
+                block-size: 2.25rem;
+                stroke: white;
+                stroke-width: 3;
+                fill: none;
+            }
+
+            dialog>div {
+                padding: 2rem;
+                text-align: center;
+            }
+
+            dialog h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--text);
+                margin-block-end: 0.75rem;
+            }
+
+            dialog p {
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                margin-block-end: 1.5rem;
+                line-height: 1.5;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 0.625rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .modal-actions button {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.875rem;
+                font-weight: 600;
+                border-radius: 0.25rem;
+                min-inline-size: 7.5rem;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .modal-actions button {
+                    transition: background 0.2s, border-color 0.2s;
+                }
+            }
+
+            .button-modal-primary {
+                background: var(--primary);
+                color: white;
+                border: 1px solid var(--primary);
+            }
+
+            .button-modal-primary:hover {
+                background: var(--primary-hover);
+                border-color: var(--primary-hover);
+            }
+
+            .button-modal-primary:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            .button-modal-secondary {
+                background: var(--bg-elevated);
+                color: var(--primary);
+                border: 1px solid var(--primary);
+            }
+
+            .button-modal-secondary:hover {
+                background: var(--primary-750);
+            }
+
+            .button-modal-secondary:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            .button-modal-close {
+                background: transparent;
+                color: var(--primary);
+                border: none;
+                text-decoration: underline;
+            }
+
+            .button-modal-close:hover {
+                background: var(--primary-750);
+                color: var(--primary-hover);
+            }
+
+            .button-modal-close:focus-visible {
+                outline: 2px solid var(--focus-color);
+                outline-offset: 0.125rem;
+            }
+
+            @layer utilities {
+                .visually-hidden {
+                    position: absolute;
+                    inline-size: 0.0625rem;
+                    block-size: 0.0625rem;
+                    padding: 0;
+                    margin: -0.0625rem;
+                    overflow: hidden;
+                    clip: rect(0, 0, 0, 0);
+                    white-space: nowrap;
+                    border-width: 0;
+                }
+            }
+    </style>
+</head>
+
+<body ng-controller="ServiceCodeCtrl as vm">
+    <!-- Main Service Window -->
+    <div class="service-window">
+        <header>Service Code</header>
+
+        <main style="padding: 1.5rem;">
+            <table>
+                <caption class="visually-hidden">Service codes and charges</caption>
+                <thead>
+                    <tr>
+                        <th>Units</th>
+                        <th>Short List</th>
+                        <th>Modifier(s)</th>
+                        <th>Charge</th>
+                        <th>Authorization</th>
+                        <th><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Units for 90832</span>
+                                <input type="number" value="1" min="1">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Service code</span>
+                                <select>
+                                    <option>90832 - Psychotherapy, 30 minutes (16-37 min)</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="modifier-group">
+                                <input type="text" class="modifier-input" aria-label="Modifier 1">
+                                <input type="text" class="modifier-input" aria-label="Modifier 2">
+                                <input type="text" class="modifier-input" aria-label="Modifier 3">
+                                <input type="text" class="modifier-input" aria-label="Modifier 4">
+                            </div>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Charge amount</span>
+                                <input type="text" class="charge-input" value="$50.00">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Authorization</span>
+                                <select>
+                                    <option>Select from list</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <button class="delete-button" aria-label="Delete row">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M10 11v6"/>
+                                    <path d="M14 11v6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                    <path d="M3 6h18"/>
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Units for 90834</span>
+                                <input type="number" value="1" min="1">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Service code</span>
+                                <select>
+                                    <option>90834 - Psychotherapy, 45 minutes (38-52 min)</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="modifier-group">
+                                <input type="text" class="modifier-input" aria-label="Modifier 1">
+                                <input type="text" class="modifier-input" aria-label="Modifier 2">
+                                <input type="text" class="modifier-input" aria-label="Modifier 3">
+                                <input type="text" class="modifier-input" aria-label="Modifier 4">
+                            </div>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Charge amount</span>
+                                <input type="text" class="charge-input" value="$100.00">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Authorization</span>
+                                <select>
+                                    <option>Select from list</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <button class="delete-button" aria-label="Delete row">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M10 11v6"/>
+                                    <path d="M14 11v6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                    <path d="M3 6h18"/>
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Units</span>
+                                <input type="number" value="1" min="1">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Service code</span>
+                                <select>
+                                    <option>Select from list</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="modifier-group">
+                                <input type="text" class="modifier-input" aria-label="Modifier 1">
+                                <input type="text" class="modifier-input" aria-label="Modifier 2">
+                                <input type="text" class="modifier-input" aria-label="Modifier 3">
+                                <input type="text" class="modifier-input" aria-label="Modifier 4">
+                            </div>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Charge amount</span>
+                                <input type="text" class="charge-input" value="0">
+                            </label>
+                        </td>
+                        <td>
+                            <label>
+                                <span class="visually-hidden">Authorization</span>
+                                <select>
+                                    <option>Select from list</option>
+                                </select>
+                            </label>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div class="total-label">Total Charge</div>
+                <div class="total-amount" aria-live="polite" aria-atomic="true">$150.00</div>
+            </div>
+
+            <div style="display: flex; justify-content: end; align-items: center; margin-block-start: 1.5rem;">
+                <div class="split-button-group">
+                    <button class="button-primary" ng-click="vm.generateBoth()">
+                        Generate Invoice & Superbill
+                    </button>
+                    <button class="dropdown-toggle" ng-click="vm.toggleDropdown(); $event.stopPropagation()" aria-expanded="{{vm.dropdownOpen}}" aria-controls="dropdownMenu" aria-label="More generation options">
+                        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                            <path d="M8 11L3 6h10z" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" role="menu" aria-hidden="{{!vm.dropdownOpen}}" id="dropdownMenu">
+                        <button role="menuitem" ng-click="vm.generateInvoice(); $event.stopPropagation()">Generate Invoice Only</button>
+                        <button role="menuitem" ng-click="vm.generateSuperbill(); $event.stopPropagation()">Generate Superbill Only</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timestamps">
+                <div class="timestamp-row">
+                    <span class="timestamp-label">Last Invoice Generated:</span> <time datetime="2026-02-10T15:15:10">Tuesday, February 10th 2026, 3:15:10 pm</time>
+                </div>
+                <div class="timestamp-row">
+                    <span class="timestamp-label">Last Superbill Generated:</span> <time datetime="2026-02-10T15:15:12">Tuesday, February 10th 2026, 3:15:12 pm</time>
+                </div>
+            </div>
+
+            <button class="done-button" ng-click="vm.close()">Done</button>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal - Both Generated -->
+    <dialog id="modalBoth" aria-labelledby="modalBothTitle">
+        <div>
+            <div class="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 id="modalBothTitle">Invoice & Superbill Generated</h2>
+            <p>Both documents have been created and are available to view.</p>
+            <div class="modal-actions">
+                <button class="button-modal-primary" ng-click="vm.viewInvoice()">View Invoice</button>
+                <button class="button-modal-primary" ng-click="vm.viewSuperbill()">View Superbill</button>
+                <button class="button-modal-secondary" ng-click="vm.requestPayment()">Request Payment</button>
+                <button class="button-modal-close" ng-click="vm.closeModal('modalBoth')">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Confirmation Modal - Invoice Only -->
+    <dialog id="modalInvoice" aria-labelledby="modalInvoiceTitle">
+        <div>
+            <div class="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 id="modalInvoiceTitle">Invoice Generated</h2>
+            <p>The invoice has been created and is available to view.</p>
+            <div class="modal-actions">
+                <button class="button-modal-primary" ng-click="vm.viewInvoice()">View Invoice</button>
+                <button class="button-modal-secondary" ng-click="vm.requestPayment()">Request Payment</button>
+                <button class="button-modal-close" ng-click="vm.closeModal('modalInvoice')">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Confirmation Modal - Superbill Only -->
+    <dialog id="modalSuperbill" aria-labelledby="modalSuperbillTitle">
+        <div>
+            <div class="success-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 id="modalSuperbillTitle">Superbill Generated</h2>
+            <p>The superbill has been created and is available to view.</p>
+            <div class="modal-actions">
+                <button class="button-modal-primary" ng-click="vm.viewSuperbill()">View Superbill</button>
+                <button class="button-modal-close" ng-click="vm.closeModal('modalSuperbill')">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        angular.module('serviceCodeApp', [])
+            .controller('ServiceCodeCtrl', function ($scope, $timeout) {
+                var vm = this;
+
+                vm.dropdownOpen = false;
+
+                vm.toggleDropdown = function () {
+                    vm.dropdownOpen = !vm.dropdownOpen;
+                    console.log('Dropdown toggled:', vm.dropdownOpen);
+                };
+
+                vm.closeDropdown = function () {
+                    vm.dropdownOpen = false;
+                    console.log('Dropdown closed');
+                };
+
+                vm.generateBoth = function () {
+                    console.log('Generate Both clicked');
+                    vm.closeDropdown();
+                    vm.showModal('modalBoth');
+                };
+
+                vm.generateInvoice = function () {
+                    console.log('Generate Invoice clicked');
+                    vm.closeDropdown();
+                    vm.showModal('modalInvoice');
+                };
+
+                vm.generateSuperbill = function () {
+                    console.log('Generate Superbill clicked');
+                    vm.closeDropdown();
+                    vm.showModal('modalSuperbill');
+                };
+
+                vm.showModal = function (modalId) {
+                    console.log('Showing modal:', modalId);
+                    $timeout(function () {
+                        var modal = document.getElementById(modalId);
+                        if (modal) {
+                            modal.showModal();
+                        } else {
+                            console.error('Modal not found:', modalId);
+                        }
+                    }, 0);
+                };
+
+                vm.closeModal = function (modalId) {
+                    var modal = document.getElementById(modalId);
+                    if (modal) {
+                        modal.classList.add('closing');
+
+                        modal.addEventListener('animationend', function() {
+                            modal.classList.remove('closing');
+                            modal.close();
+                        }, { once: true });
+
+                        setTimeout(function() {
+                            if (modal.classList.contains('closing')) {
+                                modal.classList.remove('closing');
+                                modal.close();
+                            }
+                        }, 300);
+                    }
+                };
+
+                vm.viewInvoice = function () {
+                    alert('View Invoice');
+                };
+
+                vm.viewSuperbill = function () {
+                    alert('View Superbill');
+                };
+
+                vm.requestPayment = function () {
+                    alert('Request Payment');
+                };
+
+                vm.close = function () {
+                    window.close();
+                };
+
+                // Close dropdown when clicking outside
+                $timeout(function () {
+                    document.addEventListener('click', function (event) {
+                        if (!event.target.closest('.split-button-group')) {
+                            $scope.$apply(function () {
+                                vm.closeDropdown();
+                            });
+                        }
+                    });
+
+                    // Keyboard navigation for dropdown
+                    var dropdownToggle = document.querySelector('.dropdown-toggle');
+                    if (dropdownToggle) {
+                        dropdownToggle.addEventListener('keydown', function (e) {
+                            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                if (!vm.dropdownOpen) {
+                                    $scope.$apply(function () {
+                                        vm.toggleDropdown();
+                                    });
+                                }
+                                setTimeout(function () {
+                                    var firstItem = document.querySelector('.dropdown-menu button');
+                                    if (firstItem) firstItem.focus();
+                                }, 0);
+                            }
+                        });
+                    }
+
+                    // Arrow key navigation within dropdown menu
+                    var menuButtons = document.querySelectorAll('.dropdown-menu button');
+                    menuButtons.forEach(function (button, index) {
+                        button.addEventListener('keydown', function (e) {
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                var nextIndex = (index + 1) % menuButtons.length;
+                                menuButtons[nextIndex].focus();
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                var prevIndex = (index - 1 + menuButtons.length) % menuButtons.length;
+                                menuButtons[prevIndex].focus();
+                            } else if (e.key === 'Escape') {
+                                $scope.$apply(function () {
+                                    vm.closeDropdown();
+                                });
+                                if (dropdownToggle) dropdownToggle.focus();
+                            }
+                        });
+                    });
+                }, 0);
+
+                // Close modal when clicking backdrop
+                $timeout(function() {
+                    var modals = document.querySelectorAll('dialog');
+                    modals.forEach(function(modal) {
+                        modal.addEventListener('click', function(e) {
+                            if (e.target === modal) {
+                                var modalId = modal.id;
+                                $scope.$apply(function() {
+                                    vm.closeModal(modalId);
+                                });
+                            }
+                        });
+                    });
+                }, 0);
+            });
+    </script>
+</body>
+
+</html>

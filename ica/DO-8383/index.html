@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="portalApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Portal v2: Demographics</title>
+    <!-- <link rel="preconnect" href="https://cdn.jsdelivr.net"> -->
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <!-- <link rel="stylesheet" href="assets/css/app.css"> -->
+    <style>
+        * {
+            /* outline: .5px solid black; */
+            /* outline: .5px dotted cornflowerblue; */
+        }
+
+        @layer config {
+            :root {
+                /* Primary Scale (16 steps) - Blue hue 216° */
+                /* --🔒-primary-50: hsl(216, 53%, 10%); */
+                --primary-50: hsl(216, 53%, 10%);
+                --primary-100: hsl(216, 53%, 15%);
+                --primary-150: hsl(216, 53%, 20%);
+                --primary-200: hsl(216, 53%, 25%);
+                --primary-250: hsl(216, 53%, 29%);
+                --primary-300: hsl(216, 53%, 35%);
+                --primary-350: hsl(216, 53%, 42%);
+                --primary-400: hsl(216, 53%, 52%);
+                --primary-450: hsl(216, 53%, 65%);
+                --primary-500: hsl(216, 53%, 80%);
+                --primary-550: hsl(216, 53%, 88%);
+                --primary-600: hsl(216, 53%, 90%);
+                --primary-650: hsl(216, 53%, 93%);
+                --primary-700: hsl(216, 53%, 95%);
+                --primary-750: hsl(216, 53%, 97%);
+                --primary-800: hsl(216, 53%, 99%);
+                /* --primary-850: hsl(216, 53%, 99%);
+                --primary-900: hsl(216, 53%, 99%);
+                --primary-950: hsl(216, 53%, 99%);
+                /* Secondary Scale (16 steps) - Green hue 89° */
+                --secondary-50: hsl(89, 66%, 10%);
+                --secondary-100: hsl(89, 66%, 15%);
+                --secondary-150: hsl(89, 66%, 20%);
+                --secondary-200: hsl(89, 66%, 28%);
+                --secondary-250: hsl(89, 66%, 35%);
+                --secondary-300: hsl(89, 66%, 42%);
+                --secondary-350: hsl(89, 66%, 52%);
+                --secondary-400: hsl(89, 66%, 62%);
+                --secondary-450: hsl(89, 66%, 75%);
+                --secondary-500: hsl(89, 60%, 90%);
+                --secondary-550: hsl(89, 60%, 93%);
+                --secondary-600: hsl(89, 60%, 94%);
+                --secondary-650: hsl(89, 60%, 95%);
+                --secondary-700: hsl(89, 60%, 96%);
+                --secondary-750: hsl(89, 60%, 97%);
+                --secondary-800: hsl(89, 60%, 99%);
+                /* Grayscale (17 steps) - Subtle primary hue tint */
+                --gray-50: hsl(216, 12%, 10%);
+                --gray-100: hsl(216, 12%, 15%);
+                --gray-150: hsl(216, 12%, 22%);
+                --gray-200: hsl(216, 12%, 32%);
+                --gray-250: hsl(216, 12%, 40%);
+                --gray-300: hsl(216, 12%, 46%);
+                --gray-350: hsl(216, 12%, 58%);
+                --gray-400: hsl(216, 12%, 65%);
+                --gray-450: hsl(216, 12%, 70%);
+                --gray-500: hsl(216, 10%, 81%);
+                --gray-550: hsl(216, 20%, 90%);
+                --gray-600: hsl(213, 35%, 94%);
+                --gray-650: hsl(218, 48%, 95%);
+                --gray-700: hsl(218, 65%, 97%);
+                --gray-750: hsl(216, 50%, 98%);
+                --gray-800: hsl(216, 40%, 99%);
+                --gray-850: hsl(0, 0%, 100%);
+                /* Info Scale (16 steps) - Cyan hue 205° for guarantor */
+                --info-50: hsl(205, 100%, 12%);
+                --info-100: hsl(205, 100%, 18%);
+                --info-150: hsl(205, 100%, 25%);
+                --info-200: hsl(205, 100%, 32%);
+                --info-250: hsl(205, 100%, 38%);
+                --info-300: hsl(205, 100%, 45%);
+                --info-350: hsl(205, 100%, 55%);
+                --info-400: hsl(205, 100%, 65%);
+                --info-450: hsl(205, 100%, 75%);
+                --info-500: hsl(205, 100%, 85%);
+                --info-550: hsl(205, 100%, 93%);
+                --info-600: hsl(205, 100%, 94%);
+                --info-650: hsl(205, 100%, 95%);
+                --info-700: hsl(205, 100%, 97%);
+                --info-750: hsl(205, 100%, 98%);
+                --info-800: hsl(205, 100%, 99%);
+                /* Positive Scale (16 steps) - Green hue 140° for success */
+                --positive-50: hsl(140, 65%, 10%);
+                --positive-100: hsl(140, 65%, 15%);
+                --positive-150: hsl(140, 65%, 20%);
+                --positive-200: hsl(140, 65%, 25%);
+                --positive-250: hsl(140, 65%, 30%);
+                --positive-300: hsl(140, 65%, 38%);
+                --positive-350: hsl(140, 65%, 45%);
+                --positive-400: hsl(140, 65%, 55%);
+                --positive-450: hsl(140, 65%, 70%);
+                --positive-500: hsl(140, 60%, 85%);
+                --positive-550: hsl(140, 60%, 92%);
+                --positive-600: hsl(140, 60%, 94%);
+                --positive-650: hsl(140, 60%, 95%);
+                --positive-700: hsl(140, 60%, 97%);
+                --positive-750: hsl(140, 60%, 98%);
+                --positive-800: hsl(140, 60%, 99%);
+                /* Notice Scale (16 steps) - Amber hue 45° for cautions */
+                --notice-50: hsl(45, 100%, 10%);
+                --notice-100: hsl(45, 100%, 15%);
+                --notice-150: hsl(45, 100%, 20%);
+                --notice-200: hsl(45, 100%, 25%);
+                --notice-250: hsl(45, 100%, 30%);
+                --notice-300: hsl(45, 100%, 40%);
+                --notice-350: hsl(45, 100%, 50%);
+                --notice-400: hsl(45, 100%, 60%);
+                --notice-450: hsl(45, 100%, 70%);
+                --notice-500: hsl(45, 100%, 85%);
+                --notice-550: hsl(45, 100%, 92%);
+                --notice-600: hsl(45, 100%, 94%);
+                --notice-650: hsl(45, 100%, 95%);
+                --notice-700: hsl(45, 100%, 97%);
+                --notice-750: hsl(45, 100%, 98%);
+                --notice-800: hsl(45, 100%, 99%);
+                /* Warning Scale (16 steps) - Red hue 352° for errors */
+                --warning-50: hsl(352, 92%, 12%);
+                --warning-100: hsl(352, 92%, 18%);
+                --warning-150: hsl(352, 92%, 25%);
+                --warning-200: hsl(352, 92%, 32%);
+                --warning-250: hsl(352, 92%, 38%);
+                --warning-300: hsl(352, 92%, 43%);
+                --warning-350: hsl(352, 92%, 52%);
+                --warning-400: hsl(352, 92%, 62%);
+                --warning-450: hsl(352, 92%, 75%);
+                --warning-500: hsl(352, 92%, 85%);
+                --warning-550: hsl(11, 100%, 92%);
+                --warning-600: hsl(11, 100%, 94%);
+                --warning-650: hsl(11, 100%, 95%);
+                --warning-700: hsl(11, 100%, 97%);
+                --warning-750: hsl(11, 100%, 98%);
+                --warning-800: hsl(11, 100%, 99%);
+                /* Orange Scale (16 steps) - Orange hue 28° for notifications */
+                --orange-50: hsl(28, 100%, 10%);
+                --orange-100: hsl(28, 100%, 15%);
+                --orange-150: hsl(28, 100%, 20%);
+                --orange-200: hsl(28, 100%, 25%);
+                --orange-250: hsl(28, 100%, 30%);
+                --orange-300: hsl(28, 100%, 40%);
+                --orange-350: hsl(28, 100%, 49%);
+                --orange-400: hsl(28, 100%, 60%);
+                --orange-450: hsl(28, 100%, 70%);
+                --orange-500: hsl(28, 100%, 85%);
+                --orange-550: hsl(28, 100%, 92%);
+                --orange-600: hsl(28, 100%, 94%);
+                --orange-650: hsl(28, 100%, 95%);
+                --orange-700: hsl(28, 100%, 97%);
+                --orange-750: hsl(28, 100%, 98%);
+                --orange-800: hsl(28, 100%, 99%);
+                /* Semantic tokens */
+                --primary: var(--primary-300);
+                --link: var(--primary-350);
+                --link-hover: var(--primary-250);
+                --primary-hover: var(--primary-250);
+                --bg: var(--gray-700);
+                --border: var(--gray-400);
+                --border-disabled: var(--gray-500);
+                --border-structural: var(--gray-500);
+                --error: var(--warning-300);
+                --text: var(--primary-50);
+                --muted: var(--gray-250);
+                --white: var(--gray-850);
+                /* --secondary-text: var(--white); */
+                --secondary: var(--nav-icon);
+                --nav-icon: var(--secondary-300);
+                --nav-hover-bg: var(--secondary-700);
+                --nav-active-bg: var(--secondary-550);
+                --nav-active-press: var(--secondary-500);
+                --nav-text: var(--primary-300);
+                --header-hover: var(--primary-350);
+                --mobile-nav-border: var(--gray-600);
+                --mobile-nav-hover: var(--gray-700);
+                --mobile-nav-active: var(--primary-700);
+                --table-hover: var(--nav-hover-bg);
+                --input-disabled: var(--gray-650);
+                --badge-hover-bg: var(--primary-hover);
+                --popover-bg: var(--primary-150);
+                --emergency-bg: var(--warning-550);
+                --emergency-text: var(--warning-200);
+                --guarantor-bg: var(--info-550);
+                --error-shadow: var(--warning-300);
+                --font-weight-normal: 400;
+                --font-weight-medium: 500;
+                --font-size: 100%;
+                --text-body: 1rem;
+                --text-display: 1.125rem;
+                --text-info: 0.875rem;
+                --line-height-body: 1.5;
+                --line-height-medium: 1.25;
+                --line-height-tight: 1.125;
+                --space-00: 0;
+                --space-01: 0.0625rem;
+                --space-02: 0.125rem;
+                --space-03: 0.25rem;
+                --space-04: 0.375rem;
+                --space-05: 0.5rem;
+                --space-06: 0.75rem;
+                --space-07: 1rem;
+                --space-08: 1.25rem;
+                --space-09: 1.5rem;
+                --space-10: 2rem;
+                --space-11: 2.5rem;
+                --space-12: 3rem;
+                --space-13: 4rem;
+                --space-14: 5rem;
+                --space-15: 6rem;
+                --space-16: 8rem;
+                --space-17: 10rem;
+                --space-fluid-05-06: clamp(0.75rem, 2vw, 1rem);
+                --space-fluid-06-07: clamp(1rem, 2.5vw, 1.25rem);
+                --space-fluid-06-08: clamp(1rem, 3vw, 1.5rem);
+                --space-fluid-07-08: clamp(1.25rem, 2.5vw, 1.5rem);
+                --space-fluid-07-09: clamp(1.25rem, 3.5vw, 2rem);
+                --space-fluid-08-09: clamp(1.5rem, 3vw, 2rem);
+                --space-fluid-08-10: clamp(1.5rem, 4vw, 2.5rem);
+                --space-fluid-09-11: clamp(2rem, 4.5vw, 3rem);
+                --space-fluid-11-12: clamp(3rem, 5vw, 4rem);
+                --tab-block: var(--space-05);
+                --tab-inline: clamp(var(--space-08), 3vw, var(--space-09));
+                --radius-sm: var(--space-04);
+                --radius-md: var(--space-05);
+                --radius-lg: var(--space-06);
+                --radius-circle: 50%;
+                --z-base: 10;
+                --z-dropdown: 20;
+                --z-overlay: 30;
+                --z-modal: 40;
+                --z-toast: 50;
+                --ease-out-quadratic: cubic-bezier(.25, .46, .45, .94);
+                --duration-1: 60ms;
+                --duration-2: 120ms;
+                --duration-3: 180ms;
+                --duration-4: 240ms;
+                --duration-5: 300ms;
+                --duration-6: 360ms;
+            }
+
+            @media (min-width: 576px) {
+                :root {
+                    --font-size: 106.25%;
+                }
+            }
+
+            @media (min-width: 768px) {
+                :root {
+                    --font-size: 112.5%;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                :root {
+                    --font-size: 118.75%;
+                }
+            }
+
+            @media (min-width: 1280px) {
+                :root {
+                    --font-size: 125%;
+                }
+            }
+
+            @media (min-width: 1536px) {
+                :root {
+                    --font-size: 131.25%;
+                }
+            }
+        }
+
+        @layer resets {
+            @font-face {
+                font-family: 'Atkinson Hyperlegible Next';
+                src: url('assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2') format('woff2');
+                font-display: swap;
+                font-weight: 400;
+            }
+
+            @font-face {
+                font-family: 'Atkinson Hyperlegible Next';
+                src: url('assets/fonts/AtkinsonHyperlegibleNext-Medium.woff2') format('woff2');
+                font-display: swap;
+                font-weight: 500;
+            }
+
+            html {
+                font-size: var(--font-size);
+                accent-color: var(--secondary);
+                overflow-y: auto;
+                scrollbar-gutter: stable;
+            }
+
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: var(--text-body);
+                background: var(--bg);
+                color: var(--text);
+                line-height: var(--line-height-body);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                font-feature-settings: "kern" 1;
+                text-rendering: optimizeLegibility;
+            }
+
+            button,
+            input,
+            select {
+                font: inherit;
+            }
+
+            button {
+                white-space: nowrap;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                font-size: inherit;
+                font-weight: inherit;
+                line-height: var(--line-height-medium);
+            }
+
+            ul {
+                list-style: none;
+            }
+
+            a {
+                color: var(--link);
+                text-underline-offset: 0.1em;
+            }
+
+            a:hover {
+                color: var(--link-hover) !important;
+                text-underline-offset: 0.15em;
+            }
+
+            a:visited {
+                color: var(--link);
+            }
+
+            ::selection {
+                background: var(--nav-active-bg);
+                color: var(--text);
+            }
+        }
+
+        @layer components {
+            .portal-header {
+                background: var(--white);
+                border-block-end: 1px solid var(--border-structural);
+                padding-block: var(--space-06);
+                padding-inline: var(--space-fluid-07-08);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: var(--space-fluid-07-08);
+                position: relative;
+            }
+
+            .portal-header div:hover {
+                color: var(--header-hover);
+            }
+
+            .menu-toggle {
+                display: none;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: var(--space-05);
+                color: var(--text);
+            }
+
+            .menu-toggle svg {
+                inline-size: 1.5rem;
+                block-size: 1.5rem;
+            }
+
+            .menu-toggle .hamburger {
+                display: block;
+            }
+
+            .menu-toggle .close {
+                display: none;
+            }
+
+            .menu-toggle[aria-expanded="true"] .hamburger {
+                display: none;
+            }
+
+            .menu-toggle[aria-expanded="true"] .close {
+                display: block;
+            }
+
+            .portal-nav {
+                display: flex;
+                gap: var(--space-fluid-06-07);
+                align-items: center;
+            }
+
+            .portal-nav button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-03);
+                color: var(--nav-icon);
+                padding-block: var(--space-06);
+                padding-inline: var(--space-fluid-06-07);
+                border-radius: var(--radius-md);
+                inline-size: 7rem;
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .portal-nav button {
+                    transition: background-color var(--duration-3) ease, color var(--duration-3) ease, box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            .portal-nav button:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            .portal-nav button:hover {
+                color: var(--primary);
+                background: var(--nav-hover-bg);
+            }
+
+            .portal-nav button:hover svg {
+                color: var(--primary) !important;
+            }
+
+            .portal-nav button:hover .badge-dot {
+                border-color: var(--nav-hover-bg);
+            }
+
+            .portal-nav button.active {
+                color: var(--primary);
+                background: var(--nav-active-bg);
+            }
+
+            .portal-nav button:active {
+                background: var(--nav-active-press);
+            }
+
+            .portal-nav svg {
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+            }
+
+            .icon-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .icon-wrapper svg {
+                color: var(--nav-icon) !important;
+            }
+
+            .icon-wrapper .badge-dot {
+                position: absolute;
+                top: -0.125rem;
+                right: -0.125rem;
+                inline-size: 0.625rem;
+                block-size: 0.625rem;
+                background: var(--orange-350);
+                border: 2px solid var(--white);
+                border-radius: var(--radius-circle);
+                pointer-events: none;
+            }
+
+            .portal-nav span {
+                font-size: var(--text-info);
+                font-weight: var(--font-weight-medium);
+                color: var(--nav-text);
+            }
+
+            .portal-nav button.active span {
+                color: var(--primary);
+            }
+
+            .sign-out {
+                background: none;
+                border: 1px solid var(--border);
+                padding-block: var(--space-05);
+                padding-inline: var(--space-fluid-05-06);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-weight: var(--font-weight-normal);
+                color: var(--text);
+                block-size: 2.25rem;
+                display: flex;
+                align-items: center;
+            }
+
+            .sign-out:hover {
+                background: var(--bg);
+                border-color: var(--primary);
+            }
+
+            .sign-out:active {
+                background: oklch(94% 0.01 259);
+            }
+
+            .sign-out {
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .sign-out {
+                    transition: background-color var(--duration-3) ease, border-color var(--duration-3) ease, box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            .sign-out:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            .mobile-nav-overlay {
+                position: fixed;
+                top: 5rem;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.1);
+                z-index: var(--z-overlay);
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .mobile-nav-overlay {
+                    transition: opacity 240ms ease;
+                }
+            }
+
+            .mobile-nav-overlay.show {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            @media (max-width: 60rem) {
+                .menu-toggle {
+                    display: block;
+                    margin-right: calc(0px - var(--space-05) - 3px);
+                }
+
+                .portal-nav {
+                    position: absolute;
+                    top: 100%;
+                    left: var(--space-fluid-08-10);
+                    right: var(--space-fluid-08-10);
+                    background: var(--white);
+                    border-block-start: 1px solid var(--border-structural);
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 0;
+                    padding: 0;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    z-index: var(--z-modal);
+                    border-radius: var(--radius-md);
+                    opacity: 0;
+                    transform: translateY(-0.5rem);
+                    pointer-events: none;
+                }
+
+                @media (prefers-reduced-motion: no-preference) {
+                    .portal-nav {
+                        transition: opacity 240ms ease, transform 240ms var(--ease-out-quadratic);
+                    }
+                }
+
+                .portal-nav.show {
+                    opacity: 1;
+                    transform: none;
+                    pointer-events: auto;
+                }
+
+                .portal-nav.hidden {
+                    display: none;
+                }
+
+                .portal-nav[hidden] {
+                    display: none;
+                }
+
+                .portal-nav button {
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: var(--space-06);
+                    padding: var(--space-fluid-06-07) var(--space-fluid-08-10);
+                    border-radius: 0;
+                    text-align: left;
+                    border-block-end: 1px solid var(--mobile-nav-border);
+                    inline-size: auto;
+                }
+
+                .portal-nav button:hover {
+                    color: var(--primary);
+                    background: var(--nav-hover-bg);
+                }
+
+                .portal-nav button.active {
+                    color: var(--primary);
+                    background: var(--nav-active-bg);
+                }
+
+                .portal-nav svg {
+                    inline-size: 1.25rem;
+                    block-size: 1.25rem;
+                }
+
+                .icon-wrapper .badge-dot {
+                    top: calc(var(--space-01) * -1);
+                    right: calc(var(--space-01) * -1);
+                    inline-size: 0.5625rem;
+                    block-size: 0.5625rem;
+                }
+
+                .portal-nav span {
+                    font-size: var(--text-body);
+                }
+
+                .sign-out {
+                    display: none;
+                }
+
+                .mobile-sign-out {
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: var(--space-06);
+                    padding: var(--space-fluid-06-07) var(--space-fluid-08-10);
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: var(--font-weight-normal);
+                    color: var(--text);
+                    text-align: left;
+                    border-block-start: 1px solid var(--border);
+                }
+
+                .mobile-sign-out:hover {
+                    background: var(--mobile-nav-hover);
+                }
+
+                .mobile-sign-out:active {
+                    background: var(--mobile-nav-active);
+                }
+
+                .mobile-sign-out svg {
+                    inline-size: 1.25rem;
+                    block-size: 1.25rem;
+                }
+            }
+
+            @media (min-width: 60.0625rem) {
+                .mobile-sign-out {
+                    display: none !important;
+                }
+            }
+
+            .main-container {
+                max-inline-size: 75rem;
+                margin-inline: auto;
+                padding-block-start: var(--space-fluid-07-08);
+                padding-block-end: var(--space-14);
+                padding-inline: clamp(1rem, 4vw, 2.5rem);
+                flex: 1;
+                width: 100%;
+            }
+
+            @media (max-width: 60rem) {
+                .main-container {
+                    padding-block-end: var(--space-13);
+                }
+            }
+
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-inline: var(--space-fluid-08-10);
+                margin-block-end: var(--space-fluid-07-08);
+            }
+
+            @media (max-width: 60rem) {
+                .page-header {
+                    padding-inline: 1rem;
+                }
+            }
+
+            .page-header h1 {
+                font-size: var(--text-display);
+                font-weight: var(--font-weight-medium);
+                color: var(--primary-30);
+            }
+
+            .button-primary {
+                background: var(--primary);
+                color: var(--white);
+                border: none;
+                padding-block: var(--space-05);
+                padding-inline: var(--space-fluid-05-06);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-weight: var(--font-weight-normal);
+                block-size: 2.25rem;
+            }
+
+            .button-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            .button-primary:hover svg {
+                color: var(--white);
+            }
+
+            .button-primary:active {
+                background: var(--primary-200);
+            }
+
+            .button-primary {
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .button-primary {
+                    transition: background-color var(--duration-3) ease, box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            .button-primary:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            .button-secondary {
+                background: var(--white);
+                color: var(--text);
+                border: 1px solid var(--border);
+                padding-block: var(--space-05);
+                padding-inline: var(--space-fluid-05-06);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-weight: var(--font-weight-normal);
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                block-size: 2.25rem;
+            }
+
+            .button-primary,
+            .button-secondary {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+            }
+
+            .button-primary svg,
+            .button-secondary svg {
+                width: 1.125em;
+                height: 1.125em;
+            }
+
+            .button-primary svg {
+                color: var(--primary-700);
+            }
+
+            .button-secondary svg {
+                color: var(--muted);
+            }
+
+            svg {
+                width: 1em;
+                height: 1em;
+                display: inline-block;
+            }
+
+            .button-secondary:hover {
+                background: var(--bg);
+                border-color: var(--primary);
+            }
+
+            .button-secondary:hover svg {
+                color: var(--text);
+            }
+
+            .button-secondary:active {
+                background: oklch(94% 0.01 259);
+            }
+
+            .button-secondary {
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .button-secondary {
+                    transition: background-color var(--duration-3) ease, border-color var(--duration-3) ease, box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            .button-secondary:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            .tabs {
+                background: var(--white);
+                border-radius: var(--radius-lg);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .tab-list {
+                display: flex;
+                gap: var(--space-04);
+                padding-block: var(--space-06);
+                padding-inline: var(--space-fluid-08-10);
+                border-block-end: 1px solid var(--border-structural);
+            }
+
+            .tab-list button {
+                background: transparent;
+                border: none;
+                padding-block: var(--space-06);
+                padding-inline: var(--space-07);
+                cursor: pointer;
+                font-weight: var(--font-weight-medium);
+                color: var(--muted);
+                font-size: var(--text-info);
+                border-radius: var(--radius-lg);
+                transition: background-color 180ms ease, color 180ms ease;
+            }
+
+            .tab-list button:first-child {
+                margin-inline-start: calc(0px - var(--space-07));
+            }
+
+            @media (max-width: 30rem) {
+                .tab-list {
+                    justify-content: center;
+                }
+
+                .tab-list button:first-child {
+                    margin-inline-start: 0;
+                }
+            }
+
+            .tab-list button:hover {
+                color: var(--text);
+                background: var(--nav-hover-bg);
+            }
+
+            .tab-list button.active {
+                color: var(--primary);
+                background: var(--nav-active-bg);
+            }
+
+            .tab-list button:active {
+                background: var(--nav-active-press);
+            }
+
+            .tab-list button {
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            .tab-list button:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            .tab-content {
+                padding-block-start: var(--space-fluid-08-09);
+                padding-block-end: var(--space-fluid-09-11);
+                padding-inline: var(--space-fluid-08-10);
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-block-start: var(--space-09);
+                margin-block-end: var(--space-06);
+                min-block-size: var(--space-09);
+            }
+
+            .section-header:first-of-type {
+                margin-block-start: 0;
+                margin-block-end: var(--space-06);
+            }
+
+            .section-header h2 {
+                font-size: var(--text-body);
+                font-weight: var(--font-weight-medium);
+            }
+
+            .info-grid {
+                display: grid;
+                gap: var(--space-09);
+            }
+
+            .info-row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: clamp(1rem, 3vw, 1.5rem);
+            }
+
+            .info-row:last-child {
+                margin-block-end: var(--space-06);
+            }
+
+            .info-row.cols-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-03);
+            }
+
+            .info-item label {
+                font-weight: var(--font-weight-medium);
+                color: var(--muted);
+                font-size: var(--text-body);
+            }
+
+            .info-item span {
+                color: var(--text);
+                font-size: var(--text-body);
+            }
+
+            .data-table {
+                inline-size: 100%;
+                border-collapse: collapse;
+                /* font-variant-numeric: tabular-nums; */
+                line-height: var(--line-height-medium);
+            }
+
+            .data-table caption {
+                text-align: left;
+                padding-inline: var(--space-04);
+            }
+
+            @media (max-width: 60rem) {
+                .data-table caption {
+                    padding-inline: 0;
+                }
+            }
+
+            .data-table caption .section-header {
+                margin-block-start: 0;
+            }
+
+            .data-table thead {
+                border-block-end: 1px solid var(--border-structural);
+            }
+
+            .data-table th {
+                text-align: start;
+                padding-block-start: var(--space-02);
+                padding-block-end: var(--space-06);
+                padding-inline: var(--space-05);
+                font-weight: var(--font-weight-medium);
+                font-size: var(--text-body);
+                color: var(--muted);
+                white-space: nowrap;
+            }
+
+            .data-table th[style*="text-align:center"] {
+                padding-inline: 0;
+            }
+
+            .data-table th:first-child {
+                padding-inline-start: var(--space-04);
+            }
+
+            .data-table th:last-child {
+                padding-inline-end: var(--space-04);
+            }
+
+            .data-table td,
+            math,
+            time[datetime*=":"] {
+                font-variant-numeric: tabular-nums lining-nums slashed-zero;
+                padding-block: var(--space-06);
+                padding-inline: var(--space-05);
+                border-block-end: 1px solid var(--border-structural);
+            }
+
+            .data-table tbody tr:last-child td {
+                border-block-end: none;
+            }
+
+            .table-wrapper {
+                margin-block-end: calc(0px - var(--space-06));
+            }
+
+            .data-table td:first-child {
+                padding-inline-start: var(--space-04);
+            }
+
+            @media (max-width: 60rem) {
+                .data-table td:first-child {
+                    padding-inline-start: 0;
+                }
+            }
+
+            .data-table td:last-child {
+                padding-inline-end: var(--space-04);
+            }
+
+            .data-table td:has(.action-buttons) {
+                padding-inline-start: 0;
+            }
+
+            .data-table tbody tr:hover {
+                background: var(--table-hover);
+            }
+
+            .data-table td[data-label="Phone"] {
+                white-space: nowrap;
+            }
+
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-03);
+                padding-block: 0.1875rem;
+                padding-inline: var(--space-05);
+                border-radius: var(--radius-sm);
+                font-size: var(--text-info);
+                font-weight: var(--font-weight-normal);
+            }
+
+            .badge-emergency {
+                background: var(--emergency-bg);
+                color: var(--emergency-text);
+            }
+
+            .badge-guarantor {
+                background: var(--guarantor-bg);
+                color: var(--info-200);
+            }
+
+            .contact-method-badge {
+                background: var(--primary);
+                color: var(--white);
+                font-weight: var(--font-weight-medium);
+                min-inline-size: 1.5rem;
+                aspect-ratio: 1;
+                justify-content: center;
+                align-items: center;
+                line-height: var(--line-height-tight);
+                padding-block-start: var(--space-03);
+                cursor: help;
+            }
+
+            .contact-method-badge:hover {
+                background: var(--badge-hover-bg);
+            }
+
+            .action-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: var(--space-06);
+            }
+
+            @media (max-width: 60rem) {
+                .action-buttons {
+                    justify-content: center;
+                }
+            }
+
+            .row {
+                display: grid;
+                gap: clamp(1rem, 3vw, 1.5rem);
+            }
+
+            .row+.row {
+                margin-block-start: var(--space-09);
+            }
+
+            [ng-if*="editing"]>.row:last-child {
+                margin-block-end: var(--space-06);
+            }
+
+            [ng-if*="editing.general"]>.row:last-child,
+            [ng-if*="editing.contact"]>.row:last-child {
+                margin-block-end: calc(var(--space-09) + var(--space-06));
+            }
+
+            .row.cols-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .row.cols-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .row.cols-2-1 {
+                grid-template-columns: 2fr 1fr;
+            }
+
+            .row.cols-2-1-1 {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-03);
+            }
+
+            .field label {
+                font-weight: var(--font-weight-medium);
+                color: var(--muted);
+                font-size: var(--text-body);
+            }
+
+            .required {
+                color: var(--error);
+                margin-inline-start: 0.125rem;
+            }
+
+            /* playing around with superalignment concepts */
+            /* input[type="text"] {
+                margin-inline-start: -.8rem
+            } */
+
+            input[type="text"].error,
+            input[type="email"].error,
+            input[type="tel"].error,
+            input[type="date"].error,
+            input[type="number"].error {
+                border-color: var(--error) !important;
+            }
+
+            input[type="text"].error:focus-visible,
+            input[type="email"].error:focus-visible,
+            input[type="tel"].error:focus-visible,
+            input[type="date"].error:focus-visible,
+            input[type="number"].error:focus-visible {
+                border-color: var(--error) !important;
+                box-shadow: 0 0 0 0.1875rem var(--error-shadow);
+            }
+
+            select.error {
+                border-color: var(--error);
+            }
+
+            select.error:focus-visible {
+                border-color: var(--error);
+                box-shadow: 0 0 0 0.1875rem var(--error-shadow);
+            }
+
+            .field.error input[type="radio"] {
+                outline: 1px solid var(--error);
+                outline-offset: 0;
+                border-radius: 50%;
+            }
+
+            .error-message {
+                color: var(--error);
+                font-size: var(--text-info);
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            input[type="number"],
+            select {
+                block-size: 2.5rem;
+                padding-inline: var(--space-06);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: var(--white);
+                inline-size: 100%;
+                font-size: var(--text-body);
+                color: var(--text);
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            input[type="number"],
+            select {
+                outline: none;
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+
+                input[type="text"],
+                input[type="email"],
+                input[type="tel"],
+                input[type="date"],
+                input[type="number"],
+                select {
+                    transition: box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            input[type="text"]:focus-visible,
+            input[type="email"]:focus-visible,
+            input[type="tel"]:focus-visible,
+            input[type="date"]:focus-visible,
+            input[type="number"]:focus-visible,
+            select:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            input:disabled,
+            select:disabled {
+                background: var(--input-disabled);
+                color: hsl(222, 100%, 12%, 0.75);
+                border: 1px solid var(--border-disabled);
+                cursor: not-allowed;
+            }
+
+            input:disabled:focus-visible,
+            input:read-only:focus-visible {
+                outline: none;
+                box-shadow: none;
+            }
+
+            select {
+                appearance: none;
+                padding-inline-end: 2rem;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23475569' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right var(--space-06) center;
+                cursor: pointer;
+            }
+
+
+
+            select:not(:disabled) {
+                pointer-events: auto;
+            }
+
+
+
+            dialog {
+                border: none;
+                border-radius: var(--radius-lg);
+                box-shadow: 0 1.25rem 1.5625rem -0.3125rem rgba(0, 0, 0, 0.1);
+                margin: auto;
+                padding: 0;
+                max-inline-size: 50rem;
+                inline-size: calc(100% - 2rem);
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                dialog {
+                    transition: opacity 240ms ease, transform 240ms var(--ease-out-quadratic);
+                }
+
+                dialog::backdrop {
+                    transition: opacity 240ms ease;
+                }
+            }
+
+            dialog[open].animate-in {
+                opacity: 1;
+                transform: none;
+            }
+
+            dialog.closing {
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+            }
+
+            dialog::backdrop {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            dialog:not(.animate-in)::backdrop {
+                opacity: 0;
+            }
+
+            dialog.animate-in::backdrop {
+                opacity: 1;
+            }
+
+            dialog.closing::backdrop {
+                opacity: 0;
+            }
+
+            dialog>header {
+                background: var(--primary);
+                color: var(--white);
+                padding-block: var(--space-05);
+                padding-inline: var(--space-fluid-07-09);
+                border-start-start-radius: var(--radius-lg);
+                border-start-end-radius: var(--radius-lg);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            dialog h2 {
+                font-size: var(--text-body);
+                font-weight: var(--font-weight-medium);
+            }
+
+            dialog>header button {
+                background: none;
+                border: none;
+                color: var(--white);
+                cursor: pointer;
+                padding: var(--space-06);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--radius-sm);
+                margin-right: calc(0px - var(--space-06) - 3px);
+            }
+
+            dialog>header button {
+                transition: background-color 200ms;
+            }
+
+            dialog>header button:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            dialog>header button:active {
+                background-color: rgba(255, 255, 255, 0.2);
+                outline: 0.125rem solid rgba(255, 255, 255, 0.5);
+                outline-offset: 0.125rem;
+            }
+
+            dialog>header button:focus-visible {
+                outline: none;
+                outline-offset: 0.125rem;
+            }
+
+            dialog>div {
+                padding-block-start: var(--space-fluid-08-10);
+                padding-block-end: 0;
+                padding-inline: var(--space-fluid-07-09);
+            }
+
+            dialog>footer {
+                padding-block: var(--space-06);
+                padding-inline: var(--space-fluid-07-09);
+                background: var(--bg);
+                border-block-start: 1px solid var(--border-structural);
+                border-end-start-radius: var(--radius-lg);
+                border-end-end-radius: var(--radius-lg);
+                display: flex;
+                justify-content: flex-end;
+                gap: var(--space-06);
+            }
+
+            dialog>footer>button:last-child {
+                margin-right: calc(0px - var(--space-06) - 3px);
+            }
+
+            dialog>header>button {
+                margin-right: calc(0px - var(--space-09));
+            }
+
+            section {
+                margin-block-end: var(--space-fluid-08-10);
+            }
+
+            section h3 {
+                font-size: var(--text-body);
+                font-weight: var(--font-weight-medium);
+                margin-block-end: var(--space-fluid-06-07);
+            }
+
+            .checkbox-group {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-05);
+                overflow: visible;
+            }
+
+            .checkbox-group label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                color: var(--text);
+                font-weight: normal;
+                overflow: visible;
+            }
+
+            input[type="radio"],
+            input[type="checkbox"] {
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                cursor: pointer;
+                flex-shrink: 0;
+                border: 1px solid var(--border);
+                background: var(--white);
+                -webkit-appearance: none;
+                appearance: none;
+                position: relative;
+            }
+
+            input[type="radio"] {
+                border-radius: var(--radius-circle);
+            }
+
+            input[type="checkbox"] {
+                border-radius: var(--radius-sm);
+            }
+
+            input[type="radio"]:disabled {
+                background: var(--input-disabled);
+                opacity: 0.90;
+            }
+
+            input[type="radio"]:checked {
+                border-color: var(--secondary);
+            }
+
+            input[type="radio"]:checked::before {
+                content: '';
+                position: absolute;
+                inset: 0.25rem;
+                background: var(--secondary);
+                border-radius: var(--radius-circle);
+            }
+
+            input[type="checkbox"]:checked {
+                background: var(--secondary);
+                border-color: var(--secondary);
+            }
+
+            input[type="checkbox"]:checked:disabled {
+                background: var(--input-disabled);
+                border-color: var(--border);
+            }
+
+            input[type="checkbox"]:checked:disabled::after {
+                border-color: var(--muted);
+            }
+
+            input[type="checkbox"]:checked::after {
+                content: '';
+                position: absolute;
+                left: 0.375rem;
+                top: 0.1rem;
+                width: 0.35rem;
+                height: 0.65rem;
+                border: solid var(--white);
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+
+            input[type="radio"],
+            input[type="checkbox"] {
+                box-shadow: 0 0 0 0 transparent;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+
+                input[type="radio"],
+                input[type="checkbox"] {
+                    transition: box-shadow var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            input[type="radio"]:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            input[type="checkbox"]:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            input[type="checkbox"]:disabled {
+                background: var(--input-disabled);
+                cursor: not-allowed;
+                opacity: 0.90;
+            }
+
+            label.disabled {
+                color: var(--muted);
+            }
+
+            .info-item input {
+                background: var(--input-disabled);
+                color: hsl(222, 100%, 12%, 0.75);
+                border: 1px solid var(--border-disabled);
+                cursor: not-allowed;
+            }
+
+            .section-note {
+                color: var(--muted);
+                font-size: var(--text-body);
+                margin-block-end: var(--space-fluid-07-08);
+            }
+
+            .insurance-note {
+                color: var(--muted);
+                font-size: var(--text-body);
+                margin-block-end: var(--space-fluid-06-07);
+            }
+
+            .push-down-14 {
+                margin-block-start: var(--space-05);
+            }
+
+            .section-header-spacing {
+                margin-block-start: var(--space-05) !important;
+                margin-block-end: 0 !important;
+            }
+
+            .section-header-spacing>div {
+                min-block-size: var(--space-09);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .insurance-item:not(:last-child) {
+                margin-block-end: clamp(1.375rem, 3.5vw, 1.75rem);
+            }
+
+            .insurance-item:first-child {
+                margin-block-start: var(--space-fluid-07-08);
+            }
+
+            .insurance-item h3 {
+                font-weight: var(--font-weight-medium);
+                margin-block-end: var(--space-07);
+                min-block-size: var(--space-09);
+                text-transform: capitalize;
+            }
+
+            .portal-title {
+                cursor: pointer;
+                font-size: var(--text-display);
+                font-weight: var(--font-weight-medium);
+                color: var(--primary);
+                line-height: var(--line-height-tight);
+            }
+
+            @media (max-width: 60rem) {
+                .portal-title {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    max-inline-size: calc(100% - 3rem);
+                }
+            }
+
+            .edit-buttons {
+                display: flex;
+                gap: 0.75rem;
+            }
+
+
+
+            .dialog-close-icon {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+
+            .preferred-contact-options {
+                display: flex;
+                gap: var(--space-fluid-06-07);
+                margin-top: var(--space-03);
+                overflow: visible;
+            }
+
+            .preferred-contact-options label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                font-weight: normal;
+                overflow: visible;
+            }
+
+            .contact-type-options {
+                display: flex;
+                gap: var(--space-fluid-06-07);
+                margin-top: var(--space-03);
+                overflow: visible;
+            }
+
+            .contact-type-options label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                font-weight: normal;
+                overflow: visible;
+            }
+
+
+
+            .debug-text {
+                background-color: hsla(0deg 0% 100% / 20%);
+            }
+
+            .debug-char {
+                background-color: deeppink;
+            }
+
+            .phone-type-container {
+                display: flex;
+                gap: var(--space-05);
+                align-items: center;
+            }
+
+            .phone-type-container input {
+                flex: 1;
+            }
+
+            .text-checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                white-space: nowrap;
+                font-weight: var(--font-weight-medium);
+                color: var(--muted);
+            }
+
+            .phone-edit-container {
+                display: flex;
+                gap: var(--space-06);
+            }
+
+            .phone-edit-container select {
+                flex: 1;
+            }
+
+            .contact-type-nowrap {
+                white-space: nowrap;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin-inline: calc(0px - var(--space-04));
+            }
+
+            @media (max-width: 60rem) {
+                .table-wrapper {
+                    margin-inline: 0;
+                }
+            }
+
+            @media (max-width: 60rem) {
+                .tab-content {
+                    padding-inline: 1rem;
+                }
+
+                .row.cols-2,
+                .row.cols-3,
+                .info-row,
+                .contact-section {
+                    grid-template-columns: 1fr !important;
+                }
+
+                .insurance-note {
+                    text-align: left;
+                }
+
+                .contact-section .phone-type-text>div {
+                    flex-direction: row;
+                    align-items: center;
+                    gap: var(--space-05);
+                }
+
+                .contact-section .phone-type-text>div>input {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .data-table thead {
+                    display: none;
+                }
+
+                .data-table tbody {
+                    display: block;
+                }
+
+                .data-table {
+                    margin-block-start: 0;
+                }
+
+                .data-table tbody tr {
+                    display: block;
+                    background: var(--white);
+                    border: 1px solid var(--border);
+                    border-radius: var(--radius-md);
+                    margin-block-end: var(--space-fluid-06-07);
+                    margin-inline: 0;
+                    padding: var(--space-fluid-06-07);
+                    overflow: hidden;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+
+                .data-table tbody tr:hover {
+                    background: var(--white);
+                }
+
+                .data-table td {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    padding-block: var(--space-05);
+                    padding-inline: 0;
+                    border: none;
+                }
+
+                .data-table td:before {
+                    content: attr(data-label);
+                    font-weight: var(--font-weight-medium);
+                    color: var(--muted);
+                    flex-shrink: 0;
+                    margin-inline-end: var(--space-06);
+                    min-inline-size: 0;
+                }
+
+                .data-table td>* {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    text-align: right;
+                    min-width: 0;
+                    flex: 1;
+                }
+
+                .data-table td[data-label="Contact Type"]>.badge,
+                .data-table td[data-label="By"]>.badge {
+                    flex: none;
+                    overflow: visible;
+                    text-overflow: unset;
+                    white-space: nowrap;
+                }
+
+                .data-table td[data-label="Actions"]:before {
+                    display: none;
+                }
+
+                .data-table td[data-label="Actions"] {
+                    justify-content: center;
+                    margin-block-start: var(--space-06);
+                    padding-block-start: var(--space-06);
+                    border-block-start: 1px solid var(--border-structural);
+                }
+
+                .data-table td[data-label="Actions"]>* {
+                    overflow: visible;
+                    text-overflow: unset;
+                    white-space: unset;
+                    text-align: center;
+                }
+
+                .data-table td[data-label="Actions"] .action-buttons {
+                    align-items: center;
+                }
+            }
+
+            .portal-footer {
+                background: var(--white);
+                border-block-start: 1px solid var(--border-structural);
+                padding-block: var(--space-fluid-08-10);
+                padding-inline: clamp(1rem, 4vw, 2.5rem);
+                font-size: var(--text-info);
+            }
+
+            .footer-grid {
+                max-inline-size: 75rem;
+                margin-inline: auto;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-fluid-07-08);
+                padding-inline: var(--space-fluid-08-10);
+            }
+
+            @media (max-width: 60rem) {
+                .footer-grid {
+                    grid-template-columns: 1fr;
+                    gap: var(--space-10);
+                }
+            }
+
+            .footer-column h3 {
+                font-size: var(--text-info);
+                font-weight: var(--font-weight-medium);
+                color: var(--text);
+                margin-block-end: var(--space-05);
+            }
+
+            .footer-column ul {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-04);
+            }
+
+            .footer-column p {
+                font-size: var(--text-info);
+                color: var(--muted);
+                line-height: var(--line-height-body);
+            }
+
+            /* Disabled select chevron fix */
+            .info-item {
+                position: relative;
+            }
+
+            .info-item select:disabled::after {
+                content: '';
+                position: absolute;
+                right: 0.75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 12px;
+                height: 8px;
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23a1a1aa' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat;
+                pointer-events: none;
+                z-index: 1;
+            }
+        }
+
+        @layer utilities {
+            .section-header-shim {
+                block-size: var(--space-09);
+            }
+
+            .visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            .skip-link {
+                position: absolute;
+                top: var(--space-05);
+                left: var(--space-05);
+                background: var(--primary);
+                color: var(--white);
+                padding: var(--space-05) var(--space-07);
+                border-radius: var(--radius-md);
+                text-decoration: none;
+                font-weight: var(--font-weight-medium);
+                z-index: calc(var(--z-toast) + 1);
+                transform: translateY(-200%);
+            }
+
+            .skip-link:focus {
+                transform: translateY(0);
+                outline: none;
+                box-shadow: 0 0 0 3px var(--secondary);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .skip-link {
+                    transition: transform var(--duration-3) var(--ease-out-quadratic);
+                }
+            }
+
+            [popover] {
+                border: none;
+                background: var(--popover-bg);
+                color: var(--white);
+                padding: var(--space-04) var(--space-05);
+                border-radius: var(--radius-sm);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+                font-size: var(--text-info);
+                max-inline-size: 15rem;
+                margin: 0;
+                inset: auto;
+                position: absolute;
+            }
+
+            [popover],
+            [popover]::backdrop {
+                transition:
+                    display var(--duration-3) allow-discrete,
+                    overlay var(--duration-3) allow-discrete,
+                    opacity var(--duration-3) ease,
+                    transform var(--duration-3) var(--ease-out-quadratic);
+                opacity: 0;
+            }
+
+            [popover]:popover-open {
+                opacity: 1;
+            }
+
+            @starting-style {
+                [popover]:popover-open {
+                    opacity: 0;
+                    transform: translateY(var(--space-02));
+                }
+            }
+
+            .tac {
+                text-align: center;
+            }
+
+        }
+    </style>
+    <meta name="view-transition" content="same-origin">
+    <meta name="author" content="">
+    <meta name="description" content="">
+</head>
+
+<body ng-controller="PortalCtrl as vm">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="mobile-nav-overlay" ng-class="{show: !vm.mobileMenuHidden}" ng-click="vm.closeMobileMenu()"></div>
+    <header class="portal-header">
+        <div ng-click="vm.navTo('home')" class="portal-title">The Friendly Mind Portal</div>
+        <button class="menu-toggle" ng-click="vm.toggleMenu()" aria-expanded="{{!vm.mobileMenuHidden}}">
+            <svg class="hamburger">
+                <use href="icons.svg#icon-menu" />
+            </svg>
+            <svg class="close">
+                <use href="icons.svg#icon-x" />
+            </svg>
+        </button>
+        <nav class="portal-nav" ng-class="{hidden: vm.mobileMenuHidden, show: !vm.mobileMenuHidden}">
+            <button ng-click="vm.navTo('home')" ng-class="{active: vm.currentNav === 'home'}">
+                <svg>
+                    <use href="icons.svg#icon-home" />
+                </svg>
+                <span>Home</span>
+            </button>
+            <button ng-click="vm.navTo('appointments')" ng-class="{active: vm.currentNav === 'appointments'}">
+                <svg>
+                    <use href="icons.svg#icon-calendar" />
+                </svg>
+                <span>Appointments</span>
+            </button>
+            <button ng-click="vm.navTo('documents')" ng-class="{active: vm.currentNav === 'documents'}">
+                <svg>
+                    <use href="icons.svg#icon-file-text" />
+                </svg>
+                <span>Documents</span>
+            </button>
+            <button ng-click="vm.navTo('messages')" ng-class="{active: vm.currentNav === 'messages'}" title="You have unread messages">
+                <span class="icon-wrapper">
+                    <svg>
+                        <use href="icons.svg#icon-message-circle" />
+                    </svg>
+                    <span class="badge-dot"></span>
+                </span>
+                <span>Messages</span>
+            </button>
+            <button ng-click="vm.navTo('myinfo')" ng-class="{active: vm.currentNav === 'myinfo'}">
+                <svg>
+                    <use href="icons.svg#icon-user" />
+                </svg>
+                <span>Profile</span>
+            </button>
+            <button class="mobile-sign-out" ng-click="vm.signOut()" ng-show="!vm.mobileMenuHidden">
+                <svg>
+                    <use href="icons.svg#icon-log-out" />
+                </svg>
+                <span>Sign Out</span>
+            </button>
+        </nav>
+        <button class="sign-out" ng-click="vm.signOut()">Sign Out</button>
+    </header>
+
+    <main id="main-content" class="main-container">
+        <div class="page-header">
+            <h1>My Profile</h1>
+            <button class="button-secondary" ng-click="vm.openAccount()">
+                <svg>
+                    <use href="icons.svg#icon-credit-card" />
+                </svg>
+                Account
+            </button>
+        </div>
+
+        <div class="tabs">
+            <nav class="tab-list" role="tablist">
+                <button role="tab" ng-click="vm.setTab('general')" ng-class="{active: vm.activeTab === 'general'}">
+                    General
+                </button>
+                <button role="tab" ng-click="vm.setTab('contacts')" ng-class="{active: vm.activeTab === 'contacts'}">
+                    Contacts
+                </button>
+                <button role="tab" ng-click="vm.setTab('insurance')" ng-class="{active: vm.activeTab === 'insurance'}">
+                    Insurance
+                </button>
+            </nav>
+
+            <div class="tab-content">
+                <!-- General Info Tab -->
+                <div ng-show="vm.activeTab === 'general'">
+                    <div class="section-header">
+                        <h2>Demographics</h2>
+                        <div ng-if="!vm.editing.general" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.toggleEdit('general')">
+                                <svg>
+                                    <use href="icons.svg#icon-edit" />
+                                </svg>
+                                Edit
+                            </button>
+                        </div>
+                        <div ng-if="vm.editing.general" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.cancelEdit('general')">Cancel</button>
+                            <button class="button-primary" ng-click="vm.saveEdit('general')">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="info-grid" ng-if="!vm.editing.general">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Legal First Name<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.firstName" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Legal Last Name<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.lastName" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Preferred Name<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.name" readonly>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Date of Birth<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.dob" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Legal Sex<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.sex" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Gender<span class="required visually-hidden" aria-hidden="true">*</span></label>
+                                <input type="text" ng-model="vm.patient.gender" readonly>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Race</label>
+                                <input type="text" ng-model="vm.patient.race" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Ethnicity</label>
+                                <input type="text" ng-model="vm.patient.ethnicity" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Marital Status</label>
+                                <input type="text" ng-model="vm.patient.marital" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.editing.general">
+                        <div class="row cols-3">
+                            <div class="field">
+                                <label for="firstName">Legal First Name<span class="required" aria-label="required">*</span></label>
+                                <input id="firstName" type="text" ng-model="vm.editData.firstName" ng-class="{error: vm.errors.firstName}" aria-required="true" aria-invalid="{{!!vm.errors.firstName}}" aria-describedby="{{vm.errors.firstName ? 'firstName-error' : ''}}">
+                                <div id="firstName-error" class="error-message" ng-if="vm.errors.firstName" role="alert">{{vm.errors.firstName}}</div>
+                            </div>
+                            <div class="field">
+                                <label for="lastName">Legal Last Name<span class="required" aria-label="required">*</span></label>
+                                <input id="lastName" type="text" ng-model="vm.editData.lastName" ng-class="{error: vm.errors.lastName}" aria-required="true" aria-invalid="{{!!vm.errors.lastName}}" aria-describedby="{{vm.errors.lastName ? 'lastName-error' : ''}}">
+                                <div id="lastName-error" class="error-message" ng-if="vm.errors.lastName" role="alert">{{vm.errors.lastName}}</div>
+                            </div>
+                            <div class="field">
+                                <label for="name">Preferred Name<span class="required" aria-label="required">*</span></label>
+                                <input id="name" type="text" ng-model="vm.editData.name" ng-class="{error: vm.errors.name}" aria-required="true" aria-invalid="{{!!vm.errors.name}}" aria-describedby="{{vm.errors.name ? 'name-error' : ''}}">
+                                <div id="name-error" class="error-message" ng-if="vm.errors.name" role="alert">{{vm.errors.name}}</div>
+                            </div>
+                        </div>
+                        <div class="row cols-3">
+                            <div class="field">
+                                <label for="dob">Date of Birth<span class="required" aria-label="required">*</span></label>
+                                <input id="dob" type="date" ng-model="vm.editData.dobEdit" ng-class="{error: vm.errors.dob}" aria-required="true" aria-invalid="{{!!vm.errors.dob}}" aria-describedby="{{vm.errors.dob ? 'dob-error' : ''}}">
+                                <div id="dob-error" class="error-message" ng-if="vm.errors.dob" role="alert">{{vm.errors.dob}}</div>
+                            </div>
+                            <div class="field">
+                                <label for="sex">Legal Sex<span class="required" aria-label="required">*</span></label>
+                                <select id="sex" ng-model="vm.editData.sex" ng-class="{error: vm.errors.sex}" aria-required="true" aria-invalid="{{!!vm.errors.sex}}" aria-describedby="{{vm.errors.sex ? 'sex-error' : ''}}" tabindex="0">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                </select>
+                                <div id="sex-error" class="error-message" ng-if="vm.errors.sex" role="alert">{{vm.errors.sex}}</div>
+                            </div>
+                            <div class="field">
+                                <label for="gender">Gender<span class="required" aria-label="required">*</span></label>
+                                <select id="gender" ng-model="vm.editData.gender" ng-class="{error: vm.errors.gender}" aria-required="true" aria-invalid="{{!!vm.errors.gender}}" aria-describedby="{{vm.errors.gender ? 'gender-error' : ''}}" tabindex="0">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Transgender Male/Trans Man (Female-to-Male, FTM)</option>
+                                    <option>Transgender Female/Trans Woman (Male-to-Female, MTF)</option>
+                                    <!-- <option>Female-to-Male (FTM)/Transgender Male/Trans Man</option> -->
+                                    <!-- <option>Male-to-Female (MTF)/Transgender Female/Trans Woman</option> -->
+                                    <option>Non-binary</option>
+                                    <!-- <option>Identifies as non-conforming gender</option> -->
+                                    <option>Another gender identity (please specify)</option>
+                                    <!-- <option>Additional gender category or other, please specify</option> -->
+                                    <option>Choose not to disclose</option>
+                                </select>
+                                <div id="gender-error" class="error-message" ng-if="vm.errors.gender" role="alert">{{vm.errors.gender}}</div>
+                            </div>
+                        </div>
+                        <div class="row cols-3">
+                            <div class="field">
+                                <label for="race">Race</label>
+                                <select id="race" ng-model="vm.editData.race">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>American Indian or Alaskan Native</option>
+                                    <option>Asian</option>
+                                    <option>Black or African American</option>
+                                    <option>Declined to Specify</option>
+                                    <option>Native Hawaiian or Other Pacific Islander</option>
+                                    <option>White</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="ethnicity">Ethnicity</label>
+                                <select id="ethnicity" ng-model="vm.editData.ethnicity">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>African-American</option>
+                                    <option>African-Caribbean</option>
+                                    <option>American Indian</option>
+                                    <option>Arab-American</option>
+                                    <option>ArmenianAmerican</option>
+                                    <option>Asian-American</option>
+                                    <option>Bangladeshi</option>
+                                    <option>Biracial American</option>
+                                    <option>Brazilian</option>
+                                    <option>Canadian</option>
+                                    <option>Caribbean</option>
+                                    <option>Caucasian</option>
+                                    <option>Central American</option>
+                                    <option>Central European</option>
+                                    <option>Chamorro</option>
+                                    <option>Chinese</option>
+                                    <option>Chinese-American</option>
+                                    <option>Colombian</option>
+                                    <option>Creole</option>
+                                    <option>Danish</option>
+                                    <option>Declined to Specify</option>
+                                    <option>Dominican</option>
+                                    <option>Ecuadorian</option>
+                                    <option>Eurasian</option>
+                                    <option>Filipino</option>
+                                    <option>Filipino-American</option>
+                                    <option>French</option>
+                                    <option>German-American</option>
+                                    <option>Greek-American</option>
+                                    <option>Haitian</option>
+                                    <option>Hawaiian</option>
+                                    <option>Hispanic or Latino</option>
+                                    <option>Hungarian</option>
+                                    <option>Indian</option>
+                                    <option>Iranian</option>
+                                    <option>Irish-American</option>
+                                    <option>Israeli</option>
+                                    <option>Italian-American</option>
+                                    <option>Japanese-American</option>
+                                    <option>Jewish-American</option>
+                                    <option>Jewish-Moroccan</option>
+                                    <option>Korean</option>
+                                    <option>Latin American</option>
+                                    <option>Latino</option>
+                                    <option>Lebanese</option>
+                                    <option>Mexican</option>
+                                    <option>Middle Eastern</option>
+                                    <option>Mixed Racial American</option>
+                                    <option>Native Alaskan</option>
+                                    <option>Native American</option>
+                                    <option>Not Hispanic or Latino</option>
+                                    <option>Pacific Islander</option>
+                                    <option>Pakistani</option>
+                                    <option>Persian</option>
+                                    <option>Persian-English</option>
+                                    <option>Peruvian</option>
+                                    <option>Polish-American</option>
+                                    <option>Portuguese</option>
+                                    <option>Puerto Rican</option>
+                                    <option>Romanian/Venezuelan</option>
+                                    <option>Russian</option>
+                                    <option>Swedish</option>
+                                    <option>Syrian</option>
+                                    <option>Thai</option>
+                                    <option>Turkish</option>
+                                    <option>Unknown</option>
+                                    <option>Vietnamese</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="marital">Marital Status</label>
+                                <select id="marital" ng-model="vm.editData.marital">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>Declined to specify</option>
+                                    <option>Divorced</option>
+                                    <option>Domestic Partner</option>
+                                    <option>Engaged</option>
+                                    <option>Married</option>
+                                    <option>Never Married</option>
+                                    <option>Separated</option>
+                                    <option>Single</option>
+                                    <option>Widowed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Contact Information</h2>
+                        <div ng-if="!vm.editing.contact" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.toggleEdit('contact')">
+                                <svg>
+                                    <use href="icons.svg#icon-edit" />
+                                </svg>
+                                Edit
+                            </button>
+                        </div>
+                        <div ng-if="vm.editing.contact" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.cancelEdit('contact')">Cancel</button>
+                            <button class="button-primary" ng-click="vm.saveEdit('contact')">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="info-grid" ng-if="!vm.editing.contact">
+                        <div class="info-row cols-2 contact-section">
+                            <div class="info-item">
+                                <label>Email</label>
+                                <input type="email" ng-model="vm.patient.email" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Email Type</label>
+                                <input type="text" ng-model="vm.patient.emailType" readonly>
+                            </div>
+                        </div>
+                        <div class="info-row cols-2 contact-section">
+                            <div class="info-item">
+                                <label>Phone</label>
+                                <input type="tel" ng-model="vm.patient.phone" readonly>
+                            </div>
+                            <div class="info-item phone-type-text">
+                                <label>Phone Type</label>
+                                <div class="phone-type-container">
+                                    <input type="text" ng-model="vm.patient.phoneType" readonly>
+                                    <label class="text-checkbox-label">
+                                        <input type="checkbox" ng-model="vm.patient.canText" disabled>
+                                        Textable?
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-row cols-2">
+                            <div class="info-item">
+                                <label>Street Address</label>
+                                <input type="text" ng-model="vm.patient.address" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>City</label>
+                                <input type="text" ng-model="vm.patient.city" readonly>
+                            </div>
+                        </div>
+                        <div class="info-row cols-2">
+                            <div class="info-item">
+                                <label>State</label>
+                                <input type="text" ng-model="vm.patient.state" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Zip Code</label>
+                                <input type="text" ng-model="vm.patient.zip" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.editing.contact">
+                        <div class="row cols-2">
+                            <div class="field">
+                                <label for="email">Email</label>
+                                <input id="email" type="email" ng-model="vm.editData.email" disabled>
+                            </div>
+                            <div class="field">
+                                <label for="emailType">Email Type</label>
+                                <select id="emailType" ng-model="vm.editData.emailType" disabled>
+                                    <option value="">Select...</option>
+                                    <option>Work</option>
+                                    <option>Personal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols-2">
+                            <div class="field">
+                                <label for="phone">Phone</label>
+                                <input id="phone" type="tel" ng-model="vm.editData.phone">
+                            </div>
+                            <div class="field">
+                                <label for="phoneType">Phone Type</label>
+                                <div class="phone-edit-container">
+                                    <select id="phoneType" ng-model="vm.editData.phoneType" ng-change="vm.updateTextAvailability()">
+                                        <option value="">Select...</option>
+                                        <option>Home</option>
+                                        <option>Mobile</option>
+                                        <option>Work</option>
+                                    </select>
+                                    <label class="text-checkbox-label" ng-class="{disabled: vm.editData.phoneType !== 'Mobile'}">
+                                        <input type="checkbox" ng-model="vm.editData.canText" ng-disabled="vm.editData.phoneType !== 'Mobile'">
+                                        Textable?
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row cols-2">
+                            <div class="field">
+                                <label for="address">Street Address</label>
+                                <input id="address" type="text" ng-model="vm.editData.address">
+                            </div>
+                            <div class="field">
+                                <label for="city">City</label>
+                                <input id="city" type="text" ng-model="vm.editData.city">
+                            </div>
+                        </div>
+                        <div class="row cols-2">
+                            <div class="field">
+                                <label for="state">State</label>
+                                <select id="state" ng-model="vm.editData.state">
+                                    <option value="">Select...</option>
+                                    <option>Alabama</option>
+                                    <option>Alaska</option>
+                                    <option>Arizona</option>
+                                    <option>Arkansas</option>
+                                    <option>California</option>
+                                    <option>Colorado</option>
+                                    <option>Connecticut</option>
+                                    <option>Delaware</option>
+                                    <option>Florida</option>
+                                    <option>Georgia</option>
+                                    <option>Hawaii</option>
+                                    <option>Idaho</option>
+                                    <option>Illinois</option>
+                                    <option>Indiana</option>
+                                    <option>Iowa</option>
+                                    <option>Kansas</option>
+                                    <option>Kentucky</option>
+                                    <option>Louisiana</option>
+                                    <option>Maine</option>
+                                    <option>Maryland</option>
+                                    <option>Massachusetts</option>
+                                    <option>Michigan</option>
+                                    <option>Minnesota</option>
+                                    <option>Mississippi</option>
+                                    <option>Missouri</option>
+                                    <option>Montana</option>
+                                    <option>Nebraska</option>
+                                    <option>Nevada</option>
+                                    <option>New Hampshire</option>
+                                    <option>New Jersey</option>
+                                    <option>New Mexico</option>
+                                    <option>New York</option>
+                                    <option>North Carolina</option>
+                                    <option>North Dakota</option>
+                                    <option>Ohio</option>
+                                    <option>Oklahoma</option>
+                                    <option>Oregon</option>
+                                    <option>Pennsylvania</option>
+                                    <option>Puerto Rico</option>
+                                    <option>Rhode Island</option>
+                                    <option>South Carolina</option>
+                                    <option>South Dakota</option>
+                                    <option>Tennessee</option>
+                                    <option>Texas</option>
+                                    <option>U.S. Virgin Islands</option>
+                                    <option>Utah</option>
+                                    <option>Vermont</option>
+                                    <option>Virginia</option>
+                                    <option>Washington</option>
+                                    <option>West Virginia</option>
+                                    <option>Wisconsin</option>
+                                    <option>Wyoming</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="zip">Zip Code</label>
+                                <input id="zip" type="text" ng-model="vm.editData.zip">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>Financial & Household</h2>
+                        <div ng-if="!vm.editing.financial" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.toggleEdit('financial')">
+                                <svg>
+                                    <use href="icons.svg#icon-edit" />
+                                </svg>
+                                Edit
+                            </button>
+                        </div>
+                        <div ng-if="vm.editing.financial" class="edit-buttons">
+                            <button class="button-secondary" ng-click="vm.cancelEdit('financial')">Cancel</button>
+                            <button class="button-primary" ng-click="vm.saveEdit('financial')">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="info-grid" ng-if="!vm.editing.financial">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Family Size</label>
+                                <input type="number" ng-model="vm.patient.familySize" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Employment Status</label>
+                                <input type="text" ng-model="vm.patient.employment" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Income Range</label>
+                                <input type="text" ng-model="vm.patient.income" readonly>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-item">
+                                <label>Disability</label>
+                                <input type="text" ng-model="vm.patient.disability" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>Veteran Status</label>
+                                <input type="text" ng-model="vm.patient.veteran" readonly>
+                            </div>
+                            <div class="info-item">
+                                <label>SSN</label>
+                                <input type="text" ng-model="vm.patient.ssn" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.editing.financial">
+                        <div class="row cols-3">
+                            <div class="field">
+                                <label for="familySize">Family Size</label>
+                                <input id="familySize" type="number" ng-model="vm.editData.familySize" min="1">
+                            </div>
+                            <div class="field">
+                                <label for="employment">Employment Status</label>
+                                <select id="employment" ng-model="vm.editData.employment">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>Disabled</option>
+                                    <option>Employed Full-Time</option>
+                                    <option>Employed Part-Time</option>
+                                    <option>Homemaker</option>
+                                    <option>Retired</option>
+                                    <option>Self-Employed</option>
+                                    <option>Stay at home parent</option>
+                                    <option>Student Full-Time</option>
+                                    <option>Student Part-Time</option>
+                                    <option>Unemployed</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="income">Income Range</label>
+                                <select id="income" ng-model="vm.editData.income">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>$0-$24,999</option>
+                                    <option>$25,000-$49,999</option>
+                                    <option>$50,000-$74,999</option>
+                                    <option>$75,000-$99,999</option>
+                                    <option>$100,000+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row cols-3">
+                            <div class="field">
+                                <label for="disability">Disability</label>
+                                <select id="disability" ng-model="vm.editData.disability">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>None</option>
+                                    <option>Blind</option>
+                                    <option>Deaf</option>
+                                    <option>Developmental Disability</option>
+                                    <option>Hard of Hearing</option>
+                                    <option>Intellectual Disability</option>
+                                    <option>Legally Blind</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="veteran">Veteran Status</label>
+                                <select id="veteran" ng-model="vm.editData.veteran">
+                                    <option value="">Select...</option>
+                                    <option>Unknown</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="ssn">SSN</label>
+                                <input id="ssn" type="text" ng-model="vm.editData.ssn" placeholder="XXX-XX-XXXX">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Contacts Tab -->
+                <div ng-show="vm.activeTab === 'contacts'">
+                    <div class="section-header">
+                        <h2>My Contacts</h2>
+                        <button class="button-primary" ng-click="vm.newContact()">
+                            <svg>
+                                <use href="icons.svg#icon-user-plus" />
+                            </svg>
+                            Add
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Relation</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>By</th>
+                                    <th>Role</th>
+                                    <th class="tac">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="contact in vm.contacts track by $index">
+                                    <td data-label="First Name">{{contact.firstName}}</td>
+                                    <td data-label="Last Name">{{contact.lastName}}</td>
+                                    <td data-label="Relationship">{{contact.relationship === 'Other (please specify)' ? contact.otherRelationship : contact.relationship}}</td>
+                                    <td data-label="Email">{{contact.email}}</td>
+                                    <td data-label="Phone">{{contact.phone}}</td>
+                                    <td data-label="By">
+                                        <span class="badge contact-method-badge" ng-if="contact.preferredContact === 'email'" popovertarget="email-tooltip-{{$index}}" title="Prefers contact by Email" aria-label="Contact by Email">E</span>
+                                        <div id="email-tooltip-{{$index}}" popover>Prefers contact by Email</div>
+                                        <span class="badge contact-method-badge" ng-if="contact.preferredContact === 'phone'" popovertarget="phone-tooltip-{{$index}}" title="Prefers contact by Phone" aria-label="Contact by Phone">P</span>
+                                        <div id="phone-tooltip-{{$index}}" popover>Prefers contact by Phone</div>
+                                        <span class="badge contact-method-badge" ng-if="contact.preferredContact === 'text'" popovertarget="text-tooltip-{{$index}}" title="Prefers contact by Text" aria-label="Contact by Text">T</span>
+                                        <div id="text-tooltip-{{$index}}" popover>Prefers contact by Text</div>
+                                    </td>
+                                    <td data-label="Contact Type">
+                                        <span class="badge badge-emergency" ng-if="contact.isEmergency">Emergency</span>
+                                        <span class="badge badge-guarantor" ng-if="contact.isGuarantor">Guarantor</span>
+                                    </td>
+                                    <td data-label="Actions">
+                                        <div class="action-buttons">
+                                            <button class="button-secondary" ng-click="vm.editContact(contact)">
+                                                <svg>
+                                                    <use href="icons.svg#icon-edit" />
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <button class="button-secondary" ng-click="vm.deleteContact(contact)">
+                                                <svg>
+                                                    <use href="icons.svg#icon-trash-2" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Insurance Tab -->
+                <div ng-show="vm.activeTab === 'insurance'">
+                    <div class="section-header section-header-spacing">
+                        <div>
+                            <h2>Insurance Information</h2>
+                            <div class="insurance-note">Please <a href="#" ng-click="vm.navTo('messages')">message us</a> to update your insurance.</div>
+                        </div>
+                        <div class="section-header-shim"></div>
+                    </div>
+
+                    <div ng-repeat="insurance in vm.insurances track by $index" class="insurance-item">
+                        <h3>{{insurance.type}} Insurance</h3>
+
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>Insurance Name</label>
+                                    <input type="text" ng-model="insurance.name" disabled>
+                                </div>
+                                <div class="info-item">
+                                    <label>Member ID/Policy №</label>
+                                    <input type="text" ng-model="insurance.memberId" disabled>
+                                </div>
+                                <div class="info-item">
+                                    <label>Group №</label>
+                                    <input type="text" ng-model="insurance.groupNumber" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="portal-footer">
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3>Privacy &amp; Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Notice of Privacy Practices</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Patient Rights</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Your Care &amp; Safety</h3>
+                <ul>
+                    <li><a href="#">Non-Emergency Disclaimer</a></li>
+                    <li><a href="#">Messaging Guidelines</a></li>
+                    <li><a href="#">Data Access &amp; Requests</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#" ng-click="vm.getHelp()">Contact Support</a></li>
+                    <li><a href="#">System Status</a></li>
+                    <li><a href="#">Accessibility Statement</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>About</h3>
+                <p>&copy;&thinsp;{{vm.currentYear}} ICANotes, LLC</p>
+                <p>6 E Eager St №&thinsp;310, Baltimore, MD</p>
+                <!-- <p>1600 St Margaret&#39;s Rd, Annapolis, MD</p> -->
+                <p>HIPAA-Compliant Patient Portal</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Dialog -->
+    <dialog id="contact-dialog">
+        <header>
+            <h2>{{vm.contactDialog.isEdit ? 'Edit' : 'New'}} Contact</h2>
+            <button type="button" ng-click="vm.closeContactDialog()">
+                <svg class="dialog-close-icon">
+                    <use href="icons.svg#icon-x" />
+                </svg>
+            </button>
+        </header>
+
+        <div>
+            <section>
+                <div class="row cols-2">
+                    <div class="field">
+                        <label for="contactFirstName">First Name<span class="required" aria-label="required">*</span></label>
+                        <input id="contactFirstName" type="text" ng-model="vm.contactDialog.firstName" ng-class="{error: vm.contactErrors.firstName}" aria-required="true" aria-invalid="{{!!vm.contactErrors.firstName}}" aria-describedby="{{vm.contactErrors.firstName ? 'contactFirstName-error' : ''}}">
+                        <div id="contactFirstName-error" class="error-message" ng-if="vm.contactErrors.firstName" role="alert">{{vm.contactErrors.firstName}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="contactLastName">Last Name<span class="required" aria-label="required">*</span></label>
+                        <input id="contactLastName" type="text" ng-model="vm.contactDialog.lastName" ng-class="{error: vm.contactErrors.lastName}" aria-required="true" aria-invalid="{{!!vm.contactErrors.lastName}}" aria-describedby="{{vm.contactErrors.lastName ? 'contactLastName-error' : ''}}">
+                        <div id="contactLastName-error" class="error-message" ng-if="vm.contactErrors.lastName" role="alert">{{vm.contactErrors.lastName}}</div>
+                    </div>
+                </div>
+
+                <div class="row cols-2">
+                    <div class="field">
+                        <label for="contactRelationship">Relationship<span class="required" aria-label="required">*</span></label>
+                        <select id="contactRelationship" ng-model="vm.contactDialog.relationship" ng-change="vm.updateContactType()" ng-class="{error: vm.contactErrors.relationship}" aria-required="true" aria-invalid="{{!!vm.contactErrors.relationship}}" aria-describedby="{{vm.contactErrors.relationship ? 'contactRelationship-error' : ''}}">
+                            <option value="">Select...</option>
+                            <!-- <optgroup label="Family">
+                                <option>Unknown</option>
+                                <option>Biological Parent 1</option>
+                                <option>Biological Parent 2</option>
+                                <option>Adoptive Parent 1</option>
+                                <option>Adoptive Parent 2</option>
+                                <option>Spouse</option>
+                                <option>Step Parent 1</option>
+                                <option>Step Parent 2</option>
+                                <option>Foster Parent 1</option>
+                                <option>Foster Parent 2</option>
+                                <option>Guardian 1</option>
+                                <option>Guardian 2</option>
+                            </optgroup>
+                            <optgroup label="Medical">
+                                <option>Unknown</option>
+                                <option>Primary Care Physician</option>
+                                <option>Outpatient Psychiatrist</option>
+                                <option>Outpatient Therapist</option>
+                                <option>School Contact</option>
+                                <option>SASS Worker</option>
+                                <option>Pharmacy</option>
+                            </optgroup>
+                            <optgroup label="Custom">
+                                <option>Custom (please specify)</option>
+                            </optgroup> -->
+                            <optgroup label="Immediate Family">
+                                <option>Spouse</option>
+                                <option>Domestic Partner</option>
+                                <option>Significant Other</option>
+                                <option>Mother</option>
+                                <option>Father</option>
+                                <option>Adoptive Parent</option>
+                                <option>Foster Parent</option>
+                                <option>Stepparent</option>
+                                <option>Son</option>
+                                <option>Daughter</option>
+                                <option>Child</option>
+                                <option>Stepchild</option>
+                                <option>Brother</option>
+                                <option>Sister</option>
+                                <option>Stepsibling</option>
+                            </optgroup>
+                            <optgroup label="Extended Family">
+                                <option>Grandparent</option>
+                                <option>Grandchild</option>
+                                <option>Aunt</option>
+                                <option>Uncle</option>
+                                <option>Niece</option>
+                                <option>Nephew</option>
+                                <option>Cousin</option>
+                                <option>In-law (Parent/Child/Sibling)</option>
+                            </optgroup>
+                            <optgroup label="Legal/Authorized Representatives">
+                                <option>Legal Guardian</option>
+                                <option>Power of Attorney</option>
+                                <option>Healthcare Proxy/Agent</option>
+                                <option>Conservator</option>
+                                <option>Court-Appointed Representative</option>
+                                <option>Responsible Party</option>
+                                <option>Emergency Contact</option>
+                                <option>Next of Kin</option>
+                            </optgroup>
+                            <optgroup label="Care Network">
+                                <option>Friend</option>
+                                <option>Neighbor</option>
+                                <option>Caregiver (Paid)</option>
+                                <option>Caregiver (Unpaid)</option>
+                                <option>Clergy/Spiritual Advisor</option>
+                                <option>Case Manager/Social Worker</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option>Employer</option>
+                                <option>Self</option>
+                                <option>Other (please specify)</option>
+                            </optgroup>
+                        </select>
+                        <div id="contactRelationship-error" class="error-message" ng-if="vm.contactErrors.relationship" role="alert">{{vm.contactErrors.relationship}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="contactOtherRelationship">Specify relationship<span class="required" ng-if="vm.contactDialog.relationship === 'Other (please specify)'" aria-label="required">*</span></label>
+                        <input id="contactOtherRelationship" type="text" ng-model="vm.contactDialog.otherRelationship" ng-class="{error: vm.contactErrors.otherRelationship}" ng-disabled="vm.contactDialog.relationship !== 'Other (please specify)'" aria-required="{{vm.contactDialog.relationship === 'Other (please specify)'}}" aria-invalid="{{!!vm.contactErrors.otherRelationship}}" aria-describedby="{{vm.contactErrors.otherRelationship ? 'contactOtherRelationship-error' : ''}}">
+                        <div id="contactOtherRelationship-error" class="error-message" ng-if="vm.contactErrors.otherRelationship" role="alert">{{vm.contactErrors.otherRelationship}}</div>
+                    </div>
+                </div>
+
+                <div class="row cols-2">
+                    <div class="field">
+                        <label for="contactEmail">Email<span class="required" aria-label="required">*</span></label>
+                        <input id="contactEmail" type="email" ng-model="vm.contactDialog.email" ng-class="{error: vm.contactErrors.email}" aria-required="true" aria-invalid="{{!!vm.contactErrors.email}}" aria-describedby="{{vm.contactErrors.email ? 'contactEmail-error' : ''}}">
+                        <div id="contactEmail-error" class="error-message" ng-if="vm.contactErrors.email" role="alert">{{vm.contactErrors.email}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="contactEmailType">Email Type<span class="required" aria-label="required">*</span></label>
+                        <select id="contactEmailType" ng-model="vm.contactDialog.emailType" ng-class="{error: vm.contactErrors.emailType}" aria-required="true" aria-invalid="{{!!vm.contactErrors.emailType}}" aria-describedby="{{vm.contactErrors.emailType ? 'contactEmailType-error' : ''}}">
+                            <option value="">Select...</option>
+                            <option>Work</option>
+                            <option>Personal</option>
+                        </select>
+                        <div id="contactEmailType-error" class="error-message" ng-if="vm.contactErrors.emailType" role="alert">{{vm.contactErrors.emailType}}</div>
+                    </div>
+                </div>
+
+                <div class="row cols-2">
+                    <div class="field">
+                        <label for="contactPhone">Phone<span class="required" ng-if="vm.contactDialog.preferredContact === 'phone' || vm.contactDialog.preferredContact === 'text'" aria-label="required">*</span></label>
+                        <input id="contactPhone" type="tel" ng-model="vm.contactDialog.phone" ng-class="{error: vm.contactErrors.phone}" placeholder="(XXX) XXX-XXXX" aria-required="{{vm.contactDialog.preferredContact === 'phone' || vm.contactDialog.preferredContact === 'text'}}" aria-invalid="{{!!vm.contactErrors.phone}}" aria-describedby="{{vm.contactErrors.phone ? 'contactPhone-error' : ''}}">
+                        <div id="contactPhone-error" class="error-message" ng-if="vm.contactErrors.phone" role="alert">{{vm.contactErrors.phone}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="contactPhoneType">Phone Type<span class="required" ng-if="vm.contactDialog.preferredContact === 'phone' || vm.contactDialog.preferredContact === 'text'" aria-label="required">*</span></label>
+                        <div class="phone-edit-container">
+                            <select id="contactPhoneType" ng-model="vm.contactDialog.phoneType" ng-change="vm.updateTextAvailability()" ng-class="{error: vm.contactErrors.phoneType}" aria-required="{{vm.contactDialog.preferredContact === 'phone' || vm.contactDialog.preferredContact === 'text'}}" aria-invalid="{{!!vm.contactErrors.phoneType}}" aria-describedby="{{vm.contactErrors.phoneType ? 'contactPhoneType-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>Home</option>
+                                <option>Mobile</option>
+                                <option>Work</option>
+                            </select>
+                            <label class="text-checkbox-label" ng-class="{disabled: vm.contactDialog.phoneType !== 'Mobile'}">
+                                <input type="checkbox" ng-model="vm.contactDialog.canText" ng-disabled="vm.contactDialog.phoneType !== 'Mobile'">
+                                Textable?
+                            </label>
+                        </div>
+                        <div id="contactPhoneType-error" class="error-message" ng-if="vm.contactErrors.phoneType" role="alert">{{vm.contactErrors.phoneType}}</div>
+                    </div>
+                </div>
+
+                <div class="row cols-2">
+                    <div class="field" ng-class="{error: vm.contactErrors.preferredContact}">
+                        <label>Preferred method of contact<span class="required" aria-label="required">*</span></label>
+                        <div class="preferred-contact-options">
+                            <label>
+                                <input id="preferredContactEmail" type="radio" ng-model="vm.contactDialog.preferredContact" value="email">
+                                Email
+                            </label>
+                            <label>
+                                <input type="radio" ng-model="vm.contactDialog.preferredContact" value="phone">
+                                Phone
+                            </label>
+                            <label ng-class="{disabled: !vm.contactDialog.canText || vm.contactDialog.phoneType !== 'Mobile'}">
+                                <input type="radio" ng-model="vm.contactDialog.preferredContact" value="text" ng-disabled="!vm.contactDialog.canText || vm.contactDialog.phoneType !== 'Mobile'">
+                                Text
+                            </label>
+                        </div>
+                        <div class="error-message" ng-if="vm.contactErrors.preferredContact" role="alert">{{vm.contactErrors.preferredContact}}</div>
+                    </div>
+                    <div class="field">
+                        <label>Special Roles</label>
+                        <div class="contact-type-options">
+                            <label class="contact-type-nowrap">
+                                <input id="isEmergency" type="checkbox" ng-model="vm.contactDialog.isEmergency">
+                                Emergency Contact
+                            </label>
+                            <label>
+                                <input type="checkbox" ng-model="vm.contactDialog.isGuarantor">
+                                Guarantor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <footer>
+            <button type="button" class="button-secondary" ng-click="vm.closeContactDialog()">Cancel</button>
+            <button type="button" class="button-primary" ng-click="vm.saveContact()">{{vm.contactDialog.isEdit ? 'Update' : 'Save'}} Contact</button>
+        </footer>
+    </dialog>
+
+    <script>
+        angular.module('portalApp', [])
+            .controller('PortalCtrl', function () {
+                var vm = this;
+
+                vm.currentNav = 'myinfo';
+                vm.activeTab = 'general';
+                vm.mobileMenuHidden = true;
+
+                vm.patient = {
+                    firstName: 'Catarina',
+                    lastName: 'Ribalta',
+                    name: 'Cat',
+                    dob: 'November 19, 1997',
+                    dobEdit: '1997-11-19',
+                    sex: 'Female',
+                    gender: 'Female',
+                    race: 'White',
+                    ethnicity: 'Hispanic or Latino',
+                    marital: 'Married',
+                    phone: '(619) 555-2847',
+                    phoneType: 'Mobile',
+                    canText: true,
+                    email: 'catriba@email.com',
+                    emailType: 'Personal',
+                    address: '789 Sunny Street',
+                    city: 'Bestown',
+                    state: 'California',
+                    zip: '92037',
+                    employment: 'Employed Full-Time',
+                    income: '$100,000+',
+                    familySize: 4,
+                    disability: 'None',
+                    veteran: 'No',
+                    ssn: '–'
+                };
+
+                vm.contacts = [
+                    {
+                        firstName: 'Bernard',
+                        lastName: 'Sanders',
+                        relationship: 'Spouse',
+                        email: 'b.sanders@email.com',
+                        emailType: 'Personal',
+                        phone: '(619) 555-3921',
+                        phoneType: 'Mobile',
+                        text: '(555) 123-4568',
+                        preferredContact: 'phone',
+                        isEmergency: true,
+                        isGuarantor: false
+                    },
+                    {
+                        firstName: 'Maria',
+                        lastName: 'Ribalta',
+                        relationship: 'Mother',
+                        email: 'mary.ribalta@email.com',
+                        emailType: 'Personal',
+                        phone: '(858) 742-1965',
+                        phoneType: 'Home',
+                        text: '',
+                        preferredContact: 'email',
+                        isEmergency: false,
+                        isGuarantor: true
+                    },
+                    {
+                        firstName: 'Collette',
+                        lastName: 'Dulce',
+                        relationship: 'Other (please specify)',
+                        otherRelationship: 'Nanny',
+                        email: 'csweet@email.com',
+                        emailType: 'Personal',
+                        phone: '(213) 894-5632',
+                        phoneType: 'Mobile',
+                        text: '(555) 456-7890',
+                        preferredContact: 'text',
+                        isEmergency: false,
+                        isGuarantor: false
+                    }
+                ];
+
+                vm.insurances = [
+                    {
+                        type: 'primary',
+                        name: 'BCBS HealthyBlue',
+                        memberId: 'F8ME569888',
+                        groupNumber: 'PN2526'
+                    },
+                    {
+                        type: 'secondary',
+                        name: 'Aetna CDHP',
+                        memberId: 'AHP555222',
+                        groupNumber: 'XYZ7890'
+                    }
+                ];
+
+                vm.editing = {};
+                vm.editData = {};
+                vm.contactDialog = {};
+                vm.errors = {};
+                vm.contactErrors = {};
+                vm.currentYear = new Date().getFullYear();
+
+                vm.setTab = function (tab) {
+                    vm.activeTab = tab;
+                };
+
+                vm.toggleEdit = function (section) {
+                    vm.editing[section] = true;
+                    vm.editData = angular.copy(vm.patient);
+                    // Ensure selects are focusable after DOM update
+                    setTimeout(function () {
+                        var selects = document.querySelectorAll('select:not([disabled])');
+                        selects.forEach(function (select) {
+                            select.setAttribute('tabindex', '0');
+                        });
+                    }, 0);
+                };
+
+                vm.cancelEdit = function (section) {
+                    vm.editing[section] = false;
+                    vm.editData = {};
+                    vm.errors = {};
+                };
+
+                vm.saveEdit = function (section) {
+                    if (section === 'general') {
+                        vm.errors = {};
+                        if (!vm.editData.firstName) vm.errors.firstName = 'Required';
+                        if (!vm.editData.lastName) vm.errors.lastName = 'Required';
+                        if (!vm.editData.name) vm.errors.name = 'Required';
+                        if (!vm.editData.dobEdit) vm.errors.dob = 'Required';
+                        if (!vm.editData.sex) vm.errors.sex = 'Required';
+                        if (!vm.editData.gender) vm.errors.gender = 'Required';
+
+                        if (Object.keys(vm.errors).length > 0) {
+                            return;
+                        }
+                    }
+
+                    angular.extend(vm.patient, vm.editData);
+                    vm.editing[section] = false;
+                    vm.editData = {};
+                    vm.errors = {};
+                };
+
+                vm.newContact = function () {
+                    vm.contactDialog = {
+                        isEdit: false,
+                        firstName: '',
+                        lastName: '',
+                        relationship: '',
+                        email: '',
+                        emailType: '',
+                        phone: '',
+                        phoneType: '',
+                        canText: false,
+                        otherRelationship: '',
+                        isEmergency: false,
+                        isGuarantor: false
+                    };
+                    vm.openDialog();
+                };
+
+                vm.editContact = function (contact) {
+                    vm.contactDialog = angular.copy(contact);
+                    vm.contactDialog.isEdit = true;
+                    vm.contactDialog.originalContact = contact;
+                    if (contact.phoneType === 'Mobile' && contact.text) {
+                        vm.contactDialog.canText = true;
+                    }
+                    vm.openDialog();
+                };
+
+                vm.updateContactType = function () {
+                    // Auto-check Emergency Contact only when Emergency Contact relationship is selected
+                    if (vm.contactDialog.relationship === 'Emergency Contact') {
+                        vm.contactDialog.isEmergency = true;
+                    }
+
+                    // Auto-check Guarantor only when Responsible Party relationship is selected
+                    // Also uncheck Emergency Contact since these are mutually exclusive roles
+                    if (vm.contactDialog.relationship === 'Responsible Party') {
+                        vm.contactDialog.isGuarantor = true;
+                        vm.contactDialog.isEmergency = false;
+                    }
+                };
+
+                vm.updateTextAvailability = function () {
+                    // For contact dialog
+                    if (vm.contactDialog.phoneType !== 'Mobile') {
+                        vm.contactDialog.canText = false;
+                        // Clear text as preferred contact if it's no longer available
+                        if (vm.contactDialog.preferredContact === 'text') {
+                            vm.contactDialog.preferredContact = '';
+                        }
+                    }
+
+                    // For general contact edit
+                    if (vm.editData.phoneType !== 'Mobile') {
+                        vm.editData.canText = false;
+                    }
+                };
+
+                vm.openDialog = function () {
+                    var d = document.getElementById('contact-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        })
+                    })
+                };
+
+                vm.closeContactDialog = function () {
+                    var d = document.getElementById('contact-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                        vm.contactErrors = {};
+                    }, 200);
+                };
+
+                vm.saveContact = function () {
+                    vm.contactErrors = {};
+
+                    // Required field validation
+                    if (!vm.contactDialog.firstName) vm.contactErrors.firstName = 'Required';
+                    if (!vm.contactDialog.lastName) vm.contactErrors.lastName = 'Required';
+                    if (!vm.contactDialog.relationship) vm.contactErrors.relationship = 'Required';
+                    if (!vm.contactDialog.email) vm.contactErrors.email = 'Required';
+                    if (!vm.contactDialog.emailType) vm.contactErrors.emailType = 'Required';
+                    if (!vm.contactDialog.preferredContact) vm.contactErrors.preferredContact = 'Required';
+                    if (vm.contactDialog.relationship === 'Other (please specify)' && !vm.contactDialog.otherRelationship) vm.contactErrors.otherRelationship = 'Required';
+
+                    // Validate the selected preferred contact method has a value
+                    if (vm.contactDialog.preferredContact === 'phone' || vm.contactDialog.preferredContact === 'text') {
+                        if (!vm.contactDialog.phone) vm.contactErrors.phone = 'Required';
+                        if (!vm.contactDialog.phoneType) vm.contactErrors.phoneType = 'Required';
+                        // If text is preferred, require text checkbox to be checked
+                        if (vm.contactDialog.preferredContact === 'text' && !vm.contactDialog.canText) {
+                            vm.contactErrors.canText = 'Text must be enabled for text messaging';
+                        }
+                    }
+
+                    if (Object.keys(vm.contactErrors).length > 0) {
+                        return;
+                    }
+
+                    if (vm.contactDialog.isEdit) {
+                        var index = vm.contacts.indexOf(vm.contactDialog.originalContact);
+                        if (index !== -1) {
+                            vm.contacts[index] = angular.copy(vm.contactDialog);
+                        }
+                    } else {
+                        vm.contacts.push(angular.copy(vm.contactDialog));
+                    }
+                    vm.closeContactDialog();
+                };
+
+                vm.deleteContact = function (contact) {
+                    if (confirm('Delete contact: ' + contact.firstName + ' ' + contact.lastName + '?\nThis action cannot be undone.')) {
+                        var index = vm.contacts.indexOf(contact);
+                        vm.contacts.splice(index, 1);
+                    }
+                };
+
+                vm.navTo = function (nav) {
+                    vm.currentNav = nav;
+                    vm.mobileMenuHidden = true;
+                };
+
+                vm.toggleMenu = function () {
+                    vm.mobileMenuHidden = !vm.mobileMenuHidden;
+                };
+
+                vm.closeMobileMenu = function () {
+                    vm.mobileMenuHidden = true;
+                };
+
+                vm.openAccount = function () {
+                    alert('My Account');
+                };
+
+                vm.signOut = function () {
+                    alert('Sign out');
+                };
+
+                vm.getHelp = function () {
+                    alert('Get Help');
+                };
+
+                document.getElementById('contact-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeContactDialog();
+                });
+
+                // Prevent AngularJS from interfering with keyboard events
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        // Don't prevent default - let browser handle tab navigation
+                        return;
+                    }
+                });
+
+                // Hover popover functionality
+                document.addEventListener('mouseover', function (e) {
+                    const trigger = e.target.closest('[popovertarget]');
+                    if (trigger) {
+                        const popoverId = trigger.getAttribute('popovertarget');
+                        const popover = document.getElementById(popoverId);
+                        if (popover) {
+                            popover.showPopover();
+                            const rect = trigger.getBoundingClientRect();
+                            const popoverRect = popover.getBoundingClientRect();
+                            let left = rect.left + window.scrollX + rect.width / 2 - popoverRect.width / 2;
+                            let top = rect.top + window.scrollY - popoverRect.height - 4;
+
+                            // Keep within viewport
+                            left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + window.innerWidth - popoverRect.width - 8));
+                            top = Math.max(window.scrollY + 8, top);
+
+                            popover.style.left = left + 'px';
+                            popover.style.top = top + 'px';
+                        }
+                    }
+                });
+
+                document.addEventListener('mouseout', function (e) {
+                    const trigger = e.target.closest('[popovertarget]');
+                    if (trigger) {
+                        const popoverId = trigger.getAttribute('popovertarget');
+                        const popover = document.getElementById(popoverId);
+                        if (popover) {
+                            popover.hidePopover();
+                        }
+                    }
+                });
+            });
+    </script>
+
+</body>
+
+</html>

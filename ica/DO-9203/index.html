@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="practiceApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype: Three-Tier Configuration UI for Note Compilation Requirements [DO-9203]</title>
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #fafafa;
+            color: #09090b
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh
+        }
+
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e4e4e7;
+            display: flex;
+            gap: 0;
+            padding: 0 24px
+        }
+
+        .nav-tab {
+            padding: 16px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #71717a;
+            border-bottom: 2px solid transparent;
+            transition: all .2s;
+            white-space: nowrap
+        }
+
+        .nav-tab:hover {
+            color: #18181b
+        }
+
+        .nav-tab.active {
+            color: #18181b;
+            border-bottom-color: #18181b
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden
+        }
+
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e4e4e7;
+            overflow-y: auto;
+            padding: 16px 0
+        }
+
+        .sidebar-item {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #71717a;
+            cursor: pointer;
+            transition: all .2s;
+            border-left: 2px solid transparent
+        }
+
+        .sidebar-item:hover {
+            background: #f4f4f5;
+            color: #18181b
+        }
+
+        .sidebar-item.active {
+            color: #18181b;
+            background: #f4f4f5;
+            border-left-color: #18181b
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px
+        }
+
+        .content-header {
+            margin-bottom: 24px
+        }
+
+        .content-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        .content-header p {
+            font-size: 14px;
+            color: #71717a
+        }
+
+        .settings-section {
+            background: white;
+            border: 1px solid #e4e4e7;
+            border-radius: 8px;
+            overflow: hidden
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e4e4e7;
+            gap: 12px
+        }
+
+        .setting-item:last-child {
+            border-bottom: none
+        }
+
+        .setting-item:hover {
+            background: #fafafa
+        }
+
+        .setting-toggle {
+            flex-shrink: 0;
+            margin-top: 2px
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #e4e4e7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background .2s
+        }
+
+        .toggle-switch.active {
+            background: #18181b
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            transition: transform .2s
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px)
+        }
+
+        .setting-content {
+            flex: 1
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            cursor: pointer
+        }
+
+        .setting-exceptions {
+            font-size: 13px;
+            color: #71717a;
+            margin-top: 8px;
+            min-height: 28px
+        }
+
+        .exception-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 6px;
+            margin-bottom: 6px
+        }
+
+        .manage-exceptions-btn {
+            padding: 4px 12px;
+            border: 1px solid #e4e4e7;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .2s;
+            color: #18181b;
+            font-weight: 500
+        }
+
+        .manage-exceptions-btn:hover {
+            background: #f4f4f5
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center
+        }
+
+        .modal-overlay.active {
+            display: flex
+        }
+
+        .modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e4e4e7
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            color: #71717a
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto
+        }
+
+        .exception-group {
+            margin-bottom: 24px
+        }
+
+        .exception-group-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 12px
+        }
+
+        .exception-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e4e4e7;
+            border-radius: 6px;
+            margin-bottom: 8px
+        }
+
+        .exception-row.column {
+            flex-direction: column;
+            align-items: stretch
+        }
+
+        .exception-row-top {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px
+        }
+
+        .remove-btn {
+            padding: 6px 12px;
+            border: 1px solid #e4e4e7;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #dc2626;
+            transition: all .2s
+        }
+
+        .remove-btn:hover {
+            background: #fef2f2;
+            border-color: #dc2626
+        }
+
+        .add-exception-btn {
+            padding: 8px 16px;
+            border: 1px dashed #e4e4e7;
+            background: white;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            color: #71717a;
+            transition: all .2s;
+            font-weight: 500
+        }
+
+        .add-exception-btn:hover {
+            border-color: #18181b;
+            color: #18181b
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e4e4e7;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .btn-secondary {
+            border: 1px solid #e4e4e7;
+            background: white;
+            color: #18181b
+        }
+
+        .btn-secondary:hover {
+            background: #f4f4f5
+        }
+
+        .btn-primary {
+            border: none;
+            background: #18181b;
+            color: white
+        }
+
+        .btn-primary:hover {
+            background: #27272a
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer
+        }
+
+        .checkbox-label input {
+            cursor: pointer
+        }
+
+        .search-dropdown {
+            position: relative;
+            flex: 1
+        }
+
+        .search-dropdown input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e4e4e7;
+            border-radius: 6px;
+            font-size: 14px
+        }
+
+        .search-dropdown input:focus {
+            outline: none;
+            border-color: #18181b
+        }
+
+        .dropdown-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e4e4e7;
+            border-radius: 6px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1)
+        }
+
+        .dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background .2s
+        }
+
+        .dropdown-item:hover {
+            background: #f4f4f5
+        }
+
+        .dropdown-item.selected {
+            background: #f4f4f5;
+            font-weight: 500
+        }
+
+        .dropdown-item.highlighted {
+            background: #e4e4e7
+        }
+
+        .dropdown-empty {
+            padding: 12px;
+            text-align: center;
+            color: #71717a;
+            font-size: 13px
+        }
+    </style>
+</head>
+
+<body ng-controller="MainCtrl as vm">
+    <div class="container">
+        <nav class="top-nav">
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='practice-info'}" ng-click="vm.activeNav='practice-info'">Practice Information</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='calendar'}" ng-click="vm.activeNav='calendar'">Calendar Settings</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='portal'}" ng-click="vm.activeNav='portal'">Client Portal</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='practice-settings'}" ng-click="vm.activeNav='practice-settings'">Practice Settings</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='practice-requirements'}" ng-click="vm.activeNav='practice-requirements'">Required Data</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='revenue'}" ng-click="vm.activeNav='revenue'">Revenue Cycle Management</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='forms'}" ng-click="vm.activeNav='forms'">Practice Forms</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='note-settings'}" ng-click="vm.activeNav='note-settings'">Note Settings</button>
+            <button class="nav-tab" ng-class="{'active':vm.activeNav==='account'}" ng-click="vm.activeNav='account'">Account Management</button>
+        </nav>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-item" ng-class="{'active':vm.currentSectionKey===key}" ng-repeat="(key,s) in vm.sections" ng-click="vm.setSection(key)">{{s.title}}</div>
+            </aside>
+            <main class="content">
+                <div class="content-header">
+                    <h1>{{vm.sections[vm.currentSectionKey].title}}</h1>
+                    <p>{{vm.sections[vm.currentSectionKey].desc}}</p>
+                    <p>Setting initially applies to all users; manage user exceptions below.</p>
+                </div>
+                <div class="settings-section">
+                    <div class="setting-item" ng-repeat="setting in vm.sections[vm.currentSectionKey].settings">
+                        <div class="setting-toggle">
+                            <div class="toggle-switch" ng-class="{'active':setting.enabled}" ng-click="vm.toggleSetting(vm.currentSectionKey,setting.id)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-label" ng-click="vm.toggleSetting(vm.currentSectionKey,setting.id)">{{setting.label}}</div>
+                            <div class="setting-exceptions" ng-if="setting.enabled&&setting.exceptions&&setting.exceptions.length">
+                                <span class="exception-badge" ng-repeat="ex in setting.exceptions">⚠ {{ex.name}}{{ex.noteTypes&&ex.noteTypes.length?': '+ex.noteTypes.join(', '):''}}</span>
+                                <button class="manage-exceptions-btn" ng-click="vm.openExceptionModal(vm.currentSectionKey,setting.id)">Manage Exceptions</button>
+                            </div>
+                            <div class="setting-exceptions" ng-if="setting.enabled&&(!setting.exceptions||!setting.exceptions.length)">
+                                <button class="manage-exceptions-btn" ng-click="vm.openExceptionModal(vm.currentSectionKey,setting.id)">Add Exceptions</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div class="modal-overlay" ng-class="{'active':vm.modalOpen}" ng-click="vm.overlayClick($event)">
+        <div class="modal" ng-click="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{vm.modalTitle}}</h2>
+                <p>{{vm.modalSubtitle}}</p>
+            </div>
+            <div class="modal-body">
+                <div class="exception-group">
+                    <div class="exception-group-title">User Exceptions</div>
+                    <div>
+                        <div class="exception-row column" ng-repeat="row in vm.modalUserExceptions">
+                            <div class="exception-row-top">
+                                <div class="search-dropdown">
+                                    <input type="text" placeholder="Search for user..." ng-model="row.searchText" ng-focus="row.showDropdown=true" ng-blur="vm.hideDropdown(row,$event)" ng-change="vm.filterUsers(row)" ng-keydown="vm.handleKeyDown(row,$event)">
+                                    <div class="dropdown-results" ng-if="row.showDropdown&&row.filteredUsers.length">
+                                        <div class="dropdown-item" ng-repeat="u in row.filteredUsers" ng-class="{'selected':u===row.name,'highlighted':$index===row.highlightedIndex}" ng-mousedown="vm.selectUser(row,u)">{{u}}</div>
+                                    </div>
+                                    <div class="dropdown-results" ng-if="row.showDropdown&&!row.filteredUsers.length">
+                                        <div class="dropdown-empty">No users found</div>
+                                    </div>
+                                </div>
+                                <button class="remove-btn" ng-click="vm.removeUserException($index)">Remove</button>
+                            </div>
+                            <div>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label" ng-repeat="nt in vm.noteTypes">
+                                        <input type="checkbox" ng-checked="row.noteTypes.indexOf(nt)!==-1" ng-click="vm.toggleNoteType(row,nt)">{{nt}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="add-exception-btn" ng-click="vm.addUserException()">+ Add User Exception</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" ng-click="vm.closeModal()">Cancel</button>
+                <button class="btn btn-primary" ng-click="vm.saveExceptions()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        angular.module('practiceApp', []).controller('MainCtrl', ['$scope', function ($scope) {
+            var vm = this;
+            vm.activeNav = 'practice-requirements';
+            vm.allNoteTypes = {
+                'diagnosis-code': ['ASAM', 'Case Management', 'Complete Evaluation', 'Couples/Family Therapy', 'Primary Care Note', 'Progress Note', 'Quick Note', 'SOAP'],
+                'service-code': ['ASAM', 'Case Management', 'Complete Evaluation', 'Couples/Family Therapy', 'Primary Care Note', 'Progress Note', 'Quick Note', 'SOAP'],
+                'time-spent': ['ASAM', 'Case Management', 'Complete Evaluation', 'Couples/Family Therapy', 'Primary Care Note', 'Progress Note', 'SOAP']
+            };
+            vm.noteTypes = [];
+            vm.users = ['Dr. Wilson', 'Dr. Trainer', 'Dr. Johnson', 'Dr. Smith', 'Dr. Lee', 'Dr. Martinez', 'Sarah Johnson', 'Michael Chen', 'Emily Rodriguez', 'James Patterson', 'Lisa Anderson', 'David Thompson'];
+            vm.sections = {
+                notes: {
+                    title: 'Clinical Notes',
+                    desc: 'Configure required fields for clinical notes and documentation',
+                    settings: [
+                        { id: 'diagnosis-code', label: 'Diagnosis Code', enabled: true, exceptions: [{ name: 'Dr. Wilson', noteTypes: ['Quick Note'] }, { name: 'Dr. Trainer', noteTypes: ['Quick Note', 'SOAP', 'ASAM'] }] },
+                        { id: 'service-code', label: 'Service Code', enabled: true, exceptions: [{ name: 'Sarah Johnson', noteTypes: ['Quick Note', 'Progress Note'] }] },
+                        { id: 'time-spent', label: 'Time Spent', enabled: true, exceptions: [{ name: 'Dr. Johnson', noteTypes: ['Progress Note', 'SOAP'] }] },
+                        { id: 'completed-tp', label: 'Completed Treatment Plan', enabled: false },
+                        { id: 'new-tp-overdue', label: 'New Treatment Plan if Overdue', enabled: true },
+                        { id: 'tp-to-create', label: 'Treatment Plan to Create', enabled: false },
+                        { id: 'icd10', label: 'ICD-10 (post 10/1/2015)', enabled: true },
+                        { id: 'justify-loc', label: 'Justify Level of Care', enabled: false },
+                        { id: 'custom-note-title', label: 'Custom Note Title', enabled: false }
+                    ]
+                },
+                assessments: {
+                    title: 'Assessments',
+                    desc: 'Configure required fields for clinical assessments',
+                    settings: [
+                        { id: 'mse-non-rx', label: 'MSE for Non-Rx Complete Assessments', enabled: true },
+                        { id: 'suicide-violence', label: 'Suicide/Violence Assessment', enabled: true }
+                    ]
+                },
+                demographics: {
+                    title: 'Patient Demographics',
+                    desc: 'Configure required patient demographic information',
+                    settings: [
+                        { id: 'address', label: 'Address', enabled: true },
+                        { id: 'phone', label: 'Phone', enabled: true },
+                        { id: 'email', label: 'Email Address', enabled: false },
+                        { id: 'ssn', label: 'SSN', enabled: false },
+                        { id: 'ethnicity', label: 'Ethnicity', enabled: true },
+                        { id: 'race', label: 'Race', enabled: true },
+                        { id: 'marital-status', label: 'Marital Status', enabled: false },
+                        { id: 'disability', label: 'Disability', enabled: false },
+                        { id: 'family-size', label: 'Family Size', enabled: false },
+                        { id: 'employment', label: 'Employment Status', enabled: false },
+                        { id: 'income', label: 'Annual Household Income', enabled: false },
+                        { id: 'referred-by', label: 'Referred By', enabled: false },
+                        { id: 'emergency-contact', label: 'Emergency Contact', enabled: true }
+                    ]
+                },
+                insurance: {
+                    title: 'Insurance',
+                    desc: 'Configure required insurance information',
+                    settings: [
+                        { id: 'insurance-short-list', label: 'Insurance Short List', enabled: true },
+                        { id: 'coverage-details', label: 'Insurance Coverage Details', enabled: true },
+                        { id: 'medicaid-number', label: 'Medicaid Number', enabled: false }
+                    ]
+                },
+                medication: {
+                    title: 'Medication Management',
+                    desc: 'Configure required fields for medication management',
+                    settings: [
+                        { id: 'permission-rx', label: 'Permission to Add/Edit Rx', enabled: true },
+                        { id: 'med-consent', label: 'Medication Consent', enabled: true },
+                        { id: 'reason-prescribed', label: 'Reason Prescribed', enabled: true },
+                        { id: 'reason-vo', label: 'Reason Prescribed for Verbal Order', enabled: true }
+                    ]
+                },
+                scheduling: {
+                    title: 'Scheduling',
+                    desc: 'Configure required fields for scheduling and appointments',
+                    settings: [
+                        { id: 'follow-up', label: 'Follow Up', enabled: false },
+                        { id: 'location', label: 'Location in Calendar Events', enabled: true },
+                        { id: 'where-seen', label: 'Where Seen', enabled: true }
+                    ]
+                }
+            };
+            vm.currentSectionKey = 'notes';
+            vm.modalOpen = false;
+            vm.modalTitle = '';
+            vm.modalSubtitle = '';
+            vm.modalUserExceptions = [];
+            vm.currentSettingId = null;
+
+            vm.setSection = function (k) {
+                vm.currentSectionKey = k
+            };
+
+            vm.toggleSetting = function (sk, sid) {
+                var s = vm.sections[sk].settings.find(function (x) { return x.id === sid });
+                s.enabled = !s.enabled
+            };
+
+            vm.openExceptionModal = function (sk, sid) {
+                vm.currentSectionKey = sk;
+                vm.currentSettingId = sid;
+                var s = vm.sections[sk].settings.find(function (x) { return x.id === sid });
+                vm.modalTitle = 'Manage Exceptions: ' + s.label;
+                vm.modalSubtitle = 'Configure user exceptions for this setting';
+                vm.noteTypes = vm.allNoteTypes[sid] || [];
+                vm.modalUserExceptions = (s.exceptions || []).map(function (e) {
+                    return {
+                        name: e.name || '',
+                        noteTypes: Array.isArray(e.noteTypes) ? e.noteTypes.slice() : [],
+                        searchText: e.name || '',
+                        showDropdown: false,
+                        filteredUsers: [],
+                        highlightedIndex: -1
+                    }
+                });
+                vm.modalOpen = true
+            };
+
+            vm.addUserException = function () {
+                vm.modalUserExceptions.push({
+                    name: '',
+                    noteTypes: [],
+                    searchText: '',
+                    showDropdown: false,
+                    filteredUsers: [],
+                    highlightedIndex: -1
+                })
+            };
+
+            vm.removeUserException = function (i) {
+                vm.modalUserExceptions.splice(i, 1)
+            };
+
+            vm.toggleNoteType = function (r, nt) {
+                var i = r.noteTypes.indexOf(nt);
+                if (i === -1) r.noteTypes.push(nt);
+                else r.noteTypes.splice(i, 1)
+            };
+
+            vm.filterUsers = function (r) {
+                var s = (r.searchText || '').toLowerCase();
+                r.filteredUsers = !s ? vm.users.slice() : vm.users.filter(function (u) {
+                    return u.toLowerCase().indexOf(s) !== -1
+                });
+                r.showDropdown = true;
+                r.highlightedIndex = -1
+            };
+
+            vm.handleKeyDown = function (r, e) {
+                if (!r.showDropdown) return;
+                var list = r.filteredUsers;
+                if (!list || !list.length) return;
+                if (e.keyCode === 40) {
+                    e.preventDefault();
+                    r.highlightedIndex = r.highlightedIndex < list.length - 1 ? r.highlightedIndex + 1 : 0;
+                    $scope.$applyAsync()
+                } else if (e.keyCode === 38) {
+                    e.preventDefault();
+                    r.highlightedIndex = r.highlightedIndex > 0 ? r.highlightedIndex - 1 : list.length - 1;
+                    $scope.$applyAsync()
+                } else if (e.keyCode === 13) {
+                    e.preventDefault();
+                    if (r.highlightedIndex >= 0 && r.highlightedIndex < list.length) {
+                        var selected = list[r.highlightedIndex];
+                        vm.selectUser(r, selected);
+                        $scope.$applyAsync()
+                    }
+                } else if (e.keyCode === 27) {
+                    e.preventDefault();
+                    r.showDropdown = false;
+                    $scope.$applyAsync()
+                }
+            };
+
+            vm.selectUser = function (r, u) {
+                r.name = u;
+                r.searchText = u;
+                r.showDropdown = false
+            };
+
+            vm.hideDropdown = function (r, e) {
+                setTimeout(function () {
+                    r.showDropdown = false;
+                    $scope.$applyAsync()
+                }, 200)
+            };
+
+            vm.closeModal = function () {
+                vm.modalOpen = false
+            };
+
+            vm.overlayClick = function (e) {
+                if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+                    vm.closeModal();
+                    $scope.$applyAsync()
+                }
+            };
+
+            vm.saveExceptions = function () {
+                var s = vm.sections[vm.currentSectionKey].settings.find(function (x) {
+                    return x.id === vm.currentSettingId
+                });
+                var ue = vm.modalUserExceptions.filter(function (r) {
+                    return r.name && r.name.trim()
+                }).map(function (r) {
+                    return {
+                        name: r.name.trim(),
+                        noteTypes: r.noteTypes && r.noteTypes.length ? r.noteTypes.slice() : []
+                    }
+                });
+                s.exceptions = ue;
+                vm.modalOpen = false
+            };
+
+            $scope.vm = vm
+        }]);
+    </script>
+</body>
+
+</html>

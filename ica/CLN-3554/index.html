@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Billing Filters</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
+  <style>
+    @layer config, base, components, utils;
+
+    @layer config {
+      :root {
+        /* Colors */
+        --color-bg: hsl(220, 20%, 97%);
+        --color-bg: oklch(97% 0.008 250);
+        --color-surface: hsl(0, 0%, 100%);
+        --color-surface: oklch(100% 0 0);
+        --color-surface-alt: hsl(220, 20%, 95%);
+        --color-surface-alt: oklch(95% 0.01 250);
+        --color-border: hsl(220, 15%, 88%);
+        --color-border: oklch(88% 0.012 250);
+        --color-border-strong: hsl(220, 15%, 75%);
+        --color-border-strong: oklch(76% 0.018 250);
+        --color-text: hsl(220, 25%, 18%);
+        --color-text: oklch(22% 0.03 250);
+        --color-text-muted: hsl(220, 15%, 52%);
+        --color-text-muted: oklch(55% 0.02 250);
+        --color-accent: hsl(216, 82%, 46%);
+        --color-accent: oklch(52% 0.18 255);
+        --color-accent-hover: hsl(216, 82%, 38%);
+        --color-accent-hover: oklch(44% 0.18 255);
+        --color-accent-subtle: hsl(216, 82%, 96%);
+        --color-accent-subtle: oklch(96% 0.025 255);
+        --color-success: hsl(145, 60%, 42%);
+        --color-success: oklch(58% 0.14 155);
+        --color-warning: hsl(38, 92%, 50%);
+        --color-warning: oklch(73% 0.17 75);
+        --color-danger: hsl(4, 76%, 52%);
+        --color-danger: oklch(52% 0.19 25);
+        --color-row-hover: hsl(220, 20%, 97%);
+        --color-row-hover: oklch(97.5% 0.006 250);
+        --color-focus: hsl(216, 82%, 46%);
+        --color-focus: oklch(52% 0.18 255);
+
+        /* Typography */
+        --font-sans: 'DM Sans', system-ui, sans-serif;
+        --font-mono: 'DM Mono', monospace;
+
+        /* Spacing */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+
+        /* Radius */
+        --radius-sm: 0.25rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 3px hsl(220 25% 18% / 0.08), 0 1px 2px hsl(220 25% 18% / 0.06);
+        --shadow-md: 0 4px 12px hsl(220 25% 18% / 0.1), 0 2px 4px hsl(220 25% 18% / 0.06);
+
+        /* Durations */
+        --duration-short-1: 60ms;
+        --duration-short-2: 120ms;
+        --duration-short-3: 180ms;
+        --duration-medium-1: 300ms;
+        --duration-medium-2: 360ms;
+
+        /* Easings */
+        --ease-out-ui: cubic-bezier(0, 0, 0.2, 1);
+        --ease-in-out-ui: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-hover: cubic-bezier(0.25, 0.1, 0.25, 1);
+      }
+    }
+
+    @layer base {
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        font-family: var(--font-sans);
+        font-size: 100%;
+        background: var(--color-bg);
+        color: var(--color-text);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        margin: 0;
+        padding: var(--space-8);
+        min-block-size: 100vh;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--color-text-muted);
+        margin-block-end: var(--space-1);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      select,
+      input[type="date"] {
+        inline-size: 100%;
+        padding-block: var(--space-2);
+        padding-inline: var(--space-3);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        color: var(--color-text);
+        appearance: none;
+        -webkit-appearance: none;
+        outline: none;
+        block-size: 2.25rem;
+      }
+
+      select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7a9a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right var(--space-2) center;
+        padding-inline-end: var(--space-8);
+        cursor: pointer;
+      }
+
+      select:hover,
+      input[type="date"]:hover {
+        border-color: var(--color-border-strong);
+      }
+
+      select:focus,
+      input[type="date"]:focus {
+        border-color: var(--color-focus);
+        box-shadow: 0 0 0 3px hsl(216 82% 46% / 0.15);
+      }
+    }
+
+    @layer components {
+      .page-header {
+        margin-block-end: var(--space-6);
+      }
+
+      .page-header h1 {
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--color-text);
+      }
+
+      .page-header p {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        margin-block-start: var(--space-1);
+      }
+
+      /* Filter Panel */
+      .filter-panel {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-block-end: var(--space-4);
+      }
+
+      .filter-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: var(--space-3) var(--space-3);
+        padding-inline: var(--space-5);
+        border-block-end: 1px solid var(--color-border);
+        background: none;
+        border-inline: none;
+        border-block-start: none;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-text);
+        cursor: pointer;
+        inline-size: 100%;
+        text-align: start;
+        border-radius: 0;
+      }
+
+      .filter-panel-header:hover {
+        background: var(--color-surface-alt);
+      }
+
+      .filter-panel-header:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: -2px;
+      }
+
+      .filter-panel-header svg.chevron {
+        margin-inline-start: auto;
+        color: var(--color-text-muted);
+      }
+
+      .filter-panel-header[aria-expanded="false"] svg.chevron {
+        transform: rotate(-90deg);
+      }
+
+      .filter-panel-header[aria-expanded="true"] svg.chevron {
+        transform: rotate(0deg);
+      }
+
+      .filter-panel-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .filter-panel-title svg {
+        color: var(--color-text-muted);
+      }
+
+      /* Main filters collapsible */
+      .main-filters-content {
+        display: grid;
+        grid-template-rows: 1fr;
+      }
+
+      .main-filters-content[aria-hidden="true"] {
+        grid-template-rows: 0fr;
+      }
+
+      .main-filters-inner {
+        overflow: hidden;
+      }
+
+      .filter-body {
+        padding-block: var(--space-4);
+        padding-inline: var(--space-5);
+      }
+
+      /* Filter rows */
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        column-gap: var(--space-4);
+        row-gap: var(--space-3);
+      }
+
+      @media (max-width: 64rem) {
+        .filter-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 40rem) {
+        .filter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .filter-row {
+        display: contents;
+      }
+
+      .filter-divider {
+        grid-column: 1 / -1;
+        border: none;
+        border-block-start: 1px dashed var(--color-border);
+        margin-block: var(--space-1);
+      }
+
+      /* Advanced filters */
+      .advanced-section {
+        border-block-start: 1px solid var(--color-border);
+        overflow: hidden;
+      }
+
+      .advanced-toggle {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding-block: var(--space-3);
+        padding-inline: var(--space-5);
+        background: none;
+        border: none;
+        font-family: var(--font-sans);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--color-text);
+        cursor: pointer;
+        inline-size: 100%;
+        text-align: start;
+      }
+
+      .advanced-toggle svg:not(.chevron) {
+        color: var(--color-text-muted);
+      }
+
+      .advanced-toggle:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: -2px;
+      }
+
+      .advanced-toggle[aria-expanded="true"] svg.chevron {
+        transform: rotate(180deg);
+      }
+
+      .advanced-toggle:hover {
+        background: var(--color-surface-alt);
+      }
+
+      .advanced-filters-content,
+      .main-filters-content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows var(--duration-medium-1) var(--ease-out-ui);
+      }
+
+      .main-filters-content {
+        grid-template-rows: 1fr;
+      }
+
+      .advanced-filters-content[aria-hidden="false"],
+      .main-filters-content[aria-hidden="false"] {
+        grid-template-rows: 1fr;
+      }
+
+      .main-filters-content[aria-hidden="true"],
+      .advanced-filters-content[aria-hidden="true"] {
+        grid-template-rows: 0fr;
+      }
+
+      .advanced-filters-inner {
+        overflow: hidden;
+      }
+
+      .advanced-filters-grid {
+        padding-block: var(--space-4);
+        padding-inline: var(--space-5);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        column-gap: var(--space-4);
+        row-gap: var(--space-3);
+        background: var(--color-surface-alt);
+        border-block-start: 1px solid var(--color-border);
+      }
+
+      @media (max-width: 64rem) {
+        .advanced-filters-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Actions row */
+      .filter-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--space-3);
+        padding-block: var(--space-4);
+        padding-inline: var(--space-5);
+        border-block-start: 1px solid var(--color-border);
+        background: var(--color-surface-alt);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding-block: var(--space-2);
+        padding-inline: var(--space-5);
+        border-radius: var(--radius-md);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+        outline: none;
+        transition: background var(--duration-short-2) var(--ease-hover),
+          border-color var(--duration-short-2) var(--ease-hover),
+          color var(--duration-short-2) var(--ease-hover);
+        block-size: 2.25rem;
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+      }
+
+      .btn-primary {
+        background: var(--color-accent);
+        color: hsl(0 0% 100%);
+        border-color: var(--color-accent);
+      }
+
+      .btn-primary:hover {
+        background: var(--color-accent-hover);
+        border-color: var(--color-accent-hover);
+      }
+
+      .btn-primary:active {
+        transform: scale(0.98);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--color-text-muted);
+        border-color: var(--color-border);
+      }
+
+      .btn-ghost:hover {
+        background: var(--color-surface);
+        color: var(--color-text);
+        border-color: var(--color-border-strong);
+      }
+
+      .btn-ghost:active {
+        transform: scale(0.98);
+      }
+
+      .btn-gray {
+        background: hsl(220, 20%, 98%);
+        background: oklch(98% 0.005 250);
+        color: var(--color-text-muted);
+        border-color: var(--color-border);
+      }
+
+      .btn-gray:hover {
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+        border-color: var(--color-border-strong);
+      }
+
+      .btn-gray:active {
+        transform: scale(0.98);
+      }
+
+      /* Data table */
+      .table-container {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+      }
+
+      .table-header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: var(--space-4);
+        padding-inline: var(--space-5);
+        border-block-end: 1px solid var(--color-border);
+      }
+
+      .table-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .table-count {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        background: var(--color-surface-alt);
+        padding-block: 2px;
+        padding-inline: var(--space-2);
+        border-radius: 2rem;
+        font-weight: 500;
+      }
+
+      table {
+        inline-size: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+      }
+
+      thead th {
+        padding-block: var(--space-3);
+        padding-inline: var(--space-4);
+        text-align: start;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: var(--color-surface-alt);
+        border-block-end: 1px solid var(--color-border);
+        white-space: nowrap;
+      }
+
+      tbody tr {
+        border-block-end: 1px solid var(--color-border);
+      }
+
+      tbody tr:last-child {
+        border-block-end: none;
+      }
+
+      tbody tr:hover {
+        background: var(--color-row-hover);
+      }
+
+      tbody td {
+        padding-block: var(--space-3);
+        padding-inline: var(--space-4);
+        color: var(--color-text);
+        vertical-align: middle;
+      }
+
+      .col-invoice {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--color-accent);
+        font-weight: 500;
+      }
+
+      .col-amount {
+        font-family: var(--font-mono);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        text-align: end;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding-block: 2px;
+        padding-inline: var(--space-2);
+        border-radius: 0.25rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .badge-paid {
+        background: hsl(145 60% 42% / 0.1);
+        background: oklch(58% 0.14 155 / 0.1);
+        color: var(--color-success);
+      }
+
+      .badge-pending {
+        background: hsl(38 92% 50% / 0.12);
+        background: oklch(73% 0.17 75 / 0.12);
+        color: hsl(38 80% 35%);
+        color: oklch(48% 0.14 75);
+      }
+
+      .badge-overdue {
+        background: hsl(4 76% 52% / 0.1);
+        background: oklch(52% 0.19 25 / 0.1);
+        color: var(--color-danger);
+      }
+
+      .badge-draft {
+        background: var(--color-surface-alt);
+        color: var(--color-text-muted);
+      }
+
+      .col-customer {
+        font-weight: 500;
+      }
+
+      .col-date {
+        color: var(--color-text-muted);
+        font-size: 0.8125rem;
+      }
+    }
+
+    @layer utils {
+      .visually-hidden {
+        position: absolute;
+        inline-size: 0.0625rem;
+        block-size: 0.0625rem;
+        padding: 0;
+        margin: -0.0625rem;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .advanced-filters-content,
+      .main-filters-content {
+        transition: grid-template-rows var(--duration-medium-1) var(--ease-out-ui);
+      }
+
+      .advanced-toggle svg.chevron,
+      .filter-panel-header svg.chevron {
+        transition: transform var(--duration-short-3) var(--ease-in-out-ui);
+      }
+
+      .btn {
+        transition: background var(--duration-short-2) var(--ease-hover),
+          border-color var(--duration-short-2) var(--ease-hover),
+          color var(--duration-short-2) var(--ease-hover),
+          transform var(--duration-short-1) var(--ease-out-ui);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="page-header">
+    <h1>Billing</h1>
+    <p>Manage invoices, payments, and billing records</p>
+  </header>
+
+  <main>
+    <!-- Filter Panel -->
+    <section class="filter-panel" aria-label="Billing filters">
+
+      <button class="filter-panel-header" type="button" aria-expanded="true" aria-controls="main-filters-panel" id="main-toggle-btn">
+        <div class="filter-panel-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+          Filters
+        </div>
+        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      <div class="main-filters-content" id="main-filters-panel" aria-hidden="false">
+        <div class="main-filters-inner">
+
+          <div class="filter-body">
+            <!-- Row 1 -->
+            <div class="filter-grid">
+              <div>
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                  <option value="">All statuses</option>
+                  <option value="paid">Paid</option>
+                  <option value="pending">Pending</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </div>
+              <div>
+                <label for="customer">Customer</label>
+                <select id="customer" name="customer">
+                  <option value="">All customers</option>
+                  <option value="acme">Acme Corp</option>
+                  <option value="initech">Initech</option>
+                  <option value="umbrella">Umbrella Ltd</option>
+                  <option value="globex">Globex</option>
+                </select>
+              </div>
+              <div>
+                <label for="date-from">Date from</label>
+                <input type="date" id="date-from" name="date_from">
+              </div>
+              <div>
+                <label for="date-to">Date to</label>
+                <input type="date" id="date-to" name="date_to">
+              </div>
+
+              <hr class="filter-divider" role="separator">
+
+              <!-- Row 2 -->
+              <div>
+                <label for="billing-period">Billing period</label>
+                <select id="billing-period" name="billing_period">
+                  <option value="">Any period</option>
+                  <option value="jan">January 2025</option>
+                  <option value="feb">February 2025</option>
+                  <option value="mar">March 2025</option>
+                  <option value="q1">Q1 2025</option>
+                  <option value="q2">Q2 2025</option>
+                </select>
+              </div>
+              <div>
+                <label for="payment-method">Payment method</label>
+                <select id="payment-method" name="payment_method">
+                  <option value="">All methods</option>
+                  <option value="card">Credit card</option>
+                  <option value="ach">ACH / Bank transfer</option>
+                  <option value="wire">Wire transfer</option>
+                  <option value="check">Check</option>
+                </select>
+              </div>
+              <div>
+                <label for="due-from">Due from</label>
+                <input type="date" id="due-from" name="due_from">
+              </div>
+              <div>
+                <label for="due-to">Due to</label>
+                <input type="date" id="due-to" name="due_to">
+              </div>
+
+              <hr class="filter-divider" role="separator">
+
+              <!-- Row 3 -->
+              <div>
+                <label for="currency">Currency</label>
+                <select id="currency" name="currency">
+                  <option value="">All currencies</option>
+                  <option value="usd">USD — US Dollar</option>
+                  <option value="eur">EUR — Euro</option>
+                  <option value="gbp">GBP — British Pound</option>
+                  <option value="cad">CAD — Canadian Dollar</option>
+                </select>
+              </div>
+              <div>
+                <label for="type">Invoice type</label>
+                <select id="type" name="type">
+                  <option value="">All types</option>
+                  <option value="standard">Standard</option>
+                  <option value="recurring">Recurring</option>
+                  <option value="credit">Credit note</option>
+                  <option value="proforma">Pro-forma</option>
+                </select>
+              </div>
+              <div>
+                <label for="amount-min">Min amount</label>
+                <select id="amount-min" name="amount_min">
+                  <option value="">No minimum</option>
+                  <option value="100">$100</option>
+                  <option value="500">$500</option>
+                  <option value="1000">$1,000</option>
+                  <option value="5000">$5,000</option>
+                </select>
+              </div>
+              <div>
+                <label for="amount-max">Max amount</label>
+                <select id="amount-max" name="amount_max">
+                  <option value="">No maximum</option>
+                  <option value="500">$500</option>
+                  <option value="1000">$1,000</option>
+                  <option value="5000">$5,000</option>
+                  <option value="10000">$10,000</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced filters -->
+          <div class="advanced-section">
+            <button class="advanced-toggle" type="button" aria-expanded="false" aria-controls="advanced-filters-panel" id="advanced-toggle-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+              Advanced filters
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            <div class="advanced-filters-content" id="advanced-filters-panel" aria-hidden="true">
+              <div class="advanced-filters-inner">
+                <div class="advanced-filters-grid">
+                  <!-- Advanced Row 1 -->
+                  <div>
+                    <label for="account-manager">Account manager</label>
+                    <select id="account-manager" name="account_manager">
+                      <option value="">All managers</option>
+                      <option value="alex">Alex Rivera</option>
+                      <option value="sam">Sam Chen</option>
+                      <option value="jordan">Jordan Lee</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="region">Region</label>
+                    <select id="region" name="region">
+                      <option value="">All regions</option>
+                      <option value="na">North America</option>
+                      <option value="eu">Europe</option>
+                      <option value="apac">Asia Pacific</option>
+                      <option value="latam">Latin America</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="created-from">Created from</label>
+                    <input type="date" id="created-from" name="created_from">
+                  </div>
+                  <div>
+                    <label for="created-to">Created to</label>
+                    <input type="date" id="created-to" name="created_to">
+                  </div>
+
+                  <!-- Separator between advanced rows -->
+                  <hr class="filter-divider" role="separator">
+
+                  <!-- Advanced Row 2 -->
+                  <div>
+                    <label for="tax-status">Tax status</label>
+                    <select id="tax-status" name="tax_status">
+                      <option value="">All</option>
+                      <option value="taxed">Taxed</option>
+                      <option value="exempt">Tax exempt</option>
+                      <option value="reverse">Reverse charge</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="project">Project</label>
+                    <select id="project" name="project">
+                      <option value="">All projects</option>
+                      <option value="alpha">Project Alpha</option>
+                      <option value="beta">Project Beta</option>
+                      <option value="gamma">Project Gamma</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="paid-from">Paid from</label>
+                    <input type="date" id="paid-from" name="paid_from">
+                  </div>
+                  <div>
+                    <label for="paid-to">Paid to</label>
+                    <input type="date" id="paid-to" name="paid_to">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /.advanced-section -->
+        </div><!-- /.main-filters-inner -->
+      </div><!-- /.main-filters-content -->
+
+      <!-- Action buttons -->
+      <div class="filter-actions">
+        <button type="button" class="btn btn-gray" id="reset-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          Reset filters
+        </button>
+        <button type="button" class="btn btn-primary" id="apply-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Apply filters
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Data table -->
+    <div class="table-container">
+      <div class="table-header-bar">
+        <span class="table-title">Invoices</span>
+        <span class="table-count">142 results</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Invoice</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Type</th>
+            <th scope="col">Issue date</th>
+            <th scope="col">Due date</th>
+            <th scope="col">Status</th>
+            <th scope="col" style="text-align:end">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-invoice">#INV-2025-0142</td>
+            <td class="col-customer">Acme Corp</td>
+            <td class="col-date">Recurring</td>
+            <td class="col-date">Feb 15, 2025</td>
+            <td class="col-date">Mar 15, 2025</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td class="col-amount">$12,400.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0141</td>
+            <td class="col-customer">Initech</td>
+            <td class="col-date">Standard</td>
+            <td class="col-date">Feb 12, 2025</td>
+            <td class="col-date">Mar 12, 2025</td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td class="col-amount">$3,850.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0140</td>
+            <td class="col-customer">Umbrella Ltd</td>
+            <td class="col-date">Standard</td>
+            <td class="col-date">Jan 28, 2025</td>
+            <td class="col-date">Feb 28, 2025</td>
+            <td><span class="badge badge-overdue">Overdue</span></td>
+            <td class="col-amount">$8,200.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0139</td>
+            <td class="col-customer">Globex</td>
+            <td class="col-date">Pro-forma</td>
+            <td class="col-date">Feb 10, 2025</td>
+            <td class="col-date">Mar 10, 2025</td>
+            <td><span class="badge badge-draft">Draft</span></td>
+            <td class="col-amount">$950.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0138</td>
+            <td class="col-customer">Acme Corp</td>
+            <td class="col-date">Credit note</td>
+            <td class="col-date">Feb 5, 2025</td>
+            <td class="col-date">Mar 5, 2025</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td class="col-amount">−$1,200.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0137</td>
+            <td class="col-customer">Initech</td>
+            <td class="col-date">Recurring</td>
+            <td class="col-date">Jan 31, 2025</td>
+            <td class="col-date">Feb 28, 2025</td>
+            <td><span class="badge badge-overdue">Overdue</span></td>
+            <td class="col-amount">$6,750.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0136</td>
+            <td class="col-customer">Globex</td>
+            <td class="col-date">Standard</td>
+            <td class="col-date">Jan 22, 2025</td>
+            <td class="col-date">Feb 22, 2025</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+            <td class="col-amount">$21,000.00</td>
+          </tr>
+          <tr>
+            <td class="col-invoice">#INV-2025-0135</td>
+            <td class="col-customer">Umbrella Ltd</td>
+            <td class="col-date">Standard</td>
+            <td class="col-date">Jan 18, 2025</td>
+            <td class="col-date">Feb 18, 2025</td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td class="col-amount">$4,320.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      function wireToggle(btnId, panelId) {
+        const btn = document.getElementById(btnId);
+        const panel = document.getElementById(panelId);
+        btn.addEventListener('click', () => {
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!expanded));
+          panel.setAttribute('aria-hidden', String(expanded));
+        });
+      }
+
+      wireToggle('main-toggle-btn', 'main-filters-panel');
+      wireToggle('advanced-toggle-btn', 'advanced-filters-panel');
+
+      document.getElementById('reset-btn').addEventListener('click', () => {
+        document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+        document.querySelectorAll('input[type="date"]').forEach(i => i.value = '');
+      });
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="chartApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype: Patient Demographics/Related Contacts Required Data Rules [DO-9187]</title>
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <style>
+        @layer config {
+            :root {
+                --primary: oklch(38% 0.09 259);
+                --primary-hover: oklch(32% 0.09 259);
+                --bg: oklch(97% 0.01 259);
+                --border: oklch(85% 0.01 259);
+                --error: oklch(55% 0.22 25);
+                --text: oklch(20% 0.09 259);
+                --muted: oklch(50% 0.03 259);
+                --white: oklch(100% 0 0);
+                --font-size-base: 0.875rem;
+                --font-size-header: 1rem;
+                --font-size-xs: 0.8125rem;
+                --space-xs: 0.3125rem;
+                --space-sm: 0.5rem;
+                --space-md: 0.75rem;
+                --space-lg: 1rem;
+                --space-xl: 1.25rem;
+                --space-2xl: 1.5rem;
+                --radius-sm: 0.25rem;
+                --radius-md: 0.375rem;
+                --radius-lg: 0.5rem;
+                accent-color: var(--primary);
+            }
+        }
+
+        @layer resets {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+                scrollbar-gutter: stable;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: var(--font-size-base);
+                background: var(--bg);
+                padding: var(--space-xl);
+            }
+
+            button,
+            input,
+            optgroup,
+            select {
+                font: inherit;
+            }
+
+            fieldset {
+                border: none;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                font-size: inherit;
+                font-weight: inherit;
+            }
+        }
+
+        @layer components {
+
+            .demo {
+                max-width: 26.25rem;
+                margin-block: 0.625rem 1.25rem;
+                margin-inline: auto;
+                background: var(--white);
+                padding: var(--space-2xl);
+                border-radius: var(--radius-lg);
+                border: 1px solid oklch(90% 0.01 259);
+            }
+
+            .demo h1 {
+                font-size: var(--font-size-header);
+                font-weight: 600;
+                margin-block-end: var(--space-2xl);
+                text-align: center;
+            }
+
+            .demo fieldset {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-md);
+                max-width: 22.5rem;
+                margin-inline: auto;
+            }
+
+            @media(max-width: 30rem) {
+                .demo fieldset {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .demo label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                color: var(--muted);
+                text-align: start;
+            }
+
+            .demo input[type="checkbox"] {
+                inline-size: 1rem;
+                block-size: 1rem;
+                cursor: pointer;
+            }
+
+            .demo>button {
+                display: block;
+                margin-block-start: 2rem;
+                margin-inline: auto;
+                padding-block: var(--space-md);
+                padding-inline: var(--space-2xl);
+                background: var(--primary);
+                color: var(--white);
+                border: none;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+            }
+
+            .demo>button:hover {
+                background: var(--primary-hover);
+            }
+
+            .demo>button:focus-visible {
+                outline: 0.1875rem solid var(--primary);
+                outline-offset: 0.125rem;
+            }
+
+            dialog {
+                border: none;
+                border-radius: var(--radius-lg);
+                box-shadow: 0 1.25rem 1.5625rem -0.3125rem rgba(0, 0, 0, 0.1);
+                margin: auto;
+                padding: 0;
+                max-inline-size: 50rem;
+                inline-size: calc(100% - 2rem);
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                dialog {
+                    transition: opacity 240ms, transform 240ms ease-out;
+                }
+
+                dialog::backdrop {
+                    transition: opacity 240ms;
+                }
+            }
+
+            dialog[open].animate-in {
+                opacity: 1;
+                transform: none;
+            }
+
+            dialog.closing {
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+            }
+
+            dialog::backdrop {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            dialog:not(.animate-in)::backdrop {
+                opacity: 0;
+            }
+
+            dialog.animate-in::backdrop {
+                opacity: 1;
+            }
+
+            dialog.closing::backdrop {
+                opacity: 0;
+            }
+
+            dialog>header {
+                background: var(--primary);
+                color: var(--white);
+                padding-block: var(--space-lg);
+                padding-inline: var(--space-2xl);
+                border-start-start-radius: var(--radius-lg);
+                border-start-end-radius: var(--radius-lg);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            dialog h2 {
+                font-size: var(--font-size-header);
+                font-weight: 600;
+            }
+
+            dialog>header button {
+                background: none;
+                border: none;
+                color: var(--white);
+                cursor: pointer;
+                padding: 0.75rem;
+                margin-inline-end: -1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--radius-sm);
+                inline-size: 2.75rem;
+                block-size: 2.75rem;
+            }
+
+            dialog>header button svg {
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                flex-shrink: 0;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                dialog>header button {
+                    transition: background-color 200ms;
+                }
+            }
+
+            dialog>header button:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            dialog>header button:active {
+                background-color: rgba(255, 255, 255, 0.2);
+                outline: 0.125rem solid rgba(255, 255, 255, 0.5);
+                outline-offset: 0.125rem;
+            }
+
+            dialog>header button:focus-visible {
+                outline: none;
+                outline-offset: 0.125rem;
+            }
+
+            dialog>div {
+                padding: var(--space-2xl);
+                max-block-size: calc(100vh - 15.625rem);
+                overflow-y: auto;
+                scrollbar-gutter: stable;
+            }
+
+            section {
+                margin-block-end: 1.75rem;
+            }
+
+            section:has(.collapse.hide) {
+                margin-block-end: var(--space-md);
+            }
+
+            dialog>div>section:last-child {
+                margin-block-end: 0;
+            }
+
+            section>header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-block-end: var(--space-md);
+                padding-block-end: var(--space-md);
+                border-block-end: 1px solid oklch(90% 0.01 259);
+            }
+
+            section>div>header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-block-end: var(--space-md);
+                padding-block-end: var(--space-md);
+                border-block-end: 1px solid oklch(90% 0.01 259);
+            }
+
+            section>header h3,
+            section>div>header h3 {
+                margin-block-end: 0;
+                padding-block-end: 0;
+                border-block-end: none;
+            }
+
+            section h3 {
+                font-size: var(--font-size-base);
+                font-weight: 600;
+                margin-block-end: var(--space-md);
+                padding-block-end: var(--space-md);
+                border-block-end: 1px solid oklch(90% 0.01 259);
+            }
+
+            section label:has(input[type="checkbox"]) {
+                display: flex;
+                align-items: center;
+                gap: var(--space-sm);
+                font-weight: 500;
+                color: var(--muted);
+            }
+
+            section input[type="checkbox"] {
+                inline-size: 1rem;
+                block-size: 1rem;
+                cursor: pointer;
+            }
+
+            .collapse {
+                display: grid;
+                grid-template-rows: 1fr;
+                opacity: 1;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .collapse {
+                    transition: grid-template-rows 600ms cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 480ms cubic-bezier(0.4, 0, 0.2, 1),
+                        margin 600ms cubic-bezier(0.4, 0, 0.2, 1);
+                }
+            }
+
+            .collapse>div {
+                overflow: hidden;
+                min-block-size: 0;
+                padding: 0.1875rem;
+            }
+
+            .collapse.hide {
+                grid-template-rows: 0fr;
+                opacity: 0;
+                margin-block-end: 0;
+            }
+
+            .collapse.hide>div {
+                padding: 0;
+                margin: 0;
+            }
+
+            .collapse.no-transition {
+                transition: none;
+            }
+
+            .row {
+                display: grid;
+                gap: var(--space-lg);
+                margin-block-end: var(--space-md);
+            }
+
+            .row:last-child {
+                margin-block-end: 0;
+            }
+
+            .row.cols-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .row.cols-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-xs);
+            }
+
+            .field label {
+                font-weight: 500;
+                color: var(--muted);
+            }
+
+            .required {
+                color: var(--error);
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            input[type="number"],
+            select {
+                block-size: 2.5rem;
+                padding-inline: var(--space-md);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: var(--white);
+                inline-size: 100%;
+                min-inline-size: 0;
+            }
+
+            input:focus-visible,
+            select:focus-visible {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.1875rem oklch(38% 0.09 259 / 0.1);
+            }
+
+            input.error,
+            select.error {
+                border-color: var(--error);
+            }
+
+            input.error:focus-visible,
+            select.error:focus-visible {
+                border-color: var(--error);
+                box-shadow: 0 0 0 0.1875rem oklch(55% 0.22 25 / 0.1);
+            }
+
+            select {
+                appearance: none;
+                padding-inline-end: 2rem;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23475569' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right var(--space-md) center;
+                cursor: pointer;
+            }
+
+            .error-message {
+                color: var(--error);
+                font-size: var(--font-size-xs);
+            }
+
+            dialog>footer {
+                padding-block: var(--space-lg);
+                padding-inline: var(--space-2xl);
+                background: var(--bg);
+                border-block-start: 1px solid oklch(90% 0.01 259);
+                border-end-start-radius: var(--radius-lg);
+                border-end-end-radius: var(--radius-lg);
+                display: flex;
+                justify-content: flex-end;
+                gap: var(--space-md);
+            }
+
+            dialog button[type="button"] {
+                block-size: 2.5rem;
+                padding-inline: var(--space-xl);
+                font-weight: 500;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+            }
+
+            .button-secondary {
+                background: var(--white);
+                color: var(--muted);
+                border: 1px solid var(--border);
+            }
+
+            .button-secondary:hover {
+                background: oklch(98% 0.01 259);
+            }
+
+            .button-secondary:focus-visible {
+                outline: 0.125rem solid var(--primary);
+                outline-offset: 0.125rem;
+            }
+
+            .button-primary {
+                background: var(--primary);
+                color: var(--white);
+                border: none;
+            }
+
+            .button-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            .button-primary:focus-visible {
+                outline: 0.125rem solid var(--primary);
+                outline-offset: 0.125rem;
+            }
+
+            @media(max-width: 40rem) {
+
+                .row.cols-2,
+                .row.cols-3 {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            input[type="checkbox"] {
+                inline-size: 1rem;
+                block-size: 1rem;
+                cursor: pointer;
+                appearance: none;
+                -webkit-appearance: none;
+                border: 0.125rem solid var(--border);
+                border-radius: var(--radius-sm);
+                background: var(--white);
+                position: relative;
+            }
+
+            input[type="checkbox"]:checked {
+                background: var(--primary);
+                border-color: var(--primary);
+            }
+
+            input[type="checkbox"]:checked::after {
+                content: '✓';
+                position: absolute;
+                color: white;
+                font-size: 0.75rem;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            input[type="checkbox"]:focus-visible {
+                outline: 0.125rem solid var(--primary);
+                outline-offset: 0.125rem;
+            }
+        }
+
+        @layer utilities {
+            .visually-hidden {
+                position: absolute;
+                inline-size: 0.0625rem;
+                block-size: 0.0625rem;
+                padding: 0;
+                margin: -0.0625rem;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+            }
+        }
+
+        a.em {
+            font-size: 2rem;
+            position: fixed;
+            bottom: 6px;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body ng-controller="ChartCtrl as vm">
+    <main>
+        <div class="demo">
+            <h1>Mandated Demographics Simulation</h1>
+            <fieldset>
+                <legend class="visually-hidden">Select required fields</legend>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.ssn">
+                    <span>SSN</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.race">
+                    <span>Race</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.ethnicity">
+                    <span>Ethnicity</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.marital">
+                    <span>Marital Status</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.disability">
+                    <span>Disability</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.email">
+                    <span>Email</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.phone">
+                    <span>Phone</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.address">
+                    <span>Address</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.emergency">
+                    <span>Emergency Contact</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.family">
+                    <span>Family Size</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.employment">
+                    <span>Employment Status</span>
+                </label>
+                <label>
+                    <input type="checkbox" ng-model="vm.cfg.income">
+                    <span>Income Range</span>
+                </label>
+            </fieldset>
+            <button ng-click="vm.open()">Create New Chart</button>
+        </div>
+        <a href="em.html" target="_blank" class="em">💎</a>
+    </main>
+
+    <dialog id="js-dialog" aria-labelledby="dialog-title">
+        <header>
+            <h2 id="dialog-title">Create New Chart</h2>
+            <!-- <h2 id="dialog-title">Create New Chart in a written<span style="background-color:hsla(0deg 0% 100% / 20%)"><span title="35th character" style="background-color:deeppink">&emsp14;</span> or typese<span title="45th character" style="background-color:deeppink">&emsp14;</span>t page is called its <span title="66th character" style="background-color:deeppink">&emsp14;</span>color. Th<span title="75th character" style="background-color:deeppink">&emsp14;</span>is ha<span title="80th character" style="background-color:deeppink">&emsp14;</span></span>s nothing to do…</h2> -->
+            <button type="button" ng-click="vm.close()" aria-label="Close dialog">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+
+        <div>
+            <section aria-labelledby="client-details">
+                <header>
+                    <h3 id="client-details">Client Details</h3>
+                    <label>
+                        <input type="checkbox" ng-model="vm.f.quick">
+                        <span>Quick chart</span>
+                    </label>
+                </header>
+
+                <div class="row cols-3">
+                    <div class="field">
+                        <label for="firstName">
+                            Legal First Name<span class="required" aria-label="required">*</span>
+                        </label>
+                        <input id="firstName" type="text" ng-model="vm.f.firstName" ng-class="{error: vm.e.firstName}" aria-required="true" aria-invalid="{{!!vm.e.firstName}}" aria-describedby="{{vm.e.firstName ? 'firstName-error' : ''}}">
+                        <div id="firstName-error" class="error-message" ng-if="vm.e.firstName" role="alert">{{vm.e.firstName}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="lastName">
+                            Legal Last Name<span class="required" aria-label="required">*</span>
+                        </label>
+                        <input id="lastName" type="text" ng-model="vm.f.lastName" ng-class="{error: vm.e.lastName}" aria-required="true" aria-invalid="{{!!vm.e.lastName}}" aria-describedby="{{vm.e.lastName ? 'lastName-error' : ''}}">
+                        <div id="lastName-error" class="error-message" ng-if="vm.e.lastName" role="alert">{{vm.e.lastName}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="name">
+                            Name<span class="required" aria-label="required">*</span>
+                        </label>
+                        <input id="name" type="text" ng-model="vm.f.name" ng-class="{error: vm.e.name}" aria-required="true" aria-invalid="{{!!vm.e.name}}" aria-describedby="{{vm.e.name ? 'name-error' : ''}}">
+                        <div id="name-error" class="error-message" ng-if="vm.e.name" role="alert">{{vm.e.name}}</div>
+                    </div>
+                </div>
+
+                <div class="row cols-3">
+                    <div class="field">
+                        <label for="dob">
+                            Date of Birth<span class="required" aria-label="required">*</span>
+                        </label>
+                        <input id="dob" type="date" ng-model="vm.f.dob" ng-class="{error: vm.e.dob}" aria-required="true" aria-invalid="{{!!vm.e.dob}}" aria-describedby="{{vm.e.dob ? 'dob-error' : ''}}">
+                        <div id="dob-error" class="error-message" ng-if="vm.e.dob" role="alert">{{vm.e.dob}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="sex">
+                            Legal Sex<span class="required" aria-label="required">*</span>
+                        </label>
+                        <select id="sex" ng-model="vm.f.sex" ng-class="{error: vm.e.sex}" aria-required="true" aria-invalid="{{!!vm.e.sex}}" aria-describedby="{{vm.e.sex ? 'sex-error' : ''}}">
+                            <option value="">Select...</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Unknown</option>
+                        </select>
+                        <div id="sex-error" class="error-message" ng-if="vm.e.sex" role="alert">{{vm.e.sex}}</div>
+                    </div>
+                    <div class="field">
+                        <label for="gender">
+                            Gender<span class="required" aria-label="required">*</span>
+                        </label>
+                        <select id="gender" ng-model="vm.f.gender" ng-class="{error: vm.e.gender}" aria-required="true" aria-invalid="{{!!vm.e.gender}}" aria-describedby="{{vm.e.gender ? 'gender-error' : ''}}">
+                            <option value="">Select...</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Female-to-Male (FTM)/Transgender Male/Trans Man</option>
+                            <option>Male-to-Female (MTF)/Transgender Female/Trans Woman</option>
+                            <option>Identifies as non-conforming gender</option>
+                            <option>Additional gender category or other, please specify</option>
+                            <option>Choose not to disclose</option>
+                        </select>
+                        <div id="gender-error" class="error-message" ng-if="vm.e.gender" role="alert">{{vm.e.gender}}</div>
+                    </div>
+                </div>
+
+                <div class="collapse" ng-class="{hide: vm.f.quick}">
+                    <div>
+                        <div class="row cols-2">
+                            <div class="field">
+                                <label for="race">
+                                    Race<span class="required" ng-if="vm.cfg.race" aria-label="required">*</span>
+                                </label>
+                                <select id="race" ng-model="vm.f.race" ng-class="{error: vm.e.race}" aria-required="{{vm.cfg.race}}" aria-invalid="{{!!vm.e.race}}" aria-describedby="{{vm.e.race ? 'race-error' : ''}}">
+                                    <option value="">Select...</option>
+                                    <option>Asian</option>
+                                    <option>Black or African American</option>
+                                    <option>Declined to Specify</option>
+                                    <option>Native Hawaiian or Other Pacific Islander</option>
+                                    <option>Unknown</option>
+                                    <option>White</option>
+                                </select>
+                                <div id="race-error" class="error-message" ng-if="vm.e.race" role="alert">{{vm.e.race}}</div>
+                            </div>
+                            <div class="field">
+                                <label for="ethnicity">
+                                    Ethnicity<span class="required" ng-if="vm.cfg.ethnicity" aria-label="required">*</span>
+                                </label>
+                                <select id="ethnicity" ng-model="vm.f.ethnicity" ng-class="{error: vm.e.ethnicity}" aria-required="{{vm.cfg.ethnicity}}" aria-invalid="{{!!vm.e.ethnicity}}" aria-describedby="{{vm.e.ethnicity ? 'ethnicity-error' : ''}}">
+                                    <option value="">Select...</option>
+                                    <option>African-American</option>
+                                    <option>African-Caribbean</option>
+                                    <option>American Indian</option>
+                                    <option>Arab-American</option>
+                                    <option>ArmenianAmerican</option>
+                                    <option>Asian-American</option>
+                                    <option>Bangladeshi</option>
+                                    <option>Biracial American</option>
+                                    <option>Brazilian</option>
+                                    <option>Canadian</option>
+                                    <option>Caribbean</option>
+                                    <option>Caucasian</option>
+                                    <option>Central American</option>
+                                    <option>Central European</option>
+                                    <option>Chamorro</option>
+                                    <option>Chinese</option>
+                                    <option>Chinese-American</option>
+                                    <option>Colombian</option>
+                                    <option>Creole</option>
+                                    <option>Danish</option>
+                                    <option>Declined to Specify</option>
+                                    <option>Dominican</option>
+                                    <option>Ecuadorian</option>
+                                    <option>Eurasian</option>
+                                    <option>Filipino</option>
+                                    <option>Filipino-American</option>
+                                    <option>French</option>
+                                    <option>German-American</option>
+                                    <option>Greek-American</option>
+                                    <option>Haitian</option>
+                                    <option>Hawaiian</option>
+                                    <option>Hispanic or Latino</option>
+                                    <option>Hungarian</option>
+                                    <option>Indian</option>
+                                    <option>Iranian</option>
+                                    <option>Irish-American</option>
+                                    <option>Israeli</option>
+                                    <option>Italian-American</option>
+                                    <option>Japanese-American</option>
+                                    <option>Jewish-American</option>
+                                    <option>Jewish-Moroccan</option>
+                                    <option>Korean</option>
+                                    <option>Latin American</option>
+                                    <option>Latino</option>
+                                    <option>Lebanese</option>
+                                    <option>Mexican</option>
+                                    <option>Middle Eastern</option>
+                                    <option>Mixed Racial American</option>
+                                    <option>Native Alaskan</option>
+                                    <option>Native American</option>
+                                    <option>Not Hispanic or Latino</option>
+                                    <option>Pacific Islander</option>
+                                    <option>Pakistani</option>
+                                    <option>Persian</option>
+                                    <option>Persian-English</option>
+                                    <option>Peruvian</option>
+                                    <option>Polish-American</option>
+                                    <option>Portuguese</option>
+                                    <option>Puerto Rican</option>
+                                    <option>Romanian/Venezuelan</option>
+                                    <option>Russian</option>
+                                    <option>Swedish</option>
+                                    <option>Syrian</option>
+                                    <option>Thai</option>
+                                    <option>Turkish</option>
+                                    <option>Unknown</option>
+                                    <option>Vietnamese</option>
+                                </select>
+                                <div id="ethnicity-error" class="error-message" ng-if="vm.e.ethnicity" role="alert">{{vm.e.ethnicity}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="collapse" ng-class="{hide: vm.f.quick}" aria-labelledby="contact-info">
+                <div>
+                    <header>
+                        <h3 id="contact-info">Contact Information</h3>
+                        <label>
+                            <input type="checkbox" ng-model="vm.f.homeless">
+                            <span>Client is homeless</span>
+                        </label>
+                    </header>
+
+                    <div class="row cols-2">
+                        <div class="field">
+                            <label for="phone">
+                                Phone<span class="required" ng-if="vm.cfg.phone && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="phone" type="tel" ng-model="vm.f.phone" ng-class="{error: vm.e.phone}" placeholder="(XXX) XXX-XXXX" aria-required="{{vm.cfg.phone && !vm.f.homeless}}" aria-invalid="{{!!vm.e.phone}}" aria-describedby="{{vm.e.phone ? 'phone-error' : ''}}">
+                            <div id="phone-error" class="error-message" ng-if="vm.e.phone" role="alert">{{vm.e.phone}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="email">
+                                Email<span class="required" ng-if="vm.cfg.email && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="email" type="email" ng-model="vm.f.email" ng-class="{error: vm.e.email}" aria-required="{{vm.cfg.email && !vm.f.homeless}}" aria-invalid="{{!!vm.e.email}}" aria-describedby="{{vm.e.email ? 'email-error' : ''}}">
+                            <div id="email-error" class="error-message" ng-if="vm.e.email" role="alert">{{vm.e.email}}</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label for="address">
+                                Street Address<span class="required" ng-if="vm.cfg.address && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="address" type="text" ng-model="vm.f.address" ng-class="{error: vm.e.address}" aria-required="{{vm.cfg.address}}" aria-invalid="{{!!vm.e.address}}" aria-describedby="{{vm.e.address ? 'address-error' : ''}}">
+                            <div id="address-error" class="error-message" ng-if="vm.e.address" role="alert">{{vm.e.address}}</div>
+                        </div>
+                    </div>
+
+                    <div class="row cols-3">
+                        <div class="field">
+                            <label for="city">
+                                City<span class="required" ng-if="vm.cfg.address && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="city" type="text" ng-model="vm.f.city" ng-class="{error: vm.e.city}" aria-required="{{vm.cfg.address}}" aria-invalid="{{!!vm.e.city}}" aria-describedby="{{vm.e.city ? 'city-error' : ''}}">
+                            <div id="city-error" class="error-message" ng-if="vm.e.city" role="alert">{{vm.e.city}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="state">
+                                State<span class="required" ng-if="vm.cfg.address && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <select id="state" ng-model="vm.f.state" ng-class="{error: vm.e.state}" aria-required="{{vm.cfg.address}}" aria-invalid="{{!!vm.e.state}}" aria-describedby="{{vm.e.state ? 'state-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>Alabama</option>
+                                <option>Alaska</option>
+                                <option>Arizona</option>
+                                <option>Arkansas</option>
+                                <option>California</option>
+                                <option>Colorado</option>
+                                <option>Connecticut</option>
+                                <option>Delaware</option>
+                                <option>Florida</option>
+                                <option>Georgia</option>
+                                <option>Hawaii</option>
+                                <option>Idaho</option>
+                                <option>Illinois</option>
+                                <option>Indiana</option>
+                                <option>Iowa</option>
+                                <option>Kansas</option>
+                                <option>Kentucky</option>
+                                <option>Louisiana</option>
+                                <option>Maine</option>
+                                <option>Maryland</option>
+                                <option>Massachusetts</option>
+                                <option>Michigan</option>
+                                <option>Minnesota</option>
+                                <option>Mississippi</option>
+                                <option>Missouri</option>
+                                <option>Montana</option>
+                                <option>Nebraska</option>
+                                <option>Nevada</option>
+                                <option>New Hampshire</option>
+                                <option>New Jersey</option>
+                                <option>New Mexico</option>
+                                <option>New York</option>
+                                <option>North Carolina</option>
+                                <option>North Dakota</option>
+                                <option>Ohio</option>
+                                <option>Oklahoma</option>
+                                <option>Oregon</option>
+                                <option>Pennsylvania</option>
+                                <option>Puerto Rico</option>
+                                <option>Rhode Island</option>
+                                <option>South Carolina</option>
+                                <option>South Dakota</option>
+                                <option>Tennessee</option>
+                                <option>Texas</option>
+                                <option>US Virgin Islands</option>
+                                <option>Utah</option>
+                                <option>Vermont</option>
+                                <option>Virginia</option>
+                                <option>Washington</option>
+                                <option>West Virginia</option>
+                                <option>Wisconsin</option>
+                                <option>Wyoming</option>
+                            </select>
+                            <div id="state-error" class="error-message" ng-if="vm.e.state" role="alert">{{vm.e.state}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="zip">
+                                Zip<span class="required" ng-if="vm.cfg.address && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="zip" type="text" ng-model="vm.f.zip" ng-class="{error: vm.e.zip}" placeholder="XXXXX" maxlength="5" aria-required="{{vm.cfg.address}}" aria-invalid="{{!!vm.e.zip}}" aria-describedby="{{vm.e.zip ? 'zip-error' : ''}}">
+                            <div id="zip-error" class="error-message" ng-if="vm.e.zip" role="alert">{{vm.e.zip}}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="collapse" ng-class="{hide: vm.f.quick}" aria-labelledby="emergency-contact">
+                <div>
+                    <header>
+                        <h3 id="emergency-contact">Emergency Contact</h3>
+                    </header>
+
+                    <div class="row cols-2">
+                        <div class="field">
+                            <label for="emFirst">
+                                First Name<span class="required" ng-if="vm.cfg.emergency && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="emFirst" type="text" ng-model="vm.f.emFirst" ng-class="{error: vm.e.emFirst}" aria-required="{{vm.cfg.emergency && !vm.f.homeless}}" aria-invalid="{{!!vm.e.emFirst}}" aria-describedby="{{vm.e.emFirst ? 'emFirst-error' : ''}}">
+                            <div id="emFirst-error" class="error-message" ng-if="vm.e.emFirst" role="alert">{{vm.e.emFirst}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="emLast">
+                                Last Name<span class="required" ng-if="vm.cfg.emergency && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="emLast" type="text" ng-model="vm.f.emLast" ng-class="{error: vm.e.emLast}" aria-required="{{vm.cfg.emergency && !vm.f.homeless}}" aria-invalid="{{!!vm.e.emLast}}" aria-describedby="{{vm.e.emLast ? 'emLast-error' : ''}}">
+                            <div id="emLast-error" class="error-message" ng-if="vm.e.emLast" role="alert">{{vm.e.emLast}}</div>
+                        </div>
+                    </div>
+
+                    <div class="row cols-3">
+                        <div class="field">
+                            <label for="emPhone">
+                                Phone<span class="required" ng-if="vm.cfg.emergency && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <input id="emPhone" type="tel" ng-model="vm.f.emPhone" ng-class="{error: vm.e.emPhone}" placeholder="(XXX) XXX-XXXX" aria-required="{{vm.cfg.emergency && !vm.f.homeless}}" aria-invalid="{{!!vm.e.emPhone}}" aria-describedby="{{vm.e.emPhone ? 'emPhone-error' : ''}}">
+                            <div id="emPhone-error" class="error-message" ng-if="vm.e.emPhone" role="alert">{{vm.e.emPhone}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="emType">
+                                Type<span class="required" ng-if="vm.cfg.emergency && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <select id="emType" ng-model="vm.f.emType" ng-class="{error: vm.e.emType}" aria-required="{{vm.cfg.emergency && !vm.f.homeless}}" aria-invalid="{{!!vm.e.emType}}" aria-describedby="{{vm.e.emType ? 'emType-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>Family</option>
+                                <option>Medical</option>
+                                <option>Custom</option>
+                            </select>
+                            <div id="emType-error" class="error-message" ng-if="vm.e.emType" role="alert">{{vm.e.emType}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="emRel">
+                                Relationship<span class="required" ng-if="vm.cfg.emergency && !vm.f.homeless" aria-label="required">*</span>
+                            </label>
+                            <select id="emRel" ng-model="vm.f.emRel" ng-class="{error: vm.e.emRel}" aria-required="{{vm.cfg.emergency && !vm.f.homeless}}" aria-invalid="{{!!vm.e.emRel}}" aria-describedby="{{vm.e.emRel ? 'emRel-error' : ''}}">
+                                <option value="">Select...</option>
+                                <optgroup label="Family">
+                                    <option>Biological Parent 1</option>
+                                    <option>Biological Parent 2</option>
+                                    <option>Adoptive Parent 1</option>
+                                    <option>Adoptive Parent 2</option>
+                                    <option>Spouse</option>
+                                    <option>Step Parent 1</option>
+                                    <option>Step Parent 2</option>
+                                    <option>Foster Parent 1</option>
+                                    <option>Foster Parent 2</option>
+                                    <option>Guardian 1</option>
+                                    <option>Guardian 2</option>
+                                </optgroup>
+                                <optgroup label="Medical">
+                                    <option>Primary Care Physician</option>
+                                    <option>Outpatient Psychiatrist</option>
+                                    <option>Outpatient Therapist</option>
+                                    <option>School Contact</option>
+                                    <option>SASS Worker</option>
+                                    <option>Pharmacy</option>
+                                </optgroup>
+                                <optgroup label="Custom">
+                                    <option>New Custom</option>
+                                </optgroup>
+                            </select>
+                            <div id="emRel-error" class="error-message" ng-if="vm.e.emRel" role="alert">{{vm.e.emRel}}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="collapse" ng-class="{hide: vm.f.quick}" aria-labelledby="financial">
+                <div>
+                    <header>
+                        <h3 id="financial">Financial/Household</h3>
+                    </header>
+
+                    <div class="row cols-3">
+                        <div class="field">
+                            <label for="employment">
+                                Employment<span class="required" ng-if="vm.cfg.employment" aria-label="required">*</span>
+                            </label>
+                            <select id="employment" ng-model="vm.f.employment" ng-class="{error: vm.e.employment}" aria-required="{{vm.cfg.employment}}" aria-invalid="{{!!vm.e.employment}}" aria-describedby="{{vm.e.employment ? 'employment-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>Disabled</option>
+                                <option>Employed Full-Time</option>
+                                <option>Employed Part-Time</option>
+                                <option>Homemaker</option>
+                                <option>Retired</option>
+                                <option>Self-Employed</option>
+                                <option>Stay at home parent</option>
+                                <option>Student Full-Time</option>
+                                <option>Student Part-Time</option>
+                                <option>Unemployed</option>
+                                <option>Unknown</option>
+                            </select>
+                            <div id="employment-error" class="error-message" ng-if="vm.e.employment" role="alert">{{vm.e.employment}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="income">
+                                Income Range<span class="required" ng-if="vm.cfg.income" aria-label="required">*</span>
+                            </label>
+                            <select id="income" ng-model="vm.f.income" ng-class="{error: vm.e.income}" aria-required="{{vm.cfg.income}}" aria-invalid="{{!!vm.e.income}}" aria-describedby="{{vm.e.income ? 'income-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>$0-$24,999</option>
+                                <option>$25,000-$49,999</option>
+                                <option>$50,000-$74,999</option>
+                                <option>$75,000-$99,999</option>
+                                <option>$100,000+</option>
+                                <option>Unknown</option>
+                            </select>
+                            <div id="income-error" class="error-message" ng-if="vm.e.income" role="alert">{{vm.e.income}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="ssn">
+                                SSN<span class="required" ng-if="vm.cfg.ssn" aria-label="required">*</span>
+                            </label>
+                            <input id="ssn" type="text" ng-model="vm.f.ssn" ng-class="{error: vm.e.ssn}" placeholder="XXX-XX-XXXX" aria-required="{{vm.cfg.ssn}}" aria-invalid="{{!!vm.e.ssn}}" aria-describedby="{{vm.e.ssn ? 'ssn-error' : ''}}">
+                            <div id="ssn-error" class="error-message" ng-if="vm.e.ssn" role="alert">{{vm.e.ssn}}</div>
+                        </div>
+                    </div>
+                    <div class="row cols-3">
+                        <div class="field">
+                            <label for="disability">
+                                Disability<span class="required" ng-if="vm.cfg.disability" aria-label="required">*</span>
+                            </label>
+                            <select id="disability" ng-model="vm.f.disability" ng-class="{error: vm.e.disability}" aria-required="{{vm.cfg.disability}}" aria-invalid="{{!!vm.e.disability}}" aria-describedby="{{vm.e.disability ? 'disability-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>None</option>
+                                <option>Blind</option>
+                                <option>Deaf</option>
+                                <option>Developmental Disability</option>
+                                <option>Hard of Hearing</option>
+                                <option>Intellectual Disability</option>
+                                <option>Legally Blind</option>
+                                <option>Unknown</option>
+                            </select>
+                            <div id="disability-error" class="error-message" ng-if="vm.e.disability" role="alert">{{vm.e.disability}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="marital">
+                                Marital Status<span class="required" ng-if="vm.cfg.marital" aria-label="required">*</span>
+                            </label>
+                            <select id="marital" ng-model="vm.f.marital" ng-class="{error: vm.e.marital}" aria-required="{{vm.cfg.marital}}" aria-invalid="{{!!vm.e.marital}}" aria-describedby="{{vm.e.marital ? 'marital-error' : ''}}">
+                                <option value="">Select...</option>
+                                <option>Declined to specify</option>
+                                <option>Divorced</option>
+                                <option>Domestic Partner</option>
+                                <option>Engaged</option>
+                                <option>Married</option>
+                                <option>Never Married</option>
+                                <option>Separated</option>
+                                <option>Single</option>
+                                <option>Unknown</option>
+                                <option>Widowed</option>
+                            </select>
+                            <div id="marital-error" class="error-message" ng-if="vm.e.marital" role="alert">{{vm.e.marital}}</div>
+                        </div>
+                        <div class="field">
+                            <label for="familySize">
+                                Family Size<span class="required" ng-if="vm.cfg.family" aria-label="required">*</span>
+                            </label>
+                            <input id="familySize" type="number" ng-model="vm.f.familySize" ng-class="{error: vm.e.familySize}" min="1" aria-required="{{vm.cfg.family}}" aria-invalid="{{!!vm.e.familySize}}" aria-describedby="{{vm.e.familySize ? 'familySize-error' : ''}}">
+                            <div id="familySize-error" class="error-message" ng-if="vm.e.familySize" role="alert">{{vm.e.familySize}}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section aria-labelledby="chart-details">
+                <header>
+                    <h3 id="chart-details">Chart Details</h3>
+                </header>
+
+                <div class="row cols-3">
+                    <div class="field">
+                        <label for="clinician">
+                            Principal Clinician<span class="required" aria-label="required">*</span>
+                        </label>
+                        <select id="clinician" ng-model="vm.f.clinician" aria-required="true">
+                            <option>Dr. Sarah Johnson</option>
+                            <option>Dr. Michael Smith</option>
+                            <option>Dr. Emily Williams</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="chartId">
+                            Chart ID<span class="required" aria-label="required">*</span>
+                        </label>
+                        <input id="chartId" type="text" ng-model="vm.f.chartId" placeholder="Auto-generated" aria-required="true">
+                    </div>
+                    <div class="field">
+                        <label for="team">Clinical Team</label>
+                        <select id="team" ng-model="vm.f.team">
+                            <option value="">Select...</option>
+                            <option>Team Alpha</option>
+                            <option>Team Beta</option>
+                            <option>Team Gamma</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <button type="button" class="button-secondary" ng-click="vm.close()">Cancel</button>
+            <button type="button" class="button-primary" ng-click="vm.save()">Create Chart</button>
+        </footer>
+    </dialog>
+
+    <script>
+        angular.module('chartApp', []).controller('ChartCtrl', ['$timeout', function ($t) {
+            var vm = this;
+            vm.cfg = { ssn: true, race: true, ethnicity: false, marital: false, disability: false, family: false, employment: true, income: false, email: true, phone: true, address: true, emergency: true };
+            vm.f = {};
+            vm.e = {};
+
+            vm.reset = function () {
+                vm.f = { firstName: '', lastName: '', name: '', dob: '', sex: '', gender: '', ssn: '', race: '', ethnicity: '', marital: '', disability: '', homeless: false, quick: false, email: '', phone: '', address: '', city: '', state: '', zip: '', emFirst: '', emLast: '', emPhone: '', emType: '', emRel: '', familySize: '', employment: '', income: '', clinician: 'Dr. Sarah Johnson', chartId: '0173', team: '' };
+                vm.e = {}
+            };
+
+            vm.open = function () {
+                vm.reset();
+                var d = document.getElementById('js-dialog');
+                d.classList.remove('animate-in');
+
+                var collapses = d.querySelectorAll('.collapse');
+                collapses.forEach(function (el) { el.classList.add('no-transition'); });
+
+                d.showModal();
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        d.classList.add('animate-in');
+                        collapses.forEach(function (el) { el.classList.remove('no-transition'); });
+                    })
+                })
+            };
+
+            vm.close = function () {
+                var d = document.getElementById('js-dialog');
+                d.classList.remove('animate-in');
+                d.classList.add('closing');
+                $t(function () { d.close(); d.classList.remove('closing') }, 200)
+            };
+
+            vm.save = function () {
+                vm.e = {};
+                if (!vm.f.firstName) vm.e.firstName = 'Required';
+                if (!vm.f.lastName) vm.e.lastName = 'Required';
+                if (!vm.f.name) vm.e.name = 'Required';
+                if (!vm.f.dob) vm.e.dob = 'Required';
+                if (!vm.f.sex) vm.e.sex = 'Required';
+                if (!vm.f.gender) vm.e.gender = 'Required';
+                if (!vm.f.quick) {
+                    if (vm.cfg.ssn && !vm.f.ssn) vm.e.ssn = 'Required';
+                    if (vm.cfg.race && !vm.f.race) vm.e.race = 'Required';
+                    if (vm.cfg.ethnicity && !vm.f.ethnicity) vm.e.ethnicity = 'Required';
+                    if (vm.cfg.marital && !vm.f.marital) vm.e.marital = 'Required';
+                    if (vm.cfg.disability && !vm.f.disability) vm.e.disability = 'Required';
+                    if (vm.cfg.address && !vm.f.homeless) {
+                        if (!vm.f.address) vm.e.address = 'Required';
+                        if (!vm.f.city) vm.e.city = 'Required';
+                        if (!vm.f.state) vm.e.state = 'Required';
+                        if (!vm.f.zip) vm.e.zip = 'Required'
+                    }
+                    if (!vm.f.homeless) {
+                        if (vm.cfg.email && !vm.f.email) vm.e.email = 'Required';
+                        if (vm.cfg.phone && !vm.f.phone) vm.e.phone = 'Required';
+                        if (vm.cfg.emergency) {
+                            if (!vm.f.emRel) vm.e.emRel = 'Required'
+                        }
+                    }
+                    if (vm.cfg.family && !vm.f.familySize) vm.e.familySize = 'Required';
+                    if (vm.cfg.employment && !vm.f.employment) vm.e.employment = 'Required';
+                    if (vm.cfg.income && !vm.f.income) vm.e.income = 'Required'
+                }
+                if (!Object.keys(vm.e).length) {
+                    alert('Chart created successfully!');
+                    vm.close()
+                } else $t(function () {
+                    var el = document.querySelector('.error-message');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }, 100)
+            };
+
+            vm.reset();
+            document.getElementById('js-dialog').addEventListener('cancel', function (e) {
+                e.preventDefault();
+                vm.close()
+            })
+        }]);
+    </script>
+</body>
+
+</html>

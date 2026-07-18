@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar Appointment Status Color System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --appt-1: oklch(52% 0.16 234);
+      --appt-2: oklch(52% 0.16 260);
+      --appt-3: oklch(52% 0.16 310);
+      --appt-4: oklch(52% 0.16 357);
+      --appt-5: oklch(52% 0.16 75);
+      --appt-6: oklch(55% 0.18 148);
+      --appt-7: oklch(52% 0.16 100);
+      --appt-8: oklch(52% 0.16 128);
+      --appt-9: oklch(52% 0.16 170);
+      --appt-10: oklch(52% 0.16 205);
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 16px 40px
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      margin-bottom: 12px
+    }
+
+    .toolbar-right {
+      display: flex;
+      justify-content: flex-end
+    }
+
+    .cal-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111
+    }
+
+    .seg {
+      display: flex;
+      border: 1px solid #d4d4d0;
+      border-radius: 5px;
+      overflow: hidden
+    }
+
+    .seg button {
+      background: #fff;
+      border: none;
+      border-right: 1px solid #d4d4d0;
+      padding: 5px 13px;
+      font-size: 11.5px;
+      color: #595959;
+      cursor: pointer;
+      line-height: 1
+    }
+
+    .seg button:last-child {
+      border-right: none
+    }
+
+    .seg button.active {
+      background: #f0f0ee;
+      color: #111;
+      font-weight: 500
+    }
+
+    /* ── Month ── */
+    .dow-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      margin-bottom: 1px
+    }
+
+    .dow-row.five-day {
+      grid-template-columns: repeat(5, 1fr)
+    }
+
+    .dow {
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-align: center;
+      padding: 5px 0
+    }
+
+    .dow.wknd {
+      color: #999
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: #d4d4d4;
+      border: 1px solid #d4d4d4
+    }
+
+    .grid.five-day {
+      grid-template-columns: repeat(5, 1fr)
+    }
+
+    .dow-row.five-day .dow.wknd,
+    .grid.five-day .cell.wknd {
+      display: none
+    }
+
+    .cell {
+      background: #f9f9f6;
+      aspect-ratio: 1.25/1;
+      padding: 8px 6px 9px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden
+    }
+
+    .cell.other {
+      background: #f3f3f1
+    }
+
+    .cell.other .dn {
+      color: #c4c4c0
+    }
+
+    .cell.wknd {
+      background: #f3f3f1
+    }
+
+    .cell.today .dn {
+      font-weight: 600;
+      color: #111
+    }
+
+    .dn {
+      font-size: 11px;
+      color: #767676;
+      line-height: 1;
+      margin-bottom: 5px;
+      flex-shrink: 0
+    }
+
+    .appts {
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .appt-overflow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 6px 2px 6px;
+      background: #fff;
+      border-radius: 6px;
+      min-height: 22px;
+      box-shadow: 0 1px 4px rgba(50, 45, 35, .09);
+      gap: 5px
+    }
+
+    .appt-overflow-count {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #595959;
+      line-height: 1
+    }
+
+    .appt-overflow-dots {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0
+    }
+
+    .appt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      padding: 2px 4px 2px 4px;
+      background: #fff;
+      border-radius: 6px;
+      min-height: 22px;
+      box-shadow: 0 1px 4px rgba(50, 45, 35, .09);
+      transition: transform 120ms ease, box-shadow 120ms ease
+    }
+
+    .appt:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(50, 45, 35, .16)
+    }
+
+    .appts.concurrent {
+      flex-direction: row;
+      gap: 6px
+    }
+
+    .appts.concurrent .appt {
+      flex: 1;
+      min-width: 0;
+      padding: 2px 5px 2px 5px
+    }
+
+    .appt-left {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+      overflow: hidden
+    }
+
+    .pt-name {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1
+    }
+
+    .appt-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .slabel {
+      font-size: 10.5px;
+      color: #333;
+      white-space: nowrap;
+      line-height: 1
+    }
+
+    /* ── Gear dropdown ── */
+    .gear-wrap {
+      position: relative
+    }
+
+    .gear-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #767676;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      transition: background .15s
+    }
+
+    .gear-btn:hover {
+      background: #f0f0ee;
+      color: #111
+    }
+
+    .gear-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 4px);
+      background: #fff;
+      border: 1px solid #d4d4d0;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+      min-width: 140px;
+      z-index: 100;
+      overflow: hidden
+    }
+
+    .gear-menu.open {
+      display: block
+    }
+
+    .gear-menu-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: #595959;
+      padding: 8px 12px 4px
+    }
+
+    .gear-menu button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 7px 12px;
+      font-size: 12px;
+      color: #333;
+      cursor: pointer;
+      text-align: left
+    }
+
+    .gear-menu button:hover {
+      background: #f3f3f1
+    }
+
+    .gear-menu button.active {
+      font-weight: 500;
+      color: #111
+    }
+
+    .gear-check {
+      width: 14px;
+      height: 14px;
+      opacity: 0
+    }
+
+    .gear-menu button.active .gear-check {
+      opacity: 1
+    }
+
+    /* ── Week & Day shared grid ── */
+    .week-grid {
+      display: grid;
+      grid-template-columns: 60px repeat(5, 1fr);
+      grid-template-rows: 26px;
+      grid-auto-rows: 32px;
+      background: #d4d4d4;
+      column-gap: 1px;
+      border-right: 1px solid #d4d4d4;
+      border-bottom: 1px solid #d4d4d4
+    }
+
+    .day-grid {
+      display: grid;
+      grid-template-columns: 60px repeat(3, 1fr);
+      grid-template-rows: 26px;
+      grid-auto-rows: 32px;
+      background: #d4d4d4;
+      column-gap: 1px;
+      border-right: 1px solid #d4d4d4;
+      border-bottom: 1px solid #d4d4d4
+    }
+
+    .wv-head,
+    .dv-head {
+      background: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-align: center;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      border-bottom: none;
+      box-shadow: 0 1px 0 #d4d4d4;
+      margin: 0 -1px;
+      z-index: 1
+    }
+
+    .wv-time[style*="grid-row:2;"],
+    .dv-time[style*="grid-row:2;"],
+    .wv-cell[style*="grid-row:2;"],
+    .dv-cell[style*="grid-row:2;"] {
+      border-top: none
+    }
+
+    .wv-head[style*="grid-column:1"],
+    .dv-head[style*="grid-column:1"] {
+      margin-left: 0
+    }
+
+    /* time column */
+    .wv-time,
+    .dv-time {
+      background: #fff;
+      font-size: 10px;
+      color: #767676;
+      text-align: right;
+      padding: 0 8px 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      white-space: nowrap;
+      border-top: 1px solid #d4d4d4;
+      position: relative
+    }
+
+    .wv-time.lunch,
+    .dv-time.lunch,
+    .wv-time.lunch-minor,
+    .dv-time.lunch-minor {
+      background: #fff
+    }
+
+    .wv-time.minor,
+    .dv-time.minor,
+    .wv-time.lunch-minor,
+    .dv-time.lunch-minor {
+      color: transparent;
+      border-top: none
+    }
+
+    .wv-time.minor::after,
+    .dv-time.minor::after,
+    .wv-time.lunch-minor::after,
+    .dv-time.lunch-minor::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 100%;
+      height: 1px;
+      background: #d4d4d4
+    }
+
+    .wv-tick {
+      position: absolute;
+      right: 0;
+      width: 6px;
+      height: 1px;
+      background: #767676
+    }
+
+    /* data cells — one per slot, chip spans rows */
+    .wv-cell,
+    .dv-cell {
+      background: #f9f9f6;
+      border-top: 1px solid #d4d4d4;
+      padding: 2px 3px;
+      min-height: 0;
+      overflow: visible;
+      position: relative
+    }
+
+    .wv-cell.minor,
+    .dv-cell.minor,
+    .wv-cell.lunch-minor,
+    .dv-cell.lunch-minor {
+      border-top: none
+    }
+
+    .wv-cell.cont,
+    .dv-cell.cont {
+      background: transparent
+    }
+
+    .wv-cell.lunch,
+    .dv-cell.lunch,
+    .wv-cell.lunch-minor,
+    .dv-cell.lunch-minor {
+      background: #f9f9f6
+    }
+
+    /* ── Card (day/week appt chip) ── */
+    .wv-appt {
+      position: absolute;
+      inset: 2px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(50, 45, 35, .09);
+      overflow: visible;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease
+    }
+
+    .wv-appt:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(50, 45, 35, .16)
+    }
+
+    .wv-type-bar {
+      width: 4px;
+      height: calc(100% - 8px);
+      align-self: center;
+      flex-shrink: 0;
+      border-radius: 2px;
+      margin-left: 5px;
+      margin-right: 7px
+    }
+
+    .wv-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 5px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      margin-left: auto
+    }
+
+    .wv-status-chip .wv-status-label {
+      font-size: 10.5px;
+      font-weight: 400;
+      color: #595959;
+      white-space: nowrap;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding-right: 0;
+      transform: translateX(3px);
+      filter: blur(0.4px);
+      transition:
+        max-width 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        transform 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        filter 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        padding-right 180ms cubic-bezier(0.65, 0, 0.35, 1)
+    }
+
+    .wv-status-chip:hover .wv-status-label {
+      max-width: 120px;
+      opacity: 1;
+      padding-right: 3px;
+      transform: translateX(0);
+      filter: blur(0px);
+      transition:
+        max-width 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        opacity 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        transform 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        filter 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        padding-right 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms
+    }
+
+    /* ── Square variant type expand ── */
+    .wv-type-chip-sq {
+      display: inline-flex;
+      align-items: center;
+      align-self: center;
+      padding: 2px 5px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      cursor: default
+    }
+
+    .wv-type-chip-sq:hover {
+      z-index: 10
+    }
+
+    .wv-type-chip-sq .wv-type-label {
+      font-size: 10.5px;
+      font-weight: 400;
+      color: #595959;
+      white-space: nowrap;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding-left: 0;
+      transform: translateX(-3px);
+      filter: blur(0.4px);
+      transition:
+        max-width 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        transform 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        filter 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        padding-left 180ms cubic-bezier(0.65, 0, 0.35, 1)
+    }
+
+    .wv-type-chip-sq:hover .wv-type-label {
+      max-width: 120px;
+      opacity: 1;
+      padding-left: 3px;
+      transform: translateX(0);
+      filter: blur(0px);
+      transition:
+        max-width 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        opacity 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        transform 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        filter 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        padding-left 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms
+    }
+
+    /* ── Month chip hover expand ── */
+    .mv-type-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 5px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 1
+    }
+
+    .mv-type-badge:hover {
+      z-index: 10
+    }
+
+    .mv-type-badge .mv-type-label {
+      font-size: 10.5px;
+      font-weight: 400;
+      color: #595959;
+      white-space: nowrap;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding-left: 0;
+      transform: translateX(-3px);
+      filter: blur(0.4px);
+      transition:
+        max-width 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        transform 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        filter 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        padding-left 180ms cubic-bezier(0.65, 0, 0.35, 1)
+    }
+
+    .mv-type-badge:hover .mv-type-label {
+      max-width: 120px;
+      opacity: 1;
+      padding-left: 4px;
+      transform: translateX(0);
+      filter: blur(0px);
+      transition:
+        max-width 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        opacity 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        transform 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        filter 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        padding-left 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms
+    }
+
+    .mv-status-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 5px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      overflow: hidden
+    }
+
+    .mv-status-chip .mv-status-label {
+      font-size: 10.5px;
+      font-weight: 400;
+      color: #595959;
+      white-space: nowrap;
+      padding-right: 4px
+    }
+
+    .mv-status-chip.conc .mv-status-label {
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding-right: 0;
+      transform: translateX(3px);
+      filter: blur(0.4px);
+      transition:
+        max-width 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        transform 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        filter 180ms cubic-bezier(0.65, 0, 0.35, 1),
+        padding-right 180ms cubic-bezier(0.65, 0, 0.35, 1)
+    }
+
+    .mv-status-chip.conc:hover .mv-status-label {
+      max-width: 120px;
+      opacity: 1;
+      padding-right: 4px;
+      transform: translateX(0);
+      filter: blur(0px);
+      transition:
+        max-width 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        opacity 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        transform 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms,
+        filter 240ms cubic-bezier(0.65, 0, 0.35, 1) 300ms,
+        padding-right 240ms cubic-bezier(0.65, 0, 0.35, 1) 240ms
+    }
+
+    /* ── Type square ── */
+    .type-sq {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      display: inline-block
+    }
+
+    /* ── Legend items ── */
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px
+    }
+
+    .legend-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: #999
+    }
+
+    .leg {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.5px;
+      color: #333;
+      padding: 2px 6px 2px 5px;
+      border-radius: 6px;
+      align-self: start
+    }
+
+    .leg .dot {
+      width: 10px;
+      height: 10px
+    }
+
+    /* ── Key bar ── */
+    .key-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+      margin-bottom: 0;
+      background: #fff;
+      padding: 8px 16px;
+      font-size: 10px
+    }
+
+    .key-bar-divider {
+      width: 1px;
+      height: 16px;
+      background: #d4d4d4;
+      flex-shrink: 0
+    }
+
+    .key-col {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px
+    }
+
+    .key-bar .leg {
+      font-size: 10px
+    }
+
+    .key-col.right {
+      justify-content: flex-end
+    }
+
+
+    /* ── Reference bands ── */
+    .ref-section {
+      margin-top: 96px;
+      border-top: 1px solid #d4d4d4;
+      padding-top: 28px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0 48px;
+      align-items: start
+    }
+
+    .ref-copy {
+      color: #595959;
+      font-size: 13px;
+      line-height: 1.7
+    }
+
+    .ref-copy h2 {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+      margin-bottom: 14px;
+      letter-spacing: .01em
+    }
+
+    .ref-copy p {
+      margin-bottom: 20px;
+      max-width: 680px
+    }
+
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0 24px;
+      margin-top: 4px
+    }
+
+    .group-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 5px
+    }
+
+    .group-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .group-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: #111
+    }
+
+    .group-statuses {
+      font-size: 11.5px;
+      color: #767676;
+      margin-bottom: 4px
+    }
+
+    .group-desc {
+      font-size: 12px;
+      color: #595959;
+      line-height: 1.6
+    }
+
+    .ref-section+.ref-section {
+      margin-top: 32px
+    }
+
+    @media(max-width:900px) {
+      .ref-section {
+        grid-template-columns: 1fr
+      }
+
+      .groups {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 40px
+      }
+    }
+
+    @media(max-width:480px) {
+      .groups {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* ── Popover ── */
+    .appt-popover {
+      position: fixed;
+      width: 320px;
+      background: #fff;
+      border: 1px solid #d4d4d0;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(50, 45, 35, .14), 0 2px 6px rgba(50, 45, 35, .08);
+      z-index: 200;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition: opacity 160ms cubic-bezier(0.33, 1, 0.68, 1), transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
+      pointer-events: none
+    }
+
+    .appt-popover.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto
+    }
+
+    .pop-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 10px 12px 8px
+    }
+
+    .pop-type-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 400;
+      color: #595959;
+      flex-shrink: 0
+    }
+
+    .pop-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 400;
+      color: #595959;
+      cursor: pointer;
+      flex-shrink: 0
+    }
+
+    .pop-status-chip:hover {
+      filter: brightness(0.97)
+    }
+
+    .pop-status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .pop-type-sq {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      flex-shrink: 0
+    }
+
+    .pop-divider {
+      height: 1px;
+      background: #ebebea;
+      margin: 0
+    }
+
+    .pop-body {
+      padding: 10px 12px
+    }
+
+    .pop-row {
+      opacity: 0;
+      transform: translateY(4px);
+      filter: blur(2px);
+      transition: opacity 120ms cubic-bezier(0.65, 0, 0.35, 1), transform 120ms cubic-bezier(0.65, 0, 0.35, 1), filter 120ms cubic-bezier(0.65, 0, 0.35, 1)
+    }
+
+    .pop-row.in {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0)
+    }
+
+    .pop-subhead {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      line-height: 1.5;
+      margin-bottom: 1px
+    }
+
+    .pop-subhead-name {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .pop-subhead-right {
+      font-size: 11px;
+      color: #767676;
+      white-space: nowrap;
+      flex-shrink: 0
+    }
+
+    .pop-subhead2 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: #767676;
+      line-height: 1.5;
+      margin-bottom: 10px
+    }
+
+    .pop-icon-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px
+    }
+
+    .pop-icon-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 6px;
+      border: 1px solid #e8e8e6;
+      border-radius: 7px;
+      cursor: pointer;
+      color: #595959;
+      font-size: 10.5px;
+      position: relative;
+      transition: background 120ms ease, border-color 120ms ease, color 120ms ease
+    }
+
+    .pop-icon-tile svg {
+      color: #888;
+      transition: color 120ms ease
+    }
+
+    .pop-icon-tile:hover {
+      background: #f5f5f3;
+      border-color: #d4d4d0;
+      color: #111
+    }
+
+    .pop-icon-tile:hover svg {
+      color: #111
+    }
+
+    .pop-notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 10px;
+      height: 10px;
+      background: oklch(62% 0.18 48);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      pointer-events: none
+    }
+
+    .pop-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-top: 1px solid #ebebea
+    }
+
+    .pop-footer-meta {
+      font-size: 10.5px;
+      color: #767676
+    }
+
+    .pop-footer-link {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #595959;
+      text-decoration: none;
+      transition: color 120ms ease
+    }
+
+    .pop-footer-link:hover {
+      color: #111
+    }
+
+    .pop-footer-edit {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #767676;
+      padding: 3px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: background 120ms ease, color 120ms ease
+    }
+
+    .pop-footer-edit:hover {
+      background: #f0f0ee;
+      color: #111
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 240ms;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="cal-label" id="cal-label">Wednesday, June 24, 2026</div>
+      <div class="seg" id="view-seg">
+        <button class="active" onclick="setView('day')">Day</button>
+        <button onclick="setView('week')">Week</button>
+        <button onclick="setView('month')">Month</button>
+      </div>
+      <div class="toolbar-right" style="gap:8px">
+        <div class="seg">
+          <button class="active" id="ab-sq" onclick="setCardStyle('sq')">Concept A: Square</button>
+          <button id="ab-bar" onclick="setCardStyle('bar')">Concept B: Bar</button>
+        </div>
+        <div class="gear-wrap" id="gear-wrap">
+          <button class="gear-btn" id="gear-btn" aria-label="Calendar settings" onclick="toggleGear()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          <div class="gear-menu" id="gear-menu">
+            <div class="gear-menu-label" id="gear-interval-label">Slot interval</div>
+            <button class="active" onclick="setInterval(15)" id="int-btn-15">
+              15 min
+              <svg class="gear-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </button>
+            <button onclick="setInterval(20)" id="int-btn-20">
+              20 min
+              <svg class="gear-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </button>
+            <div class="gear-menu-label" id="gear-wdays-label">Week view</div>
+            <button class="active" onclick="setWeekDays(5)" id="wdays-btn-5">
+              5-day
+              <svg class="gear-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </button>
+            <button onclick="setWeekDays(7)" id="wdays-btn-7">
+              7-day
+              <svg class="gear-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-month" style="display:none">
+      <div class="dow-row five-day" id="dow-row">
+        <div class="dow wknd">Sunday</div>
+        <div class="dow">Monday</div>
+        <div class="dow">Tuesday</div>
+        <div class="dow">Wednesday</div>
+        <div class="dow">Thursday</div>
+        <div class="dow">Friday</div>
+        <div class="dow wknd">Saturday</div>
+      </div>
+      <div class="grid five-day" id="grid"></div>
+    </div>
+
+    <div id="view-week" style="display:none">
+      <div class="week-grid" id="week-grid"></div>
+    </div>
+
+    <div id="view-day">
+      <div class="day-grid" id="day-grid"></div>
+    </div>
+
+    <div class="key-bar">
+      <div class="key-col" id="key-type"></div>
+      <div class="key-bar-divider"></div>
+      <div class="key-col" id="key-status"></div>
+    </div>
+
+    <div class="ref-section">
+      <div id="legend-type"></div>
+      <div class="ref-copy">
+        <h2>Appointment type system</h2>
+        <p>A 10-step hue ramp spanning the full 360&deg; wheel. Brand anchors H234 (Established Client) and H128 (Follow Up) are locked; the remaining 8 steps are distributed across both arcs. Non-anchor hues within ~15&deg; of a status hue were nudged; the two anchor conflicts (H234/confirmed, H128/occurred) are accepted. Perceptually faint hues use 95% bg lightness instead of 97% for visual evenness.</p>
+      </div>
+    </div>
+
+    <div class="ref-section">
+      <div id="legend-status"></div>
+      <div class="ref-copy">
+        <h2>Appointment status system</h2>
+        <p>Statuses are grouped into five conceptual phases, each with a distinct hue. Color encodes where an appointment stands in its lifecycle &mdash; not just its name &mdash; so patterns across a day or week read at a glance.</p>
+        <div class="groups" id="groups"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // TODO: wire appt-palettes-tokens.css
+    // 1. Import/inline appt-palettes-tokens.css (or @import in <style>)
+    // 2. Replace C{} values with getComputedStyle(root).getPropertyValue('--appt-status-{key}-fg')
+    // 3. Replace BG{} values with --appt-status-{key}-bg
+    // 4. Replace TYPES color/bg with --appt-type-{n}-fg / --appt-type-{n}-bg
+    // 5. Remove hardcoded oklch() from :root --appt-1..10 once token vars are live
+
+    // All text colors verified 4.5:1 against #fff (white chip/cell bg)
+    const C = {
+      scheduled: 'oklch(51.1% 0.262 276.966)',
+      rescheduled: 'oklch(51.1% 0.262 276.966)',
+      confirmed: 'oklch(58.8% 0.158 241.966)',
+      arrived: 'oklch(58.0% 0.118 184.704)',
+      checkedin: 'oklch(58.0% 0.118 184.704)',
+      occurred: 'oklch(62.8% 0.2   131.684)',
+      cancelled: 'oklch(50.7% 0.179 58.318)',
+      late: 'oklch(48.7% 0.222 41.116)',
+      noshow: 'oklch(48.2% 0.245 27.325)',
+    };
+    const BG = {
+      scheduled: 'oklch(95% 0.03 276.966)',
+      rescheduled: 'oklch(95% 0.03 276.966)',
+      confirmed: 'oklch(97% 0.03 241.966)',
+      arrived: 'oklch(97% 0.03 184.704)',
+      checkedin: 'oklch(97% 0.03 184.704)',
+      occurred: 'oklch(95% 0.03 131.684)',
+      cancelled: 'oklch(97% 0.03 58.318)',
+      late: 'oklch(97% 0.03 41.116)',
+      noshow: 'oklch(97% 0.03 27.325)',
+    };
+    const LBL = {
+      scheduled: 'Scheduled', rescheduled: 'Rescheduled', confirmed: 'Confirmed',
+      arrived: 'Arrived', checkedin: 'Checked-in', occurred: 'Occurred',
+      cancelled: 'Cancelled', late: 'Late cancel', noshow: 'No-show',
+    };
+    const LEGEND = [
+      { label: 'Scheduled', key: 'scheduled' }, { label: 'Rescheduled', key: 'rescheduled' },
+      { label: 'Confirmed', key: 'confirmed' }, { label: 'Arrived', key: 'arrived' },
+      { label: 'Checked-in', key: 'checkedin' }, { label: 'Occurred', key: 'occurred' },
+      { label: 'Cancelled', key: 'cancelled' }, { label: 'Late cancel', key: 'late' },
+      { label: 'No-show', key: 'noshow' },
+    ];
+    // ── Type data ──────────────────────────────────────────────────────────────────
+    const TYPES = {
+      1: { label: 'Established Client', color: 'var(--appt-1)', hue: 234 },
+      2: { label: 'Example', color: 'var(--appt-2)', hue: 260 },
+      3: { label: 'Group Therapy', color: 'var(--appt-3)', hue: 310 },
+      4: { label: 'Example', color: 'var(--appt-4)', hue: 357 },
+      5: { label: 'Complete Evaluation', color: 'var(--appt-5)', hue: 75 },
+      6: { label: 'New Client', color: 'var(--appt-6)', hue: 148 },
+      7: { label: 'Example', color: 'var(--appt-7)', hue: 100, bg: 'oklch(95% 0.03 100)' },
+      8: { label: 'Follow Up', color: 'var(--appt-8)', hue: 128, bg: 'oklch(95% 0.03 128)' },
+      9: { label: 'Example', color: 'var(--appt-9)', hue: 170 },
+      10: { label: 'Example', color: 'var(--appt-10)', hue: 205 },
+    };
+
+    const GROUPS = [
+      { name: 'Scheduling', color: C.scheduled, statuses: 'Scheduled · Rescheduled', desc: 'A slot is held, no commitment made. Rescheduled shares the hue — it’s a revised slot, not a new phase.' },
+      { name: 'Pre-visit', color: C.confirmed, statuses: 'Confirmed', desc: 'Intent is established. The patient or provider has acknowledged the appointment but hasn’t arrived yet.' },
+      { name: 'Engagement', color: C.arrived, statuses: 'Arrived · Checked-in', desc: 'Patient is on-site, call, virtual. Two labels, one hue — sequential steps in the same moment.' },
+      { name: 'Completed', color: C.occurred, statuses: 'Occurred', desc: 'Care was delivered. Green is reserved for this outcome only, so it reads unambiguously across any view.' },
+      { name: 'Did not occur', color: C.cancelled, statuses: 'Cancelled · Late cancel · No-show', desc: 'Shifts amber to red by severity. Cancelled is managed; late cancel disrupts; no-show is most negative.' },
+    ];
+
+    // ── Popover mock data ──────────────────────────────────────────────────────────
+    const MOCK = {
+      name: 'Alex Johnson', preferred: 'AJ',
+      dob: '6/12/1985', age: 40, id: '4821',
+      provider: 'Dr. Patel',
+      timeRange: '9:00 AM – 10:00 AM',
+      lastUpdated: '06/23/2026 2:31:54 PM',
+    };
+
+    function formatName(m) {
+      return m.preferred && m.preferred !== m.name.split(' ')[0]
+        ? `${m.name} (&#x201C;${m.preferred}&#x201D;)`
+        : m.name;
+    }
+
+    let cardStyle = 'sq';
+
+    // stable pseudo-random type 1-10 from patient name
+    function typeFor(pt) {
+      let h = 0;
+      for (let i = 0; i < pt.length; i++) h = (h * 31 + pt.charCodeAt(i)) & 0xffff;
+      return (h % 10) + 1;
+    }
+
+    // ── Chip renderers ─────────────────────────────────────────────────────────────
+    function chipM(a, conc) {
+      const t = TYPES[typeFor(a.pt)];
+      const statusChip = `<div class="mv-status-chip${conc ? ' conc' : ''}" style="background:${BG[a.s]}">` +
+        `<span class="mv-status-label">${LBL[a.s]}</span>` +
+        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div>`;
+      if (cardStyle === 'bar') {
+        return `<div class="appt" style="background:#fff;gap:0;padding:0;overflow:hidden">` +
+          `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:3px 7px 3px 4px"></div>` +
+          `<span class="pt-name" style="flex:1;padding:2px 0">${a.pt}</span>` +
+          statusChip +
+          `<div style="width:4px;flex-shrink:0"></div>` +
+          `</div>`;
+      }
+      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const typeBadge = `<div class="mv-type-badge" style="background:${typeBg}">` +
+        `<span style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:${t.color};display:inline-block"></span>` +
+        `<span class="mv-type-label">${t.label}</span></div>`;
+      return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="background:#fff;gap:5px">` +
+        typeBadge +
+        `<span class="pt-name" style="flex:1">${a.pt}</span>` +
+        statusChip +
+        `</div>`;
+    }
+    // ── Month ─────────────────────────────────────────────────────────────────────
+    // flat obj = single chip; nested array = concurrent row
+    const APPTS = {
+      1: [{ s: 'occurred', pt: 'Pamela P.' }, { s: 'confirmed', pt: 'Caleb E.' }, { s: 'scheduled', pt: 'Dana K.' }, { s: 'arrived', pt: 'Wren S.' }, { s: 'noshow', pt: 'Derek C.' }, { s: 'late', pt: 'Sam C.' }],
+      2: [[{ s: 'noshow', pt: 'Vera H.' }, { s: 'scheduled', pt: 'Finn O.' }], [{ s: 'rescheduled', pt: 'Cora E.' }, { s: 'checkedin', pt: 'Diana D.' }]],
+      3: [{ s: 'scheduled', pt: 'Ethan H.' }, [{ s: 'arrived', pt: 'Mia L.' }, { s: 'confirmed', pt: 'Felix A.' }]],
+      4: [{ s: 'confirmed', pt: 'Grant F.' }, { s: 'occurred', pt: 'Beth N.' }, { s: 'late', pt: 'Sam C.' }],
+      5: [[{ s: 'rescheduled', pt: 'Luis R.' }, { s: 'checkedin', pt: 'Tina S.' }], { s: 'scheduled', pt: 'Ben B.' }],
+      8: [{ s: 'confirmed', pt: 'Hugo D.' }, { s: 'scheduled', pt: 'Ben D.' }, [{ s: 'late', pt: 'Gina P.' }, { s: 'occurred', pt: 'Ivan G.' }]],
+      9: [{ s: 'occurred', pt: 'Nora J.' }, { s: 'scheduled', pt: 'Jesse F.' }, { s: 'arrived', pt: 'Keith B.' }, { s: 'confirmed', pt: 'Lance H.' }, { s: 'noshow', pt: 'Raj K.' }],
+      10: [[{ s: 'noshow', pt: 'Ann T.' }, { s: 'arrived', pt: 'Marco B.' }], { s: 'rescheduled', pt: 'Nigel E.' }],
+      11: [{ s: 'cancelled', pt: 'Abraham M.' }, { s: 'occurred', pt: 'Hana R.' }, { s: 'checkedin', pt: 'Oscar G.' }, { s: 'arrived', pt: 'Ben G.' }],
+      12: [{ s: 'rescheduled', pt: 'Raj K.' }, [{ s: 'confirmed', pt: 'Iris M.' }, { s: 'noshow', pt: 'Perry G.' }]],
+      15: [{ s: 'late', pt: 'Remy E.' }, { s: 'occurred', pt: 'Scott A.' }, { s: 'scheduled', pt: 'Trent G.' }, { s: 'confirmed', pt: 'Ben S.' }],
+      16: [[{ s: 'checkedin', pt: 'Umar F.' }, { s: 'scheduled', pt: 'Derek C.' }], { s: 'confirmed', pt: 'Vince C.' }],
+      17: [{ s: 'noshow', pt: 'Wren S.' }, { s: 'confirmed', pt: 'Wade G.' }, { s: 'arrived', pt: 'Xavier B.' }, { s: 'late', pt: 'Frank D.' }, { s: 'occurred', pt: 'Tina S.' }, { s: 'scheduled', pt: 'Derek C.' }, { s: 'checkedin', pt: 'Raj K.' }, { s: 'cancelled', pt: 'Vince C.' }, { s: 'rescheduled', pt: 'Keith B.' }, { s: 'noshow', pt: 'Nigel E.' }],
+      18: [{ s: 'occurred', pt: 'Yusuf D.' }, [{ s: 'arrived', pt: 'Zack B.' }, { s: 'cancelled', pt: 'Carla C.' }]],
+      19: [{ s: 'cancelled', pt: 'Priya S.' }, { s: 'checkedin', pt: 'Lance H.' }, { s: 'occurred', pt: 'Henry W.' }, { s: 'rescheduled', pt: 'Ben T.' }],
+      22: [{ s: 'rescheduled', pt: 'Bette B.' }, [{ s: 'late', pt: 'Frank D.' }, { s: 'scheduled', pt: 'Elena D.' }]],
+      23: [[{ s: 'occurred', pt: 'Lara V.' }, { s: 'confirmed', pt: 'Raj K.' }], { s: 'noshow', pt: 'Fiona H.' }, { s: 'checkedin', pt: 'Yusuf D.' }, { s: 'cancelled', pt: 'Grace T.' }, { s: 'arrived', pt: 'Trent G.' }, { s: 'late', pt: 'Gina P.' }, { s: 'occurred', pt: 'Jesse F.' }, { s: 'confirmed', pt: 'Hana R.' }, { s: 'scheduled', pt: 'Marco B.' }],
+      24: [{ s: 'scheduled', pt: 'Helen B.' }, { s: 'cancelled', pt: 'Janet G.' }, { s: 'occurred', pt: 'Karen B.' }, { s: 'confirmed', pt: 'Hugo D.' }, { s: 'arrived', pt: 'Wren S.' }, { s: 'checkedin', pt: 'Derek C.' }, { s: 'noshow', pt: 'Priya S.' }, { s: 'occurred', pt: 'Wade G.' }, { s: 'rescheduled', pt: 'Bette B.' }, { s: 'late', pt: 'Frank D.' }],
+      25: [{ s: 'noshow', pt: 'Grace T.' }, [{ s: 'checkedin', pt: 'Vince C.' }, { s: 'arrived', pt: 'Grant F.' }]],
+      26: [{ s: 'arrived', pt: 'Trent G.' }, { s: 'occurred', pt: 'Mia L.' }, { s: 'confirmed', pt: 'Marco B.' }],
+      29: [[{ s: 'late', pt: 'Nigel E.' }, { s: 'occurred', pt: 'Nora J.' }], { s: 'rescheduled', pt: 'Ethan H.' }],
+      30: [{ s: 'rescheduled', pt: 'Gina P.' }, { s: 'confirmed', pt: 'Hugo D.' }, { s: 'scheduled', pt: 'Ann T.' }],
+    };
+    let currentInterval = 15;
+    let weekDays = 5;
+
+    function buildMonthGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      const startDow = 1, daysInMonth = 30;
+      const totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
+      const MAX_BASE = weekDays === 5 ? 7 : 5;
+      for (let i = 0; i < totalCells; i++) {
+        const col = i % 7, isWknd = col === 0 || col === 6;
+        const dayNum = i - startDow + 1;
+        const isOther = dayNum < 1 || dayNum > daysInMonth;
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (isOther ? ' other' : '') + (isWknd ? ' wknd' : '') + (dayNum === 29 ? ' today' : '');
+        const dn = dayNum < 1 ? 31 + dayNum : dayNum > daysInMonth ? dayNum - daysInMonth : dayNum;
+        const dayAppts = (!isOther && !isWknd && APPTS[dayNum]) ? APPTS[dayNum] : [];
+        const rows = dayAppts.map(a => Array.isArray(a) ? a : [a]);
+        const MAX_VISIBLE = rows.length > MAX_BASE ? MAX_BASE - 1 : MAX_BASE;
+        const visibleRows = rows.slice(0, MAX_VISIBLE);
+        const hiddenRows = rows.slice(MAX_VISIBLE);
+        const hiddenAppts = hiddenRows.flat();
+        let html = '<div class="dn">' + dn + '</div><div class="appts">';
+        visibleRows.forEach(row => {
+          const conc = row.length > 1;
+          html += '<div class="appts' + (conc ? ' concurrent' : '') + '">';
+          row.forEach(a => { html += chipM(a, conc); });
+          html += '</div>';
+        });
+        if (hiddenAppts.length) {
+          html += '<div class="appt-overflow">' +
+            '<span class="appt-overflow-count">+' + hiddenAppts.length + '</span>' +
+            '<span class="appt-overflow-dots">' +
+            hiddenAppts.map(a => '<span class="dot" style="background:' + C[a.s] + '"></span>').join('') +
+            '</span></div>';
+        }
+        cell.innerHTML = html + '</div>';
+        cell.querySelectorAll('.appt').forEach(card => {
+          const raw = card.dataset.appt;
+          if (raw) attachPopover(card, JSON.parse(raw));
+        });
+        grid.appendChild(cell);
+      }
+    }
+    buildMonthGrid();
+
+    // ── Gear ───────────────────────────────────────────────────────────────────────
+    function toggleGear() {
+      document.getElementById('gear-menu').classList.toggle('open');
+    }
+    document.addEventListener('click', e => {
+      if (!document.getElementById('gear-wrap').contains(e.target))
+        document.getElementById('gear-menu').classList.remove('open');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.getElementById('gear-menu').classList.remove('open');
+    });
+    function setInterval(n) {
+      const update = () => {
+        currentInterval = n;
+        document.getElementById('int-btn-15').classList.toggle('active', n === 15);
+        document.getElementById('int-btn-20').classList.toggle('active', n === 20);
+        document.getElementById('gear-menu').classList.remove('open');
+        buildWeekGrid(n);
+        buildDayGrid(n);
+      };
+      if (document.startViewTransition) {
+        document.startViewTransition(update);
+      } else {
+        update();
+      }
+    }
+
+    // ── Week ──────────────────────────────────────────────────────────────────────
+    const WEEK_DAYS = [
+      { label: 'Monday 22', date: 22 }, { label: 'Tuesday 23', date: 23 }, { label: 'Wednesday 24', date: 24 },
+      { label: 'Thursday 25', date: 25 }, { label: 'Friday 26', date: 26 },
+    ];
+    // Each appt: { s, pt, dur } where dur is minutes
+    // Realistic arc: morning=scheduled/confirmed, mid=arrived/checkedin, afternoon=occurred, exceptions scattered
+    // WEEK_SLOTS: each appt has s, pt, dur (minutes)
+    // 15-min valid durs: 15,30,45,60 | 20-min valid durs: 20,40,60
+    // Day arc: early=scheduled/confirmed, mid=arrived/checkedin, afternoon=occurred
+    const WEEK_SLOTS = {
+      22: [
+        { s: 'confirmed', pt: 'Pamela P.', time: '8:00 AM', dur: 30 },
+        { s: 'arrived', pt: 'Wren S.', time: '8:30 AM', dur: 15 },
+        { s: 'noshow', pt: 'Derek C.', time: '8:30 AM', dur: 15 },
+        { s: 'checkedin', pt: 'Henry W.', time: '9:00 AM', dur: 60 },
+        { s: 'late', pt: 'Sam C.', time: '10:00 AM', dur: 15 },
+        { s: 'occurred', pt: 'Keith B.', time: '10:30 AM', dur: 30 },
+        { s: 'noshow', pt: 'Grace T.', time: '11:00 AM', dur: 15 },
+        { s: 'confirmed', pt: 'Carla C.', time: '11:30 AM', dur: 30 },
+        { s: 'occurred', pt: 'Vince C.', time: '1:00 PM', dur: 60 },
+        { s: 'occurred', pt: 'Wade G.', time: '2:00 PM', dur: 30 },
+        { s: 'scheduled', pt: 'Helen B.', time: '2:30 PM', dur: 15 },
+        { s: 'arrived', pt: 'Oscar G.', time: '3:00 PM', dur: 45 },
+        { s: 'occurred', pt: 'Mia L.', time: '4:00 PM', dur: 15 },
+      ],
+      23: [
+        { s: 'scheduled', pt: 'Caleb E.', time: '8:00 AM', dur: 45 },
+        { s: 'confirmed', pt: 'Oscar G.', time: '8:30 AM', dur: 30 },
+        { s: 'confirmed', pt: 'Mia L.', time: '9:00 AM', dur: 30 },
+        { s: 'noshow', pt: 'Vera H.', time: '9:30 AM', dur: 15 },
+        { s: 'occurred', pt: 'Nora J.', time: '10:00 AM', dur: 60 },
+        { s: 'arrived', pt: 'Hana R.', time: '11:00 AM', dur: 30 },
+        { s: 'late', pt: 'Remy E.', time: '11:30 AM', dur: 15 },
+        { s: 'arrived', pt: 'Grant F.', time: '1:00 PM', dur: 15 },
+        { s: 'occurred', pt: 'Lance H.', time: '1:15 PM', dur: 45 },
+        { s: 'checkedin', pt: 'Laura C.', time: '2:00 PM', dur: 60 },
+        { s: 'noshow', pt: 'Abraham M.', time: '3:00 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Wade G.', time: '3:30 PM', dur: 30 },
+        { s: 'occurred', pt: 'Nora J.', time: '4:00 PM', dur: 15 },
+      ],
+      24: [
+        { s: 'rescheduled', pt: 'Ethan H.', time: '8:00 AM', dur: 60 },
+        { s: 'confirmed', pt: 'Felix A.', time: '9:00 AM', dur: 30 },
+        { s: 'arrived', pt: 'Marco B.', time: '10:30 AM', dur: 45 },
+        { s: 'occurred', pt: 'Laura C.', time: '11:00 AM', dur: 60 },
+        { s: 'noshow', pt: 'Perry G.', time: '1:00 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Wren S.', time: '1:30 PM', dur: 30 },
+        { s: 'occurred', pt: 'Mia L.', time: '2:00 PM', dur: 15 },
+        { s: 'rescheduled', pt: 'Nigel E.', time: '2:15 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Finn O.', time: '2:30 PM', dur: 30 },
+        { s: 'arrived', pt: 'Oscar G.', time: '2:45 PM', dur: 15 },
+        { s: 'occurred', pt: 'Beth N.', time: '3:00 PM', dur: 60 },
+        { s: 'confirmed', pt: 'Ivan G.', time: '4:00 PM', dur: 15 },
+      ],
+      25: [
+        { s: 'scheduled', pt: 'Bette B.', time: '8:00 AM', dur: 15 },
+        { s: 'confirmed', pt: 'Beth N.', time: '8:30 AM', dur: 30 },
+        { s: 'scheduled', pt: 'Felix A.', time: '9:00 AM', dur: 45 },
+        { s: 'checkedin', pt: 'Hugo D.', time: '9:30 AM', dur: 30 },
+        { s: 'noshow', pt: 'Ann T.', time: '9:45 AM', dur: 15 },
+        { s: 'arrived', pt: 'Trent G.', time: '10:00 AM', dur: 60 },
+        { s: 'confirmed', pt: 'Vince C.', time: '11:00 AM', dur: 30 },
+        { s: 'noshow', pt: 'Janet G.', time: '11:30 AM', dur: 15 },
+        { s: 'rescheduled', pt: 'Zack B.', time: '1:00 PM', dur: 60 },
+        { s: 'occurred', pt: 'Derek C.', time: '1:45 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Raj K.', time: '2:00 PM', dur: 45 },
+        { s: 'occurred', pt: 'Grace T.', time: '2:30 PM', dur: 30 },
+        { s: 'confirmed', pt: 'Bette B.', time: '3:00 PM', dur: 60 },
+        { s: 'occurred', pt: 'Helen B.', time: '4:00 PM', dur: 15 },
+        { s: 'scheduled', pt: 'Ben S.', time: '4:30 PM', dur: 15 },
+      ],
+      26: [
+        { s: 'rescheduled', pt: 'Luis R.', time: '8:00 AM', dur: 30 },
+        { s: 'arrived', pt: 'Tina S.', time: '8:30 AM', dur: 45 },
+        { s: 'arrived', pt: 'Frank D.', time: '9:00 AM', dur: 15 },
+        { s: 'late', pt: 'Gina P.', time: '9:15 AM', dur: 15 },
+        { s: 'confirmed', pt: 'Raj K.', time: '9:30 AM', dur: 60 },
+        { s: 'occurred', pt: 'Karen B.', time: '10:00 AM', dur: 30 },
+        { s: 'checkedin', pt: 'Xavier B.', time: '10:30 AM', dur: 30 },
+        { s: 'cancelled', pt: 'Abraham M.', time: '11:00 AM', dur: 15 },
+        { s: 'checkedin', pt: 'Umar F.', time: '11:15 AM', dur: 15 },
+        { s: 'occurred', pt: 'Scott A.', time: '11:30 AM', dur: 30 },
+        { s: 'occurred', pt: 'Hana R.', time: '1:00 PM', dur: 60 },
+        { s: 'noshow', pt: 'Fiona H.', time: '1:30 PM', dur: 15 },
+        { s: 'arrived', pt: 'Sam C.', time: '2:00 PM', dur: 45 },
+        { s: 'cancelled', pt: 'Janet G.', time: '2:30 PM', dur: 15 },
+        { s: 'occurred', pt: 'Karen B.', time: '2:45 PM', dur: 15 },
+        { s: 'occurred', pt: 'Frank D.', time: '3:00 PM', dur: 60 },
+        { s: 'rescheduled', pt: 'Scott A.', time: '4:00 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Ben T.', time: '4:30 PM', dur: 15 },
+      ],
+    };
+
+    function timeToMin(t) {
+      const [time, ampm] = t.split(' ');
+      let [h, m] = time.split(':').map(Number);
+      if (ampm === 'PM' && h !== 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      return h * 60 + m;
+    }
+
+    function minToTime(min) {
+      const h = Math.floor(min / 60), m = min % 60;
+      const h12 = h === 12 ? 12 : h % 12 || 12;
+      return h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
+    }
+
+    function setCardStyle(s) {
+      cardStyle = s;
+      document.getElementById('ab-bar').classList.toggle('active', s === 'bar');
+      document.getElementById('ab-sq').classList.toggle('active', s === 'sq');
+      buildMonthGrid();
+      buildWeekGrid(currentInterval);
+      buildDayGrid(currentInterval);
+    }
+
+    // ── Popover logic ──────────────────────────────────────────────────────────────
+    let popoverEl = null, popTimer = null, popLeaveTimer = null, popTarget = null;
+
+    function buildPopover(a) {
+      const t = TYPES[typeFor(a.pt)];
+      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const el = document.createElement('div');
+      el.className = 'appt-popover';
+      const pencilSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`;
+      el.innerHTML =
+        `<div class="pop-header">` +
+        `<div class="pop-type-chip" style="background:${typeBg}"><span class="pop-type-sq" style="background:${t.color}"></span>${t.label}</div>` +
+        `<div class="pop-status-chip" style="background:${BG[a.s]}">${LBL[a.s]}<span class="pop-status-dot" style="background:${C[a.s]}"></span></div>` +
+        `</div>` +
+        `<div class="pop-divider"></div>` +
+        `<div class="pop-body">` +
+        `<div class="pop-row pop-subhead"><span class="pop-subhead-name">${formatName(MOCK)}</span><span class="pop-subhead-right">${MOCK.dob} (${MOCK.age}) &bull; ID ${MOCK.id}</span></div>` +
+        `<div class="pop-row pop-subhead2"><span>${MOCK.timeRange}</span><span>with ${MOCK.provider}</span></div>` +
+        `<div class="pop-row pop-icon-grid">` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/></svg>Note</div>` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>Chart</div>` +
+        `</div>` +
+        `<div class="pop-row pop-icon-grid">` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1"/><path d="M16 16a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1"/><path d="M21 6a2 2 0 0 0-.586-1.414l-2-2A2 2 0 0 0 17 2h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/></svg>Documents</div>` +
+        `<div class="pop-icon-tile" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Messages<span class="pop-notif-badge"></span></div>` +
+        `</div>` +
+        `<div class="pop-row pop-icon-grid">` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>Demographics</div>` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>Account</div>` +
+        `</div>` +
+        `</div>` +
+        `<div class="pop-footer">` +
+        `<button class="pop-footer-edit" aria-label="Edit appointment">${pencilSvg}</button>` +
+        `<a class="pop-footer-link" href="#">${MOCK.lastUpdated}</a>` +
+        `</div>`;
+      return el;
+    }
+
+    function positionPopover(el, cardEl) {
+      const r = cardEl.getBoundingClientRect();
+      const pw = 320, ph = el.offsetHeight || 320;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      let left = r.left;
+      if (left + pw > vw - 8) left = vw - pw - 8;
+      if (left < 8) left = 8;
+      let top = r.bottom + 6;
+      if (top + ph > vh - 8) top = r.top - ph - 6;
+      if (top < 8) top = 8;
+      el.style.left = left + 'px';
+      el.style.top = top + 'px';
+    }
+
+    function showPopover(a, cardEl) {
+      closePopover();
+      const el = buildPopover(a);
+      document.body.appendChild(el);
+      popoverEl = el;
+      popTarget = cardEl;
+      positionPopover(el, cardEl);
+      requestAnimationFrame(() => {
+        el.classList.add('visible');
+        const rows = el.querySelectorAll('.pop-row');
+        rows.forEach((r, i) => setTimeout(() => r.classList.add('in'), 120 + i * 40));
+      });
+      el.addEventListener('mouseenter', () => { clearTimeout(popLeaveTimer); });
+      el.addEventListener('mouseleave', () => { popLeaveTimer = setTimeout(closePopover, 180); });
+    }
+
+    function closePopover() {
+      clearTimeout(popTimer);
+      clearTimeout(popLeaveTimer);
+      if (!popoverEl) return;
+      const el = popoverEl;
+      popoverEl = null; popTarget = null;
+      el.classList.remove('visible');
+      setTimeout(() => el.remove(), 120);
+    }
+
+    function attachPopover(cardEl, a) {
+      cardEl.addEventListener('mouseenter', () => {
+        clearTimeout(popLeaveTimer);
+        popTimer = setTimeout(() => showPopover(a, cardEl), 420);
+      });
+      cardEl.addEventListener('mouseleave', () => {
+        clearTimeout(popTimer);
+        popLeaveTimer = setTimeout(closePopover, 180);
+      });
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopover(); });
+
+    function chipW(a, half, span, dayView) {
+      return cardStyle === 'sq' ? chipW_sq(a, half, span, dayView) : chipW_bar(a, half, span, dayView);
+    }
+
+    function chipW_bar(a, half, span, dayView) {
+      const t = TYPES[typeFor(a.pt)];
+      const inset = half === 'left' ? '2px calc(50% + 3px) 2px 6px' : half === 'right' ? '2px 6px 2px calc(50% + 3px)' : '2px 6px';
+      const single = (span || 1) === 1;
+      const conc = half !== '';
+      const chipPad = conc ? '2px' : '2px 5px';
+      const statusLabel = (conc && !dayView) ? `<span class="wv-status-label">${LBL[a.s]}</span>` : `<span style="font-size:10.5px;font-weight:400;color:#595959;white-space:nowrap">${LBL[a.s]}</span>`;
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+        `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:4px 7px 4px 5px"></div>` +
+        `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '0' : '5px'} 6px 0 0;overflow:hidden">` +
+        `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
+        `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad}">${statusLabel}` +
+        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div>` +
+        `</div>`;
+    }
+
+    function chipW_sq(a, half, span, dayView) {
+      const t = TYPES[typeFor(a.pt)];
+      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const inset = half === 'left' ? '2px calc(50% + 3px) 2px 6px' : half === 'right' ? '2px 6px 2px calc(50% + 3px)' : '2px 6px';
+      const single = (span || 1) === 1;
+      const conc = half !== '';
+      const chipPad = '2px 5px';
+      const statusLabel = (conc && !dayView) ? `<span class="wv-status-label">${LBL[a.s]}</span>` : `<span style="font-size:10.5px;font-weight:400;color:#595959;white-space:nowrap">${LBL[a.s]}</span>`;
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+        `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '3px 6px' : '5px 6px 0 6px'};gap:5px">` +
+        `<div class="wv-type-chip-sq" style="background:${typeBg}">` +
+        `<span style="width:9px;height:9px;border-radius:2px;background:${t.color};flex-shrink:0"></span>` +
+        `<span class="wv-type-label">${t.label}</span></div>` +
+        `<div style="display:flex;align-items:center;flex:1;min-width:0;gap:5px;overflow:hidden">` +
+        `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
+        `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad};gap:${(conc && !dayView) ? '0' : '4px'}">${statusLabel}` +
+        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div></div>` +
+        `</div>`;
+    }
+
+    // Emit all cells for a week/day grid with explicit grid-row/grid-column placement
+    function buildGrid(gridEl, prefix, slots, colHeaders, getAppts) {
+      // row 1 = headers, data rows start at 2
+      let html = '<div class="' + prefix + '-head" style="grid-row:1;grid-column:1"></div>';
+      colHeaders.forEach((lbl, ci) => {
+        html += '<div class="' + prefix + '-head" style="grid-row:1;grid-column:' + (ci + 2) + '">' + lbl + '</div>';
+      });
+
+      // For each column, map slotIndex -> span
+      const spans = colHeaders.map((_, ci) => {
+        const map = {};
+        (getAppts(ci) || []).forEach(a => {
+          const si = slots.findIndex(s => s.time === a.time);
+          if (si >= 0) {
+            const sp = Math.max(1, Math.round(a.dur / slots._interval));
+            map[si] = Math.max(map[si] || 1, sp);
+          }
+        });
+        return map;
+      });
+
+      slots.forEach((slot, si) => {
+        const row = si + 2;
+        const cls = slot.lunch ? ' lunch' : slot.lunchMinor ? ' lunch-minor' : slot.minor ? ' minor' : '';
+        const timeText = (slot.minor || slot.lunchMinor) ? '' : slot.time;
+        html += '<div class="' + prefix + '-time' + cls + '" style="grid-row:' + row + ';grid-column:1">' + timeText + '</div>';
+
+        colHeaders.forEach((_, ci) => {
+          const col = ci + 2;
+          let covered = false;
+          for (let prev = 0; prev < si; prev++) {
+            const sp = spans[ci][prev] || 1;
+            if (sp > 1 && prev + sp > si) { covered = true; break; }
+          }
+          if (covered) {
+            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + ';grid-column:' + col + ';overflow:hidden"></div>';
+            return;
+          }
+
+          const appts = (getAppts(ci) || []).filter(a => a.time === slot.time);
+          if (appts.length) {
+            const span = spans[ci][si];
+            const dv = prefix === 'dv';
+            const chips = appts.length === 1
+              ? chipW(appts[0], '', span, dv)
+              : chipW(appts[0], 'left', span, dv) + chipW(appts[1], 'right', span, dv);
+            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + '/span ' + span + ';grid-column:' + col + ';z-index:1">' + chips + '</div>';
+          } else {
+            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + ';grid-column:' + col + '"></div>';
+          }
+        });
+      });
+      gridEl.innerHTML = html;
+      gridEl.querySelectorAll('.wv-appt, .dv-appt').forEach(card => {
+        const raw = card.dataset.appt;
+        if (raw) attachPopover(card, JSON.parse(raw));
+      });
+    }
+
+    function buildWeekGrid(interval) {
+      const slots = generateTimeSlots(interval);
+      slots._interval = interval;
+      buildGrid(
+        document.getElementById('week-grid'), 'wv',
+        slots, WEEK_DAYS.map(d => d.label),
+        ci => WEEK_SLOTS[WEEK_DAYS[ci].date]
+      );
+    }
+    buildWeekGrid(15);
+
+    // ── Day ────────────────────────────────────────────────────────────────────────
+    const PROVIDERS = ['Dr. Boyles', 'Dr. Morganstern', 'Dr. Patel'];
+    const DAY_SLOTS = {
+      0: [ // Dr. Okafor
+        { s: 'scheduled', pt: 'Marcus C.', time: '8:00 AM', dur: 30 },
+        { s: 'occurred', pt: 'Dana K.', time: '8:30 AM', dur: 30 },
+        { s: 'confirmed', pt: 'Mia L.', time: '9:00 AM', dur: 60 },
+        { s: 'rescheduled', pt: 'Jesse F.', time: '9:00 AM', dur: 30 },
+        { s: 'occurred', pt: 'Nora J.', time: '10:00 AM', dur: 30 },
+        { s: 'noshow', pt: 'Vera H.', time: '11:00 AM', dur: 15 },
+        { s: 'checkedin', pt: 'Tina S.', time: '11:30 AM', dur: 30 },
+        { s: 'arrived', pt: 'Grant F.', time: '1:00 PM', dur: 45 },
+        { s: 'confirmed', pt: 'Trent G.', time: '1:30 PM', dur: 30 },
+        { s: 'late', pt: 'Remy E.', time: '2:30 PM', dur: 15 },
+        { s: 'occurred', pt: 'Scott A.', time: '3:00 PM', dur: 60 },
+        { s: 'occurred', pt: 'Karen B.', time: '4:00 PM', dur: 15 },
+        { s: 'confirmed', pt: 'Ben B.', time: '4:30 PM', dur: 15 },
+      ],
+      1: [ // Dr. Morganstern
+        { s: 'confirmed', pt: 'Felix A.', time: '8:00 AM', dur: 60 },
+        { s: 'noshow', pt: 'Keith B.', time: '8:00 AM', dur: 30 },
+        { s: 'arrived', pt: 'Keith B.', time: '8:30 AM', dur: 30 },
+        { s: 'checkedin', pt: 'Oscar G.', time: '9:30 AM', dur: 45 },
+        { s: 'rescheduled', pt: 'Nigel E.', time: '10:00 AM', dur: 30 },
+        { s: 'arrived', pt: 'Sam C.', time: '10:30 AM', dur: 30 },
+        { s: 'occurred', pt: 'Ivan G.', time: '11:30 AM', dur: 30 },
+        { s: 'occurred', pt: 'Lance H.', time: '1:00 PM', dur: 60 },
+        { s: 'scheduled', pt: 'Jesse F.', time: '2:00 PM', dur: 45 },
+        { s: 'confirmed', pt: 'Vince C.', time: '2:30 PM', dur: 30 },
+        { s: 'cancelled', pt: 'Janet G.', time: '3:00 PM', dur: 15 },
+        { s: 'noshow', pt: 'Maria T.', time: '3:30 PM', dur: 15 },
+        { s: 'scheduled', pt: 'Ben D.', time: '4:00 PM', dur: 15 },
+      ],
+      2: [ // Dr. Nguyen
+        { s: 'rescheduled', pt: 'Felix A.', time: '8:00 AM', dur: 45 },
+        { s: 'noshow', pt: 'Finn O.', time: '9:00 AM', dur: 15 },
+        { s: 'occurred', pt: 'Beth N.', time: '9:30 AM', dur: 30 },
+        { s: 'late', pt: 'Gina P.', time: '10:30 AM', dur: 15 },
+        { s: 'confirmed', pt: 'Hugo D.', time: '11:00 AM', dur: 60 },
+        { s: 'scheduled', pt: 'Ann T.', time: '1:00 PM', dur: 30 },
+        { s: 'cancelled', pt: 'Raj K.', time: '1:30 PM', dur: 15 },
+        { s: 'occurred', pt: 'Iris M.', time: '2:00 PM', dur: 60 },
+        { s: 'arrived', pt: 'Marco B.', time: '3:00 PM', dur: 45 },
+        { s: 'occurred', pt: 'Lara V.', time: '3:30 PM', dur: 30 },
+        { s: 'rescheduled', pt: 'Laura C.', time: '4:00 PM', dur: 15 },
+        { s: 'arrived', pt: 'Ben G.', time: '4:15 PM', dur: 15 },
+        { s: 'checkedin', pt: 'Ben S.', time: '4:30 PM', dur: 15 },
+        { s: 'occurred', pt: 'Ben T.', time: '4:45 PM', dur: 15 },
+      ],
+    };
+
+    function buildDayGrid(interval) {
+      const slots = generateTimeSlots(interval);
+      slots._interval = interval;
+      buildGrid(
+        document.getElementById('day-grid'), 'dv',
+        slots, PROVIDERS,
+        ci => DAY_SLOTS[ci]
+      );
+    }
+    buildDayGrid(15);
+    // hide month-only gear items on load (day view is default)
+    ['gear-wdays-label', 'wdays-btn-5', 'wdays-btn-7'].forEach(id => document.getElementById(id).style.display = 'none');
+
+    // ── Key bar ───────────────────────────────────────────────────────────────────
+    const NAMED_TYPES = [1, 6, 8, 5, 3];
+    document.getElementById('key-type').innerHTML = NAMED_TYPES.map(id => {
+      const t = TYPES[id];
+      return `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
+        `<span class="type-sq" style="background:${t.color}"></span><span>${t.label}</span></div>`;
+    }).join('');
+
+    document.getElementById('key-status').innerHTML = GROUPS.map(g => {
+      const hue = parseFloat(g.color.split(' ').pop());
+      const bg = g.name === 'Did not occur'
+        ? `linear-gradient(to right, ${BG.cancelled}, ${BG.noshow})`
+        : `oklch(97% 0.03 ${hue})`;
+      const dots = g.name === 'Did not occur'
+        ? `<span class="dot" style="background:${C.cancelled}"></span><span class="dot" style="background:${C.late}"></span><span class="dot" style="background:${C.noshow}"></span>`
+        : `<span class="dot" style="background:${g.color}"></span>`;
+      return `<div class="leg" style="background:${bg}">` +
+        `<span>${g.name}</span>${dots}</div>`;
+    }).join('');
+
+    // ── Legends ──────────────────────────────────────────────────────────────────
+    let tHtml = '<div class="legend"><span class="legend-label">Appointment type</span>';
+    const typesSorted = Object.values(TYPES).sort((a, b) => b.hue - a.hue);
+    typesSorted.push(typesSorted.shift());
+    typesSorted.forEach(t => {
+      tHtml += `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
+        `<span class="type-sq" style="background:${t.color}"></span><span>${t.label}</span></div>`;
+    });
+    tHtml += '</div>';
+    document.getElementById('legend-type').innerHTML = tHtml;
+
+    let sHtml = '<div class="legend"><span class="legend-label">Appointment status</span>';
+    LEGEND.forEach(g => {
+      sHtml += `<div class="leg" style="background:${BG[g.key]}"><span>${g.label}</span>` +
+        `<span class="dot" style="background:${C[g.key]}"></span></div>`;
+    });
+    sHtml += '</div>';
+    document.getElementById('legend-status').innerHTML = sHtml;
+
+    // ── Groups ─────────────────────────────────────────────────────────────────────
+    const groupsEl = document.getElementById('groups');
+    GROUPS.forEach(g => {
+      groupsEl.innerHTML += '<div class="group">' +
+        '<div class="group-head"><span class="group-dot" style="background:' + g.color + '"></span>' +
+        '<span class="group-name">' + g.name + '</span></div>' +
+        '<div class="group-statuses">' + g.statuses + '</div>' +
+        '<div class="group-desc">' + g.desc + '</div></div>';
+    });
+
+    // ── Time slot generator ────────────────────────────────────────────────────────
+    function generateTimeSlots(interval) {
+      const slots = [];
+      for (let min = 8 * 60; min < 17 * 60; min += interval) {
+        const h = Math.floor(min / 60), m = min % 60;
+        const h12 = h === 12 ? 12 : h % 12;
+        const label = h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
+        const isLunch = h === 12;
+        slots.push({ time: label, minor: m !== 0 && !isLunch, lunch: isLunch && m === 0, lunchMinor: isLunch && m !== 0 });
+      }
+      return slots;
+    }
+
+    // ── View switcher ──────────────────────────────────────────────────────────────
+    const LABELS = { month: 'June 2026', week: 'Week of June 22, 2026', day: 'Tuesday, June 23, 2026' };
+    function setWeekDays(n) {
+      const update = () => {
+        weekDays = n;
+        const five = n === 5;
+        document.getElementById('grid').classList.toggle('five-day', five);
+        document.getElementById('dow-row').classList.toggle('five-day', five);
+        document.getElementById('wdays-btn-5').classList.toggle('active', five);
+        document.getElementById('wdays-btn-7').classList.toggle('active', !five);
+        buildMonthGrid();
+      };
+      if (document.startViewTransition) {
+        document.startViewTransition(update);
+      } else {
+        update();
+      }
+    }
+
+    function setView(v) {
+      const update = () => {
+        ['month', 'week', 'day'].forEach(k => {
+          document.getElementById('view-' + k).style.display = k === v ? '' : 'none';
+        });
+        document.getElementById('cal-label').textContent = LABELS[v];
+        document.querySelectorAll('#view-seg button').forEach((btn, i) => {
+          btn.classList.toggle('active', ['day', 'week', 'month'][i] === v);
+        });
+        const isMonth = v === 'month';
+        ['gear-wdays-label', 'wdays-btn-5', 'wdays-btn-7'].forEach(id => document.getElementById(id).style.display = isMonth ? '' : 'none');
+        ['gear-interval-label', 'int-btn-15', 'int-btn-20'].forEach(id => document.getElementById(id).style.display = isMonth ? 'none' : '');
+      };
+      if (document.startViewTransition) {
+        document.startViewTransition(update);
+      } else {
+        update();
+      }
+    }
+  </script>
+
+</body>
+
+</html>

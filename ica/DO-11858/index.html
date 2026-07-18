@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kno2 Credentials — Support Portal mock</title>
+<style>
+@layer config, native, layouts, components, utils;
+
+@layer config {
+  @layer tokens-primitive, tokens-semantic, reset;
+
+  @layer tokens-primitive {
+    :where(:host, :root) {
+      color-scheme: light dark;
+      --blue-1: oklch(38.052% 0.0888 258.539);
+      --blue-1d: oklch(43.332% 0.10422 258.384);
+      --blue-2: oklch(43.332% 0.10422 258.384);
+      --blue-2d: oklch(49.153% 0.12057 258.167);
+      --blue-3: oklch(49.153% 0.12057 258.167);
+      --blue-3d: oklch(56.478% 0.13534 258.279);
+      --blue-4: oklch(57.378% 0.13186 258.137);
+      --blue-4d: oklch(62.692% 0.11509 258.021);
+      --green-1: oklch(64.334% 0.18078 133.703);
+      --green-1d: oklch(56.178% 0.1659 135.639);
+      --red-1: oklch(57.66% 0.21353 21.464);
+      --red-1d: oklch(61.965% 0.2142 21.254);
+      --red-2: oklch(49.325% 0.19967 24.322);
+      --red-2d: oklch(54.881% 0.2139 21.382);
+      --slate-05: oklch(15.41% 0.0046 264.465);
+      --slate-06: oklch(16.706% 0.00533 248.233);
+      --slate-08: oklch(19.039% 0.00688 258.417);
+      --slate-12: oklch(23.361% 0.00896 255.653);
+      --slate-14: oklch(25.421% 0.01115 254.089);
+      --slate-20: oklch(31.514% 0.01438 256.824);
+      --slate-23: oklch(34.343% 0.01723 262.294);
+      --slate-24: oklch(35.412% 0.01768 258.409);
+      --slate-28: oklch(39.165% 0.01936 257.297);
+      --slate-40: oklch(49.977% 0.02562 256.83);
+      --slate-44: oklch(53.474% 0.02855 257.711);
+      --slate-51: oklch(59.293% 0.03109 258.407);
+      --slate-55: oklch(62.691% 0.02877 259.08);
+      --slate-56: oklch(63.654% 0.02732 257.711);
+      --slate-58: oklch(65.388% 0.0266 259.852);
+      --slate-70: oklch(75.749% 0.01822 256.377);
+      --slate-76: oklch(80.582% 0.0144 258.439);
+      --slate-84: oklch(87.168% 0.00944 258.479);
+      --slate-88: oklch(90.555% 0.00644 255.732);
+      --slate-92: oklch(93.637% 0.00469 258.621);
+      --slate-96: oklch(96.967% 0.00181 249.224);
+      --slate-97: oklch(97.566% 0.00181 249.234);
+      --slate-98: oklch(98.463% 0.00181 249.248);
+      --slate-100: oklch(100% 0.00011 271.152);
+      --font-system-ui: system-ui, sans-serif;
+      --font-size-00: 0.75rem;
+      --font-size-05: 0.916rem;
+      --font-size-10: 0.9375rem;
+      --font-size-15: 1.166rem;
+      --leading-05: 1.25;
+      --leading-10: 1.5;
+      --tracking-00: 0.0125em;
+      --tracking-05: 0.07125em;
+      --regular: 400; --medium: 500; --semibold: 600;
+      --space-10: 0.125rem; --space-15: 0.25rem; --space-20: 0.375rem;
+      --space-25: 0.5rem; --space-30: 0.625rem; --space-35: 0.75rem;
+      --space-40: 1rem; --space-45: 1.125rem; --space-50: 1.25rem;
+      --space-55: 1.5rem; --space-60: 2rem;
+      --space-30-40: clamp(var(--space-30), 0.5179rem + 0.5357vw, var(--space-40));
+      --grid-gap: clamp(var(--space-55), 1.4286rem + 0.3571vw, calc(var(--space-55)*1.167));
+      --ease-out-quad: cubic-bezier(.25, .46, .45, .94);
+      --motion-unit: 60ms;
+    }
+  }
+
+  @layer tokens-semantic {
+    :where(:host, :root) {
+      --canvas:         light-dark(var(--slate-98), var(--slate-05));
+      --surface:        light-dark(var(--slate-100), var(--slate-06));
+      --surface-hover:  light-dark(var(--slate-92), var(--slate-12));
+      --surface-tint:   light-dark(var(--slate-97), var(--slate-08));
+      --surface-active: light-dark(var(--slate-88), var(--slate-14));
+      --text-heading:   light-dark(var(--slate-24), var(--slate-92));
+      --text-body:      light-dark(var(--slate-20), var(--slate-88));
+      --text-muted:     light-dark(var(--slate-40), var(--slate-58));
+      --text-ghost:     light-dark(var(--slate-51), var(--slate-44));
+      --text-on-brand:  var(--slate-100);
+      --brand-text:     light-dark(var(--blue-3), var(--blue-4d));
+      --brand-surface:  light-dark(var(--blue-3), var(--blue-3d));
+      --brand-hover:    light-dark(var(--blue-2), var(--blue-2d));
+      --brand-active:   light-dark(var(--blue-1), var(--blue-1d));
+      --error:          light-dark(var(--red-1), var(--red-1d));
+      --border-color:   light-dark(var(--slate-76), var(--slate-20));
+      --input-color:    light-dark(var(--slate-55), var(--slate-40));
+      --font-size-small: clamp(var(--font-size-00), 0.7026rem + 0.2371vw, var(--font-size-05));
+      --font-size-body:  clamp(var(--font-size-10), 0.8722rem + 0.3264vw, var(--font-size-15));
+      --radius-sm: var(--space-10);
+      --radius:    var(--space-30);
+      --border-width:   calc(var(--space-10) / 2);
+      --border:         var(--border-width) solid var(--border-color);
+      --input-border:   var(--border-width) solid var(--input-color);
+      --focus-ring-size:  max(var(--space-10), 0.08em);
+      --focus-ring-color: var(--brand-text);
+      --duration-fast:   calc(var(--motion-unit)*2);
+      --duration-normal: calc(var(--motion-unit)*4);
+    }
+  }
+
+  @layer reset {
+    *, *::after, *::before { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 100%; -webkit-text-size-adjust: none; text-size-adjust: none; line-height: var(--leading-10); }
+    fieldset { border: none; padding: 0; }
+    legend { float: left; width: 100%; }
+    legend + * { clear: left; }
+    :where(ol,ul) { list-style: none; }
+    :where(button,input,select,textarea) { font: inherit; }
+    :focus-visible { outline-offset: max(var(--space-10), 0.09375em); }
+    [hidden] { display: none !important; }
+  }
+}
+
+@layer native {
+  body {
+    color: var(--text-body);
+    background-color: var(--canvas);
+    font-family: var(--font-system-ui);
+    font-size: var(--font-size-body);
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    text-decoration-skip-ink: auto;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-55);
+  }
+
+  :is(a,button,input,select):focus-visible {
+    outline: var(--focus-ring-size) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-size);
+  }
+  :is(a,button,input,select):focus:not(:focus-visible) { outline: none; }
+}
+
+@layer layouts {
+  .stack-y {
+    --gap: var(--space-30);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+
+  /* two equal columns */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-30-40);
+    column-gap: var(--grid-gap);
+  }
+
+  /* city + state + zip — city takes the space, state and zip are constrained */
+  .grid-address {
+    display: grid;
+    grid-template-columns: 1fr 5.5rem 10.5rem;
+    gap: var(--space-30-40);
+    column-gap: var(--grid-gap);
+  }
+
+  /* three equal phone columns */
+  .grid-3 {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-30-40);
+    column-gap: var(--grid-gap);
+  }
+
+  .grid-2 > *,
+  .grid-address > *,
+  .grid-3 > * {
+    min-width: 0;
+  }
+
+  @media (max-width: 42rem) {
+    .grid-2, .grid-address, .grid-3 {
+
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@layer components {
+  :where(button,.btn) {
+    background-color: unset;
+    color: var(--brand-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--space-15);
+    padding-inline: var(--space-40);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: var(--semibold);
+    letter-spacing: var(--tracking-00);
+    white-space: nowrap;
+  }
+  :where(button,.btn):not(.primary):not(:disabled):hover { background-color: var(--surface-hover); }
+  :where(button,.btn):not(.primary):not(:disabled):active { background-color: var(--surface-active); }
+  :where(button,.btn).primary { background-color: var(--brand-surface); color: var(--text-on-brand); }
+  :where(button,.btn).primary:not(:disabled):hover { background-color: var(--brand-hover); }
+  :where(button,.btn).primary:not(:disabled):active { background-color: var(--brand-active); }
+  @media (prefers-reduced-motion: no-preference) {
+    :where(button,.btn) { transition: background-color var(--duration-normal) ease; }
+  }
+
+  .field { display: flex; flex-direction: column; }
+  .field label {
+    font-weight: var(--semibold);
+    color: var(--text-heading);
+    line-height: var(--leading-05);
+    margin-block-end: var(--space-25);
+    font-size: var(--font-size-small);
+  }
+  .field .hint {
+    margin-block-start: var(--space-15);
+    color: var(--text-muted);
+    font-size: var(--font-size-small);
+  }
+  .opt {
+    font-weight: var(--regular);
+    color: var(--text-ghost);
+  }
+
+  input:is([type=text],[type=email],[type=tel]),
+  select {
+    inline-size: 100%;
+    padding-block: var(--space-35);
+    padding-inline: var(--space-45);
+    border: var(--input-border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    color: var(--text-body);
+    font: inherit;
+  }
+  ::placeholder { color: var(--text-ghost); }
+
+  select {
+    appearance: none;
+    padding-inline-end: var(--space-60);
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23677379' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-45) center;
+    background-size: 12px 8px;
+    cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) {
+    select { background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238b969c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  }
+  select:has(option[value=""]:checked) { color: var(--text-ghost); }
+
+  input:is([type=text],[type=email],[type=tel]):focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-ring-size) var(--focus-ring-color);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    input:is([type=text],[type=email],[type=tel]), select {
+      transition: box-shadow var(--duration-fast) var(--ease-out-quad);
+    }
+  }
+
+  input[readonly] {
+    color: var(--text-ghost);
+    background-color: var(--surface-tint);
+    cursor: default;
+  }
+
+  /* modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: light-dark(oklch(35% 0.01 258 / 0.45), oklch(10% 0.005 258 / 0.7));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-55);
+  }
+
+  .modal {
+    background-color: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 680px;
+    max-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: var(--space-45) var(--space-55) var(--space-40);
+    border-bottom: var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-40);
+    flex-shrink: 0;
+  }
+
+  .modal-header h2 {
+    font-size: var(--font-size-body);
+    font-weight: var(--semibold);
+    color: var(--text-heading);
+    line-height: var(--leading-05);
+    margin: 0;
+  }
+
+  .modal-header p {
+    font-size: var(--font-size-small);
+    color: var(--text-muted);
+    margin-block-start: var(--space-15);
+  }
+
+  .modal-header p strong {
+    color: var(--text-heading);
+    font-weight: var(--semibold);
+  }
+
+  .btn-close {
+    background: none;
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-15);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .btn-close:hover { background-color: var(--surface-hover); color: var(--text-body); }
+  .btn-close svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+  .modal-body {
+    padding: var(--space-45) var(--space-55);
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .modal-footer {
+    padding: var(--space-35) var(--space-55);
+    border-top: var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-25);
+    flex-shrink: 0;
+    background-color: var(--surface-tint);
+  }
+
+  .register-toggle {
+    width: 100%;
+    text-align: left;
+    padding: var(--space-35) var(--space-45);
+    border: var(--border-width) dashed var(--input-color);
+    border-radius: var(--radius);
+    background-color: var(--surface-tint);
+    color: var(--brand-text);
+    font-weight: var(--semibold);
+    font-size: var(--font-size-small);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-25);
+  }
+  .register-toggle:hover { background-color: var(--surface-hover); border-color: var(--brand-text); }
+  .register-toggle svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; flex-shrink: 0; }
+
+  .section-label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-05);
+    padding-block-end: var(--space-30);
+    border-bottom: var(--border);
+    margin-block-end: var(--space-40);
+  }
+
+  .note {
+    font-size: var(--font-size-small);
+    color: var(--text-ghost);
+    line-height: var(--leading-10);
+    padding: var(--space-30) var(--space-40);
+    background-color: var(--surface-tint);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--border-color);
+  }
+
+  #provision-section {
+    margin-block-start: var(--space-45);
+    padding-block-start: var(--space-45);
+    border-top: var(--border);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="modal-backdrop" role="presentation">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title">Kno2 Credentials</h2>
+        <p>Edit Kno2 credentials for <strong>Chris Test</strong></p>
+      </div>
+      <button class="btn-close" aria-label="Close" type="button">
+        <svg viewBox="0 0 16 16"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="stack-y" style="--gap: var(--space-40)">
+
+        <div class="field">
+          <label for="org-id">Organization ID</label>
+          <input type="text" id="org-id" name="org-id" placeholder="Paste existing org ID">
+          <span class="hint">For migration from classic or an existing Kno2 account.</span>
+        </div>
+
+        <button class="register-toggle" id="toggle-btn" aria-expanded="false" aria-controls="provision-section" type="button">
+          <svg viewBox="0 0 16 16" id="toggle-icon"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>
+          <span id="toggle-label">Register with Kno2</span>
+        </button>
+
+      </div>
+
+      <section id="provision-section" hidden aria-label="Kno2 provisioning form">
+        <div class="stack-y" style="--gap: var(--space-55)">
+
+          <fieldset>
+            <legend class="section-label">Contact</legend>
+            <div class="stack-y" style="--gap: var(--space-35)">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="first-name">First name</label>
+                  <input type="text" id="first-name" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="last-name">Last name</label>
+                  <input type="text" id="last-name" placeholder="EHR populated">
+                </div>
+              </div>
+              <div class="field">
+                <label for="email">Email address</label>
+                <input type="email" id="email" placeholder="EHR populated">
+                <span class="hint">Kno2 sends the ID proofing email to this address.</span>
+              </div>
+              <div class="field">
+                <label for="job-function">Job function</label>
+                <select id="job-function">
+                  <option value="">Select…</option>
+                  <option>Administrative Healthcare Staff</option>
+                  <option>Executive/Administrator</option>
+                  <option>Health Information Management</option>
+                  <option>Medical Assistant</option>
+                  <option>Nurse</option>
+                  <option>Office Support</option>
+                  <option>Paramedic/EMT</option>
+                  <option>Physician</option>
+                  <option>Therapist</option>
+                </select>
+                <span class="hint">Values are environment-specific — loaded from Kno2 API at runtime.</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="contact-phone">Phone</label>
+                  <input type="tel" id="contact-phone" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="extension">Extension <span class="opt">(optional)</span></label>
+                  <input type="text" id="extension" placeholder="Omit if none">
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend class="section-label">Organization</legend>
+            <div class="stack-y" style="--gap: var(--space-35)">
+              <div class="field">
+                <label for="practice-name">Practice name <span class="opt">(max 50 chars)</span></label>
+                <input type="text" id="practice-name" placeholder="EHR populated">
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="org-type">Organization type</label>
+                  <select id="org-type" onchange="var n=this.options[this.selectedIndex].text;document.getElementById('care-setting').value=n==='Select…'?'':n">
+                    <option value="">Select…</option>
+                    <option>Assisted Living</option>
+                    <option>Behavioral Health Center</option>
+                    <option>Durable Medical Equipment</option>
+                    <option>Emergency Medical Services</option>
+                    <option>Health System</option>
+                    <option>Home Care</option>
+                    <option>Hospice Care</option>
+                    <option>Hospital</option>
+                  </select>
+                  <span class="hint">Loaded from Kno2 API — environment-specific IDs.</span>
+                </div>
+                <div class="field">
+                  <label for="specialty">Specialty</label>
+                  <select id="specialty">
+                    <option value="">Select…</option>
+                    <option>Anesthesiology</option>
+                    <option>Cardiology</option>
+                    <option>Chiropractic</option>
+                    <option>Durable Medical Equipment</option>
+                    <option>Emergency</option>
+                    <option>Endocrinology</option>
+                    <option>Family Practice</option>
+                    <option>General</option>
+                  </select>
+                  <span class="hint">Loaded from Kno2 API — environment-specific IDs.</span>
+                </div>
+              </div>
+              <div class="field">
+                <label for="subdomain">Subdomain</label>
+                <input type="text" id="subdomain" placeholder="e.g. healthyclinic">
+                <span class="hint">Used in the org's Direct address — e.g. practice@<strong>healthyclinic</strong>.kno2fy.com. Max 24 chars, a–z / 0–9 / hyphens only, no leading or trailing hyphen. Must be entered manually.</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="npi">NPI <span class="opt">(clinicians only)</span></label>
+                  <input type="text" id="npi" placeholder="EHR populated">
+                  <span class="hint">Omit entirely if the user is not a clinician.</span>
+                </div>
+                <div class="field">
+                  <label for="ehr-name">EHR</label>
+                  <input type="text" id="ehr-name" value="ICANotes" readonly>
+                  <span class="hint">Fixed — always sent as ICANotes.</span>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="website">Practice website</label>
+                  <input type="text" id="website" placeholder="https://">
+                  <span class="hint">The client's practice website.</span>
+                </div>
+                <div class="field">
+                  <label for="description">Description <span class="opt">(optional)</span></label>
+                  <input type="text" id="description" placeholder="Free-text description">
+                </div>
+              </div>
+              <input type="hidden" id="care-setting" name="careSetting">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend class="section-label">Location</legend>
+            <div class="stack-y" style="--gap: var(--space-35)">
+              <div class="grid-2">
+                <div class="field">
+                  <label for="street">Street address</label>
+                  <input type="text" id="street" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="unit">Unit <span class="opt">(optional)</span></label>
+                  <input type="text" id="unit" placeholder="Suite, floor…">
+                </div>
+              </div>
+              <div class="grid-address">
+                <div class="field">
+                  <label for="city">City</label>
+                  <input type="text" id="city" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="state">State</label>
+                  <select id="state" name="state">
+                    <option value="">…</option>
+                    <option value="AL">AL</option>
+                    <option value="AK">AK</option>
+                    <option value="AZ">AZ</option>
+                    <option value="AR">AR</option>
+                    <option value="CA">CA</option>
+                    <option value="CO">CO</option>
+                    <option value="CT">CT</option>
+                    <option value="DE">DE</option>
+                    <option value="FL">FL</option>
+                    <option value="GA">GA</option>
+                    <option value="HI">HI</option>
+                    <option value="ID">ID</option>
+                    <option value="IL">IL</option>
+                    <option value="IN">IN</option>
+                    <option value="IA">IA</option>
+                    <option value="KS">KS</option>
+                    <option value="KY">KY</option>
+                    <option value="LA">LA</option>
+                    <option value="ME">ME</option>
+                    <option value="MD">MD</option>
+                    <option value="MA">MA</option>
+                    <option value="MI">MI</option>
+                    <option value="MN">MN</option>
+                    <option value="MS">MS</option>
+                    <option value="MO">MO</option>
+                    <option value="MT">MT</option>
+                    <option value="NE">NE</option>
+                    <option value="NV">NV</option>
+                    <option value="NH">NH</option>
+                    <option value="NJ">NJ</option>
+                    <option value="NM">NM</option>
+                    <option value="NY">NY</option>
+                    <option value="NC">NC</option>
+                    <option value="ND">ND</option>
+                    <option value="OH">OH</option>
+                    <option value="OK">OK</option>
+                    <option value="OR">OR</option>
+                    <option value="PA">PA</option>
+                    <option value="RI">RI</option>
+                    <option value="SC">SC</option>
+                    <option value="SD">SD</option>
+                    <option value="TN">TN</option>
+                    <option value="TX">TX</option>
+                    <option value="UT">UT</option>
+                    <option value="VT">VT</option>
+                    <option value="VA">VA</option>
+                    <option value="WA">WA</option>
+                    <option value="WV">WV</option>
+                    <option value="WI">WI</option>
+                    <option value="WY">WY</option>
+                    <option value="DC">DC</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="zip">ZIP</label>
+                  <input type="text" id="zip" placeholder="EHR populated">
+                </div>
+              </div>
+              <div class="grid-3">
+                <div class="field">
+                  <label for="loc-phone">Location phone</label>
+                  <input type="tel" id="loc-phone" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="primary-phone">Primary phone</label>
+                  <input type="tel" id="primary-phone" placeholder="EHR populated">
+                </div>
+                <div class="field">
+                  <label for="primary-fax">Primary fax</label>
+                  <input type="tel" id="primary-fax" placeholder="EHR populated">
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <p class="note">On submission: (1) POST to Kno2 provisioning API — org ID returned immediately and written to the Organization ID field above. (2) POST to <code>managementaccess</code> to delegate Communications API access to SA2 before Kno2 activates the org.</p>
+
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button">Cancel</button>
+      <button type="button">Clear</button>
+      <button type="button" class="primary">Save</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const toggleBtn = document.getElementById('toggle-btn');
+  const toggleIcon = document.getElementById('toggle-icon');
+  const toggleLabel = document.getElementById('toggle-label');
+  const section = document.getElementById('provision-section');
+
+  toggleBtn.addEventListener('click', function() {
+    const isOpen = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', String(!isOpen));
+    section.hidden = isOpen;
+    if (isOpen) {
+      toggleIcon.innerHTML = '<line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/>';
+      toggleLabel.textContent = 'Register with Kno2';
+    } else {
+      toggleIcon.innerHTML = '<line x1="3" y1="8" x2="13" y2="8"/>';
+      toggleLabel.textContent = 'Hide provisioning form';
+    }
+  });
+
+  document.querySelector('.btn-close').addEventListener('click', function() {
+    alert('Modal closed.');
+  });
+</script>
+
+</body>
+</html>

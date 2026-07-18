@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="inboxApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Universal Inbox</title>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <style>
+        @layer config {
+            :root {
+                --primary-hue: 216;
+                --primary-sat: 53%;
+                --accent-hue: 89;
+                --accent-sat: 66%;
+                --gray-hue: 216;
+                --gray-sat: 12%;
+
+                --clinical-hue: 210;
+                --fax-hue: 30;
+                --dsm-hue: 150;
+                --hie-hue: 330;
+
+                --primary-05: hsl(216, 53%, 10%);
+                --primary-10: hsl(216, 53%, 15%);
+                --primary-20: hsl(216, 53%, 20%);
+                --primary-30: hsl(216, 53%, 25%);
+                --primary-40: hsl(216, 53%, 29%);
+                --primary-50: hsl(216, 53%, 35%);
+                --primary-60: hsl(216, 53%, 42%);
+                --primary-70: hsl(216, 53%, 52%);
+                --primary-80: hsl(216, 53%, 65%);
+                --primary-90: hsl(216, 53%, 80%);
+                --primary-95: hsl(216, 53%, 88%);
+                --primary-96: hsl(216, 53%, 90%);
+                --primary-97: hsl(216, 53%, 93%);
+                --primary-98: hsl(216, 53%, 95%);
+                --primary-99: hsl(216, 53%, 97%);
+                --primary-100: hsl(216, 53%, 99%);
+
+                --gray-50: hsl(var(--gray-hue), var(--gray-sat), 10%);
+                --gray-100: hsl(var(--gray-hue), var(--gray-sat), 15%);
+                --gray-200: hsl(var(--gray-hue), var(--gray-sat), 20%);
+                --gray-300: hsl(var(--gray-hue), var(--gray-sat), 25%);
+                --gray-400: hsl(var(--gray-hue), var(--gray-sat), 30%);
+                --gray-500: hsl(var(--gray-hue), var(--gray-sat), 35%);
+                --gray-600: hsl(var(--gray-hue), var(--gray-sat), 40%);
+                --gray-700: hsl(var(--gray-hue), var(--gray-sat), 47%);
+                --gray-800: hsl(var(--gray-hue), var(--gray-sat), 57%);
+                --gray-850: hsl(var(--gray-hue), var(--gray-sat), 67%);
+                --gray-900: hsl(var(--gray-hue), var(--gray-sat), 75%);
+                --gray-925: hsl(var(--gray-hue), var(--gray-sat), 83%);
+                --gray-940: hsl(var(--gray-hue), var(--gray-sat), 88%);
+                --gray-950: hsl(var(--gray-hue), var(--gray-sat), 92%);
+                --gray-960: hsl(var(--gray-hue), var(--gray-sat), 94%);
+                --gray-970: hsl(var(--gray-hue), var(--gray-sat), 96%);
+                --gray-980: hsl(var(--gray-hue), var(--gray-sat), 97%);
+                --gray-990: hsl(var(--gray-hue), var(--gray-sat), 98%);
+                --white: hsl(0, 0%, 100%);
+
+                --clinical: hsl(var(--clinical-hue), 60%, 48%);
+                --clinical-bg: hsl(var(--clinical-hue), 60%, 95%);
+                --fax: hsl(var(--fax-hue), 85%, 45%);
+                --fax-bg: hsl(var(--fax-hue), 80%, 95%);
+                --dsm: hsl(var(--dsm-hue), 50%, 38%);
+                --dsm-bg: hsl(var(--dsm-hue), 50%, 95%);
+                --hie: hsl(var(--hie-hue), 70%, 45%);
+                --hie-bg: hsl(var(--hie-hue), 70%, 95%);
+
+                --text: var(--gray-50);
+                --text-muted: var(--gray-700);
+                --bg: var(--gray-980);
+                --border: var(--gray-925);
+                --hover-bg: var(--gray-970);
+
+                --space-02: 0.25rem;
+                --space-03: 0.375rem;
+                --space-04: 0.5rem;
+                --space-05: 0.75rem;
+                --space-06: 1rem;
+                --space-07: 1.25rem;
+                --space-08: 1.5rem;
+                --space-09: 2rem;
+                --space-10: 2.5rem;
+                --radius-md: var(--space-04);
+                --radius-lg: var(--space-05);
+            }
+        }
+
+        @layer resets {
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                font-size: 1rem;
+                line-height: 1.5;
+                color: var(--text);
+                background: var(--bg);
+                min-height: 100vh;
+            }
+
+            button {
+                font: inherit;
+                cursor: pointer;
+            }
+
+            input {
+                font: inherit;
+            }
+        }
+
+        @layer components {
+            .app-header {
+                background: var(--white);
+                border-bottom: 1px solid var(--border);
+                padding: var(--space-06) var(--space-08);
+                display: grid;
+                grid-template-columns: 12rem 1fr 12rem;
+                align-items: center;
+                gap: var(--space-08);
+            }
+
+            .app-title {
+                font-size: 1.125rem;
+                font-weight: 500;
+                color: var(--primary-60);
+                line-height: 1.25;
+                letter-spacing: 0.02em;
+                text-transform: uppercase;
+            }
+
+            .logs-btn {
+                background: var(--white);
+                border: 1px solid var(--border);
+                padding: var(--space-04) var(--space-07);
+                border-radius: var(--radius-md);
+                font-weight: 500;
+                color: var(--text);
+                justify-self: end;
+            }
+
+            .logs-btn:hover {
+                background: var(--hover-bg);
+                border-color: var(--text-muted);
+            }
+
+            .search-container {
+                max-width: 40rem;
+                width: 100%;
+                position: relative;
+                justify-self: center;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: var(--space-04) var(--space-06);
+                padding-left: 2.5rem;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: var(--white);
+            }
+
+            .search-icon {
+                position: absolute;
+                left: var(--space-05);
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 1.25rem;
+            }
+
+            .search-results {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                margin-top: var(--space-02);
+                max-height: 20rem;
+                overflow-y: auto;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                display: none;
+            }
+
+            .search-results.show {
+                display: block;
+            }
+
+            .search-result-item {
+                padding: var(--space-05) var(--space-06);
+                border-bottom: 1px solid var(--border);
+                cursor: pointer;
+            }
+
+            .search-result-item:hover {
+                background: var(--hover-bg);
+            }
+
+            .inbox-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: var(--white);
+                border-bottom: 1px solid var(--border);
+                padding: 0 var(--space-08);
+            }
+
+            .inbox-nav-tabs {
+                display: flex;
+                gap: var(--space-02);
+            }
+
+            .inbox-nav-actions {
+                display: flex;
+                gap: var(--space-04);
+                align-items: center;
+            }
+
+            .selection-count {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+                margin-right: var(--space-04);
+            }
+
+            .inbox-nav-btn {
+                background: none;
+                border: none;
+                padding: var(--space-06) var(--space-07);
+                display: flex;
+                align-items: center;
+                gap: var(--space-04);
+                color: var(--text-muted);
+                border-bottom: 2px solid transparent;
+                font-weight: 500;
+            }
+
+            .inbox-nav-btn i {
+                font-size: 1.25rem;
+            }
+
+            .inbox-nav-btn:hover {
+                background: var(--hover-bg);
+            }
+
+            .inbox-nav-btn.active {
+                color: var(--text);
+                border-bottom-color: currentColor;
+            }
+
+            .inbox-nav-btn .badge {
+                background: var(--gray-940);
+                color: var(--text);
+                padding: 0.125rem var(--space-03);
+                border-radius: var(--space-02);
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .inbox-container {
+                display: grid;
+                grid-template-columns: 16rem 1fr;
+                height: calc(100vh - 8rem);
+            }
+
+            .folder-nav {
+                background: var(--white);
+                border-right: 1px solid var(--border);
+                padding: var(--space-06);
+                overflow-y: auto;
+            }
+
+            .compose-btn {
+                background: hsl(216, 53%, 35%);
+                color: var(--white);
+                border: none;
+                padding: var(--space-04) var(--space-06);
+                border-radius: var(--radius-md);
+                font-weight: 500;
+                margin: 0 auto var(--space-06);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-03);
+            }
+
+            .compose-btn:hover {
+                background: hsl(216, 53%, 29%);
+            }
+
+            .compose-btn:active {
+                background: hsl(216, 53%, 25%);
+            }
+
+            .compose-btn i {
+                font-size: 1.125rem;
+            }
+
+            .compose-divider {
+                border-top: 1px solid var(--border);
+                margin-bottom: var(--space-06);
+            }
+
+            .folder-nav h3 {
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                margin-bottom: var(--space-04);
+                font-weight: 600;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .folder-nav h3 button {
+                background: none;
+                border: none;
+                padding: var(--space-02);
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+            }
+
+            .folder-nav h3 button i {
+                font-size: 1rem;
+            }
+
+            .folder-nav h3 button:hover {
+                background: var(--hover-bg);
+                border-radius: var(--radius-md);
+            }
+
+            .folder-list {
+                list-style: none;
+            }
+
+            .folder-item {
+                padding: var(--space-04) var(--space-05);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--space-02);
+                position: relative;
+            }
+
+            .folder-item-menu {
+                background: none;
+                border: none;
+                padding: var(--space-02);
+                color: var(--text);
+                display: none;
+                align-items: center;
+                position: absolute;
+                right: var(--space-03);
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .folder-item-menu i {
+                font-size: 1.25rem;
+            }
+
+            .folder-item:hover .folder-item-menu {
+                display: block;
+            }
+
+            .folder-item:hover .folder-count {
+                display: none;
+            }
+
+            .folder-item:hover {
+                background: var(--hover-bg);
+            }
+
+            .folder-item.active {
+                background: var(--gray-960);
+                font-weight: 500;
+            }
+
+            .folder-count {
+                background: var(--gray-940);
+                color: var(--text);
+                padding: 0.125rem var(--space-03);
+                border-radius: var(--space-02);
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .message-list {
+                background: var(--bg);
+                overflow-y: auto;
+            }
+
+            .message-item {
+                background: hsl(var(--gray-hue), var(--gray-sat), 96%);
+                border-bottom: 1px solid var(--border);
+                padding: var(--space-05) var(--space-06);
+                cursor: pointer;
+                position: relative;
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: var(--space-05);
+                align-items: start;
+            }
+
+            .message-checkbox {
+                cursor: pointer;
+                width: 1rem;
+                height: 1rem;
+                accent-color: var(--primary-50);
+                margin-top: 0.375rem;
+            }
+
+            .message-content {
+                min-width: 0;
+            }
+
+            .message-item:hover {
+                z-index: 1;
+            }
+
+            .message-actions {
+                position: absolute;
+                right: var(--space-08);
+                top: 50%;
+                transform: translateY(-50%);
+                display: none;
+                gap: var(--space-03);
+                align-items: center;
+            }
+
+            .message-item:hover .message-actions {
+                display: flex;
+            }
+
+            .message-item:hover .message-date {
+                opacity: 0;
+            }
+
+            .message-item.selected {
+                background: var(--primary-98);
+            }
+
+            .message-action-btn {
+                background: none;
+                border: none;
+                padding: var(--space-03);
+                cursor: pointer;
+                color: var(--text-muted);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .message-action-btn:hover {
+                background: var(--white);
+                color: var(--text);
+            }
+
+            .message-action-btn i {
+                font-size: 1.25rem;
+            }
+
+            .message-action-tooltip {
+                position: absolute;
+                top: calc(100% + var(--space-03));
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--text);
+                color: var(--white);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                white-space: nowrap;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 200ms ease;
+                z-index: 10;
+            }
+
+            .message-actions> :nth-last-child(1) .message-action-tooltip {
+                left: auto;
+                right: 0;
+                transform: none;
+            }
+
+            .message-action-btn:hover .message-action-tooltip {
+                opacity: 1;
+            }
+
+            .toolbar-action-btn {
+                background: none;
+                border: 1px solid var(--border);
+                padding: var(--space-03) var(--space-04);
+                border-radius: var(--radius-md);
+                color: var(--text);
+                display: flex;
+                align-items: center;
+                gap: var(--space-02);
+                font-size: 0.875rem;
+                position: relative;
+            }
+
+            .toolbar-action-btn:hover:not(:disabled) {
+                background: var(--hover-bg);
+            }
+
+            .toolbar-action-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .toolbar-action-btn:disabled .toolbar-action-tooltip {
+                display: none;
+            }
+
+            .toolbar-action-btn i {
+                font-size: 1.25rem;
+            }
+
+            .toolbar-action-tooltip {
+                position: absolute;
+                top: calc(100% + var(--space-03));
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--text);
+                color: var(--white);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                white-space: nowrap;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 200ms ease;
+                z-index: 10;
+            }
+
+            .toolbar-action-btn:hover .toolbar-action-tooltip {
+                opacity: 1;
+            }
+
+            .message-item:hover {
+                border-bottom-color: var(--gray-700);
+                box-shadow: inset 0 -1px 0 0 var(--gray-700), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+
+            .message-item.unread {
+                background: var(--white);
+            }
+
+            .message-item.unread .message-title {
+                font-weight: 500;
+            }
+
+            .message-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: var(--space-02);
+                position: relative;
+            }
+
+            .message-title {
+                font-weight: 400;
+            }
+
+            .message-date {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+                flex-shrink: 0;
+                margin-left: var(--space-04);
+            }
+
+            .message-preview {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+            }
+
+            .message-detail {
+                background: var(--white);
+                padding: var(--space-08);
+                overflow-y: auto;
+            }
+
+            .detail-header {
+                display: flex;
+                align-items: center;
+                gap: var(--space-05);
+                margin-bottom: var(--space-08);
+                padding-bottom: var(--space-06);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .back-btn {
+                background: none;
+                border: 1px solid var(--border);
+                padding: var(--space-04);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+            }
+
+            .back-btn i {
+                font-size: 1rem;
+            }
+
+            .back-btn:hover {
+                background: var(--hover-bg);
+            }
+
+            .detail-title {
+                font-size: 1.25rem;
+                font-weight: 500;
+            }
+
+            .detail-meta {
+                display: grid;
+                gap: var(--space-04);
+                margin-bottom: var(--space-08);
+                padding: var(--space-06);
+                background: var(--bg);
+                border-radius: var(--radius-md);
+            }
+
+            .meta-row {
+                display: flex;
+                gap: var(--space-06);
+            }
+
+            .meta-label {
+                color: var(--text-muted);
+                min-width: 6rem;
+            }
+
+            .detail-content {
+                line-height: 1.6;
+            }
+
+            .patient-match-widget {
+                background: var(--gray-990);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: var(--space-06);
+                margin-top: var(--space-08);
+            }
+
+            .patient-match-widget h4 {
+                margin-bottom: var(--space-05);
+                font-weight: 500;
+            }
+
+            .match-search {
+                width: 100%;
+                padding: var(--space-04) var(--space-05);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                margin-bottom: var(--space-05);
+            }
+
+            .match-results {
+                display: grid;
+                gap: var(--space-03);
+            }
+
+            .match-result {
+                padding: var(--space-05);
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+            }
+
+            .match-result:hover {
+                background: var(--hover-bg);
+            }
+
+            .btn-primary {
+                background: hsl(216, 53%, 35%);
+                color: var(--white);
+                border: none;
+                padding: var(--space-04) var(--space-07);
+                border-radius: var(--radius-md);
+                font-weight: 500;
+            }
+
+            .btn-primary:hover {
+                background: hsl(216, 53%, 29%);
+            }
+
+            .btn-primary:active {
+                background: hsl(216, 53%, 25%);
+            }
+
+            .audit-log {
+                margin-top: var(--space-08);
+                padding-top: var(--space-08);
+                border-top: 1px solid var(--border);
+            }
+
+            .audit-log h4 {
+                margin-bottom: var(--space-05);
+                font-weight: 500;
+            }
+
+            .audit-item {
+                padding: var(--space-04);
+                background: var(--bg);
+                border-radius: var(--radius-md);
+                margin-bottom: var(--space-03);
+                font-size: 0.875rem;
+            }
+
+            .info-badge {
+                background: var(--primary-98);
+                color: var(--primary-60);
+                border: 1px solid var(--primary-90);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-02);
+                white-space: nowrap;
+            }
+
+            .patient-link {
+                color: var(--primary-60);
+                text-decoration: underline;
+                cursor: pointer;
+            }
+
+            .patient-link:hover {
+                color: var(--primary-50);
+            }
+
+            .confidence-badge {
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .confidence-high {
+                background: hsl(120, 60%, 90%);
+                color: hsl(120, 60%, 25%);
+                border: 1px solid hsl(120, 60%, 80%);
+            }
+
+            .confidence-medium {
+                background: hsl(45, 80%, 90%);
+                color: hsl(45, 80%, 25%);
+                border: 1px solid hsl(45, 80%, 80%);
+            }
+
+            .confidence-low {
+                background: hsl(25, 80%, 90%);
+                color: hsl(25, 80%, 25%);
+                border: 1px solid hsl(25, 80%, 80%);
+            }
+
+            .warning-badge {
+                background: hsl(45, 80%, 90%);
+                color: hsl(45, 80%, 25%);
+                border: 1px solid hsl(45, 80%, 80%);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-02);
+                white-space: nowrap;
+            }
+
+            .urgent-badge {
+                background: hsl(0, 85%, 95%);
+                color: hsl(0, 85%, 40%);
+                border: 1px solid hsl(0, 85%, 85%);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-02);
+                white-space: nowrap;
+                margin-left: var(--space-04);
+            }
+
+            .doc-type-badge {
+                background: var(--primary-98);
+                color: var(--primary-60);
+                border: 1px solid var(--primary-90);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-02);
+                white-space: nowrap;
+                margin-left: var(--space-04);
+            }
+
+            .alert-type-badge {
+                background: var(--hie-bg);
+                color: var(--hie);
+                border: 1px solid hsl(var(--hie-hue), 70%, 85%);
+                padding: var(--space-02) var(--space-04);
+                border-radius: var(--radius-md);
+                font-size: 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-02);
+                white-space: nowrap;
+                margin-left: var(--space-04);
+            }
+
+            .severity-stat {
+                background: hsl(0, 85%, 95%);
+                color: hsl(0, 85%, 40%);
+                border: 1px solid hsl(0, 85%, 85%);
+            }
+
+            .severity-urgent {
+                background: hsl(25, 85%, 95%);
+                color: hsl(25, 85%, 40%);
+                border: 1px solid hsl(25, 85%, 85%);
+            }
+
+            .severity-routine {
+                background: var(--gray-960);
+                color: var(--gray-600);
+                border: 1px solid var(--gray-925);
+            }
+
+            .fax-controls {
+                background: var(--white);
+                border-bottom: 1px solid var(--border);
+                padding: var(--space-05) var(--space-06);
+                display: flex;
+                gap: var(--space-04);
+                align-items: center;
+            }
+
+            .fax-view-label {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+            }
+
+            .fax-view-select {
+                padding: var(--space-03) var(--space-05);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                background: var(--white);
+                color: var(--text);
+                font-size: 0.875rem;
+            }
+
+            .fax-view-select:hover {
+                background: var(--hover-bg);
+            }
+
+            @media (max-width: 768px) {
+                .inbox-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .folder-nav {
+                    border-right: none;
+                    border-bottom: 1px solid var(--border);
+                }
+            }
+        }
+    </style>
+</head>
+
+<body ng-controller="InboxCtrl as vm">
+    <header class="app-header">
+        <div class="app-title">Messages</div>
+        <div class="search-container">
+            <i class="ph-bold ph-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search all messages..." ng-model="vm.searchQuery" ng-change="vm.onSearch()">
+            <div class="search-results" ng-class="{show: vm.searchResults.length > 0}">
+                <div class="search-result-item" ng-repeat="result in vm.searchResults" ng-click="vm.openSearchResult(result)">
+                    <div><strong>{{result.type}}</strong> - {{result.subject}}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">{{result.from}} - {{result.date}}</div>
+                </div>
+            </div>
+        </div>
+        <button class="logs-btn" ng-click="vm.openLogs()">Logs</button>
+    </header>
+
+    <nav class="inbox-nav" data-active-section="{{vm.activeInbox === 'clinical' ? 'Clinic' : vm.activeInbox === 'fax' ? 'Fax' : vm.activeInbox === 'dsm' ? 'DSM' : 'HIE'}}">
+        <div class="inbox-nav-tabs">
+            <button class="inbox-nav-btn" ng-class="{active: vm.activeInbox === 'clinical'}" ng-click="vm.setInbox('clinical')">
+                <i class="ph-bold ph-tray" style="color: var(--clinical);"></i>
+                Clinic
+                <span class="badge">{{vm.getClinicalCount()}}</span>
+            </button>
+            <button class="inbox-nav-btn" ng-class="{active: vm.activeInbox === 'fax'}" ng-click="vm.setInbox('fax')">
+                <i class="ph-bold ph-file-text" style="color: var(--fax);"></i>
+                Fax
+                <span class="badge">{{vm.getFaxCount()}}</span>
+            </button>
+            <button class="inbox-nav-btn" ng-class="{active: vm.activeInbox === 'dsm'}" ng-click="vm.setInbox('dsm')">
+                <i class="ph-bold ph-shield-check" style="color: var(--dsm);"></i>
+                <span style="letter-spacing: 0.03em;">DSM</span>
+                <span class="badge">{{vm.getDsmCount()}}</span>
+            </button>
+            <button class="inbox-nav-btn" ng-class="{active: vm.activeInbox === 'hie'}" ng-click="vm.setInbox('hie')">
+                <i class="ph-bold ph-network" style="color: var(--hie);"></i>
+                <span style="letter-spacing: 0.03em;">HIE</span>
+                <span class="badge">{{vm.getHieCount()}}</span>
+            </button>
+        </div>
+        <div class="inbox-nav-actions" ng-if="vm.selectedMessages.length > 0">
+            <span class="selection-count">{{vm.selectedMessages.length}} selected</span>
+            <button class="toolbar-action-btn" ng-click="vm.replyToSelected()" ng-if="vm.canReply()">
+                <i class="ph-bold ph-arrow-bend-up-left"></i>
+                <span class="toolbar-action-tooltip">Reply</span>
+            </button>
+            <button class="toolbar-action-btn" ng-click="vm.replyAllToSelected()" ng-if="vm.canReply()" ng-disabled="!vm.canReplyAll()">
+                <i class="ph-bold ph-arrows-left-right"></i>
+                <span class="toolbar-action-tooltip">Reply All</span>
+            </button>
+            <button class="toolbar-action-btn" ng-click="vm.forwardSelected()" ng-if="vm.canReply()">
+                <i class="ph-bold ph-arrow-bend-up-right"></i>
+                <span class="toolbar-action-tooltip">Forward</span>
+            </button>
+            <button class="toolbar-action-btn" ng-click="vm.printSelected()">
+                <i class="ph-bold ph-printer"></i>
+                <span class="toolbar-action-tooltip">Print</span>
+            </button>
+            <button class="toolbar-action-btn" ng-click="vm.deleteSelected()">
+                <i class="ph-bold ph-trash"></i>
+                <span class="toolbar-action-tooltip">Delete</span>
+            </button>
+            <button class="toolbar-action-btn" ng-click="vm.moveSelected()">
+                <i class="ph-bold ph-folder"></i>
+                <i class="ph-bold ph-caret-down" style="font-size: 0.75rem; margin-left: -0.25rem;"></i>
+                <span class="toolbar-action-tooltip">Move to Folder</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="inbox-container">
+        <aside class="folder-nav">
+            <button class="compose-btn" ng-click="vm.compose()" ng-if="vm.activeInbox === 'clinical' || vm.activeInbox === 'dsm'">
+                <i class="ph-bold ph-pencil-simple"></i>
+                Compose
+            </button>
+            <button class="compose-btn" ng-click="vm.sendFax()" ng-if="vm.activeInbox === 'fax'">
+                <i class="ph-bold ph-paper-plane-tilt"></i>
+                Send Fax
+            </button>
+            <button class="compose-btn" ng-click="vm.queryHIE()" ng-if="vm.activeInbox === 'hie'">
+                <i class="ph-bold ph-magnifying-glass"></i>
+                Query
+            </button>
+            <div class="compose-divider"></div>
+            <ul class="folder-list" ng-if="vm.activeInbox === 'hie'" style="margin-bottom: var(--space-06);">
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'inbox'}" ng-click="vm.setFolder('inbox')">
+                    <span>Inbox</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'deleted'}" ng-click="vm.setFolder('deleted')">
+                    <span>Deleted</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'archive'}" ng-click="vm.setFolder('archive')">
+                    <span>Archive</span>
+                </li>
+            </ul>
+            <ul class="folder-list" ng-if="vm.activeInbox === 'clinical'" style="margin-bottom: var(--space-06);">
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'inbox'}" ng-click="vm.setFolder('inbox')">
+                    <span>Inbox</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'drafts'}" ng-click="vm.setFolder('drafts')">
+                    <span>Drafts</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'sent'}" ng-click="vm.setFolder('sent')">
+                    <span>Sent</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'deleted'}" ng-click="vm.setFolder('deleted')">
+                    <span>Deleted</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'archive'}" ng-click="vm.setFolder('archive')">
+                    <span>Archive</span>
+                </li>
+            </ul>
+            <ul class="folder-list" ng-if="vm.activeInbox === 'fax'" style="margin-bottom: var(--space-06);">
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'inbox'}" ng-click="vm.setFolder('inbox')">
+                    <span>Inbox</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'sent'}" ng-click="vm.setFolder('sent')">
+                    <span>Sent</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'deleted'}" ng-click="vm.setFolder('deleted')">
+                    <span>Deleted</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'archive'}" ng-click="vm.setFolder('archive')">
+                    <span>Archive</span>
+                </li>
+            </ul>
+            <ul class="folder-list" ng-if="vm.activeInbox === 'dsm'" style="margin-bottom: var(--space-06);">
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'inbox'}" ng-click="vm.setFolder('inbox')">
+                    <span>Inbox</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'sent'}" ng-click="vm.setFolder('sent')">
+                    <span>Sent</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'deleted'}" ng-click="vm.setFolder('deleted')">
+                    <span>Deleted</span>
+                </li>
+                <li class="folder-item" ng-class="{active: vm.activeFolder === 'archive'}" ng-click="vm.setFolder('archive')">
+                    <span>Archive</span>
+                </li>
+            </ul>
+            <h3>
+                <span>My Folders</span>
+                <button ng-click="vm.addFolder()" title="Add folder">
+                    <i class="ph-bold ph-plus"></i>
+                </button>
+            </h3>
+            <ul class="folder-list">
+                <li class="folder-item" ng-repeat="folder in vm.getCurrentFolders()" ng-class="{active: vm.activeFolder === folder.id}" ng-click="vm.setFolder(folder.id)">
+                    <span>{{folder.name}}</span>
+                    <span class="folder-count" ng-if="vm.getFolderUnreadCount(folder.id) > 0">{{vm.getFolderUnreadCount(folder.id)}}</span>
+                    <button class="folder-item-menu" ng-click="vm.folderMenu(folder, $event)" title="Folder options">
+                        <i class="ph-bold ph-dots-three-vertical"></i>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <main ng-if="!vm.selectedMessage">
+            <div class="fax-controls" ng-if="vm.activeInbox === 'fax' && vm.activeFolder === 'inbox'">
+                <span class="fax-view-label">View:</span>
+                <select class="fax-view-select" ng-model="vm.faxView" ng-change="vm.applyFaxView()">
+                    <option value="all">All</option>
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="unmatched">Unmatched</option>
+                    <option value="suggested">Suggested</option>
+                    <option value="high">High Confidence</option>
+                    <option value="medium">Medium Confidence</option>
+                    <option value="low">Low Confidence</option>
+                </select>
+            </div>
+            <div class="fax-controls" ng-if="vm.activeInbox === 'dsm' && vm.activeFolder === 'inbox'">
+                <span class="fax-view-label">View:</span>
+                <select class="fax-view-select" ng-model="vm.dsmView" ng-change="vm.applyDsmView()">
+                    <option value="all">All</option>
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="unmatched">Unmatched</option>
+                    <option value="suggested">Suggested</option>
+                    <option value="high">High Confidence</option>
+                    <option value="medium">Medium Confidence</option>
+                    <option value="low">Low Confidence</option>
+                </select>
+            </div>
+            <div class="fax-controls" ng-if="vm.activeInbox === 'hie' && vm.activeFolder === 'inbox'">
+                <span class="fax-view-label">View:</span>
+                <select class="fax-view-select" ng-model="vm.hieView" ng-change="vm.applyHieView()">
+                    <option value="all">All</option>
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="unmatched">Unmatched</option>
+                    <option value="suggested">Suggested</option>
+                    <option value="high">High Confidence</option>
+                    <option value="medium">Medium Confidence</option>
+                    <option value="low">Low Confidence</option>
+                    <option value="stat">STAT</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="routine">Routine</option>
+                </select>
+            </div>
+            <div class="message-list">
+                <div class="message-item" ng-repeat="msg in vm.getCurrentMessages()" ng-class="{unread: msg.unread, selected: msg.selected}">
+                    <input type="checkbox" class="message-checkbox" ng-model="msg.selected" ng-change="vm.updateSelection()" ng-click="$event.stopPropagation()">
+                    <div class="message-content" ng-click="vm.selectMessage(msg)">
+                        <div class="message-header">
+                            <span class="message-title">
+                                <span ng-if="vm.activeInbox === 'dsm'">{{msg.fromOrg}}: {{msg.subject}}</span>
+                                <span ng-if="vm.activeInbox === 'hie'">{{msg.fromOrg}}: {{msg.subject}}</span>
+                                <span ng-if="vm.activeInbox !== 'dsm' && vm.activeInbox !== 'hie'">{{msg.from}}: {{msg.subject}}</span>
+                                <span ng-if="vm.activeInbox === 'fax' && msg.urgent" class="urgent-badge">
+                                    <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                    Urgent
+                                </span>
+                                <span ng-if="vm.activeInbox === 'dsm'" style="margin-left: var(--space-04); display: inline-flex; gap: var(--space-02); align-items: center;">
+                                    <span ng-if="msg.urgent" class="urgent-badge" style="margin-left: 0;">
+                                        <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                        Urgent
+                                    </span>
+                                    <span ng-if="msg.docType" class="doc-type-badge" style="margin-left: 0;">{{msg.docType}}</span>
+                                </span>
+                                <span ng-if="vm.activeInbox === 'hie'" style="margin-left: var(--space-04); display: inline-flex; gap: var(--space-02); align-items: center;">
+                                    <span ng-if="msg.severity === 'STAT'" class="alert-type-badge severity-stat" style="margin-left: 0;">
+                                        <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                        STAT
+                                    </span>
+                                    <span ng-if="msg.severity === 'Urgent'" class="alert-type-badge severity-urgent" style="margin-left: 0;">
+                                        <i class="ph-bold ph-clock" style="font-size: 0.875rem;"></i>
+                                        Urgent
+                                    </span>
+                                    <span ng-if="msg.severity === 'Routine'" class="alert-type-badge severity-routine" style="margin-left: 0;">Routine</span>
+                                    <span ng-if="msg.alertType" class="doc-type-badge" style="margin-left: 0;">{{msg.alertType}}</span>
+                                </span>
+                            </span>
+                            <span class="message-date">{{msg.date}}</span>
+                        </div>
+                        <div class="message-preview">
+                            {{msg.preview}}
+                            <span ng-if="vm.activeInbox === 'fax' && msg.matchStatus === 'suggested'" class="info-badge" style="margin-left: var(--space-04);">
+                                <i class="ph-bold ph-info" style="font-size: 0.875rem;"></i>
+                                Suggested match ({{msg.matchConfidence}}): <span class="patient-link" ng-click="vm.viewPatient(msg.suggestedPatient, $event)">{{msg.suggestedPatient}}</span>
+                            </span>
+                            <span ng-if="vm.activeInbox === 'fax' && msg.matchStatus === 'unmatched'" class="warning-badge" style="margin-left: var(--space-04);">
+                                <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                Patient match required
+                            </span>
+                            <span ng-if="vm.activeInbox === 'dsm' && msg.matchStatus === 'suggested'" class="info-badge" style="margin-left: var(--space-04);">
+                                <i class="ph-bold ph-info" style="font-size: 0.875rem;"></i>
+                                Suggested match ({{msg.matchConfidence}}): <span class="patient-link" ng-click="vm.viewPatient(msg.suggestedPatient, $event)">{{msg.suggestedPatient}}</span>
+                            </span>
+                            <span ng-if="vm.activeInbox === 'dsm' && msg.matchStatus === 'unmatched'" class="warning-badge" style="margin-left: var(--space-04);">
+                                <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                Patient match required
+                            </span>
+                            <span ng-if="vm.activeInbox === 'hie'" style="margin-left: var(--space-04); display: inline-flex; gap: var(--space-02); align-items: center;">
+                                <span ng-if="msg.matchStatus === 'suggested'" class="info-badge" style="margin-left: 0;">
+                                    <i class="ph-bold ph-info" style="font-size: 0.875rem;"></i>
+                                    Suggested match ({{msg.matchConfidence}}): <span class="patient-link" ng-click="vm.viewPatient(msg.suggestedPatient, $event)">{{msg.suggestedPatient}}</span>
+                                </span>
+                                <span ng-if="msg.matchStatus === 'unmatched'" class="warning-badge" style="margin-left: 0;">
+                                    <i class="ph-bold ph-warning" style="font-size: 0.875rem;"></i>
+                                    Patient match required
+                                </span>
+                                <span ng-if="msg.recordsAvailable" class="info-badge" style="margin-left: 0;">
+                                    <i class="ph-bold ph-paperclip" style="font-size: 0.875rem;"></i>
+                                    {{msg.recordsAvailable}} records
+                                </span>
+                            </span>
+                        </div>
+                        <div class="message-actions" ng-if="vm.activeInbox === 'clinical'">
+                            <button class="message-action-btn" ng-click="vm.archiveMessage(msg, $event)" title="Archive">
+                                <i class="ph-bold ph-archive"></i>
+                                <span class="message-action-tooltip">Archive</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.deleteMessage(msg, $event)" title="Delete">
+                                <i class="ph-bold ph-trash"></i>
+                                <span class="message-action-tooltip">Delete</span>
+                            </button>
+                            <button class="message-action-btn" ng-if="msg.unread" ng-click="vm.toggleRead(msg, $event)" title="Mark as read">
+                                <i class="ph-bold ph-envelope-open"></i>
+                                <span class="message-action-tooltip">Mark as read</span>
+                            </button>
+                            <button class="message-action-btn" ng-if="!msg.unread" ng-click="vm.toggleRead(msg, $event)" title="Mark as unread">
+                                <i class="ph-bold ph-envelope"></i>
+                                <span class="message-action-tooltip">Mark as unread</span>
+                            </button>
+                        </div>
+                        <div class="message-actions" ng-if="vm.activeInbox === 'fax'">
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.acceptMatch(msg, $event)" title="Accept Suggested Match">
+                                <i class="ph-bold ph-check"></i>
+                                <span class="message-action-tooltip">Accept Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.rejectMatch(msg, $event)" title="Reject Suggested Match">
+                                <i class="ph-bold ph-x"></i>
+                                <span class="message-action-tooltip">Reject Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.assignPatient(msg, $event)" title="Assign to Patient">
+                                <i class="ph-bold ph-user-plus"></i>
+                                <span class="message-action-tooltip">Assign to Patient</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.archiveMessage(msg, $event)" title="Archive">
+                                <i class="ph-bold ph-archive"></i>
+                                <span class="message-action-tooltip">Archive</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.deleteMessage(msg, $event)" title="Delete">
+                                <i class="ph-bold ph-trash"></i>
+                                <span class="message-action-tooltip">Delete</span>
+                            </button>
+                        </div>
+                        <div class="message-actions" ng-if="vm.activeInbox === 'dsm'">
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.acceptMatch(msg, $event)" title="Accept Suggested Match">
+                                <i class="ph-bold ph-check"></i>
+                                <span class="message-action-tooltip">Accept Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.rejectMatch(msg, $event)" title="Reject Suggested Match">
+                                <i class="ph-bold ph-x"></i>
+                                <span class="message-action-tooltip">Reject Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.assignPatient(msg, $event)" title="Assign to Patient">
+                                <i class="ph-bold ph-user-plus"></i>
+                                <span class="message-action-tooltip">Assign to Patient</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.archiveMessage(msg, $event)" title="Archive">
+                                <i class="ph-bold ph-archive"></i>
+                                <span class="message-action-tooltip">Archive</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.deleteMessage(msg, $event)" title="Delete">
+                                <i class="ph-bold ph-trash"></i>
+                                <span class="message-action-tooltip">Delete</span>
+                            </button>
+                        </div>
+                        <div class="message-actions" ng-if="vm.activeInbox === 'hie'">
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.acceptMatch(msg, $event)" title="Accept Suggested Match">
+                                <i class="ph-bold ph-check"></i>
+                                <span class="message-action-tooltip">Accept Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-if="msg.matchStatus === 'suggested'" ng-click="vm.rejectMatch(msg, $event)" title="Reject Suggested Match">
+                                <i class="ph-bold ph-x"></i>
+                                <span class="message-action-tooltip">Reject Match</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.assignPatient(msg, $event)" title="Assign to Patient">
+                                <i class="ph-bold ph-user-plus"></i>
+                                <span class="message-action-tooltip">Assign to Patient</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.archiveMessage(msg, $event)" title="Archive">
+                                <i class="ph-bold ph-archive"></i>
+                                <span class="message-action-tooltip">Archive</span>
+                            </button>
+                            <button class="message-action-btn" ng-click="vm.deleteMessage(msg, $event)" title="Delete">
+                                <i class="ph-bold ph-trash"></i>
+                                <span class="message-action-tooltip">Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <main class="message-detail" ng-if="vm.selectedMessage">
+            <div class="detail-header">
+                <button class="back-btn" ng-click="vm.closeMessage()">
+                    <i class="ph-bold ph-arrow-left"></i>
+                </button>
+                <h2 class="detail-title">{{vm.selectedMessage.subject}}</h2>
+            </div>
+
+            <div class="detail-meta">
+                <div class="meta-row">
+                    <span class="meta-label">From:</span>
+                    <span>{{vm.selectedMessage.from}}</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Date:</span>
+                    <span>{{vm.selectedMessage.date}}</span>
+                </div>
+                <div class="meta-row" ng-if="vm.selectedMessage.patient">
+                    <span class="meta-label">Patient:</span>
+                    <span>{{vm.selectedMessage.patient}}</span>
+                </div>
+            </div>
+
+            <div class="detail-content">
+                {{vm.selectedMessage.content}}
+            </div>
+
+            <div class="patient-match-widget" ng-if="vm.requiresPatientMatch()">
+                <h4>{{vm.getMatchTitle()}}</h4>
+                <input type="text" class="match-search" placeholder="Search patient by name or MRN..." ng-model="vm.patientSearch">
+                <div class="match-results" ng-if="vm.patientSearch">
+                    <div class="match-result" ng-repeat="patient in vm.mockPatients" ng-click="vm.matchPatient(patient)">
+                        <div><strong>{{patient.name}}</strong></div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">MRN: {{patient.mrn}} | DOB: {{patient.dob}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: var(--space-08); display: flex; gap: var(--space-05);">
+                <button class="btn-primary" ng-if="vm.canPerformAction()" ng-click="vm.performAction()">
+                    {{vm.getActionLabel()}}
+                </button>
+                <span ng-if="!vm.canPerformAction()" style="color: var(--text-muted); font-size: 0.875rem;">
+                    {{vm.getActionBlockedReason()}}
+                </span>
+            </div>
+
+            <div class="audit-log">
+                <h4>Action Audit Log</h4>
+                <div class="audit-item" ng-repeat="log in vm.selectedMessage.auditLog">
+                    <strong>{{log.action}}</strong> by {{log.user}} on {{log.timestamp}}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        angular.module('inboxApp', [])
+            .controller('InboxCtrl', function ($timeout) {
+                var vm = this;
+
+                vm.activeInbox = 'clinical';
+                vm.activeFolder = 'inbox';
+                vm.selectedMessage = null;
+                vm.selectedMessages = [];
+                vm.searchQuery = '';
+                vm.searchResults = [];
+                vm.patientSearch = '';
+                vm.faxView = 'all';
+                vm.dsmView = 'all';
+                vm.hieView = 'all';
+
+                vm.mockPatients = [
+                    { name: 'John Smith', mrn: '12345', dob: '01/15/1980' },
+                    { name: 'Jane Doe', mrn: '67890', dob: '03/22/1975' },
+                    { name: 'Robert Johnson', mrn: '11223', dob: '07/08/1992' }
+                ];
+
+                vm.clinicalMessages = [
+                    { id: 1, from: 'Dr. Sarah Chen', subject: 'Crisis intervention follow-up', date: '01/15/2024 10:30 AM', preview: 'Patient stabilized after crisis, needs safety plan review...', unread: true, folder: 'inbox', content: 'Patient John Smith stabilized after crisis intervention. Please review updated safety plan and schedule follow-up within 48 hours.', patient: 'John Smith', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 10:30 AM' }] },
+                    { id: 14, from: 'Dr. Emily Martinez', subject: 'Urgent: Medication adjustment needed', date: '01/15/2024 9:15 AM', preview: 'Patient reporting increased anxiety symptoms...', unread: true, folder: 'inbox', content: 'Patient Sarah Williams reporting increased anxiety symptoms and panic attacks. Current SSRI may need dosage adjustment or augmentation.', patient: 'Sarah Williams', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 9:15 AM' }] },
+                    { id: 15, from: 'Therapist Lisa Park', subject: 'PHQ-9 score elevated', date: '01/15/2024 8:45 AM', preview: 'Patient screening shows worsening depression...', unread: false, folder: 'inbox', content: 'Patient Michael Brown completed PHQ-9 with score of 18 (moderate-severe depression). Recommend psychiatric evaluation for medication management.', patient: 'Michael Brown', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 8:45 AM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/15/2024 8:50 AM' }] },
+                    { id: 16, from: 'Case Manager Jennifer Lee', subject: 'Housing support coordination', date: '01/14/2024 4:20 PM', preview: 'Patient needs assistance with housing resources...', unread: false, folder: 'inbox', content: 'Patient experiencing housing instability affecting treatment adherence. Coordinating with community resources for emergency housing assistance.', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 4:20 PM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/14/2024 5:00 PM' }] },
+                    { id: 17, from: 'Dr. Robert Kim', subject: 'Substance use assessment needed', date: '01/14/2024 3:30 PM', preview: 'Patient disclosed recent alcohol use increase...', unread: false, folder: 'inbox', content: 'Patient David Thompson disclosed increased alcohol use as coping mechanism. Recommend AUDIT screening and possible referral to substance use program.', patient: 'David Thompson', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 3:30 PM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/14/2024 4:00 PM' }] },
+                    { id: 18, from: 'Pharmacy Team', subject: 'Antipsychotic monitoring due', date: '01/14/2024 1:15 PM', preview: 'Patient on clozapine needs lab work...', unread: false, folder: 'inbox', content: 'Patient Lisa Anderson on clozapine requires weekly CBC monitoring. Last labs completed 01/07/2024. Please schedule appointment.', patient: 'Lisa Anderson', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 1:15 PM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/14/2024 2:00 PM' }] },
+                    { id: 19, from: 'Front Desk', subject: 'Patient no-show pattern', date: '01/14/2024 11:00 AM', preview: 'Patient missed third consecutive appointment...', unread: false, folder: 'inbox', content: 'Patient James Wilson missed third consecutive therapy appointment. Recommend outreach to assess barriers and engagement strategies.', patient: 'James Wilson', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 11:00 AM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/14/2024 11:30 AM' }] },
+                    { id: 2, from: 'Therapist Mike Rodriguez', subject: 'Group therapy referral', date: '01/14/2024 2:15 PM', preview: 'Patient would benefit from DBT skills group...', unread: false, folder: 'assigned', content: 'Patient Jane Doe showing good progress in individual therapy. Recommend referral to DBT skills group for emotion regulation support.', patient: 'Jane Doe', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 2:15 PM' }, { action: 'Viewed', user: 'Dr. Chen', timestamp: '01/14/2024 3:00 PM' }] },
+                    { id: 12, from: 'Dr. James Wilson', subject: 'Peer support group scheduling', date: '01/13/2024 4:45 PM', preview: 'Need to reschedule depression support group...', unread: true, folder: 'pending', content: 'Need to reschedule tomorrow morning depression support group due to facility conflict. Can you help coordinate alternate time with participants?', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/13/2024 4:45 PM' }] },
+                    { id: 13, from: 'Admin Team', subject: 'Trauma-informed care training', date: '01/12/2024 9:00 AM', preview: 'Mandatory training scheduled for next week...', unread: false, folder: 'completed', content: 'Mandatory trauma-informed care training scheduled for January 22nd at 2:00 PM. Please confirm your attendance.', auditLog: [{ action: 'Received', user: 'System', timestamp: '01/12/2024 9:00 AM' }, { action: 'Completed', user: 'Current User', timestamp: '01/12/2024 10:30 AM' }] }
+                ];
+
+                vm.faxMessages = [
+                    { id: 21, from: 'Unknown Clinic (555-9876)', subject: 'Patient Referral', date: '01/15/2024 11:00 AM • 2 pages', preview: 'Referral for psychiatric evaluation...', unread: true, folder: 'inbox', content: 'Patient referral for psychiatric evaluation. Limited demographic information provided. Manual patient matching required.', matchStatus: 'unmatched', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 11:00 AM' }, { action: 'Auto-match Failed', user: 'System', timestamp: '01/15/2024 11:00 AM' }] },
+                    { id: 3, from: 'County Psychiatric Hospital', subject: 'Inpatient Discharge Summary', date: '01/15/2024 9:00 AM • 4 pages', preview: 'Patient discharge summary from psychiatric unit...', unread: true, folder: 'inbox', content: 'Discharge summary for patient admitted 01/10/2024 for suicidal ideation. Diagnosis: Major Depressive Disorder, Recurrent, Severe. Stabilized on medication. Outpatient follow-up recommended within 7 days.', matchStatus: 'suggested', suggestedPatient: 'Jane Doe', matchConfidence: 'Medium', urgent: true, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 9:00 AM' }, { action: 'Auto-match Suggested', user: 'System', timestamp: '01/15/2024 9:00 AM' }] },
+                    { id: 4, from: 'Quest Diagnostics', subject: 'Lab Results - Lithium Level', date: '01/14/2024 4:30 PM • 1 page', preview: 'Therapeutic drug monitoring results...', unread: true, folder: 'inbox', content: 'Lithium level: 0.9 mEq/L (therapeutic range 0.6-1.2). Patient stable on current dose. Recommend continue current regimen.', matchStatus: 'suggested', suggestedPatient: 'Robert Johnson', matchConfidence: 'High', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 4:30 PM' }, { action: 'Auto-match Suggested', user: 'System', timestamp: '01/14/2024 4:30 PM' }] },
+                    { id: 5, from: 'Emergency Department', subject: 'Crisis Assessment Report', date: '01/14/2024 11:30 AM • 3 pages', preview: 'Patient in crisis requiring immediate attention...', unread: true, folder: 'priority', content: 'Patient presented to ED with acute suicidal ideation and plan. Crisis assessment completed. Requires immediate psychiatric evaluation and safety planning.', urgent: true, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 11:30 AM' }] },
+                    { id: 14, from: 'Neuropsych Associates (555-0123)', subject: 'Psychological Testing Report', date: '01/13/2024 2:15 PM • 8 pages', preview: 'Follow-up testing results available...', unread: true, folder: 'follow-up', content: 'Follow-up psychological evaluation completed. Cognitive improvements noted since medication adjustment. Recommend continued monitoring and therapy.', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/13/2024 2:15 PM' }] },
+                    { id: 15, from: 'Insurance Prior Auth (555-0198)', subject: 'TMS Therapy Authorization', date: '01/12/2024 10:20 AM • 3 pages', preview: 'Prior auth for TMS treatment...', unread: false, folder: 'inbox', content: 'Prior authorization request for Transcranial Magnetic Stimulation (TMS) therapy. Patient has treatment-resistant depression with failed trials of 4+ medications. Clinical documentation required.', matchStatus: 'suggested', suggestedPatient: 'John Smith', matchConfidence: 'Low', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/12/2024 10:20 AM' }, { action: 'Viewed', user: 'Current User', timestamp: '01/12/2024 11:00 AM' }, { action: 'Auto-match Suggested', user: 'System', timestamp: '01/12/2024 11:00 AM' }] }
+                ];
+
+                vm.dsmMessages = [
+                    { id: 6, from: 'dr.jones@behavioralhealth.direct', fromOrg: 'Behavioral Health Center', docType: 'CCDA', subject: 'CCDA - Patient Transfer from IOP', date: '01/15/2024 8:45 AM', preview: 'Continuity of Care Document from intensive outpatient...', unread: true, folder: 'inbox', content: 'Patient transfer from Intensive Outpatient Program. CCDA includes psychiatric medications (Sertraline 100mg, Quetiapine 50mg), therapy progress notes, and continuing care recommendations.', requiresMatch: true, trustValidated: true, matchStatus: 'suggested', suggestedPatient: 'Jane Doe', matchConfidence: 'High', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 8:45 AM' }, { action: 'Trust Validated', user: 'System', timestamp: '01/15/2024 8:45 AM' }] },
+                    { id: 22, from: 'referrals@citypsych.direct', fromOrg: 'City Psychiatric Associates', docType: 'Referral', subject: 'Psychiatric Consultation Request', date: '01/15/2024 7:30 AM', preview: 'Requesting psychiatric evaluation for patient...', unread: true, folder: 'inbox', content: 'Requesting psychiatric evaluation for patient with treatment-resistant depression. Patient has tried multiple SSRIs without adequate response. Considering TMS or ECT options.', requiresMatch: true, trustValidated: true, matchStatus: 'unmatched', urgent: true, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 7:30 AM' }, { action: 'Trust Validated', user: 'System', timestamp: '01/15/2024 7:30 AM' }] },
+                    { id: 23, from: 'discharge@hospital.direct', fromOrg: 'County General Hospital', docType: 'CCDA', subject: 'Hospital Discharge Summary - CCDA', date: '01/14/2024 3:45 PM', preview: 'Patient discharged from inpatient psychiatric unit...', unread: true, folder: 'inbox', content: 'Patient discharged after 10-day inpatient stay for bipolar disorder, manic episode. Stabilized on Lithium 900mg and Risperidone 2mg. Follow-up within 7 days recommended.', requiresMatch: true, trustValidated: true, matchStatus: 'suggested', suggestedPatient: 'Robert Johnson', matchConfidence: 'Medium', urgent: true, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 3:45 PM' }, { action: 'Trust Validated', user: 'System', timestamp: '01/14/2024 3:45 PM' }] },
+                    { id: 8, from: 'crisis@partner.direct', fromOrg: 'Crisis Stabilization Unit', docType: 'Consult', subject: 'Crisis Stabilization Report', date: '01/12/2024 3:30 PM', preview: 'Patient match required...', unread: false, folder: 'unmatched', content: 'Crisis stabilization unit discharge summary. Patient presented with acute psychosis, stabilized on antipsychotic medication. Demographics included but no MRN match found.', requiresMatch: true, trustValidated: true, matchStatus: 'unmatched', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/12/2024 3:30 PM' }, { action: 'Trust Validated', user: 'System', timestamp: '01/12/2024 3:30 PM' }, { action: 'Auto-match Failed', user: 'System', timestamp: '01/12/2024 3:31 PM' }] },
+                    { id: 17, from: 'therapy@grouphealth.direct', fromOrg: 'Group Health Therapy Center', docType: 'Progress Note', subject: 'EMDR Therapy Progress Note', date: '01/10/2024 11:30 AM', preview: 'Trauma therapy session summary...', unread: false, folder: 'unmatched', content: 'Patient completed 6 sessions of EMDR therapy for PTSD. Significant reduction in trauma symptoms reported. Recommend continued trauma-focused therapy. Patient demographics: DOB 05/22/1968.', requiresMatch: true, trustValidated: true, matchStatus: 'unmatched', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/10/2024 11:30 AM' }, { action: 'Trust Validated', user: 'System', timestamp: '01/10/2024 11:30 AM' }] },
+                    { id: 24, from: 'dr.smith@wellness.direct', fromOrg: 'Wellness Psychiatric Group', docType: 'Treatment Plan', subject: 'Treatment Plan Update', date: '01/09/2024 2:20 PM', preview: 'Updated treatment plan for shared patient...', unread: false, folder: 'matched', content: 'Updated treatment plan for John Smith. Adjusted medication regimen and increased therapy frequency to twice weekly. Patient showing improvement in mood symptoms.', requiresMatch: false, patient: 'John Smith', matchStatus: 'matched', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/09/2024 2:20 PM' }, { action: 'Patient Matched', user: 'System', timestamp: '01/09/2024 2:20 PM' }] },
+                    { id: 25, from: 'records@behavioral.direct', fromOrg: 'Behavioral Health Records', docType: 'Lab Results', subject: 'Lab Results - Medication Monitoring', date: '01/08/2024 10:15 AM', preview: 'Quarterly medication monitoring labs...', unread: false, folder: 'reconciled', content: 'Quarterly medication monitoring labs for Jane Doe. All values within normal limits. Continue current medication regimen.', requiresMatch: false, patient: 'Jane Doe', matchStatus: 'matched', urgent: false, auditLog: [{ action: 'Received', user: 'System', timestamp: '01/08/2024 10:15 AM' }, { action: 'Reconciled', user: 'Current User', timestamp: '01/08/2024 11:00 AM' }] }
+                ];
+
+                vm.hieMessages = [
+                    { id: 9, from: 'State HIE Network', fromOrg: 'County Hospital ER', alertType: 'ADT', subject: 'ADT Alert - Psychiatric ER Visit', date: '01/15/2024 7:20 AM', preview: 'Patient presented to ER with suicidal ideation...', unread: true, folder: 'inbox', content: 'ADT Alert: Patient John Smith presented to County Hospital ER at 7:00 AM with suicidal ideation and plan. Currently under psychiatric evaluation for possible inpatient admission.', patient: 'John Smith', matchStatus: 'suggested', suggestedPatient: 'John Smith', matchConfidence: 'High', severity: 'STAT', recordsAvailable: 3, docTypes: ['ER Notes', 'Crisis Assessment', 'Safety Plan'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 7:20 AM' }] },
+                    { id: 26, from: 'Carequality Network', fromOrg: 'Memorial Behavioral Health', alertType: 'Discharge', subject: 'Discharge Summary Available', date: '01/15/2024 6:15 AM', preview: 'Patient discharged from inpatient psychiatric unit...', unread: true, folder: 'inbox', content: 'Patient discharged after 14-day inpatient stay for major depressive disorder with psychotic features. Stabilized on medications. Discharge summary and treatment plan available.', matchStatus: 'unmatched', severity: 'Routine', recordsAvailable: 5, docTypes: ['Discharge Summary', 'Medication List', 'Treatment Plan', 'Progress Notes', 'Lab Results'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/15/2024 6:15 AM' }] },
+                    { id: 10, from: 'Regional Lab Exchange', fromOrg: 'Quest Diagnostics', alertType: 'Lab', subject: 'Lab Result - Valproic Acid Level', date: '01/14/2024 5:45 PM', preview: 'Therapeutic drug monitoring results...', unread: true, folder: 'inbox', content: 'Valproic acid level: 45 mcg/mL (subtherapeutic, target 50-125). Patient: Jane Doe. Recommend dosage adjustment and recheck in 5-7 days.', patient: 'Jane Doe', matchStatus: 'suggested', suggestedPatient: 'Jane Doe', matchConfidence: 'High', severity: 'Urgent', recordsAvailable: 1, docTypes: ['Lab Results'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 5:45 PM' }, { action: 'Auto-matched', user: 'System', timestamp: '01/14/2024 5:45 PM' }] },
+                    { id: 27, from: 'State HIE Network', fromOrg: 'City Psychiatric Center', alertType: 'Imaging', subject: 'Brain MRI Results Available', date: '01/14/2024 2:30 PM', preview: 'MRI imaging completed for patient evaluation...', unread: true, folder: 'inbox', content: 'Brain MRI completed as part of psychiatric evaluation. Results available for review. Patient being evaluated for cognitive decline and mood symptoms.', matchStatus: 'suggested', suggestedPatient: 'Robert Johnson', matchConfidence: 'Medium', severity: 'Routine', recordsAvailable: 2, docTypes: ['Radiology Report', 'Images'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/14/2024 2:30 PM' }] },
+                    { id: 11, from: 'State HIE Network', fromOrg: 'Memorial Hospital', alertType: 'ADT', subject: 'Psychiatric Hospital Admission', date: '01/13/2024 2:00 PM', preview: 'Patient admitted to inpatient psych unit...', unread: false, folder: 'matched', content: 'Patient Robert Johnson admitted to Memorial Hospital psychiatric unit for acute manic episode. Diagnosis: Bipolar I Disorder. Expected length of stay 7-10 days.', patient: 'Robert Johnson', matchStatus: 'matched', severity: 'Urgent', recordsAvailable: 4, docTypes: ['Admission Note', 'H&P', 'Medication Orders', 'Treatment Plan'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/13/2024 2:00 PM' }, { action: 'Auto-matched', user: 'System', timestamp: '01/13/2024 2:00 PM' }, { action: 'Reviewed', user: 'Dr. Chen', timestamp: '01/13/2024 3:15 PM' }] },
+                    { id: 18, from: 'Carequality Network', fromOrg: 'St. Mary Behavioral Health', alertType: 'Discharge', subject: 'Psych Hospital Discharge - Records Available', date: '01/12/2024 8:30 AM', preview: 'Patient discharged from psychiatric facility...', unread: false, folder: 'matched', content: 'Patient Maria Garcia discharged from St. Mary\'s Behavioral Health Unit. Available records: Discharge Summary, Medication Reconciliation, Safety Plan, Therapy Notes (5 documents). Click to retrieve.', patient: 'Maria Garcia', matchStatus: 'matched', severity: 'Routine', recordsAvailable: 5, docTypes: ['Discharge Summary', 'Medication Reconciliation', 'Safety Plan', 'Therapy Notes', 'Follow-up Plan'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/12/2024 8:30 AM' }, { action: 'Auto-matched', user: 'System', timestamp: '01/12/2024 8:30 AM' }] },
+                    { id: 19, from: 'Regional Lab Exchange', fromOrg: 'LabCorp', alertType: 'Lab', subject: 'Lab Result - Clozapine Monitoring', date: '01/11/2024 1:45 PM', preview: 'Weekly clozapine CBC results...', unread: false, folder: 'lab', content: 'Clozapine monitoring CBC: WBC 4,200 (normal), ANC 2,100 (normal). Patient Robert Johnson cleared to continue current clozapine dose. Next monitoring due 01/18/2024.', patient: 'Robert Johnson', matchStatus: 'matched', severity: 'Routine', recordsAvailable: 1, docTypes: ['Lab Results'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/11/2024 1:45 PM' }, { action: 'Auto-matched', user: 'System', timestamp: '01/11/2024 1:45 PM' }] },
+                    { id: 20, from: 'State HIE Network', fromOrg: 'County Hospital Detox', alertType: 'ADT', subject: 'ADT Alert - Detox Unit Discharge', date: '01/10/2024 4:20 PM', preview: 'Patient discharged from detox facility...', unread: false, folder: 'matched', content: 'ADT Alert: Patient John Smith discharged from County Hospital detox unit. Completed alcohol detoxification protocol. Referred to outpatient substance use treatment. Follow-up recommended within 3 days.', patient: 'John Smith', matchStatus: 'matched', severity: 'Urgent', recordsAvailable: 3, docTypes: ['Discharge Summary', 'Detox Protocol', 'Referral'], auditLog: [{ action: 'Received', user: 'System', timestamp: '01/10/2024 4:20 PM' }, { action: 'Auto-matched', user: 'System', timestamp: '01/10/2024 4:20 PM' }, { action: 'Reviewed', user: 'Dr. Chen', timestamp: '01/10/2024 5:00 PM' }] }
+                ];
+
+                vm.folders = {
+                    clinical: [
+                        { id: 'assigned', name: 'Assigned to Me' },
+                        { id: 'pending', name: 'Pending Reply' },
+                        { id: 'completed', name: 'Completed' }
+                    ],
+                    fax: [
+                        { id: 'priority', name: 'Priority' },
+                        { id: 'follow-up', name: 'Follow-up' }
+                    ],
+                    dsm: [
+                        { id: 'unmatched', name: 'Unmatched' },
+                        { id: 'matched', name: 'Matched' },
+                        { id: 'reconciled', name: 'Reconciled' }
+                    ],
+                    hie: [
+                        { id: 'matched', name: 'Patient Matched' },
+                        { id: 'lab', name: 'Lab Results' },
+                        { id: 'reviewed', name: 'Reviewed' }
+                    ]
+                };
+
+                vm.setInbox = function (inbox) {
+                    vm.activeInbox = inbox;
+                    vm.activeFolder = 'inbox';
+                    vm.selectedMessage = null;
+                    if (inbox === 'fax') {
+                        vm.faxView = 'all';
+                    }
+                    if (inbox === 'dsm') {
+                        vm.dsmView = 'all';
+                    }
+                    if (inbox === 'hie') {
+                        vm.hieView = 'all';
+                    }
+                };
+
+                vm.setFolder = function (folderId) {
+                    vm.activeFolder = folderId;
+                    vm.selectedMessage = null;
+                };
+
+                vm.getCurrentFolders = function () {
+                    return vm.folders[vm.activeInbox] || [];
+                };
+
+                vm.getCurrentMessages = function () {
+                    var messages = [];
+                    if (vm.activeInbox === 'clinical') messages = vm.clinicalMessages;
+                    if (vm.activeInbox === 'fax') messages = vm.faxMessages;
+                    if (vm.activeInbox === 'dsm') messages = vm.dsmMessages;
+                    if (vm.activeInbox === 'hie') messages = vm.hieMessages;
+
+                    messages = messages.filter(function (m) { return m.folder === vm.activeFolder; });
+
+                    // Apply fax view
+                    if (vm.activeInbox === 'fax' && vm.activeFolder === 'inbox') {
+                        if (vm.faxView === 'unmatched') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'unmatched'; });
+                        } else if (vm.faxView === 'suggested') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'suggested'; });
+                        } else if (vm.faxView === 'high') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'High'; });
+                        } else if (vm.faxView === 'medium') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Medium'; });
+                        } else if (vm.faxView === 'low') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Low'; });
+                        } else if (vm.faxView === 'oldest') {
+                            messages = messages.slice().reverse();
+                        }
+
+                        // Always sort urgent to top
+                        messages = messages.sort(function (a, b) {
+                            if (a.urgent && !b.urgent) return -1;
+                            if (!a.urgent && b.urgent) return 1;
+                            return 0;
+                        });
+                    }
+
+                    // Apply DSM view
+                    if (vm.activeInbox === 'dsm' && vm.activeFolder === 'inbox') {
+                        if (vm.dsmView === 'unmatched') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'unmatched'; });
+                        } else if (vm.dsmView === 'suggested') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'suggested'; });
+                        } else if (vm.dsmView === 'high') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'High'; });
+                        } else if (vm.dsmView === 'medium') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Medium'; });
+                        } else if (vm.dsmView === 'low') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Low'; });
+                        } else if (vm.dsmView === 'oldest') {
+                            messages = messages.slice().reverse();
+                        }
+
+                        // Always sort urgent to top
+                        messages = messages.sort(function (a, b) {
+                            if (a.urgent && !b.urgent) return -1;
+                            if (!a.urgent && b.urgent) return 1;
+                            return 0;
+                        });
+                    }
+
+                    // Apply HIE view
+                    if (vm.activeInbox === 'hie' && vm.activeFolder === 'inbox') {
+                        if (vm.hieView === 'unmatched') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'unmatched'; });
+                        } else if (vm.hieView === 'suggested') {
+                            messages = messages.filter(function (m) { return m.matchStatus === 'suggested'; });
+                        } else if (vm.hieView === 'high') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'High'; });
+                        } else if (vm.hieView === 'medium') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Medium'; });
+                        } else if (vm.hieView === 'low') {
+                            messages = messages.filter(function (m) { return m.matchConfidence === 'Low'; });
+                        } else if (vm.hieView === 'stat') {
+                            messages = messages.filter(function (m) { return m.severity === 'STAT'; });
+                        } else if (vm.hieView === 'urgent') {
+                            messages = messages.filter(function (m) { return m.severity === 'Urgent'; });
+                        } else if (vm.hieView === 'routine') {
+                            messages = messages.filter(function (m) { return m.severity === 'Routine'; });
+                        } else if (vm.hieView === 'oldest') {
+                            messages = messages.slice().reverse();
+                        }
+
+                        // Always sort STAT/urgent to top
+                        messages = messages.sort(function (a, b) {
+                            if (a.severity === 'STAT' && b.severity !== 'STAT') return -1;
+                            if (a.severity !== 'STAT' && b.severity === 'STAT') return 1;
+                            if (a.severity === 'Urgent' && b.severity === 'Routine') return -1;
+                            if (a.severity === 'Routine' && b.severity === 'Urgent') return 1;
+                            return 0;
+                        });
+                    }
+
+                    return messages;
+                };
+
+                vm.selectMessage = function (msg) {
+                    vm.selectedMessage = msg;
+                    msg.unread = false;
+                };
+
+                vm.closeMessage = function () {
+                    vm.selectedMessage = null;
+                };
+
+                vm.getClinicalCount = function () {
+                    return vm.clinicalMessages.filter(function (m) { return m.unread; }).length;
+                };
+
+                vm.getFaxCount = function () {
+                    return vm.faxMessages.filter(function (m) { return m.unread; }).length;
+                };
+
+                vm.getDsmCount = function () {
+                    return vm.dsmMessages.filter(function (m) { return m.unread; }).length;
+                };
+
+                vm.getHieCount = function () {
+                    return vm.hieMessages.filter(function (m) { return m.unread; }).length;
+                };
+
+                vm.onSearch = function () {
+                    if (!vm.searchQuery || vm.searchQuery.length < 2) {
+                        vm.searchResults = [];
+                        return;
+                    }
+                    var query = vm.searchQuery.toLowerCase();
+                    var allMessages = [].concat(vm.clinicalMessages, vm.faxMessages, vm.dsmMessages, vm.hieMessages);
+                    vm.searchResults = allMessages.filter(function (m) {
+                        return m.subject.toLowerCase().indexOf(query) > -1 ||
+                            m.from.toLowerCase().indexOf(query) > -1 ||
+                            m.preview.toLowerCase().indexOf(query) > -1;
+                    }).map(function (m) {
+                        var type = 'Clinical';
+                        if (vm.faxMessages.indexOf(m) > -1) type = 'Fax';
+                        if (vm.dsmMessages.indexOf(m) > -1) type = 'DSM';
+                        if (vm.hieMessages.indexOf(m) > -1) type = 'HIE';
+                        return { type: type, subject: m.subject, from: m.from, date: m.date, message: m };
+                    }).slice(0, 5);
+                };
+
+                vm.openSearchResult = function (result) {
+                    vm.searchQuery = '';
+                    vm.searchResults = [];
+                    if (result.type === 'Clinical') vm.activeInbox = 'clinical';
+                    if (result.type === 'Fax') vm.activeInbox = 'fax';
+                    if (result.type === 'DSM') vm.activeInbox = 'dsm';
+                    if (result.type === 'HIE') vm.activeInbox = 'hie';
+                    vm.activeFolder = result.message.folder;
+                    vm.selectedMessage = result.message;
+                };
+
+                vm.requiresPatientMatch = function () {
+                    if (!vm.selectedMessage) return false;
+                    if (vm.activeInbox === 'fax') return true;
+                    if (vm.activeInbox === 'dsm' && vm.selectedMessage.requiresMatch) return true;
+                    if (vm.activeInbox === 'hie' && vm.selectedMessage.requiresMatch) return true;
+                    return false;
+                };
+
+                vm.getMatchTitle = function () {
+                    if (vm.activeInbox === 'fax') return 'Patient Match Required (Mandatory)';
+                    if (vm.activeInbox === 'dsm') return 'Patient Match Required';
+                    if (vm.activeInbox === 'hie') return 'Patient Match Required';
+                    return 'Patient Matching';
+                };
+
+                vm.canPerformAction = function () {
+                    if (!vm.selectedMessage) return false;
+                    if (vm.activeInbox === 'clinical') return true;
+                    if (vm.activeInbox === 'fax') return !!vm.selectedMessage.matchedPatient;
+                    if (vm.activeInbox === 'dsm') return !!vm.selectedMessage.matchedPatient;
+                    if (vm.activeInbox === 'hie') return !!vm.selectedMessage.matchedPatient;
+                    return false;
+                };
+
+                vm.getActionLabel = function () {
+                    if (vm.activeInbox === 'clinical') return 'Complete Task';
+                    if (vm.activeInbox === 'fax') return 'File to Chart';
+                    if (vm.activeInbox === 'dsm') return 'Reconcile';
+                    if (vm.activeInbox === 'hie') return 'Log Alert';
+                    return 'Submit';
+                };
+
+                vm.getActionBlockedReason = function () {
+                    if (vm.activeInbox === 'fax' && !vm.selectedMessage.matchedPatient) {
+                        return '⚠ Patient match required before filing';
+                    }
+                    if (vm.activeInbox === 'dsm' && !vm.selectedMessage.matchedPatient) {
+                        return '⚠ Patient match required';
+                    }
+                    if (vm.activeInbox === 'hie' && !vm.selectedMessage.matchedPatient) {
+                        return '⚠ Patient match required before logging';
+                    }
+                    return '';
+                };
+
+                vm.performAction = function () {
+                    var action = vm.getActionLabel();
+                    vm.selectedMessage.auditLog.push({
+                        action: action,
+                        user: 'Current User',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    alert(action + ' completed for: ' + vm.selectedMessage.subject);
+                    vm.closeMessage();
+                };
+
+                vm.matchPatient = function (patient) {
+                    vm.selectedMessage.matchedPatient = patient;
+                    vm.selectedMessage.patient = patient.name;
+                    vm.selectedMessage.auditLog.push({
+                        action: 'Patient Matched',
+                        user: 'Current User',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    vm.patientSearch = '';
+                };
+
+
+
+                vm.addFolder = function () {
+                    alert('Add folder');
+                };
+
+                vm.folderMenu = function (folder, $event) {
+                    $event.stopPropagation();
+                    alert('Rename\nDelete');
+                };
+
+                vm.openLogs = function () {
+                    alert('Open logs');
+                };
+
+                vm.archiveMessage = function (msg, $event) {
+                    $event.stopPropagation();
+                    msg.folder = 'archive';
+                };
+
+                vm.deleteMessage = function (msg, $event) {
+                    $event.stopPropagation();
+                    msg.folder = 'deleted';
+                };
+
+                vm.toggleRead = function (msg, $event) {
+                    $event.stopPropagation();
+                    msg.unread = !msg.unread;
+                };
+
+                vm.compose = function () {
+                    alert('Compose new message');
+                };
+
+                vm.sendFax = function () {
+                    alert('Send fax');
+                };
+
+                vm.queryHIE = function () {
+                    alert('Query HIE');
+                };
+
+                vm.viewPatient = function (patientName, $event) {
+                    $event.stopPropagation();
+                    alert('View patient chart: ' + patientName);
+                };
+
+                vm.assignPatient = function (msg, $event) {
+                    $event.stopPropagation();
+                    vm.selectedMessage = msg;
+                    alert('Assign patient to: ' + msg.subject);
+                };
+
+                vm.acceptMatch = function (msg, $event) {
+                    $event.stopPropagation();
+                    msg.matchStatus = 'matched';
+                    msg.patient = msg.suggestedPatient;
+                    msg.folder = 'archive';
+                    msg.unread = false;
+                    msg.auditLog.push({
+                        action: 'Match Accepted',
+                        user: 'Current User',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    msg.auditLog.push({
+                        action: 'Filed to Chart',
+                        user: 'Current User',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    alert('Patient match accepted. Attached to ' + msg.suggestedPatient + '\'s Chart (Documents) and moved to Archive folder.');
+                };
+
+                vm.rejectMatch = function (msg, $event) {
+                    $event.stopPropagation();
+                    msg.matchStatus = 'unmatched';
+                    msg.suggestedPatient = null;
+                    msg.matchConfidence = null;
+                    msg.auditLog.push({
+                        action: 'Match Rejected',
+                        user: 'Current User',
+                        timestamp: new Date().toLocaleString()
+                    });
+                    alert('Patient match rejected. Fax marked as unmatched.');
+                };
+
+                vm.canReply = function () {
+                    return vm.activeInbox === 'clinical' || vm.activeInbox === 'dsm';
+                };
+
+                vm.canReplyAll = function () {
+                    // Reply All only makes sense for single message with multiple recipients
+                    // For demo: disabled by default (most messages are 1:1)
+                    return false;
+                };
+
+                vm.replyToSelected = function () {
+                    if (vm.selectedMessages.length === 1) {
+                        alert('Reply to: ' + vm.selectedMessages[0].subject);
+                    }
+                };
+
+                vm.replyAllToSelected = function () {
+                    if (vm.selectedMessages.length === 1) {
+                        alert('Reply All to: ' + vm.selectedMessages[0].subject);
+                    }
+                };
+
+                vm.forwardSelected = function () {
+                    alert('Forward ' + vm.selectedMessages.length + ' message(s)');
+                };
+
+                vm.printSelected = function () {
+                    alert('Print ' + vm.selectedMessages.length + ' message(s)');
+                };
+
+                vm.deleteSelected = function () {
+                    alert('Delete ' + vm.selectedMessages.length + ' message(s)');
+                    vm.selectedMessages = [];
+                };
+
+                vm.moveSelected = function () {
+                    alert('Move ' + vm.selectedMessages.length + ' message(s) to folder');
+                };
+
+                vm.updateSelection = function () {
+                    var allMessages = [].concat(vm.clinicalMessages, vm.faxMessages, vm.dsmMessages, vm.hieMessages);
+                    vm.selectedMessages = allMessages.filter(function (m) { return m.selected; });
+                };
+
+                vm.getFolderUnreadCount = function (folderId) {
+                    var messages = [];
+                    if (vm.activeInbox === 'clinical') messages = vm.clinicalMessages;
+                    if (vm.activeInbox === 'fax') messages = vm.faxMessages;
+                    if (vm.activeInbox === 'dsm') messages = vm.dsmMessages;
+                    if (vm.activeInbox === 'hie') messages = vm.hieMessages;
+                    return messages.filter(function (m) { return m.folder === folderId && m.unread; }).length;
+                };
+
+                vm.applyFaxView = function () {
+                    // View change handled by getCurrentMessages
+                };
+
+                vm.applyDsmView = function () {
+                    // View change handled by getCurrentMessages
+                };
+
+                vm.applyHieView = function () {
+                    // View change handled by getCurrentMessages
+                };
+            });
+    </script>
+</body>
+
+</html>

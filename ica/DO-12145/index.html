@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Prototype: Patient Portal Document Upload [DO-12145]</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --navy:#1e3a5f;
+    --navy-dark:#152a47;
+    --blue-link:#2563a8;
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --border:#e2e6ea;
+    --text:#22282f;
+    --text-secondary:#5b6470;
+    --yellow-bg:#fdf3d6;
+    --yellow-text:#8a6d1a;
+    --green-bg:#e3f5ea;
+    --green-text:#1f8a4c;
+    --gray-badge:#6b7280;
+    --danger:#c0392b;
+    --input-border:#8b929a;
+    --toast-success-bg:#16703c;
+    --shared-badge-bg:#eef0f2;
+    --shared-badge-text:#495057;
+    --radius:8px;
+    --shadow:0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md:0 8px 24px rgba(0,0,0,0.15);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  header.topbar{
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 32px;
+  }
+  .brand{font-size:20px;font-weight:600;color:#333;}
+  nav{display:flex;align-items:center;gap:8px;}
+  nav a{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 18px;border-radius:8px;
+    color:#333;text-decoration:none;font-size:15px;font-weight:500;
+    cursor:pointer;
+  }
+  nav a.active{background:var(--navy);color:#fff;}
+  nav a svg{width:18px;height:18px;flex-shrink:0;}
+  .badge-msg{
+    background:#d0342c;color:#fff;font-size:11px;font-weight:700;
+    border-radius:50%;width:18px;height:18px;display:inline-flex;
+    align-items:center;justify-content:center;margin-left:2px;
+  }
+  .avatar{
+    width:38px;height:38px;border-radius:50%;background:var(--navy);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:700;position:relative;
+  }
+  .avatar .dot{
+    position:absolute;top:-2px;right:-2px;width:10px;height:10px;
+    background:#d0342c;border-radius:50%;border:2px solid #fff;
+  }
+  main{max-width:1400px;margin:0 auto;padding:32px 32px 60px;}
+  .page-header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-bottom:24px;flex-wrap:wrap;gap:12px;
+  }
+  .page-title{display:flex;align-items:center;gap:14px;}
+  .page-title svg{width:34px;height:34px;color:var(--navy);}
+  .page-title h1{font-size:32px;margin:0;font-weight:600;color:#333;}
+  .missing-doc{color:var(--text-secondary);font-size:15px;}
+  .missing-doc a{color:var(--blue-link);text-decoration:underline;font-weight:500;}
+  .toolbar-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:24px;flex-wrap:wrap;gap:14px;
+  }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
+  .filter-btn{
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid var(--border);border-radius:8px;
+    padding:12px 18px;font-size:15px;font-weight:500;color:#333;cursor:pointer;
+  }
+  .filter-btn svg{width:16px;height:16px;}
+  .filter-btn .count{
+    background:#eef0f2;color:#333;border-radius:6px;font-size:13px;
+    font-weight:600;padding:1px 8px;
+  }
+  .filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .filter-btn.active .count{background:rgba(255,255,255,0.25);color:#fff;}
+  .filter-btn.action .count{background:#fbeadc;color:#b5651d;}
+  .filter-btn.new .count{background:#eef0f2;color:#333;}
+
+  .upload-btn{
+    display:flex;align-items:center;gap:8px;background:var(--navy);
+    color:#fff;border:none;border-radius:8px;padding:12px 20px;
+    font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;
+  }
+  .upload-btn:hover{background:var(--navy-dark);}
+  .upload-btn svg{width:17px;height:17px;}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px;
+  }
+  @media (max-width: 1150px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width: 640px){ .grid{grid-template-columns:1fr;} }
+
+  .doc-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow);position:relative;
+    animation:fadeIn .35s ease both;
+  }
+  .doc-card.new-card{ outline:2px solid #bcd4ef; }
+  @keyframes fadeIn{ from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:none;} }
+  .doc-top{display:flex;gap:12px;margin-bottom:16px;}
+  .doc-icon{
+    width:40px;height:40px;border-radius:6px;background:#eef0f2;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .doc-icon svg{width:20px;height:20px;color:#666;}
+  .doc-name{font-size:16px;font-weight:600;color:#222;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .doc-date{font-size:13px;color:var(--text-secondary);margin-top:2px;}
+  .doc-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px solid var(--border);padding-top:14px;
+  }
+  .status{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;}
+  .status svg{width:14px;height:14px;}
+  .status.pending{background:var(--yellow-bg);color:var(--yellow-text);padding:5px 10px;border-radius:6px;}
+  .status.signed{background:var(--green-bg);color:var(--green-text);padding:5px 10px;border-radius:6px;}
+  .status.shared{background:var(--shared-badge-bg);color:var(--shared-badge-text);padding:5px 10px;border-radius:6px;}
+  .dl-btn{
+    width:32px;height:32px;border-radius:50%;background:#f2f3f5;border:none;
+    display:flex;align-items:center;justify-content:center;color:#888;cursor:pointer;
+  }
+  .dl-btn svg{width:15px;height:15px;}
+
+  .footer-row{
+    display:flex;justify-content:space-between;align-items:center;color:var(--text-secondary);
+    font-size:14px;flex-wrap:wrap;gap:10px;
+  }
+  select.per-page{
+    border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:14px;margin-left:6px;
+  }
+  .pager{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .pager button{
+    background:#fff;border:none;border-right:1px solid var(--border);width:34px;height:34px;
+    color:#888;cursor:pointer;
+  }
+  .pager button:last-child{border-right:none;}
+  .pager .active{background:var(--navy);color:#fff;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,25,35,0.45);
+    display:none;align-items:center;justify-content:center;z-index:1000;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:#fff;border-radius:12px;box-shadow:var(--shadow-md);
+    width:640px;max-width:92vw;max-height:85vh;display:flex;flex-direction:column;
+    animation:modalIn .18s ease both;
+  }
+  @keyframes modalIn{ from{opacity:0;transform:translateY(8px) scale(.98);} to{opacity:1;transform:none;} }
+  .modal-header{
+    background:var(--navy);color:#fff;padding:16px 24px;border-radius:12px 12px 0 0;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .modal-header h2{margin:0;font-size:17px;font-weight:600;}
+  .modal-header button{
+    background:none;border:none;color:#fff;cursor:pointer;opacity:.85;padding:4px;
+  }
+  .modal-header button:hover{opacity:1;}
+  .modal-body{padding:22px 24px;overflow-y:auto;flex:1;}
+  .modal-hint{
+    font-size:13px;color:var(--text-secondary);background:#f4f6f8;border:1px solid var(--border);
+    border-radius:8px;padding:10px 14px;margin-bottom:16px;
+  }
+  .file-list{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .file-row{
+    display:grid;grid-template-columns:1fr 90px 90px 40px;gap:12px;align-items:center;
+    padding:12px 14px;border-bottom:1px solid var(--border);
+  }
+  .file-row:last-child{border-bottom:none;}
+  .file-row.invalid{background:#fdf0ee;}
+  .file-name-wrap{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .file-name-wrap input{
+    border:1px solid var(--input-border);border-radius:6px;padding:6px 8px;font-size:14px;
+    width:100%;font-family:inherit;color:var(--text);
+  }
+  .file-name-wrap input:focus{outline:2px solid #9dbde4;border-color:#9dbde4;}
+  .file-error{color:var(--danger);font-size:12px;}
+  .file-type,.file-size{font-size:13px;color:var(--text-secondary);text-align:center;}
+  .file-remove{
+    background:none;border:none;color:var(--text-secondary);cursor:pointer;display:flex;
+    align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;
+  }
+  .file-remove:hover{background:#f2f3f5;color:var(--danger);}
+  .file-remove svg{width:16px;height:16px;}
+  .empty-files{
+    padding:34px 20px;text-align:center;color:var(--text-secondary);font-size:14px;
+  }
+  .modal-footer{
+    padding:16px 24px;border-top:1px solid var(--border);display:flex;
+    justify-content:space-between;align-items:center;gap:10px;
+  }
+  .footer-left{display:flex;gap:10px;}
+  .btn{
+    border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:#333;
+  }
+  .btn:hover{background:#f4f6f8;}
+  .btn-primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .btn-primary:hover{background:var(--navy-dark);}
+  .btn-primary:disabled{background:#a9b8c8;border-color:#a9b8c8;cursor:not-allowed;}
+  .btn.upload-progress{display:flex;align-items:center;gap:8px;}
+  .spinner{
+    width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+    border-radius:50%;animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Toast */
+  .toast-wrap{
+    position:fixed;bottom:28px;right:28px;z-index:2000;display:flex;flex-direction:column;gap:10px;
+  }
+  .toast{
+    background:var(--toast-success-bg);color:#fff;padding:12px 18px;border-radius:8px;
+    box-shadow:var(--shadow-md);font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;
+    animation:toastIn .25s ease both;
+  }
+  @keyframes toastIn{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+  .toast svg{width:16px;height:16px;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">Good Times Therapy Portal</div>
+  <nav>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M9 21V12h6v9"/></svg>Dashboard</a>
+    <a class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>My Documents</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Appointments</a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Messages<span class="badge-msg">7</span></a>
+    <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>My Account</a>
+  </nav>
+  <div class="avatar">T<span class="dot"></span></div>
+</header>
+
+<main>
+  <div class="page-header">
+    <div class="page-title">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z"/></svg>
+      <h1>My Documents</h1>
+    </div>
+    <div class="missing-doc">Missing a document? <a href="#">Send your provider a message</a>.</div>
+  </div>
+
+  <div class="toolbar-row">
+    <div class="filters">
+      <button class="filter-btn" id="tab-all">All Documents <span class="count" id="count-all">23</span></button>
+      <button class="filter-btn" id="tab-forms">Forms <span class="count">15</span></button>
+      <button class="filter-btn active" id="tab-documents">Documents <span class="count" id="count-documents">8</span></button>
+      <button class="filter-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+        To Be Signed <span class="count">2</span>
+      </button>
+      <button class="filter-btn action">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Action Required <span class="count">13</span>
+      </button>
+      <button class="filter-btn new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        New <span class="count">2</span>
+      </button>
+    </div>
+    <button class="upload-btn" id="open-upload-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+      Upload
+    </button>
+    <input type="file" id="file-input" multiple hidden>
+  </div>
+
+  <div class="grid" id="doc-grid"></div>
+
+  <div class="footer-row">
+    <div>Showing <span id="showing-count">1-8</span> of <span id="total-count">8</span> items &nbsp; Items per page:
+      <select class="per-page"><option>8</option></select>
+    </div>
+    <div class="pager">
+      <button>&#8249;</button>
+      <button class="active">1</button>
+      <button>&#8250;</button>
+    </div>
+  </div>
+</main>
+
+<!-- Upload review modal -->
+<div class="overlay" id="upload-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Upload Documents</h2>
+      <button id="close-modal-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-hint">
+        Accepted formats: PDF, JPG, PNG, GIF, WEBP, AVIF, DOC, DOCX, XLS, XLSX, TXT &middot; Max 20 MB per file
+      </div>
+      <div class="file-list" id="file-list">
+        <div class="empty-files" id="empty-files">No files selected yet. Click "Add Files" below to choose documents to upload.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="footer-left">
+        <button class="btn" id="cancel-btn">Cancel</button>
+        <button class="btn" id="add-files-btn">Add Files</button>
+      </div>
+      <button class="btn btn-primary" id="upload-confirm-btn" disabled>Upload</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+(function(){
+  var ACCEPTED = { pdf:'PDF', jpg:'JPG', jpeg:'JPG', png:'PNG', gif:'GIF', webp:'WEBP', avif:'AVIF', doc:'DOC', docx:'DOCX', xls:'XLS', xlsx:'XLSX', txt:'TXT' };
+  var MAX_BYTES = 20 * 1024 * 1024;
+  var PRINCIPAL_CLINICIAN = 'Dr. Sarah Johnson';
+
+  var docs = [
+    { name:'Quick Note 06/23/2026', date:'Jun 23 at 1:26 PM', status:'pending' },
+    { name:'Quick Note 06/23/2026', date:'Jun 23 at 1:26 PM', status:'shared' },
+    { name:'attachment copy 4', date:'Jun 23 at 11:02 AM', status:'pending' },
+    { name:'GenTx', date:'Jun 22 at 3:43 PM', status:'signed' },
+    { name:'Progress Note 06/22/2026', date:'Jun 15 at 4:22 PM', status:'signed' },
+    { name:'Progress Note 04/17/2026', date:'Apr 17 at 1:27 PM', status:'pending' },
+    { name:'Superbill', date:'Feb 12 at 11:28 AM', status:'shared' },
+    { name:'Invoice', date:'Feb 12 at 11:28 AM', status:'shared' }
+  ];
+  var allCount = 23, documentsCount = 8;
+
+  var ICONS = {
+    pending: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg>',
+    signed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>',
+    shared: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>'
+  };
+
+  function statusHtml(status){
+    if(status==='pending') return '<span class="status pending">'+ICONS.pending+' Pending Review</span>';
+    if(status==='signed') return '<span class="status signed">'+ICONS.signed+' Signed</span>';
+    return '<span class="status shared">'+ICONS.shared+' Shared</span>';
+  }
+
+  function renderGrid(){
+    var grid = document.getElementById('doc-grid');
+    grid.innerHTML = docs.map(function(d, i){
+      return '<div class="doc-card'+(d.isNew ? ' new-card' : '')+'">'+
+        '<div class="doc-top">'+
+          '<div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></div>'+
+          '<div><div class="doc-name" title="'+escapeHtml(d.name)+'">'+escapeHtml(d.name)+'</div><div class="doc-date">'+d.date+'</div></div>'+
+        '</div>'+
+        '<div class="doc-bottom">'+statusHtml(d.status)+
+          '<button class="dl-btn" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg></button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+    document.getElementById('count-all').textContent = allCount;
+    document.getElementById('count-documents').textContent = documentsCount;
+    document.getElementById('total-count').textContent = documentsCount;
+    document.getElementById('showing-count').textContent = '1-'+Math.min(documentsCount,8);
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  renderGrid();
+
+  // --- Upload modal state ---
+  var pending = []; // { id, file, name(no ext), ext, type, size, error }
+  var idSeq = 1;
+
+  var overlay = document.getElementById('upload-overlay');
+  var fileInput = document.getElementById('file-input');
+  var fileListEl = document.getElementById('file-list');
+  var emptyEl = document.getElementById('empty-files');
+  var uploadBtn = document.getElementById('upload-confirm-btn');
+
+  function openModal(){
+    overlay.classList.add('open');
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    pending = [];
+    renderFileList();
+  }
+
+  document.getElementById('open-upload-btn').addEventListener('click', function(){
+    openModal();
+    fileInput.click();
+  });
+  document.getElementById('add-files-btn').addEventListener('click', function(){
+    fileInput.click();
+  });
+  document.getElementById('cancel-btn').addEventListener('click', closeModal);
+  document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+
+  fileInput.addEventListener('change', function(e){
+    var files = Array.prototype.slice.call(e.target.files || []);
+    files.forEach(function(f){
+      var extMatch = /\.([a-z0-9]+)$/i.exec(f.name);
+      var ext = extMatch ? extMatch[1].toLowerCase() : '';
+      var baseName = extMatch ? f.name.slice(0, extMatch.index) : f.name;
+      var type = ACCEPTED[ext];
+      var error = '';
+      if(!type) error = 'Unsupported file type';
+      else if(f.size > MAX_BYTES) error = 'File exceeds 20 MB limit';
+      pending.push({
+        id: idSeq++,
+        editableName: baseName,
+        ext: ext,
+        type: type || ext.toUpperCase(),
+        size: f.size,
+        error: error
+      });
+    });
+    fileInput.value = '';
+    renderFileList();
+  });
+
+  function formatSize(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  function renderFileList(){
+    if(pending.length === 0){
+      fileListEl.innerHTML = '';
+      fileListEl.appendChild(emptyEl);
+      uploadBtn.disabled = true;
+      return;
+    }
+    fileListEl.innerHTML = pending.map(function(p){
+      return '<div class="file-row'+(p.error ? ' invalid' : '')+'" data-id="'+p.id+'">'+
+        '<div class="file-name-wrap">'+
+          '<input type="text" value="'+escapeHtml(p.editableName)+'" data-id="'+p.id+'" aria-label="File name">'+
+          (p.error ? '<span class="file-error">'+p.error+'</span>' : '')+
+        '</div>'+
+        '<div class="file-type">'+p.type+'</div>'+
+        '<div class="file-size">'+formatSize(p.size)+'</div>'+
+        '<button class="file-remove" data-id="'+p.id+'" aria-label="Remove file">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'+
+        '</button>'+
+      '</div>';
+    }).join('');
+
+    Array.prototype.forEach.call(fileListEl.querySelectorAll('input[type="text"]'), function(inp){
+      inp.addEventListener('input', function(){
+        var id = Number(inp.getAttribute('data-id'));
+        var item = pending.find(function(p){ return p.id === id; });
+        if(item) item.editableName = inp.value;
+      });
+    });
+    Array.prototype.forEach.call(fileListEl.querySelectorAll('.file-remove'), function(btn){
+      btn.addEventListener('click', function(){
+        var id = Number(btn.getAttribute('data-id'));
+        pending = pending.filter(function(p){ return p.id !== id; });
+        renderFileList();
+      });
+    });
+
+    var validCount = pending.filter(function(p){ return !p.error; }).length;
+    uploadBtn.disabled = validCount === 0;
+  }
+
+  uploadBtn.addEventListener('click', function(){
+    var valid = pending.filter(function(p){ return !p.error; });
+    if(valid.length === 0) return;
+
+    uploadBtn.disabled = true;
+    uploadBtn.classList.add('upload-progress');
+    uploadBtn.innerHTML = '<span class="spinner"></span> Uploading&hellip;';
+
+    setTimeout(function(){
+      var now = new Date();
+      var dateStr = now.toLocaleDateString('en-US', {month:'short', day:'numeric'}) + ' at ' +
+        now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+
+      valid.forEach(function(p){
+        docs.unshift({
+          name: p.editableName || 'Untitled',
+          date: dateStr,
+          status: 'shared',
+          isNew: true,
+          // EHR-side mapping (metadata carried with the record, not shown on card)
+          meta: {
+            type: 'Document',
+            sendDate: '\u2013',
+            receivedDate: now.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
+            encounter: '\u2013',
+            category: 'Portal Attachments',
+            clinician: PRINCIPAL_CLINICIAN,
+            shareStatus: 'Shared'
+          }
+        });
+      });
+      allCount += valid.length;
+      documentsCount += valid.length;
+      renderGrid();
+
+      uploadBtn.disabled = false;
+      uploadBtn.classList.remove('upload-progress');
+      uploadBtn.textContent = 'Upload';
+      closeModal();
+      showToast(valid.length + ' document' + (valid.length === 1 ? '' : 's') + ' uploaded successfully');
+
+      setTimeout(function(){
+        Array.prototype.forEach.call(document.querySelectorAll('.doc-card.new-card'), function(el){
+          el.classList.remove('new-card');
+        });
+      }, 2500);
+    }, 900);
+  });
+
+  function showToast(msg){
+    var wrap = document.getElementById('toast-wrap');
+    var t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>' + msg;
+    wrap.appendChild(t);
+    setTimeout(function(){
+      t.style.opacity = '0';
+      t.style.transition = 'opacity .25s';
+      setTimeout(function(){ wrap.removeChild(t); }, 260);
+    }, 3200);
+  }
+})();
+</script>
+</body>
+</html>

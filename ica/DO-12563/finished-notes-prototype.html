@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototype: Finished Notes Table</title>
+  <style>
+    :root {
+      --primary-200: hsl(216, 53%, 25%);
+      --primary-300: hsl(216, 53%, 35%);
+      --primary-350: hsl(216, 53%, 42%);
+      --primary-700: hsl(216, 53%, 95%);
+      --secondary-250: hsl(89, 66%, 35%);
+      --secondary-300: hsl(89, 66%, 42%);
+      --gray-350: hsl(216, 12%, 58%);
+      /* ~3.08:1 on white — just clears 1.4.11 3:1 ✓ */
+      --gray-400: hsl(216, 12%, 65%);
+      --gray-550: hsl(216, 20%, 90%);
+      --gray-650: hsl(218, 48%, 95%);
+      --gray-700: hsl(218, 65%, 97%);
+      --gray-750: hsl(216, 50%, 98%);
+      --warning-200: hsl(352, 92%, 32%);
+      --text: hsl(216, 53%, 10%);
+      --text-secondary: hsl(216, 12%, 40%);
+      /* ~5.45:1 on white ✓ 1.4.3 */
+      --surface: hsl(0, 0%, 100%);
+      --border-subtle: hsl(216, 10%, 81%);
+      --border-ui: var(--gray-350);
+      /* ~3.08:1 ✓ 1.4.11 */
+      --hover-bg: hsl(89, 60%, 96%);
+      --focus-ring: hsl(89, 66%, 42%);
+      --btn-primary-bg: hsl(216, 53%, 35%);
+      --btn-primary-hover: hsl(216, 53%, 29%);
+      --radius: 0.375rem;
+      --radius-sm: 0.25rem;
+      --fs-2xs: 0.6875rem;
+      --fs-xs: 0.75rem;
+      --fs-sm: 0.8125rem;
+      --fs-base: 0.875rem;
+      --fs-md: 0.9375rem;
+      --dur: 150ms;
+      --ease: cubic-bezier(.25, .46, .45, .94);
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+      -webkit-text-size-adjust: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: var(--fs-base);
+      color: var(--text);
+      background: var(--gray-700);
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th {
+      text-align: start;
+    }
+
+    a {
+      color: var(--primary-350);
+      text-decoration: none;
+      font-weight: 400;
+      border-radius: 2px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: var(--primary-300);
+    }
+
+    a:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+    }
+
+    /* ── Table card ── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .table-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.625rem 1rem;
+      background: var(--gray-750);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .table-card-title {
+      font-size: var(--fs-md);
+      font-weight: 600;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ── Buttons ── */
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border: 1px solid var(--border-ui);
+      /* 1.4.11: ≥3:1 on white ✓ */
+      background: var(--surface);
+      font: 400 var(--fs-sm)/1.4 inherit;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background var(--dur), border-color var(--dur), box-shadow var(--dur) var(--ease);
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: var(--gray-700);
+      border-color: var(--primary-300);
+    }
+
+    button:active {
+      background: var(--gray-650);
+    }
+
+    button:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    button:disabled:hover {
+      background: var(--surface);
+      border-color: var(--border-ui);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+    }
+
+    .btn-primary {
+      background: var(--btn-primary-bg);
+      color: #fff;
+      border-color: var(--btn-primary-bg);
+      font-weight: 400;
+    }
+
+    .btn-primary:hover {
+      background: var(--btn-primary-hover);
+      border-color: var(--btn-primary-hover);
+    }
+
+    .btn-primary:disabled:hover {
+      background: var(--btn-primary-bg);
+      border-color: var(--btn-primary-bg);
+    }
+
+    .btn-sign-all {
+      font-size: var(--fs-sm);
+      padding: 0.3125rem 0.875rem;
+      font-weight: 400;
+    }
+
+    .btn-sign {
+      font-size: var(--fs-xs);
+    }
+
+    .btn-rules {
+      font-size: var(--fs-xs);
+    }
+
+    /* ── Table ── */
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      font-size: var(--fs-sm);
+    }
+
+    thead tr {
+      background: hsl(89, 55%, 94%);
+    }
+
+    th {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border-ui);
+      white-space: nowrap;
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    td {
+      padding: 0.5625rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: background var(--dur);
+    }
+
+    tbody tr:hover {
+      background: var(--hover-bg);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ── Checkbox (mirroring account ledger) ── */
+    .th-cb,
+    .td-cb {
+      width: 2.25rem;
+      padding-inline: 0.75rem 0.375rem;
+    }
+
+    .checkbox {
+      inline-size: 1rem;
+      block-size: 1rem;
+      border-radius: 0.1875rem;
+      border: 2px solid var(--border-ui);
+      /* 1.4.11: ~4.57:1 ✓ */
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--dur);
+    }
+
+    .checkbox:hover {
+      border-color: var(--secondary-300);
+    }
+
+    .checkbox.checked {
+      background: var(--secondary-250);
+      border-color: var(--secondary-250);
+    }
+
+    /* SVG hidden by default, shown via class — no reliance on [hidden] attribute */
+    .checkbox svg {
+      inline-size: 0.625rem;
+      block-size: 0.5rem;
+      display: none;
+      flex-shrink: 0;
+    }
+
+    .checkbox.checked svg {
+      display: block;
+    }
+
+    /* ── Client cell ── */
+    .client-cell {
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-acct {
+      margin-left: auto;
+      padding: 0.125rem 0.375rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--gray-750);
+      font-size: var(--fs-xs);
+      font-weight: 400;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background var(--dur), color var(--dur), border-color var(--dur);
+      position: relative;
+    }
+
+    .btn-acct:hover {
+      background: var(--gray-550);
+      color: var(--text);
+      border-color: var(--border-ui);
+    }
+
+    /* Tooltip */
+    .btn-acct::after {
+      content: 'Account';
+      position: absolute;
+      bottom: calc(100% + 5px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: hsl(216, 53%, 18%);
+      color: #fff;
+      font-size: var(--fs-2xs);
+      font-weight: 400;
+      white-space: nowrap;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--dur);
+      z-index: 10;
+    }
+
+    .btn-acct:hover::after {
+      opacity: 1;
+    }
+
+    /* ── Note cell ── */
+    .note-link {
+      font-weight: 400;
+      font-size: var(--fs-sm);
+      white-space: nowrap;
+    }
+
+    /* ── Status badge ── */
+    .badge-finished {
+      display: inline-block;
+      background: #196d96;
+      color: #fff;
+      font-size: var(--fs-2xs);
+      font-weight: 600;
+      padding: 0.125rem 0.5rem;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    /* ── Rule cell ── */
+    .rule-ok {
+      font-size: var(--fs-sm);
+      color: var(--text);
+    }
+
+    .rule-none {
+      font-size: var(--fs-sm);
+      color: var(--text);
+    }
+
+    .rule-overdue {
+      font-size: var(--fs-sm);
+      color: var(--warning-200);
+      font-weight: 400;
+    }
+
+    /* 7.8:1 ✓ */
+
+    /* ── Actions cell ── */
+    .actions-cell {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+    }
+
+    .pg-left {
+      display: flex;
+      align-items: center;
+      gap: 0.1875rem;
+    }
+
+    .pg-select {
+      padding: 0.1875rem 1.75rem 0.1875rem 0.375rem;
+      border: 1px solid var(--border-ui);
+      border-radius: var(--radius-sm);
+      font: 400 var(--fs-sm)/1.5 inherit;
+      background: var(--surface) url("data:image/svg+xml,%3Csvg width='10' height='7' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23596372' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.375rem center;
+      appearance: none;
+      cursor: pointer;
+      color: var(--text);
+      margin-right: 0.375rem;
+      transition: box-shadow var(--dur) var(--ease);
+    }
+
+    .pg-select:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+    }
+
+    .pg-btn {
+      padding: 0.1875rem 0.4375rem;
+      min-width: 1.75rem;
+      justify-content: center;
+      font-size: var(--fs-xs);
+    }
+
+    .pg-btn.active {
+      background: var(--primary-700);
+      border-color: var(--primary-350);
+      color: var(--primary-200);
+      font-weight: 600;
+    }
+
+    /* ── Dialog ── */
+    dialog {
+      border: none;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .15), 0 4px 12px rgba(0, 0, 0, .1);
+      margin: auto;
+      padding: 0;
+      max-width: 26rem;
+      width: calc(100% - 2rem);
+      opacity: 0;
+      transform: translateY(4px) scale(.99);
+    }
+
+    dialog[open] {
+      display: flex;
+      flex-direction: column;
+    }
+
+    dialog[open].in {
+      opacity: 1;
+      transform: none;
+    }
+
+    dialog.out {
+      opacity: 0;
+      transform: translateY(4px) scale(.99);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      dialog {
+        transition: opacity 200ms ease, transform 200ms var(--ease);
+      }
+
+      dialog::backdrop {
+        transition: opacity 200ms ease;
+      }
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, .2);
+    }
+
+    dialog:not(.in)::backdrop {
+      opacity: 0;
+    }
+
+    dialog.in::backdrop {
+      opacity: 1;
+    }
+
+    dialog.out::backdrop {
+      opacity: 0;
+    }
+
+    .dlg-header {
+      background: var(--primary-300);
+      color: #fff;
+      padding: 0.625rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .dlg-header h2 {
+      font-size: var(--fs-md);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .dlg-close {
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 0.3rem;
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius-sm);
+      margin-right: -0.375rem;
+    }
+
+    .dlg-close:hover {
+      background: rgba(255, 255, 255, .12);
+      border-color: transparent;
+    }
+
+    .dlg-close svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    .dlg-body {
+      padding: 1.375rem 1.25rem 0.75rem;
+      background: var(--surface);
+    }
+
+    .dlg-body p {
+      font-size: var(--fs-base);
+      line-height: 1.6;
+    }
+
+    .dlg-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      padding: 0.875rem 1.25rem 1.25rem;
+      background: var(--surface);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .dlg-footer button {
+      padding: 0.375rem 0.875rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">Finished Notes</span>
+      <div class="toolbar">
+        <button class="btn-primary btn-sign-all" id="sign-all-btn" disabled onclick="openConfirm()">Sign All (0)</button>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th class="th-cb">
+              <div class="checkbox" id="hdr-cb" onclick="toggleAll(this)" role="checkbox" aria-checked="false" aria-label="Select all notes">
+                <svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </th>
+            <th>Status</th>
+            <th>Clinician</th>
+            <th>Client</th>
+            <th>Note</th>
+            <th>Rules</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">Maria Johnson</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">Progress Note · 06/30/2026</a></td>
+            <td><span class="rule-ok">Sign by 07/02/2026</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">David Kim</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">Progress Note · 06/30/2026</a></td>
+            <td><span class="rule-ok">Sign by 07/02/2026</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">Aisha Patel</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">Couples Therapy · 06/29/2026</a></td>
+            <td><span class="rule-ok">Sign by 07/02/2026</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">Marcus Webb</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">ASAM · 06/30/2026</a></td>
+            <td><span class="rule-none">–</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">Sofia Reyes</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">Quick Note · 06/23/2026</a></td>
+            <td><span class="rule-overdue">Sign by 06/25/2026</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+          <tr>
+            <td class="td-cb">
+              <div class="checkbox" onclick="toggleRow(this)" role="checkbox" aria-checked="false"><svg viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                  <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></div>
+            </td>
+            <td><span class="badge-finished">Finished</span></td>
+            <td>Timo Marte</td>
+            <td>
+              <div class="client-cell"><a href="#">Ben Carter</a><button class="btn-acct">$</button></div>
+            </td>
+            <td><a href="#" class="note-link">Intake Note · 06/20/2026</a></td>
+            <td><span class="rule-overdue">Sign by 06/22/2026</span></td>
+            <td class="actions-cell"><button class="btn-sign">Sign</button><button class="btn-rules">Rules</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <div class="pg-left">
+        <button class="pg-btn" disabled>⟨⟨</button>
+        <button class="pg-btn" disabled>⟨</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn" disabled>2</button>
+        <button class="pg-btn" disabled>⟩</button>
+        <button class="pg-btn" disabled>⟩⟩</button>
+        <select class="pg-select" aria-label="Items per page">
+          <option>5</option>
+          <option selected>10</option>
+          <option>25</option>
+        </select>
+        <span>items per page</span>
+      </div>
+      <span>1 - 6 of 6 items</span>
+    </div>
+  </div>
+
+  <dialog id="dlg">
+    <div class="dlg-header">
+      <h2 id="dlg-title">Sign Notes?</h2>
+      <button class="dlg-close" onclick="closeDlg()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <div class="dlg-body">
+      <p id="dlg-msg"></p>
+    </div>
+    <div class="dlg-footer">
+      <button onclick="closeDlg()">Cancel</button>
+      <button class="btn-primary" onclick="closeDlg()">Sign All</button>
+    </div>
+  </dialog>
+
+  <script>
+    const sel = new Set();
+    const TOTAL_ALL_PAGES = 6; // single page, all rows visible
+    let allPagesSelected = false;
+    const btn = document.getElementById('sign-all-btn');
+    const hdrCb = document.getElementById('hdr-cb');
+    const rows = () => [...document.querySelectorAll('#tbl tbody tr')];
+
+    function sync() {
+      const visibleSelected = sel.size;
+      const visibleTotal = rows().length;
+      const count = allPagesSelected ? TOTAL_ALL_PAGES : visibleSelected;
+      btn.textContent = `Sign All (${count})`;
+      btn.disabled = count === 0;
+      const allVisible = visibleSelected > 0 && visibleSelected === visibleTotal;
+      hdrCb.classList.toggle('checked', allVisible || allPagesSelected);
+      hdrCb.setAttribute('aria-checked', (allVisible || allPagesSelected) ? 'true' : visibleSelected > 0 ? 'mixed' : 'false');
+    }
+
+    function toggleRow(cb) {
+      allPagesSelected = false;
+      const row = cb.closest('tr'), on = !cb.classList.contains('checked');
+      cb.classList.toggle('checked', on);
+      cb.setAttribute('aria-checked', on ? 'true' : 'false');
+      on ? sel.add(row) : sel.delete(row);
+      sync();
+    }
+
+    function toggleAll(hdr) {
+      if (allPagesSelected) {
+        // deselect everything
+        allPagesSelected = false;
+        rows().forEach(r => {
+          const cb = r.querySelector('.checkbox');
+          cb.classList.remove('checked');
+          cb.setAttribute('aria-checked', 'false');
+          sel.delete(r);
+        });
+      } else {
+        // select all visible rows first
+        rows().forEach(r => {
+          const cb = r.querySelector('.checkbox');
+          cb.classList.add('checked');
+          cb.setAttribute('aria-checked', 'true');
+          sel.add(r);
+        });
+        // flag that all pages are selected (simulates AC-8 behavior)
+        allPagesSelected = true;
+      }
+      sync();
+    }
+
+    function openConfirm() {
+      const n = sel.size;
+      document.getElementById('dlg-title').textContent = `Sign ${n} Note${n !== 1 ? 's' : ''}?`;
+      document.getElementById('dlg-msg').innerHTML =
+        `You are about to sign <strong>${n} note${n !== 1 ? 's' : ''}</strong>. Proceed?`;
+      const d = document.getElementById('dlg');
+      d.showModal();
+      requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('in')));
+    }
+
+    function closeDlg() {
+      const d = document.getElementById('dlg');
+      d.classList.remove('in'); d.classList.add('out');
+      setTimeout(() => { d.close(); d.classList.remove('out'); }, 200);
+    }
+
+    document.getElementById('dlg').addEventListener('cancel', e => { e.preventDefault(); closeDlg(); });
+  </script>
+</body>
+
+</html>

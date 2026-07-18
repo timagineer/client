@@ -1,0 +1,4565 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ledgerApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prototype: Account Ledger [BT-2704]</title>
+    <link rel="preconnect" href="https://ajax.googleapis.com">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <style>
+        @layer config, base, components, utils;
+
+        @layer config {
+            :root {
+                --primary-50: hsl(216, 53%, 10%);
+                --primary-100: hsl(216, 53%, 15%);
+                --primary-150: hsl(216, 53%, 20%);
+                --primary-200: hsl(216, 53%, 25%);
+                --primary-250: hsl(216, 53%, 29%);
+                --primary-300: hsl(216, 53%, 35%);
+                --primary-350: hsl(216, 53%, 42%);
+                --primary-400: hsl(216, 53%, 52%);
+                --primary-450: hsl(216, 53%, 65%);
+                --primary-500: hsl(216, 53%, 80%);
+                --primary-550: hsl(216, 53%, 88%);
+                --primary-600: hsl(216, 53%, 90%);
+                --primary-650: hsl(216, 53%, 93%);
+                --primary-700: hsl(216, 53%, 95%);
+                --primary-750: hsl(216, 53%, 97%);
+                --primary-800: hsl(216, 53%, 99%);
+
+                --secondary-50: hsl(89, 66%, 10%);
+                --secondary-100: hsl(89, 66%, 15%);
+                --secondary-150: hsl(89, 66%, 20%);
+                --secondary-200: hsl(89, 66%, 28%);
+                --secondary-250: hsl(89, 66%, 35%);
+                --secondary-300: hsl(89, 66%, 42%);
+                --secondary-350: hsl(89, 66%, 52%);
+                --secondary-400: hsl(89, 66%, 62%);
+                --secondary-450: hsl(89, 66%, 75%);
+                --secondary-500: hsl(89, 60%, 90%);
+                --secondary-550: hsl(89, 60%, 93%);
+                --secondary-600: hsl(89, 60%, 94%);
+                --secondary-650: hsl(89, 60%, 95%);
+                --secondary-700: hsl(89, 60%, 96%);
+                --secondary-750: hsl(89, 60%, 97%);
+                --secondary-800: hsl(89, 60%, 99%);
+
+                --gray-50: hsl(216, 12%, 10%);
+                --gray-100: hsl(216, 12%, 15%);
+                --gray-150: hsl(216, 12%, 22%);
+                --gray-200: hsl(216, 12%, 32%);
+                --gray-250: hsl(216, 12%, 40%);
+                --gray-300: hsl(216, 12%, 46%);
+                --gray-350: hsl(216, 12%, 58%);
+                --gray-400: hsl(216, 12%, 65%);
+                --gray-450: hsl(216, 12%, 70%);
+                --gray-500: hsl(216, 10%, 81%);
+                --gray-550: hsl(216, 20%, 90%);
+                --gray-600: hsl(213, 35%, 94%);
+                --gray-650: hsl(218, 48%, 95%);
+                --gray-700: hsl(218, 65%, 97%);
+                --gray-750: hsl(216, 50%, 98%);
+                --gray-800: hsl(216, 40%, 99%);
+                --gray-850: hsl(0, 0%, 100%);
+
+                --info-50: hsl(205, 100%, 12%);
+                --info-100: hsl(205, 100%, 18%);
+                --info-150: hsl(205, 100%, 25%);
+                --info-200: hsl(205, 100%, 32%);
+                --info-250: hsl(205, 100%, 38%);
+                --info-300: hsl(205, 100%, 45%);
+                --info-350: hsl(205, 100%, 55%);
+                --info-400: hsl(205, 100%, 65%);
+                --info-450: hsl(205, 100%, 75%);
+                --info-500: hsl(205, 100%, 85%);
+                --info-550: hsl(205, 100%, 93%);
+                --info-600: hsl(205, 100%, 94%);
+                --info-650: hsl(205, 100%, 95%);
+                --info-700: hsl(205, 100%, 97%);
+                --info-750: hsl(205, 100%, 98%);
+                --info-800: hsl(205, 100%, 99%);
+
+                --positive-50: hsl(140, 65%, 10%);
+                --positive-100: hsl(140, 65%, 15%);
+                --positive-150: hsl(140, 65%, 20%);
+                --positive-200: hsl(140, 65%, 25%);
+                --positive-250: hsl(140, 65%, 30%);
+                --positive-300: hsl(140, 65%, 38%);
+                --positive-350: hsl(140, 65%, 45%);
+                --positive-400: hsl(140, 65%, 55%);
+                --positive-450: hsl(140, 65%, 70%);
+                --positive-500: hsl(140, 60%, 85%);
+                --positive-550: hsl(140, 60%, 92%);
+                --positive-600: hsl(140, 60%, 94%);
+                --positive-650: hsl(140, 60%, 95%);
+                --positive-700: hsl(140, 60%, 97%);
+                --positive-750: hsl(140, 60%, 98%);
+                --positive-800: hsl(140, 60%, 99%);
+
+                --notice-50: hsl(45, 100%, 10%);
+                --notice-100: hsl(45, 100%, 15%);
+                --notice-150: hsl(45, 100%, 20%);
+                --notice-200: hsl(45, 100%, 25%);
+                --notice-250: hsl(45, 100%, 30%);
+                --notice-300: hsl(45, 100%, 40%);
+                --notice-350: hsl(45, 100%, 50%);
+                --notice-400: hsl(45, 100%, 60%);
+                --notice-450: hsl(45, 100%, 70%);
+                --notice-500: hsl(45, 100%, 85%);
+                --notice-550: hsl(45, 100%, 92%);
+                --notice-600: hsl(45, 100%, 94%);
+                --notice-650: hsl(45, 100%, 95%);
+                --notice-700: hsl(45, 100%, 97%);
+                --notice-750: hsl(45, 100%, 98%);
+                --notice-800: hsl(45, 100%, 99%);
+
+                --warning-50: hsl(352, 92%, 12%);
+                --warning-100: hsl(352, 92%, 18%);
+                --warning-150: hsl(352, 92%, 25%);
+                --warning-200: hsl(352, 92%, 32%);
+                --warning-250: hsl(352, 92%, 38%);
+                --warning-300: hsl(352, 92%, 43%);
+                --warning-350: hsl(352, 92%, 52%);
+                --warning-400: hsl(352, 92%, 62%);
+                --warning-450: hsl(352, 92%, 75%);
+                --warning-500: hsl(352, 92%, 85%);
+                --warning-550: hsl(11, 100%, 92%);
+                --warning-600: hsl(11, 100%, 94%);
+                --warning-650: hsl(11, 100%, 95%);
+                --warning-700: hsl(11, 100%, 97%);
+                --warning-750: hsl(11, 100%, 98%);
+                --warning-800: hsl(11, 100%, 99%);
+
+                --orange-50: hsl(28, 100%, 10%);
+                --orange-100: hsl(28, 100%, 15%);
+                --orange-150: hsl(28, 100%, 20%);
+                --orange-200: hsl(28, 100%, 25%);
+                --orange-250: hsl(28, 100%, 30%);
+                --orange-300: hsl(28, 100%, 40%);
+                --orange-350: hsl(28, 100%, 49%);
+                --orange-400: hsl(28, 100%, 60%);
+                --orange-450: hsl(28, 100%, 70%);
+                --orange-500: hsl(28, 100%, 85%);
+                --orange-550: hsl(28, 100%, 92%);
+                --orange-600: hsl(28, 100%, 94%);
+                --orange-650: hsl(28, 100%, 95%);
+                --orange-700: hsl(28, 100%, 97%);
+                --orange-750: hsl(28, 100%, 98%);
+                --orange-800: hsl(28, 100%, 99%);
+
+                /* Semantic tokens */
+                --text: var(--primary-50);
+                --text-secondary: var(--gray-250);
+                --bg: var(--gray-700);
+                --surface: var(--gray-850);
+                --border: var(--gray-400);
+                --border-subtle: var(--gray-500);
+
+                --focus-ring: var(--secondary-300);
+                --hover-bg: var(--secondary-700);
+                --hover-border: var(--primary-300);
+
+                --button-primary-bg: var(--primary-300);
+                --button-primary-hover: var(--primary-250);
+                --button-primary-text: var(--gray-850);
+
+                /* Spacing scale */
+                --space-00: 0;
+                --space-05: 0.0625rem;
+                --space-10: 0.09375rem;
+                --space-15: 0.125rem;
+                --space-20: 0.25rem;
+                --space-25: 0.375rem;
+                --space-30: 0.5rem;
+                --space-35: 0.625rem;
+                --space-40: 0.75rem;
+                --space-45: 1rem;
+                --space-50: 1.25rem;
+                --space-55: 1.5rem;
+                --space-60: 2rem;
+                --space-65: 2.5rem;
+                --space-70: 3rem;
+                --space-75: 4rem;
+                --space-80: 5rem;
+                --space-85: 6rem;
+                --space-90: 8rem;
+                --space-95: 10rem;
+
+                /* Typography scale */
+                --font-size-xs: 0.625rem;
+                --font-size-2xs: 0.6875rem;
+                --font-size-sm: 0.75rem;
+                --font-size-2sm: 0.8125rem;
+                --font-size-base: 0.875rem;
+                --font-size-md: 0.9375rem;
+                --font-size-lg: 1rem;
+                --font-size-xl: 1.5rem;
+
+                /* Font weights */
+                --font-weight-normal: 400;
+                --font-weight-medium: 500;
+                --font-weight-semibold: 600;
+                --font-weight-bold: 700;
+
+                /* Border radius */
+                --radius: 0.375rem;
+                --radius-full: 1rem;
+
+                /* Letter spacing */
+                --tracking-tight: 0;
+                --tracking-normal: 0.025em;
+                --tracking-wide: 0.05em;
+
+                /* Line height */
+                --leading-none: 1;
+                --leading-tight: 1.2;
+                --leading-normal: 1.5;
+
+                /* Transitions */
+                --ease-out-quadratic: cubic-bezier(.25, .46, .45, .94);
+                --transition-fast: 180ms;
+                --transition-normal: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+                /* Elevation */
+                --elevation-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+                --elevation-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+                --elevation-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes dance {
+
+                0%,
+                100% {
+                    transform: rotate(-3deg) scale(1);
+                }
+
+                50% {
+                    transform: rotate(3deg) scale(1.1);
+                }
+            }
+
+        }
+
+        @layer base {
+
+            /* Mashup CSS Reset - Weighted by Commonalities */
+            /* Universal reset (18/20 + 17/20 + 9/20 resets) */
+            :where(*, *::before, *::after) {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            /* Font size adjustment prevention + line height (16/20 + 8/20 resets) */
+            html {
+                font-size: 100%;
+                scrollbar-gutter: stable;
+                -webkit-text-size-adjust: none;
+                text-size-adjust: none;
+                line-height: 1.5;
+            }
+
+            /* Form element font inheritance (19/20 resets) */
+            :where(input, button, textarea, select) {
+                font: inherit;
+            }
+
+            /* Interactive element cursors - usability improvement */
+            :where(button, label[for], select, summary, [role="button"]) {
+                cursor: pointer;
+            }
+
+            /* Text overflow prevention - typography safety */
+            :where(p, h1, h2, h3, h4, h5, h6) {
+                overflow-wrap: break-word;
+            }
+
+            /* Media element defaults (15/20 + 8/20 resets) */
+            :where(img, svg, video, canvas) {
+                display: block;
+                max-width: 100%;
+                height: auto;
+            }
+
+            /* Remove list styles (12/20 resets) */
+            :where(ul, ol) {
+                list-style: none;
+            }
+
+            /* Table border collapse (11/20 resets) */
+            table {
+                border-collapse: collapse;
+            }
+
+            /* Hidden attribute (10/20 resets) */
+            [hidden] {
+                display: none !important;
+            }
+
+            /* End Mashup CSS Reset - Weighted by Commonalities */
+            body {
+                animation: fadeIn 0.5s ease 0.2s backwards;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                font-size: var(--font-size-md);
+                line-height: var(--leading-normal);
+                color: var(--text);
+                background: var(--bg);
+            }
+
+            h1,
+            h2,
+            h3 {
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--leading-tight);
+            }
+
+            h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            h2 {
+                font-size: var(--font-size-lg);
+                margin-block-end: var(--space-40);
+            }
+
+            button {
+                font: inherit;
+                cursor: pointer;
+            }
+
+            a {
+                color: var(--primary-350);
+                text-decoration: none;
+                font-weight: var(--font-weight-semibold);
+                border-radius: 0.125rem;
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            a:hover {
+                text-decoration: underline;
+                color: var(--primary-300);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                a {
+                    transition: box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            a:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            table {
+                inline-size: 100%;
+                font-size: var(--font-size-base);
+                table-layout: auto;
+                font-variant-numeric: tabular-nums;
+            }
+
+            th {
+                text-align: start;
+                font-weight: var(--font-weight-semibold);
+            }
+
+            summary {
+                list-style: none;
+                cursor: pointer;
+            }
+
+            summary::-webkit-details-marker {
+                display: none;
+            }
+        }
+
+        @layer components {
+
+            /* Shared container */
+            body>header,
+            main {
+                max-inline-size: 85rem;
+                margin-inline: auto;
+                padding-inline: var(--space-55);
+            }
+
+            /* Header */
+            body>header {
+                padding-block-start: var(--space-55);
+                padding-block-end: var(--space-45);
+                margin-block-end: var(--space-55);
+                position: relative;
+            }
+
+            body>header::after {
+                content: '';
+                position: absolute;
+                inset-block-end: 0;
+                inset-inline-start: var(--space-55);
+                inset-inline-end: var(--space-55);
+                border-block-end: 1px solid var(--border);
+            }
+
+            /* Main */
+            main {
+                padding-block-end: var(--space-55);
+            }
+
+            .patient-info {
+                color: var(--text-secondary);
+                font-size: var(--font-size-base);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: var(--space-45);
+            }
+
+            .statement-info {
+                display: flex;
+                align-items: center;
+                gap: var(--space-40);
+                font-size: var(--font-size-2sm);
+                color: var(--info-150);
+                padding: var(--space-30) calc(var(--space-30) + var(--space-20));
+                background: var(--info-600);
+                border: 1px solid var(--info-500);
+                border-radius: var(--radius);
+            }
+
+            .statement-info-item {
+                display: flex;
+                align-items: center;
+                gap: var(--space-20);
+            }
+
+            .statement-info-item svg {
+                inline-size: 0.875rem;
+                block-size: 0.875rem;
+                width: 0.875rem;
+                height: 0.875rem;
+                flex-shrink: 0;
+                opacity: 0.7;
+            }
+
+            .statement-info-label {
+                font-weight: var(--font-weight-semibold);
+                opacity: 0.7;
+                white-space: nowrap;
+            }
+
+            .statement-info a {
+                margin-inline-start: auto;
+                white-space: nowrap;
+                padding-inline-start: var(--space-40);
+                position: relative;
+            }
+
+            .statement-info a::before {
+                content: '';
+                position: absolute;
+                inset-inline-start: 0;
+                inset-block-start: 50%;
+                transform: translateY(-50%);
+                block-size: 1rem;
+                border-inline-start: 1px solid color-mix(in srgb, currentColor 50%, transparent);
+            }
+
+            /* Toggle switch */
+            .freeze-toggle {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+                font-size: var(--font-size-2sm);
+                font-weight: 500;
+                color: var(--text-secondary);
+            }
+
+            .freeze-toggle label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+                cursor: pointer;
+            }
+
+            .freeze-toggle input[type="checkbox"] {
+                inline-size: 2rem;
+                block-size: 1rem;
+                appearance: none;
+                background: var(--gray-400);
+                border-radius: var(--radius-full);
+                position: relative;
+                cursor: pointer;
+                transition: background var(--transition-fast);
+            }
+
+            .freeze-toggle input[type="checkbox"]:checked {
+                background: var(--secondary-300);
+            }
+
+            .freeze-toggle input[type="checkbox"]::before {
+                content: '';
+                position: absolute;
+                inline-size: 0.75rem;
+                block-size: 0.75rem;
+                background: var(--surface);
+                border-radius: 50%;
+                inset-block-start: 0.125rem;
+                inset-inline-start: 0.125rem;
+                transition: transform var(--transition-fast);
+            }
+
+            .freeze-toggle input[type="checkbox"]:checked::before {
+                transform: translateX(1rem);
+            }
+
+            .freeze-toggle input[type="checkbox"] {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .freeze-toggle input[type="checkbox"] {
+                    transition: background var(--transition-fast), box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .freeze-toggle input[type="checkbox"]:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            /* Details/Summary (Accordions) */
+            details {
+                margin-block-end: var(--space-30);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius);
+                background: var(--surface);
+                box-shadow: var(--elevation-sm);
+            }
+
+            summary {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: calc(var(--space-40) + 0.125rem) var(--space-45);
+                background: var(--surface);
+                font-weight: var(--font-weight-semibold);
+                font-size: var(--font-size-md);
+                border-radius: var(--radius);
+                transition: background-color var(--transition-fast);
+            }
+
+            summary:hover {
+                background: var(--hover-bg);
+            }
+
+            summary {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                summary {
+                    transition: background-color var(--transition-fast), box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            summary:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            .summary-label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+            }
+
+            .summary-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                transition: transform var(--transition-normal);
+                color: var(--text-secondary);
+            }
+
+            details[open] .summary-icon {
+                transform: rotate(90deg);
+                color: var(--primary-300);
+            }
+
+            .summary-icon svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                fill: currentColor;
+            }
+
+            /* Summary stats */
+            .summary-stats {
+                display: flex;
+                gap: var(--space-55);
+                align-items: center;
+                margin-inline-start: auto;
+                padding-inline-start: var(--space-45);
+            }
+
+            .summary-stat {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 0.125rem;
+            }
+
+            .summary-stat-label {
+                font-size: var(--font-size-xs);
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: var(--tracking-wide);
+                font-weight: var(--font-weight-semibold);
+                line-height: var(--leading-none);
+                margin-block-end: var(--space-15);
+            }
+
+            .summary-stat-value {
+                font-size: var(--font-size-base);
+                font-weight: var(--font-weight-semibold);
+                font-variant-numeric: tabular-nums;
+                line-height: var(--leading-none);
+            }
+
+            .stat-balance {
+                color: var(--warning-300);
+            }
+
+            .stat-positive {
+                color: var(--positive-250);
+            }
+
+            .value-balance {
+                color: var(--warning-300);
+                font-weight: var(--font-weight-semibold);
+            }
+
+            /* Details content */
+            .details-content {
+                padding: var(--space-45);
+            }
+
+            /* Filter bar */
+            .filter-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-block-start: 0;
+                padding-block-end: var(--space-30);
+                padding-inline: var(--space-30);
+                margin-block-end: var(--space-30);
+            }
+
+            .filter-bar-count {
+                font-size: var(--font-size-2sm);
+                color: var(--text-secondary);
+            }
+
+            /* Tables */
+            .table-wrapper {
+                overflow-x: auto;
+                margin-inline: calc(var(--space-30) * -1);
+                padding-inline: var(--space-30);
+            }
+
+            table {
+                margin-block-end: var(--space-60);
+            }
+
+            th {
+                padding: var(--space-30) var(--space-40);
+                border-block-end: 1px solid var(--border);
+                white-space: nowrap;
+                color: var(--text-secondary);
+            }
+
+            td {
+                padding: calc(var(--space-30) + 0.125rem) var(--space-40);
+                border-block-end: 1px solid var(--border-subtle);
+                vertical-align: top;
+            }
+
+            th.numeric,
+            td.numeric,
+            th.code,
+            td.code {
+                text-align: end;
+            }
+
+            tbody tr:hover {
+                background: var(--hover-bg);
+            }
+
+            /* Encounter rows */
+            .encounter-row {
+                cursor: pointer;
+            }
+
+            .encounter-row td:first-child {
+                border-inline-start: 2px solid transparent;
+            }
+
+            .encounter-row td:last-child {
+                border-inline-end: 2px solid transparent;
+            }
+
+            .encounter-row.expanded {
+                background: var(--secondary-550);
+            }
+
+            .encounter-row.expanded td:first-child {
+                border-inline-start-color: var(--secondary-300);
+            }
+
+            .encounter-row.expanded td:last-child {
+                border-inline-end-color: var(--secondary-300);
+            }
+
+            /* Service line rows */
+            .service-line-row {
+                background: var(--gray-750);
+                cursor: pointer;
+            }
+
+            .service-line-row:hover {
+                background: var(--gray-650);
+            }
+
+            .service-line-row.expanded {
+                background: var(--gray-650);
+            }
+
+            .service-line-row.expanded td {
+                border-block-end-color: var(--gray-650);
+            }
+
+            .service-line-row td:first-child {
+                border-inline-start: 2px solid var(--secondary-300);
+            }
+
+            .service-line-row td:last-child {
+                border-inline-end: 2px solid var(--secondary-300);
+            }
+
+            .service-line-label {
+                padding-inline-start: var(--space-60);
+            }
+
+            /* Expand icon */
+            .expand-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                transition: transform var(--transition-normal);
+                color: var(--text-secondary);
+            }
+
+            .expand-icon.expanded {
+                transform: rotate(90deg);
+                color: var(--primary-300);
+            }
+
+            .expand-icon svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                fill: currentColor;
+            }
+
+            /* Payment table */
+            .payment-wrapper {
+                padding: var(--space-40);
+                background: var(--gray-650);
+                border-inline-start: 2px solid var(--secondary-300);
+                border-inline-end: 2px solid var(--secondary-300);
+            }
+
+            .payment-table {
+                margin: 0;
+                border: 1px solid var(--border-subtle);
+                border-collapse: separate;
+                border-radius: var(--radius);
+                background: var(--surface);
+                border-spacing: 0;
+            }
+
+            .payment-table th {
+                background: var(--gray-750);
+                padding: var(--space-30) var(--space-40);
+                border-block-end: 1px solid var(--border-subtle);
+            }
+
+            .payment-table th:first-child {
+                border-top-left-radius: var(--radius);
+            }
+
+            .payment-table th:last-child {
+                border-top-right-radius: var(--radius);
+            }
+
+            .payment-table tbody tr:last-child td {
+                border-block-end: none;
+            }
+
+            .payment-table tbody tr:last-child td:first-child {
+                border-bottom-left-radius: var(--radius);
+            }
+
+            .payment-table tbody tr:last-child td:last-child {
+                border-bottom-right-radius: var(--radius);
+            }
+
+            .payment-table tbody tr {
+                background: var(--surface);
+                transition: background var(--transition-fast);
+                cursor: pointer;
+            }
+
+            .payment-table tbody tr:hover {
+                background: var(--hover-bg);
+            }
+
+            .payment-table td {
+                vertical-align: middle;
+                padding: 0.375rem var(--space-40);
+            }
+
+            /* Unapplied payments table */
+            .unapplied-table td {
+                padding: var(--space-30) var(--space-40);
+                vertical-align: middle;
+            }
+
+            .unapplied-table th:nth-last-child(2),
+            .unapplied-table td:nth-last-child(2) {
+                padding-inline-end: var(--space-50);
+            }
+
+            .unapplied-table th:last-child,
+            .unapplied-table td:last-child {
+                width: 220px;
+                white-space: nowrap;
+            }
+
+            .unapplied-table .btn-xs:not(.btn-dropdown > button),
+            .unapplied-table .btn-xs-spaced:not(.btn-dropdown > button),
+            .unapplied-table .btn-danger:not(.btn-dropdown > button) {
+                min-width: 64px;
+            }
+
+            .unapplied-table button.hidden {
+                visibility: hidden;
+            }
+
+            .payment-table th:last-child,
+            .payment-table td:last-child {
+                width: 170px;
+                white-space: nowrap;
+            }
+
+            .payment-table .btn-xs:not(.btn-dropdown > button),
+            .payment-table .btn-xs-spaced:not(.btn-dropdown > button),
+            .payment-table .btn-danger:not(.btn-dropdown > button) {
+                min-width: 64px;
+            }
+
+            /* Activity log */
+            .activity-log {
+                margin-block-start: var(--space-45);
+                margin-block-end: var(--space-40);
+                background: var(--gray-750);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius);
+            }
+
+            .activity-log-summary {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: var(--space-40) var(--space-45);
+                cursor: pointer;
+                font-weight: var(--font-weight-semibold);
+                font-size: var(--font-size-base);
+                transition: background-color var(--transition-fast);
+            }
+
+            .activity-log-summary:hover {
+                background: var(--hover-bg);
+            }
+
+            .activity-log-summary-label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+            }
+
+            .activity-log-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                transition: transform var(--transition-normal);
+                color: var(--text-secondary);
+            }
+
+            .activity-log[open] .activity-log-icon {
+                transform: rotate(90deg);
+                color: var(--primary-300);
+            }
+
+            .activity-log-icon svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                fill: currentColor;
+            }
+
+            .activity-log-content {
+                padding: var(--space-40) var(--space-45) var(--space-45);
+                max-block-size: calc(var(--space-85) * 3);
+                overflow-y: auto;
+                scrollbar-gutter: stable;
+                overscroll-behavior: contain;
+            }
+
+            .activity-input {
+                display: flex;
+                flex: 1;
+                gap: var(--space-30);
+                margin-inline-start: var(--space-40);
+            }
+
+            .activity-input input {
+                flex: 1;
+                padding: var(--space-30) var(--space-40);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-2sm);
+                font-weight: var(--font-weight-normal);
+                background: var(--surface);
+                color: var(--text);
+            }
+
+            .activity-input input::placeholder {
+                color: var(--text-secondary);
+            }
+
+            .activity-input input {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .activity-input input {
+                    transition: box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .activity-input input:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            .activity-item {
+                padding: var(--space-30) 0;
+                border-block-start: 1px solid var(--border-subtle);
+            }
+
+            .activity-item:first-child {
+                border-block-start: none;
+                padding-block-start: 0;
+            }
+
+            .activity-time {
+                color: var(--text-secondary);
+                font-size: var(--font-size-2sm);
+            }
+
+            /* Badges */
+            .badge {
+                display: inline-block;
+                padding: 0.125rem var(--space-30);
+                font-size: var(--font-size-2xs);
+                font-weight: var(--font-weight-semibold);
+                text-transform: uppercase;
+                letter-spacing: var(--tracking-wide);
+                border-radius: var(--radius);
+            }
+
+            .badge-insurance {
+                text-transform: none;
+                letter-spacing: var(--tracking-tight);
+            }
+
+            .badge-info {
+                background: var(--info-550);
+                color: var(--info-150);
+            }
+
+            .badge-signed {
+                background: var(--positive-550);
+                color: var(--positive-150);
+            }
+
+            .badge-finished {
+                background: var(--notice-550);
+                color: var(--notice-150);
+            }
+
+            .badge-progress {
+                background: var(--info-550);
+                color: var(--info-150);
+            }
+
+            .badge-pending {
+                background: var(--info-550);
+                color: var(--info-150);
+                font-size: var(--font-size-xs);
+                padding: 0.125rem 0.375rem;
+                margin-inline-start: 0.25rem;
+                text-transform: none;
+                letter-spacing: var(--tracking-tight);
+                vertical-align: baseline;
+            }
+
+            .badge-count {
+                display: inline-block;
+                padding: 0.125rem var(--space-30);
+                background: var(--notice-550);
+                color: var(--notice-200);
+                border: 1px solid var(--notice-450);
+                font-size: var(--font-size-md);
+                font-weight: var(--font-weight-semibold);
+                border-radius: var(--radius);
+                margin-inline-start: var(--space-20);
+            }
+
+            .badge-count-info {
+                background: var(--info-550);
+                color: var(--info-200);
+                border-color: var(--info-450);
+                font-size: var(--font-size-base);
+            }
+
+            /* Buttons */
+            button {
+                padding: var(--space-30) var(--space-40);
+                border: 1px solid var(--border);
+                background: var(--surface);
+                font-size: var(--font-size-2sm);
+                border-radius: var(--radius);
+                transition: background-color var(--transition-fast), border-color var(--transition-fast);
+            }
+
+            button:hover {
+                background: var(--bg);
+                border-color: var(--hover-border);
+            }
+
+            button:active {
+                background: var(--gray-650);
+            }
+
+            button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            button:disabled:hover {
+                background: var(--surface);
+                border-color: var(--border);
+            }
+
+            button:disabled:active {
+                background: var(--surface);
+            }
+
+            .btn-primary:disabled:hover {
+                background: var(--button-primary-bg);
+                border-color: var(--button-primary-bg);
+            }
+
+            .btn-primary:disabled:active {
+                background: var(--button-primary-bg);
+            }
+
+            button {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                button {
+                    transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            button:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            .btn-primary {
+                background: var(--button-primary-bg);
+                color: var(--button-primary-text);
+                border-color: var(--button-primary-bg);
+            }
+
+            .btn-primary:hover {
+                background: var(--button-primary-hover);
+                border-color: var(--button-primary-hover);
+            }
+
+            .btn-primary:active {
+                background: var(--primary-200);
+            }
+
+            .btn-danger {
+                color: var(--warning-300);
+            }
+
+            .btn-danger:hover {
+                color: var(--gray-850);
+                background: var(--warning-300);
+                border-color: var(--warning-250);
+            }
+
+            .btn-danger:active {
+                color: var(--gray-850);
+                background: var(--warning-150);
+                border-color: var(--warning-100);
+            }
+
+            .btn-danger:disabled {
+                color: var(--warning-300);
+            }
+
+            .btn-danger:disabled:hover {
+                background: var(--surface);
+                border-color: var(--border);
+            }
+
+            .btn-danger:disabled:active {
+                background: var(--surface);
+                border-color: var(--border);
+            }
+
+            /* Checkbox */
+            .checkbox {
+                inline-size: 1rem;
+                block-size: 1rem;
+                border-radius: 0.1875rem;
+                border: 2px solid var(--gray-400);
+                background: var(--surface);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all var(--transition-fast);
+            }
+
+            .checkbox.checked {
+                background: var(--secondary-250);
+                border-color: var(--secondary-250);
+            }
+
+            .checkbox svg {
+                inline-size: 0.625rem;
+                block-size: 0.5rem;
+            }
+
+            /* Info icon */
+            .info-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.125rem;
+                border: none;
+                background: transparent;
+                color: var(--gray-250);
+                cursor: pointer;
+                transition: all var(--transition-fast);
+                margin-right: 0.25rem;
+                vertical-align: -0.125em;
+                border-radius: 0.1875rem;
+            }
+
+            .info-icon svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .info-icon:hover {
+                color: var(--text);
+                background: var(--gray-550);
+                border-color: transparent;
+            }
+
+            .info-icon:hover svg {
+                background: transparent;
+            }
+
+            .info-icon.active svg {
+                background: transparent;
+            }
+
+            .info-icon {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .info-icon {
+                    transition: all var(--transition-fast), box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .info-icon:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            /* Info tooltip */
+            .info-tooltip {
+                position: absolute;
+                z-index: 1000;
+                margin-top: 0.5rem;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--elevation-md);
+                min-width: 14rem;
+                font-size: var(--font-size-2sm);
+            }
+
+            .info-tooltip-header {
+                padding: var(--space-30) var(--space-40);
+                border-bottom: 1px solid var(--border-subtle);
+                font-size: var(--font-size-xs);
+                font-weight: var(--font-weight-semibold);
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: var(--tracking-wide);
+            }
+
+            .info-tooltip-body {
+                padding: var(--space-30) var(--space-40);
+            }
+
+            .info-tooltip-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.1875rem 0;
+                font-size: var(--font-size-2sm);
+            }
+
+            .info-tooltip-label {
+                color: var(--text);
+            }
+
+            .info-tooltip-value {
+                font-weight: var(--font-weight-semibold);
+                font-variant-numeric: tabular-nums;
+            }
+
+            .info-tooltip-footer {
+                padding: var(--space-30) var(--space-40);
+                border-top: 1px solid var(--border);
+                background: var(--gray-750);
+                border-radius: 0 0 var(--radius) var(--radius);
+            }
+
+            .info-tooltip-total {
+                display: flex;
+                justify-content: space-between;
+                font-size: var(--font-size-2sm);
+            }
+
+            .info-tooltip-total-label {
+                font-weight: var(--font-weight-semibold);
+                color: var(--text);
+            }
+
+            .info-tooltip-total-value {
+                font-weight: var(--font-weight-semibold);
+                font-variant-numeric: tabular-nums;
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-block-end: var(--space-45);
+            }
+
+            .section-header h2 {
+                margin: 0;
+            }
+
+            /* Modal/Dialog */
+            dialog {
+                border: none;
+                border-radius: var(--radius);
+                box-shadow: var(--elevation-xl);
+                margin: auto;
+                padding: 0;
+                max-inline-size: 50rem;
+                inline-size: calc(100% - 2rem);
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+                max-block-size: 85vh;
+            }
+
+            dialog[open] {
+                display: flex;
+                flex-direction: column;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                dialog {
+                    transition: opacity 240ms ease, transform 240ms var(--ease-out-quadratic);
+                }
+
+                dialog::backdrop {
+                    transition: opacity 240ms ease;
+                }
+            }
+
+            dialog[open].animate-in {
+                opacity: 1;
+                transform: none;
+            }
+
+            dialog.closing {
+                opacity: 0;
+                transform: translateY(0.3125rem) scale(0.99);
+            }
+
+            dialog::backdrop {
+                background: rgba(0, 0, 0, 0.2);
+            }
+
+            dialog:not(.animate-in)::backdrop {
+                opacity: 0;
+            }
+
+            dialog.animate-in::backdrop {
+                opacity: 1;
+            }
+
+            dialog.closing::backdrop {
+                opacity: 0;
+            }
+
+            dialog>header {
+                background: var(--primary-300);
+                color: var(--gray-850);
+                padding-block: var(--space-20);
+                padding-inline: var(--space-55);
+                border-start-start-radius: var(--radius);
+                border-start-end-radius: var(--radius);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-shrink: 0;
+            }
+
+            dialog>header::after {
+                border: none;
+            }
+
+            dialog h2 {
+                font-size: var(--font-size-md);
+                font-weight: var(--font-weight-semibold);
+                margin: 0;
+                line-height: var(--leading-tight);
+            }
+
+            dialog>header button {
+                background: none;
+                border: none;
+                color: var(--gray-850);
+                cursor: pointer;
+                padding: var(--space-40);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--radius);
+                margin-right: calc(0px - var(--space-50));
+            }
+
+            dialog>header button:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            dialog>header button:active {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            dialog>header button svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+
+            dialog>div {
+                padding-block-start: var(--space-60);
+                padding-block-end: var(--space-20);
+                padding-inline: var(--space-55);
+                background: var(--surface);
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            dialog>div p {
+                margin-block-end: var(--space-30);
+            }
+
+            dialog>div p:last-child {
+                margin-block-end: 0;
+            }
+
+            /* Modal field grid */
+            .modal-field-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-40);
+                margin-block-end: var(--space-50);
+            }
+
+            .modal-field-grid.cards>div,
+            .modal-field-grid-2col.cards>div {
+                border: 1px solid var(--gray-500);
+                border-radius: 0.375rem;
+                padding-block: var(--space-35);
+                padding-inline: var(--space-40);
+            }
+
+            .modal-warning+.modal-form-group {
+                margin-block-start: 0;
+            }
+
+            /* Modal section */
+            .modal-section {
+                margin-block-start: var(--space-45);
+            }
+
+            .modal-section-spaced {
+                margin-block-start: var(--space-50);
+            }
+
+            .modal-section-header {
+                font-size: var(--font-size-xs);
+                font-weight: 700;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: var(--tracking-wide);
+                margin-block-end: var(--space-30);
+            }
+
+            /* Modal table */
+            .modal-table {
+                inline-size: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius);
+                overflow: hidden;
+            }
+
+            .modal-table thead {
+                background: var(--gray-750);
+            }
+
+            .modal-table th {
+                padding: 0.4375rem 0.625rem;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--text-secondary);
+                text-transform: none;
+                letter-spacing: var(--tracking-normal);
+                text-align: start;
+                border-block-end: 1px solid var(--border-subtle);
+            }
+
+            .modal-table th.numeric,
+            .modal-table th.code {
+                text-align: end;
+            }
+
+            .modal-table td {
+                padding: 0.5625rem 0.625rem;
+                font-size: var(--font-size-base);
+                color: var(--text);
+                border-block-end: 1px solid var(--border-subtle);
+                vertical-align: middle;
+            }
+
+            .modal-table td.numeric,
+            .modal-table td.code {
+                text-align: end;
+            }
+
+            .modal-table td.secondary {
+                color: var(--text-secondary);
+            }
+
+            .modal-table td.positive {
+                color: var(--positive-250);
+                font-weight: var(--font-weight-semibold);
+            }
+
+            .modal-table tbody:last-child tr:last-child td {
+                border-block-end: none;
+            }
+
+            /* Modal warning banner */
+            .modal-warning {
+                margin-block-end: var(--space-45);
+                padding: var(--space-40);
+                background: var(--warning-600);
+                border: 1px solid var(--warning-500);
+                border-radius: var(--radius);
+                display: flex;
+                align-items: flex-start;
+                gap: var(--space-30);
+            }
+
+            .modal-warning-icon {
+                flex-shrink: 0;
+                color: var(--warning-200);
+                margin-block-start: 0.0625rem;
+            }
+
+            .modal-warning-icon svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+                opacity: 0.7;
+            }
+
+            .modal-warning-content {
+                flex: 1;
+            }
+
+            .modal-warning-title {
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--warning-200);
+                margin-block-end: var(--space-20);
+            }
+
+            .modal-warning-text {
+                font-size: var(--font-size-sm);
+                color: var(--warning-200);
+                line-height: var(--leading-normal);
+            }
+
+            /* Modal notice banner */
+            .modal-notice {
+                margin-block-end: var(--space-50);
+                padding: var(--space-40);
+                background: var(--notice-600);
+                border: 1px solid var(--notice-500);
+                border-radius: var(--radius);
+                display: flex;
+                align-items: flex-start;
+                gap: var(--space-30);
+            }
+
+            .modal-notice-icon {
+                flex-shrink: 0;
+                color: var(--notice-200);
+                margin-block-start: 0.0625rem;
+            }
+
+            .modal-notice-icon svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+                opacity: 0.8;
+            }
+
+            .modal-notice-content {
+                flex: 1;
+            }
+
+            .modal-notice-title {
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--notice-200);
+                margin-block-end: var(--space-20);
+            }
+
+            .modal-notice-text {
+                font-size: var(--font-size-sm);
+                color: var(--notice-200);
+                line-height: var(--leading-normal);
+            }
+
+            /* Modal form controls */
+            .modal-form-group {
+                margin-block-end: var(--space-45);
+            }
+
+            .modal-form-label {
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--gray-250);
+                margin-block-end: var(--space-20);
+                display: block;
+            }
+
+            .modal-field-label {
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-semibold);
+                color: var(--gray-250);
+                margin-block-end: var(--space-15);
+            }
+
+            .modal-field-value {
+                font-size: var(--font-size-base);
+                color: var(--text);
+            }
+
+            .modal-radio-group {
+                display: flex;
+                gap: var(--space-45);
+                margin-block-end: var(--space-30);
+            }
+
+            .modal-radio-label {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+                cursor: pointer;
+                font-size: var(--font-size-base);
+                color: var(--text);
+            }
+
+            .modal-radio-label input[type="radio"] {
+                inline-size: 1.25rem;
+                block-size: 1.25rem;
+                margin: 0;
+                cursor: pointer;
+                flex-shrink: 0;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                appearance: none;
+                position: relative;
+                border-radius: 50%;
+            }
+
+            .modal-radio-label input[type="radio"]:checked {
+                border-color: var(--secondary-300);
+            }
+
+            .modal-radio-label input[type="radio"]:checked::before {
+                content: '';
+                position: absolute;
+                inset: 0.25rem;
+                background: var(--secondary-300);
+                border-radius: 50%;
+            }
+
+            .modal-input {
+                padding: 0 0 0 var(--space-30);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-base);
+                font-variant-numeric: tabular-nums;
+                color: var(--text);
+                inline-size: 5rem;
+                margin-inline-start: var(--space-20);
+                opacity: 1;
+                transition: opacity 180ms ease;
+            }
+
+            .modal-input-distribute {
+                text-align: left;
+                margin-inline-start: 0;
+                padding: 0 0 0 var(--space-30);
+            }
+
+            .modal-field-input {
+                inline-size: 100%;
+                padding-block: var(--space-30);
+                padding-inline: var(--space-40);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-base);
+                font-family: inherit;
+                background: var(--surface);
+                color: var(--text);
+            }
+
+            .modal-field-value {
+                font-size: var(--font-size-base);
+            }
+
+            .modal-field-input.error,
+            .modal-field-select.error {
+                border-color: var(--warning-300);
+            }
+
+            .modal-field-input.error:focus,
+            .modal-field-select.error:focus {
+                border-color: var(--warning-300);
+                outline-color: var(--warning-300);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+
+                .modal-field-input,
+                .modal-field-select {
+                    box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+                    transition: box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .modal-field-input:focus-visible,
+            .modal-field-select:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            .modal-field-input[type="date"]::-webkit-calendar-picker-indicator {
+                cursor: pointer;
+                opacity: 0.6;
+            }
+
+            .modal-field-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+                opacity: 1;
+            }
+
+            .modal-field-input.with-prefix {
+                padding-inline-start: calc(var(--space-40) + 0.625rem);
+            }
+
+            .modal-field-input.tabular {
+                font-variant-numeric: tabular-nums;
+            }
+
+            .modal-field-input,
+            .modal-field-select {
+                box-shadow: 0 0 0 0 0 transparent;
+            }
+
+            .modal-field-select {
+                inline-size: 100%;
+                padding-block: var(--space-30);
+                padding-inline-start: var(--space-40);
+                padding-inline-end: var(--space-40);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-base);
+                font-family: inherit;
+                background: var(--surface) url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right var(--space-40) center;
+                color: var(--text);
+                appearance: none;
+                text-indent: 0;
+                transition: background-image var(--transition-fast);
+                cursor: pointer;
+            }
+
+            .modal-field-select:hover {
+                background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            }
+
+            .modal-field-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: var(--space-40) var(--space-40);
+                margin-block-end: var(--space-50);
+            }
+
+            .modal-field-grid-2col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-40) var(--space-40);
+            }
+
+            .modal-field-full {
+                grid-column: 1 / -1;
+            }
+
+            .modal-field-wrapper {
+                position: relative;
+            }
+
+            .modal-field-prefix {
+                position: absolute;
+                inset-inline-start: var(--space-40);
+                inset-block-start: 50%;
+                transform: translateY(-50%);
+                font-size: var(--font-size-base);
+                color: var(--text-secondary);
+                font-variant-numeric: tabular-nums;
+            }
+
+            .modal-form-label .required {
+                color: var(--warning-250);
+            }
+
+            .modal-footer-note-input button {
+                font-size: var(--font-size-sm);
+                padding: 0.375rem 0.625rem;
+            }
+
+            .payment-empty-state td {
+                text-align: center;
+                color: var(--text-secondary);
+                font-style: italic;
+                padding-block: var(--space-45);
+            }
+
+            .modal-input.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .modal-input {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .modal-input {
+                    transition: opacity 180ms ease, box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .modal-input:focus-visible,
+            .modal-input:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            .modal-input.error {
+                border-color: var(--warning-300);
+            }
+
+            .modal-input-error {
+                margin-block-start: var(--space-20);
+                font-size: var(--font-size-xs);
+                color: var(--warning-300);
+            }
+
+            .modal-textarea {
+                display: block;
+                inline-size: 100%;
+                margin-block-start: var(--space-30);
+                padding: var(--space-30) var(--space-40);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-base);
+                font-family: inherit;
+                resize: vertical;
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .modal-textarea {
+                    transition: box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .modal-textarea:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            /* Modal footer */
+            .modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: var(--space-30);
+                padding-block-start: 0;
+                padding-block-end: var(--space-60);
+                margin-block-start: calc(var(--space-45) * -1);
+                margin-block-end: var(--space-45);
+            }
+
+            .modal-footer-spaced {
+                margin-block-start: var(--space-50);
+            }
+
+            .modal-table-wrapper {
+                max-block-size: 18rem;
+                overflow-y: auto;
+                scrollbar-gutter: stable;
+                overscroll-behavior: contain;
+            }
+
+            .modal-footer-note {
+                padding-block-start: var(--space-55);
+                padding-block-end: var(--space-50);
+                border-block-start: 1px solid var(--border-subtle);
+            }
+
+            .modal-footer-note-input {
+                display: flex;
+                gap: var(--space-30);
+            }
+
+            .modal-footer-note-input input {
+                flex: 1;
+                padding: var(--space-30) var(--space-40);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                font-size: var(--font-size-sm);
+                background: var(--surface);
+                color: var(--text);
+            }
+
+            .modal-footer-note-input input::placeholder {
+                color: var(--text-secondary);
+            }
+
+            .modal-footer-note-input input {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .modal-footer-note-input input {
+                    transition: box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .modal-footer-note-input input:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            /* Modal table danger row */
+            .modal-table tbody tr.danger {
+                background: var(--surface);
+            }
+
+            .modal-table tbody tr.danger td {
+                color: var(--text);
+            }
+
+            .modal-table tbody td.danger {
+                color: var(--warning-300);
+                font-weight: var(--font-weight-semibold);
+            }
+
+            /* Sort button */
+            .sort-btn {
+                margin-inline-start: 0.25rem;
+                padding: 0.125rem;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                color: var(--gray-250);
+                vertical-align: -0.125em;
+                transition: all var(--transition-fast);
+                border-radius: 0.1875rem;
+            }
+
+            .sort-btn svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            .sort-btn:hover {
+                color: var(--text);
+                background: var(--gray-550);
+            }
+
+            .sort-btn:hover svg {
+                background: transparent;
+            }
+
+            .sort-btn {
+                box-shadow: 0 0 0 0 var(--surface), 0 0 0 0 var(--focus-ring);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .sort-btn {
+                    transition: all var(--transition-fast), box-shadow var(--transition-fast) var(--ease-out-quadratic);
+                }
+            }
+
+            .sort-btn:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
+            }
+
+            /* Overlay backdrop */
+            .overlay-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 99;
+            }
+
+            .overlay-backdrop-high {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+            }
+
+            /* Dropdown menu */
+            .dropdown-menu {
+                position: absolute;
+                z-index: 100;
+                margin-block-start: 0.25rem;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: var(--space-40);
+                box-shadow: var(--elevation-md);
+            }
+
+            .dropdown-label {
+                display: flex;
+                align-items: center;
+                margin-block-end: 0.375rem;
+                font-size: var(--font-size-2sm);
+                cursor: pointer;
+                font-weight: 400;
+            }
+
+            .dropdown-label:last-child {
+                margin-block-end: 0;
+            }
+
+            .dropdown-checkbox {
+                margin-inline-end: 0.5rem;
+                accent-color: var(--secondary-250);
+            }
+
+            /* Dropdown button */
+            .btn-dropdown {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+
+            .btn-dropdown>button {
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+
+            .btn-dropdown>button svg {
+                inline-size: 1rem;
+                block-size: 1rem;
+                vertical-align: text-bottom;
+            }
+
+            .btn-dropdown-menu {
+                position: absolute;
+                z-index: 100;
+                inset-block-start: calc(100% + 0.25rem);
+                inset-inline-end: 0;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: var(--space-20);
+                box-shadow: var(--elevation-md);
+                min-inline-size: 12rem;
+            }
+
+            .btn-dropdown-menu button {
+                display: block;
+                inline-size: 100%;
+                text-align: start;
+                padding: var(--space-30) var(--space-40);
+                font-size: var(--font-size-sm);
+                font-weight: 400;
+                border: none;
+                background: transparent;
+                color: var(--text);
+            }
+
+            .btn-dropdown-menu button:hover {
+                background: var(--hover-bg);
+                border-color: transparent;
+            }
+
+            /* Waterfall container */
+            .waterfall-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-block: var(--space-20);
+                padding-inline: var(--space-30);
+                margin-block-end: var(--space-40);
+            }
+
+            .waterfall-badges {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+                padding: var(--space-30) var(--space-40);
+                background: var(--surface);
+                border-radius: var(--radius);
+            }
+
+            .waterfall-badge-item {
+                display: flex;
+                align-items: center;
+                gap: var(--space-30);
+            }
+
+            /* Selection bar */
+            .selection-bar {
+                margin-block-start: var(--space-20);
+                padding: var(--space-40) var(--space-45);
+                background: var(--gray-750);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .selection-bar-text {
+                font-size: var(--font-size-base);
+                font-weight: var(--font-weight-semibold);
+                color: var(--text);
+            }
+
+            .selection-bar-actions {
+                display: flex;
+                gap: var(--space-30);
+            }
+
+            /* Responsive */
+            @media (max-width: 60rem) {
+
+                body>header,
+                main {
+                    padding-inline: var(--space-30);
+                }
+
+                .details-content {
+                    padding: var(--space-30);
+                }
+
+                .summary-stats {
+                    display: none;
+                }
+
+                .freeze-toggle {
+                    inline-size: 100%;
+                }
+            }
+        }
+
+        @layer utils {
+
+            /* Single-purpose utilities */
+            .empty-value {
+                color: var(--gray-350);
+            }
+
+            .visually-hidden {
+                position: absolute;
+                inline-size: 0.0625rem;
+                block-size: 0.0625rem;
+                padding: 0;
+                margin: -0.0625rem;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border-width: 0;
+            }
+
+            .placeholder-text {
+                color: var(--text-secondary);
+                font-size: var(--font-size-base);
+            }
+
+            .empty-state-message {
+                color: var(--text-secondary);
+                font-size: var(--font-size-base);
+                font-style: italic;
+                text-align: center;
+                margin-block-start: calc(var(--space-45) * -1);
+                margin-block-end: var(--space-60);
+            }
+
+            /* Table cell modifiers */
+            .th-checkbox {
+                inline-size: 1.75rem;
+                padding-inline-start: 0.75rem;
+                padding-inline-end: 0.375rem;
+            }
+
+            .th-icon {
+                inline-size: 1.5rem;
+            }
+
+            .th-middle {
+                vertical-align: middle;
+            }
+
+            .th-relative {
+                position: relative;
+            }
+
+            .td-checkbox {
+                padding-inline-start: 0.75rem;
+                padding-inline-end: 0.375rem;
+            }
+
+            .td-end {
+                text-align: end;
+            }
+
+            /* Tooltip modifiers */
+            .tooltip-right {
+                inset-inline-end: 0;
+            }
+
+            .tooltip-value-positive {
+                color: var(--positive-250);
+            }
+
+            .tooltip-value-default {
+                color: var(--text);
+            }
+
+            /* Spacing modifiers */
+            .badge-spacing {
+                margin-inline-start: 0.25rem;
+            }
+
+            /* Button size modifiers */
+            .btn-xs {
+                font-size: var(--font-size-sm);
+                padding: 0.25rem 0.5rem;
+                font-weight: 400;
+            }
+
+            .btn-xs-spaced {
+                font-size: var(--font-size-sm);
+                padding: 0.25rem 0.5rem;
+                margin-inline-end: 0.25rem;
+                font-weight: 400;
+            }
+
+            .btn-sm {
+                font-size: var(--font-size-sm);
+                padding: 0.375rem 0.625rem;
+                font-weight: 400;
+            }
+
+            /* Icon color modifier */
+            .arrow-icon {
+                color: var(--text-secondary);
+            }
+        }
+    </style>
+</head>
+
+<body ng-controller="LedgerCtrl as vm">
+    <header>
+        <div class="patient-info">
+            <span>Pat Patient | MRN: 00482 | DOB: 05/14/1988</span>
+            <div class="statement-info">
+                <span class="statement-info-label">Last Statement</span>
+                <span class="statement-info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                    </svg>
+                    01/20/2025
+                </span>
+                <span class="statement-info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                    </svg>
+                    Emailed
+                </span>
+                <span class="statement-info-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                        <path d="M12 18V6" />
+                    </svg>
+                    $80.00 Bal.
+                </span>
+                <a href="#">View All (3)</a>
+            </div>
+            <div class="freeze-toggle">
+                <label>
+                    Freeze Account
+                    <input type="checkbox" ng-model="vm.accountFrozen">
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Insurance -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Insurance
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Insurance content</p>
+            </div>
+        </details>
+
+        <!-- Eligibility -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Eligibility
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Eligibility content</p>
+            </div>
+        </details>
+
+        <!-- Invoicing -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Invoicing
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Invoicing content</p>
+            </div>
+        </details>
+
+        <!-- Statements -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Statements
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Statements content</p>
+            </div>
+        </details>
+
+        <!-- Account Ledger -->
+        <details open>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Account Ledger <span class="badge-count">{{vm.getOpenBalanceCount()}}</span>
+                </div>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Charges</div>
+                        <div class="summary-stat-value">${{vm.calculateTotals().charge.toFixed(2)}}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Paid</div>
+                        <div class="summary-stat-value stat-positive">${{vm.calculateTotals().paid.toFixed(2)}}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Adjusted</div>
+                        <div class="summary-stat-value">-${{vm.calculateTotals().adjusted.toFixed(2)}}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Client</div>
+                        <div class="summary-stat-value stat-balance">${{vm.calculateTotals().client.toFixed(2)}}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Insurance</div>
+                        <div class="summary-stat-value stat-balance">${{vm.calculateTotals().insurance.toFixed(2)}}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Total</div>
+                        <div class="summary-stat-value stat-balance">${{vm.calculateTotals().total.toFixed(2)}}</div>
+                    </div>
+                </div>
+            </summary>
+            <div class="details-content">
+                <div class="filter-bar">
+                    <div class="filter-bar-count">
+                        Showing {{vm.getVisibleEncounterCount()}} of {{vm.encounters.length}} encounters
+                    </div>
+                    <div class="freeze-toggle">
+                        <label>
+                            Open Balances
+                            <input type="checkbox" ng-model="vm.showOpenBalancesOnly">
+                        </label>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="th-checkbox">
+                                    <div ng-click="vm.toggleSelectAll()" class="checkbox" ng-class="{checked: vm.allSelected()}">
+                                        <svg ng-if="vm.allSelected()" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="th-icon"></th>
+                                <th class="th-middle">
+                                    Date
+                                    <button ng-click="vm.toggleDateSort()" class="sort-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21 16-4 4-4-4" />
+                                            <path d="M17 20V4" />
+                                            <path d="m3 8 4-4 4 4" />
+                                            <path d="M7 4v16" />
+                                        </svg>
+                                    </button>
+                                </th>
+                                <th>Clinician</th>
+                                <th class="th-middle">
+                                    Note Status
+                                    <button ng-click="vm.toggleNoteFilter($event)" class="sort-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18" />
+                                            <path d="M7 12h10" />
+                                            <path d="M10 18h4" />
+                                        </svg>
+                                    </button>
+                                    <div ng-if="vm.noteFilterOpen" ng-click="vm.closeNoteFilter()" class="overlay-backdrop"></div>
+                                    <div ng-if="vm.noteFilterOpen" class="dropdown-menu">
+                                        <label class="dropdown-label">
+                                            <input type="checkbox" ng-model="vm.noteFilters.inProgress" class="dropdown-checkbox"> In Progress
+                                        </label>
+                                        <label class="dropdown-label">
+                                            <input type="checkbox" ng-model="vm.noteFilters.finished" class="dropdown-checkbox"> Finished
+                                        </label>
+                                        <label class="dropdown-label">
+                                            <input type="checkbox" ng-model="vm.noteFilters.signed" class="dropdown-checkbox"> Signed
+                                        </label>
+                                    </div>
+                                </th>
+                                <th class="numeric">Charge</th>
+                                <th class="numeric th-relative">
+                                    <button ng-click="vm.togglePaidInfo($event)" class="info-icon" ng-class="{active: vm.paidInfoOpen}">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 16v-4"></path>
+                                            <path d="M12 8h.01"></path>
+                                        </svg>
+                                    </button>
+                                    Paid
+                                    <div ng-if="vm.paidInfoOpen" ng-click="vm.closePaidInfo()" class="overlay-backdrop-high"></div>
+                                    <div ng-if="vm.paidInfoOpen" class="info-tooltip tooltip-right">
+                                        <div class="info-tooltip-header">Paid Breakdown</div>
+                                        <div class="info-tooltip-body">
+                                            <div class="info-tooltip-row" ng-if="vm.getPaidBreakdown().insPay > 0">
+                                                <span class="info-tooltip-label">Insurance Payments</span>
+                                                <span class="info-tooltip-value tooltip-value-positive">${{vm.getPaidBreakdown().insPay.toFixed(2)}}</span>
+                                            </div>
+                                            <div class="info-tooltip-row" ng-if="vm.getPaidBreakdown().clientPay > 0">
+                                                <span class="info-tooltip-label">Client Payments</span>
+                                                <span class="info-tooltip-value tooltip-value-positive">${{vm.getPaidBreakdown().clientPay.toFixed(2)}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-tooltip-footer">
+                                            <div class="info-tooltip-total">
+                                                <span class="info-tooltip-total-label">Net Paid</span>
+                                                <span class="info-tooltip-total-value tooltip-value-positive">${{vm.getPaidBreakdown().total.toFixed(2)}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th class="numeric th-relative">
+                                    <button ng-click="vm.toggleAdjInfo($event)" class="info-icon" ng-class="{active: vm.adjInfoOpen}">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 16v-4"></path>
+                                            <path d="M12 8h.01"></path>
+                                        </svg>
+                                    </button>
+                                    Adjusted
+                                    <div ng-if="vm.adjInfoOpen" ng-click="vm.closeAdjInfo()" class="overlay-backdrop-high"></div>
+                                    <div ng-if="vm.adjInfoOpen" class="info-tooltip tooltip-right">
+                                        <div class="info-tooltip-header">Adjusted Breakdown</div>
+                                        <div class="info-tooltip-body">
+                                            <div class="info-tooltip-row" ng-repeat="(code, amount) in vm.getAdjBreakdown().byCode">
+                                                <span class="info-tooltip-label">{{code}}</span>
+                                                <span class="info-tooltip-value tooltip-value-default">-${{amount.toFixed(2)}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-tooltip-footer">
+                                            <div class="info-tooltip-total">
+                                                <span class="info-tooltip-total-label">Total Adjusted</span>
+                                                <span class="info-tooltip-total-value tooltip-value-default">-${{vm.getAdjBreakdown().total.toFixed(2)}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th class="numeric">Client Bal.</th>
+                                <th class="numeric">Ins. Bal.</th>
+                                <th class="numeric">Total Bal.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat-start="enc in vm.encounters" ng-show="vm.showEncounter(enc)" class="encounter-row" ng-class="{expanded: enc.expanded}" ng-click="vm.toggleEncounter(enc)">
+                                <td ng-click="vm.toggleSelect(enc, $event)" class="td-checkbox">
+                                    <div class="checkbox" ng-class="{checked: enc.selected}">
+                                        <svg ng-if="enc.selected" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 4l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="expand-icon" ng-class="{expanded: enc.expanded}">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                                        </svg>
+                                    </span>
+                                </td>
+                                <td>{{enc.date}}</td>
+                                <td>{{enc.clinician}}</td>
+                                <td>
+                                    <span class="badge" ng-class="{
+                                                'badge-signed': enc.noteStatus === 'Signed',
+                                                'badge-finished': enc.noteStatus === 'Finished',
+                                                'badge-progress': enc.noteStatus === 'In Progress'
+                                            }">{{enc.noteStatus}}</span>
+                                </td>
+                                <td class="numeric">${{enc.charge.toFixed(2)}}</td>
+                                <td class="numeric">${{enc.totalPaid.toFixed(2)}}</td>
+                                <td class="numeric">{{enc.insAdj > 0 ? '-$' + enc.insAdj.toFixed(2) : '$0.00'}}</td>
+                                <td class="numeric">${{enc.clientBal.toFixed(2)}}</td>
+                                <td class="numeric">${{enc.insBal.toFixed(2)}}</td>
+                                <td class="numeric" ng-class="{'value-balance': enc.totalBal > 0}">${{enc.totalBal.toFixed(2)}}</td>
+                            </tr>
+
+                            <tr ng-repeat-start="sl in enc.serviceLines" ng-show="enc.expanded && vm.showEncounter(enc)" class="service-line-row" ng-class="{expanded: sl.expanded}" ng-click="vm.toggleServiceLine(sl)">
+                                <td></td>
+                                <td>
+                                    <span class="expand-icon" ng-class="{expanded: sl.expanded}">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                                        </svg>
+                                    </span>
+                                </td>
+                                <td class="code">{{sl.cpt}}</td>
+                                <td colspan="2">{{sl.desc}}</td>
+                                <td class="numeric">${{sl.charge.toFixed(2)}}</td>
+                                <td class="numeric">${{sl.paid.toFixed(2)}}</td>
+                                <td class="numeric">{{sl.insAdj > 0 ? '-$' + sl.insAdj.toFixed(2) : '$0.00'}}</td>
+                                <td class="numeric">${{sl.clientBal.toFixed(2)}}</td>
+                                <td class="numeric">${{sl.insBal.toFixed(2)}}</td>
+                                <td class="numeric" ng-class="{'value-balance': sl.totalBal > 0}">${{sl.totalBal.toFixed(2)}}</td>
+                            </tr>
+                            <tr ng-repeat-end ng-show="sl.expanded && vm.showEncounter(enc)">
+                                <td colspan="11" class="payment-wrapper">
+                                    <table class="payment-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-middle">
+                                                    Date
+                                                    <button ng-click="vm.togglePaymentDateSort(sl, $event)" class="sort-btn">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="m21 16-4 4-4-4" />
+                                                            <path d="M17 20V4" />
+                                                            <path d="m3 8 4-4 4 4" />
+                                                            <path d="M7 4v16" />
+                                                        </svg>
+                                                    </button>
+                                                </th>
+                                                <th>Payer</th>
+                                                <th>Type</th>
+                                                <th>Source</th>
+                                                <th class="numeric">Reference №</th>
+                                                <th class="numeric">Amount</th>
+                                                <th>Adj. Codes</th>
+                                                <th class="td-end">
+                                                    <div class="btn-dropdown">
+                                                        <button class="btn-primary btn-sm" ng-click="vm.toggleTxnDropdown(sl, $event)">
+                                                            Add Transaction
+                                                            <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                                                                <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path>
+                                                            </svg>
+                                                        </button>
+                                                        <div ng-if="sl.txnDropdownOpen" ng-click="vm.closeTxnDropdown(sl)" class="overlay-backdrop"></div>
+                                                        <div ng-if="sl.txnDropdownOpen" class="btn-dropdown-menu">
+                                                            <button ng-click="vm.showAddTransaction(sl, enc, 'Client Payment')">Client Payment</button>
+                                                            <button ng-click="vm.showAddTransaction(sl, enc, 'Client Adjustment')">Client Adjustment</button>
+                                                            <button ng-click="vm.showAddTransaction(sl, enc, 'Insurance Payment')">Insurance Payment</button>
+                                                            <button ng-click="vm.showAddTransaction(sl, enc, 'Insurance Adjustment')">Insurance Adjustment</button>
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="sl.payments.length === 0" class="payment-empty-state">
+                                                <td colspan="8">No service line payments or adjustments</td>
+                                            </tr>
+                                            <tr ng-repeat-start="pmt in sl.payments">
+                                                <td>{{pmt.date}}</td>
+                                                <td>
+                                                    {{pmt.payer}}
+                                                    <span ng-if="pmt.type.includes('Client')" class="badge badge-insurance badge-info badge-spacing">Client</span>
+                                                    <span ng-if="pmt.insuranceLevel" class="badge badge-insurance badge-spacing" ng-class="{
+                                                        'badge-signed': pmt.insuranceLevel === 'Primary',
+                                                        'badge-finished': pmt.insuranceLevel === 'Secondary'
+                                                    }">{{pmt.insuranceLevel}}</span>
+                                                </td>
+                                                <td>{{pmt.type}}</td>
+                                                <td ng-class="{'empty-value': !pmt.source}">{{pmt.source || '–'}}</td>
+                                                <td class="numeric">{{pmt.checkNum}}</td>
+                                                <td class="numeric">${{pmt.amount.toFixed(2)}}</td>
+                                                <td class="empty-value">–</td>
+                                                <td class="td-end">
+                                                    <button class="btn-xs-spaced" ng-click="vm.showPaymentDetail(pmt, sl)">Details</button>
+                                                    <button class="btn-danger btn-xs" ng-click="vm.showRefundModal(pmt, sl)">Refund</button>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat-end ng-if="pmt.adjAmount > 0">
+                                                <td>{{pmt.date}}</td>
+                                                <td>
+                                                    {{pmt.payer}}
+                                                    <span ng-if="pmt.insuranceLevel" class="badge badge-insurance badge-spacing" ng-class="{
+                                                        'badge-signed': pmt.insuranceLevel === 'Primary',
+                                                        'badge-finished': pmt.insuranceLevel === 'Secondary'
+                                                    }">{{pmt.insuranceLevel}}</span>
+                                                </td>
+                                                <td>Insurance Adjustment</td>
+                                                <td>{{pmt.source}}</td>
+                                                <td class="numeric">{{pmt.checkNum}}</td>
+                                                <td class="numeric">-${{pmt.adjAmount.toFixed(2)}}</td>
+                                                <td>{{pmt.adjCodes}}</td>
+                                                <td class="td-end">
+                                                    <button class="btn-xs-spaced" ng-click="vm.showPaymentDetail(pmt, sl, 'Insurance Adjustment')">Details</button>
+                                                    <button class="btn-xs" disabled>Refund</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <details class="activity-log" ng-if="sl.activity.length > 0">
+                                        <summary class="activity-log-summary">
+                                            <div class="activity-log-summary-label">
+                                                <span class="activity-log-icon">
+                                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                                                    </svg>
+                                                </span>
+                                                Activity Log <span class="badge-count badge-count-info">{{sl.activity.length}}</span>
+                                            </div>
+                                            <div class="activity-input" ng-click="$event.stopPropagation()">
+                                                <input type="text" placeholder="Add an optional note. Notes are visible to all billers." ng-model="sl.newNote" ng-keypress="vm.handleNoteKeypress($event, sl)">
+                                                <button class="btn-primary btn-sm" ng-click="vm.addNote(sl)">Add Note</button>
+                                            </div>
+                                        </summary>
+                                        <div class="activity-log-content">
+                                            <div ng-repeat="act in sl.activity" class="activity-item">
+                                                <div class="activity-time">{{act.ts}} • {{act.user}}</div>
+                                                <div>{{act.action}}</div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                </td>
+                            </tr>
+
+                            <tr ng-repeat-end ng-if="false"></tr>
+                        </tbody>
+                    </table>
+                    <div ng-if="!vm.hasVisibleEncounters()" class="empty-state-message">
+                        No encounters, services, or payments
+                    </div>
+
+                    <!-- Selection Control Bar -->
+                    <div ng-if="vm.getSelectedCount() > 0" class="selection-bar">
+                        <div class="selection-bar-text">
+                            {{vm.getSelectedCount()}} encounter{{vm.getSelectedCount() !== 1 ? 's' : ''}} selected
+                        </div>
+                        <div class="selection-bar-actions">
+                            <button class="btn-sm">Send to Collections</button>
+                            <button class="btn-primary btn-sm">Generate Statements</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Unapplied Payments -->
+        <details open>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Unapplied Payments <span class="badge-count">3</span>
+                </div>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-stat-label">Total</div>
+                        <div class="summary-stat-value stat-balance">$329.00</div>
+                    </div>
+                </div>
+            </summary>
+            <div class="details-content">
+                <div class="filter-bar">
+                    <div class="filter-bar-count">
+                        Showing {{vm.getVisiblePaymentCount()}} of {{vm.unappliedPayments.length}} payments
+                    </div>
+                    <div class="freeze-toggle">
+                        <label>
+                            Unapplied Balances
+                            <input type="checkbox" ng-model="vm.showUnappliedOnly">
+                        </label>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="unapplied-table">
+                        <thead>
+                            <tr>
+                                <th class="th-middle">
+                                    Date
+                                    <button ng-click="vm.toggleUnappliedDateSort()" class="sort-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21 16-4 4-4-4" />
+                                            <path d="M17 20V4" />
+                                            <path d="m3 8 4-4 4 4" />
+                                            <path d="M7 4v16" />
+                                        </svg>
+                                    </button>
+                                </th>
+                                <th>Reference №</th>
+                                <th>Source</th>
+                                <th>Transaction Code</th>
+                                <th class="numeric">Amount</th>
+                                <th class="numeric">Unapplied</th>
+                                <th class="td-end">
+                                    <button class="btn-primary btn-sm" ng-click="vm.showNewPayment()">New Payment</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="pmt in vm.unappliedPayments" ng-show="vm.showUnappliedPayment(pmt)" ng-init="$first && (pmt.code = pmt.code || 'Account Payment'); $index === 1 && (pmt.code = pmt.code || 'Copay')">
+                                <td>{{pmt.date}}</td>
+                                <td>{{pmt.refNum}}</td>
+                                <td>{{pmt.source}}</td>
+                                <td>{{pmt.code || '–'}}</td>
+                                <td class="numeric">${{pmt.amount.toFixed(2)}}</td>
+                                <td class="numeric">
+                                    <span ng-if="pmt.unapplied === 0" class="badge badge-insurance badge-signed">Fully Applied</span>
+                                    <span ng-if="pmt.unapplied > 0" class="value-balance">${{pmt.unapplied.toFixed(2)}}</span>
+                                </td>
+                                <td class="td-end">
+                                    <button class="btn-xs-spaced" ng-click="vm.showUnappliedDetails(pmt)">Details</button>
+                                    <button class="btn-danger btn-xs-spaced" ng-class="{hidden: pmt.unapplied === 0}" ng-click="vm.showUnappliedRefund(pmt)">Refund</button>
+                                    <button class="btn-primary btn-xs" ng-class="{hidden: pmt.unapplied === 0}" ng-click="vm.showDistribute(pmt); $event.stopPropagation()">Distribute</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </details>
+
+        <!-- Managed Care Authorizations -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Managed Care Authorizations
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Managed Care Authorizations content</p>
+            </div>
+        </details>
+
+        <!-- Credit / Debit Cards on File -->
+        <details>
+            <summary>
+                <div class="summary-label">
+                    <span class="summary-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                        </svg>
+                    </span>
+                    Credit / Debit Cards on File
+                </div>
+            </summary>
+            <div class="details-content">
+                <p class="placeholder-text">Credit / Debit Cards on File content</p>
+            </div>
+        </details>
+    </main>
+
+    <!-- Payment Detail Modal -->
+    <dialog id="payment-detail-dialog">
+        <header>
+            <h2>Transaction Details</h2>
+            <button type="button" ng-click="vm.closePaymentDetail()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div ng-if="vm.selectedPayment">
+            <div class="modal-field-grid cards">
+                <div>
+                    <div class="modal-field-label">Date</div>
+                    <div class="modal-field-value">{{vm.selectedPayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Posted</div>
+                    <div class="modal-field-value">{{vm.selectedPayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Reference №</div>
+                    <div class="modal-field-value">{{vm.selectedPayment.checkNum}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Type</div>
+                    <div class="modal-field-value">{{vm.selectedPaymentType || vm.selectedPayment.type}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Code</div>
+                    <div class="modal-field-value"><span class="empty-value">–</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Amount</div>
+                    <div class="modal-field-value">${{vm.selectedPayment.amount.toFixed(2)}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Payer</div>
+                    <div class="modal-field-value">{{vm.selectedPayment.payer}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Source</div>
+                    <div class="modal-field-value"><span ng-if="!vm.selectedPayment.source" class="empty-value">–</span><span ng-if="vm.selectedPayment.source">{{vm.selectedPayment.source}}</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Adjusted Amount (Code)</div>
+                    <div class="modal-field-value"><span ng-if="vm.selectedPayment.adjAmount <= 0" class="empty-value">–</span><span ng-if="vm.selectedPayment.adjAmount > 0">-${{vm.selectedPayment.adjAmount.toFixed(2)}}<span ng-if="vm.selectedPayment.adjCodes"> ({{vm.selectedPayment.adjCodes}})</span></span></div>
+                </div>
+            </div>
+
+            <div ng-if="vm.selectedServiceLine" class="modal-section">
+                <div class="modal-section-header">Application History</div>
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th class="code">Code</th>
+                            <th>Description</th>
+                            <th>Posted</th>
+                            <th class="numeric">Charge</th>
+                            <th class="numeric">Paid</th>
+                            <th class="numeric"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="code">{{vm.selectedServiceLine.cpt}}</td>
+                            <td>{{vm.selectedServiceLine.desc}}</td>
+                            <td>{{vm.selectedPayment.date}}</td>
+                            <td class="numeric">${{vm.selectedServiceLine.charge.toFixed(2)}}</td>
+                            <td class="numeric positive">${{vm.selectedPayment.amount.toFixed(2)}}</td>
+                            <td class="numeric"><button class="btn-danger btn-xs">Unapply</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Refund Modal -->
+    <dialog id="refund-dialog">
+        <header>
+            <h2>Refund Payment</h2>
+            <button type="button" ng-click="vm.closeRefundModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div ng-if="vm.refundPayment">
+            <div class="modal-field-grid cards">
+                <div>
+                    <div class="modal-field-label">Payer</div>
+                    <div class="modal-field-value">{{vm.refundPayment.payer}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Date</div>
+                    <div class="modal-field-value">{{vm.refundPayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Amount</div>
+                    <div class="modal-field-value">${{vm.refundPayment.amount.toFixed(2)}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Adjustment Amount</div>
+                    <div class="modal-field-value"><span ng-if="vm.refundPayment.adjAmount <= 0" class="empty-value">–</span><span ng-if="vm.refundPayment.adjAmount > 0">-${{vm.refundPayment.adjAmount.toFixed(2)}}</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Reference №</div>
+                    <div class="modal-field-value">{{vm.refundPayment.checkNum}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Adjustment Code</div>
+                    <div class="modal-field-value"><span ng-if="!vm.refundPayment.adjCodes" class="empty-value">–</span><span ng-if="vm.refundPayment.adjCodes">{{vm.refundPayment.adjCodes}}</span></div>
+                </div>
+            </div>
+
+            <div class="modal-warning" ng-if="vm.hasDownstreamTransactions()">
+                <div class="modal-warning-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div class="modal-warning-content">
+                    <div class="modal-warning-title">Downstream Transactions Detected</div>
+                    <div class="modal-warning-text">
+                        This {{vm.refundPayment.insuranceLevel.toLowerCase()}} payment is linked to {{vm.getDownstreamDescription()}}.<br>
+                        Reversing it now may invalidate those transactions.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-form-group">
+                <div class="modal-form-label">Refund Type</div>
+                <div class="modal-radio-group">
+                    <label class="modal-radio-label">
+                        <input type="radio" name="refundType" value="full" ng-model="vm.refundType">
+                        <span>Full Refund</span>
+                    </label>
+                    <label class="modal-radio-label">
+                        <input type="radio" name="refundType" value="partial" ng-model="vm.refundType" ng-click="$event.target.parentElement.querySelector('.modal-input').focus()">
+                        <span>Partial Refund:</span>
+                        <input type="number" class="modal-input" ng-class="{hidden: vm.refundType !== 'partial'}" ng-model="vm.partialAmount" step="0.01" min="0.01" max="{{vm.refundPayment.amount}}" ng-click="$event.stopPropagation()">
+                    </label>
+                </div>
+            </div>
+
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th class="code">Code</th>
+                        <th>Description</th>
+                        <th class="numeric">Charge</th>
+                        <th class="numeric">Paid</th>
+                        <th class="numeric">Refund</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="vm.refundServiceLine">
+                        <td class="code">{{vm.refundServiceLine.cpt}}</td>
+                        <td>{{vm.refundServiceLine.desc}}</td>
+                        <td class="numeric">${{vm.refundServiceLine.charge.toFixed(2)}}</td>
+                        <td class="numeric">${{vm.refundPayment.amount.toFixed(2)}}</td>
+                        <td class="numeric danger">-${{vm.getRefundAmount().toFixed(2)}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="modal-footer">
+                <button ng-click="vm.closeRefundModal()">Cancel</button>
+                <button class="btn-danger" ng-disabled="!vm.canRefund()">Refund Payment</button>
+            </div>
+
+            <div class="modal-footer-note">
+                <div class="modal-footer-note-input">
+                    <input type="text" placeholder="Add an optional note about this refund…" ng-model="vm.refundNote" ng-keypress="vm.handleModalNoteKeypress($event, vm.refundServiceLine, 'refund')">
+                    <button class="btn-primary" ng-click="vm.addModalNote(vm.refundServiceLine, vm.refundNote, 'refund')">Add Note</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Add Transaction Modal -->
+    <dialog id="add-transaction-dialog">
+        <header>
+            <h2>Add {{vm.txnType}}</h2>
+            <button type="button" ng-click="vm.closeAddTransaction()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div ng-if="vm.addTxnServiceLine">
+            <!-- Form Fields -->
+            <div class="modal-field-grid">
+                <!-- Date -->
+                <div>
+                    <label class="modal-form-label" for="txn-date">Date <span class="required">*</span></label>
+                    <input id="txn-date" type="date" ng-model="vm.txnDate" ng-class="{error: vm.txnErrors.date}" class="modal-field-input">
+                </div>
+
+                <!-- Posted -->
+                <div>
+                    <label class="modal-form-label" for="txn-posted">Posted <span class="required">*</span></label>
+                    <input id="txn-posted" type="date" ng-model="vm.txnPosted" ng-class="{error: vm.txnErrors.posted}" class="modal-field-input">
+                </div>
+
+                <!-- Reference Number -->
+                <div>
+                    <label class="modal-form-label" for="txn-ref">Reference №</label>
+                    <input id="txn-ref" type="text" ng-model="vm.txnRefNum" placeholder="Check №, EFT №, etc." class="modal-field-input tabular">
+                </div>
+
+                <!-- Transaction Type -->
+                <div>
+                    <label class="modal-form-label" for="txn-type">Transaction Type <span class="required">*</span></label>
+                    <select id="txn-type" ng-model="vm.txnType" ng-change="vm.onTxnTypeChange()" ng-class="{error: vm.txnErrors.type}" class="modal-field-select">
+                        <option value="Client Payment">Client Payment</option>
+                        <option value="Client Adjustment">Client Adjustment</option>
+                        <option value="Insurance Payment">Insurance Payment</option>
+                        <option value="Insurance Adjustment">Insurance Adjustment</option>
+                    </select>
+                </div>
+
+                <!-- Transaction Code -->
+                <div>
+                    <label class="modal-form-label" for="txn-code">Transaction Code <span class="required">*</span></label>
+                    <select id="txn-code" ng-model="vm.txnCode" ng-class="{error: vm.txnErrors.code}" class="modal-field-select">
+                        <option value="">Select code...</option>
+                        <option ng-repeat="code in vm.getTxnCodes()" value="{{code}}">{{code}}</option>
+                    </select>
+                </div>
+
+                <!-- Amount -->
+                <div>
+                    <label class="modal-form-label" for="txn-amount">Amount <span class="required">*</span></label>
+                    <div class="modal-field-wrapper">
+                        <span class="modal-field-prefix">$</span>
+                        <input id="txn-amount" type="number" ng-model="vm.txnAmount" ng-class="{error: vm.txnErrors.amount}" step="0.01" placeholder="0.00" class="modal-field-input with-prefix tabular">
+                    </div>
+                </div>
+
+                <!-- Payer -->
+                <div>
+                    <label class="modal-form-label" for="txn-payer">Payer <span class="required" ng-if="vm.txnType.includes('Insurance')">*</span></label>
+                    <select id="txn-payer" ng-if="vm.txnType.includes('Insurance')" ng-model="vm.txnPayer" ng-class="{error: vm.txnErrors.payer}" class="modal-field-select">
+                        <option value="">Select payer...</option>
+                        <option value="Primary">Aetna (Primary)</option>
+                        <option value="Secondary">Blue Cross (Secondary)</option>
+                    </select>
+                    <div ng-if="!vm.txnType.includes('Insurance')" class="modal-field-value">Pat Patient</div>
+                </div>
+
+                <!-- Source -->
+                <div>
+                    <label class="modal-form-label" for="txn-source">Source</label>
+                    <select id="txn-source" ng-model="vm.txnSource" class="modal-field-select">
+                        <option value="">Select source...</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="EFT">EFT</option>
+                        <option value="Money Order">Money Order</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Adjusted Amount (Code) -->
+                <div>
+                    <label class="modal-form-label">Adjusted Amount (Code)</label>
+                    <div class="modal-field-value"><span class="empty-value">–</span></div>
+                </div>
+            </div>
+
+            <!-- Application Preview Table -->
+            <div class="modal-section modal-section-spaced">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th class="code">Code</th>
+                            <th>Description</th>
+                            <th>DOS</th>
+                            <th class="numeric">Charge</th>
+                            <th class="numeric">Current Bal.</th>
+                            <th class="numeric">Applying</th>
+                            <th class="numeric">After</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="code">{{vm.addTxnServiceLine.cpt}}</td>
+                            <td>{{vm.addTxnServiceLine.desc}}</td>
+                            <td>{{vm.addTxnEncounter.date}}</td>
+                            <td class="numeric">${{vm.addTxnServiceLine.charge.toFixed(2)}}</td>
+                            <td class="numeric">${{vm.addTxnServiceLine.totalBal.toFixed(2)}}</td>
+                            <td class="numeric" ng-class="{'positive': vm.getApplyingAmount(), 'empty-value': !vm.getApplyingAmount()}">{{vm.getApplyingAmount() ? '$' + vm.getApplyingAmount().toFixed(2) : '–'}}</td>
+                            <td class="numeric" ng-class="{'empty-value': !vm.getAfterAmount() && vm.getAfterAmount() !== 0}">{{vm.getAfterAmount() !== null ? '$' + vm.getAfterAmount().toFixed(2) : '–'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="modal-footer">
+                <button ng-click="vm.closeAddTransaction()">Cancel</button>
+                <button class="btn-primary" ng-click="vm.saveTransaction()">Save Transaction</button>
+            </div>
+
+            <!-- Note Section -->
+            <div class="modal-footer-note">
+                <div class="modal-footer-note-input">
+                    <input type="text" placeholder="Add an optional note about this transaction…" ng-model="vm.txnNote" ng-keypress="vm.handleModalNoteKeypress($event, vm.addTxnServiceLine, 'txn')">
+                    <button class="btn-primary" ng-click="vm.addModalNote(vm.addTxnServiceLine, vm.txnNote, 'txn')">Add Note</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Unapplied Payment Details Modal -->
+    <dialog id="unapplied-details-dialog">
+        <header>
+            <h2>Payment Details</h2>
+            <button type="button" ng-click="vm.closeUnappliedDetails()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div ng-if="vm.selectedUnappliedPayment">
+            <div class="modal-field-grid-2col cards">
+                <div>
+                    <div class="modal-field-label">Payer</div>
+                    <div class="modal-field-value">Pat Patient</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Type</div>
+                    <div class="modal-field-value">{{vm.selectedUnappliedPayment.type}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Date</div>
+                    <div class="modal-field-value">{{vm.selectedUnappliedPayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Posted</div>
+                    <div class="modal-field-value">{{vm.selectedUnappliedPayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Total <span class="empty-value">/</span> Unapplied</div>
+                    <div class="modal-field-value">${{vm.selectedUnappliedPayment.amount.toFixed(2)}} <span class="empty-value">/</span> <span class="value-balance">${{vm.selectedUnappliedPayment.unapplied.toFixed(2)}}</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Code</div>
+                    <div class="modal-field-value"><span ng-if="!vm.selectedUnappliedPayment.code" class="empty-value">–</span><span ng-if="vm.selectedUnappliedPayment.code">{{vm.selectedUnappliedPayment.code}}</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Source</div>
+                    <div class="modal-field-value"><span ng-if="!vm.selectedUnappliedPayment.source" class="empty-value">–</span><span ng-if="vm.selectedUnappliedPayment.source">{{vm.selectedUnappliedPayment.source}}</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Reference №</div>
+                    <div class="modal-field-value">{{vm.selectedUnappliedPayment.refNum}}</div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-header">Application History</div>
+                <div class="modal-table-wrapper">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th class="code">Code</th>
+                                <th>Description</th>
+                                <th class="th-middle">
+                                    DOS
+                                    <button ng-click="vm.toggleAppHistoryDateSort()" class="sort-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21 16-4 4-4-4" />
+                                            <path d="M17 20V4" />
+                                            <path d="m3 8 4-4 4 4" />
+                                            <path d="M7 4v16" />
+                                        </svg>
+                                    </button>
+                                </th>
+                                <th class="th-middle">
+                                    Posted
+                                    <button ng-click="vm.toggleAppHistoryPostedSort()" class="sort-btn">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21 16-4 4-4-4" />
+                                            <path d="M17 20V4" />
+                                            <path d="m3 8 4-4 4 4" />
+                                            <path d="M7 4v16" />
+                                        </svg>
+                                    </button>
+                                </th>
+                                <th class="numeric">Charge</th>
+                                <th class="numeric">Applied</th>
+                                <th class="numeric"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="vm.appHistory.length > 0">
+                            <tr ng-repeat="item in vm.appHistory">
+                                <td class="code">{{item.code}}</td>
+                                <td>{{item.description}}</td>
+                                <td>{{item.date}}</td>
+                                <td>{{item.posted}}</td>
+                                <td class="numeric">${{item.charge.toFixed(2)}}</td>
+                                <td class="numeric positive">${{item.applied.toFixed(2)}}</td>
+                                <td class="numeric"><button class="btn-xs">Unapply</button></td>
+                            </tr>
+
+                        </tbody>
+                        <tbody ng-if="vm.appHistory.length === 0">
+                            <tr class="payment-empty-state">
+                                <td colspan="6">No applications. The entire amount is unapplied</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Distribute Payment Modal -->
+    <dialog id="distribute-dialog">
+        <header>
+            <h2>Distribute Unapplied Payment</h2>
+            <button type="button" ng-click="vm.closeDistribute()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div ng-if="vm.distributePayment">
+            <div class="modal-field-grid cards">
+                <div>
+                    <div class="modal-field-label">Date</div>
+                    <div class="modal-field-value">{{vm.distributePayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Posted</div>
+                    <div class="modal-field-value">{{vm.distributePayment.date}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Reference №</div>
+                    <div class="modal-field-value">{{vm.distributePayment.refNum}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Type</div>
+                    <div class="modal-field-value">{{vm.distributePayment.type}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Transaction Code</div>
+                    <div class="modal-field-value"><span class="empty-value">–</span></div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Amount</div>
+                    <div class="modal-field-value">${{vm.distributePayment.amount.toFixed(2)}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Payer</div>
+                    <div class="modal-field-value">Pat Patient</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Source</div>
+                    <div class="modal-field-value">{{vm.distributePayment.source}}</div>
+                </div>
+                <div>
+                    <div class="modal-field-label">Unapplied Balance</div>
+                    <div class="modal-field-value">${{vm.distributePayment.unapplied.toFixed(2)}}</div>
+                </div>
+            </div>
+
+            <div class="modal-form-group">
+                <div class="modal-form-label">Distribution Mode</div>
+                <div class="modal-radio-group">
+                    <label class="modal-radio-label">
+                        <input type="radio" name="distMode" value="auto" ng-model="vm.distMode">
+                        <span>Auto-distribute to oldest balances</span>
+                    </label>
+                    <label class="modal-radio-label">
+                        <input type="radio" name="distMode" value="manual" ng-model="vm.distMode">
+                        <span>Manually distribute</span>
+                    </label>
+                </div>
+            </div>
+
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>DOS</th>
+                        <th class="code">Code</th>
+                        <th>Description</th>
+                        <th class="numeric">Charge</th>
+                        <th class="numeric">Client Bal.</th>
+                        <th class="numeric">Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="line in vm.getDistributableLines()">
+                        <td>{{line.encDate}}</td>
+                        <td class="code">{{line.cpt}}</td>
+                        <td>{{line.desc}}</td>
+                        <td class="numeric">${{line.charge.toFixed(2)}}</td>
+                        <td class="numeric">${{line.clientBal.toFixed(2)}}</td>
+                        <td class="numeric">
+                            <span ng-if="vm.distMode === 'auto'">${{(line.distAmount || 0).toFixed(2)}}</span>
+                            <input ng-if="vm.distMode === 'manual'" type="number" placeholder="0.00" step="0.01" min="0" class="modal-input modal-input-distribute modal-input-narrow">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="modal-footer">
+                <button ng-click="vm.closeDistribute()">Cancel</button>
+                <button class="btn-primary" ng-disabled="!vm.canDistribute()">Distribute Payment</button>
+            </div>
+
+            <div class="modal-footer-note">
+                <div class="modal-footer-note-input">
+                    <input type="text" placeholder="Add an optional note about this distribution…" ng-model="vm.distNote" ng-keypress="vm.handleDistNoteKeypress($event)">
+                    <button class="btn-primary" ng-click="vm.addDistNote()">Add Note</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- New Payment Modal -->
+    <dialog id="new-payment-dialog">
+        <header>
+            <h2>New Payment</h2>
+            <button type="button" ng-click="vm.closeNewPayment()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div>
+            <div class="modal-notice">
+                <div class="modal-notice-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                        <path d="M12 18V6" />
+                    </svg>
+                </div>
+                <div class="modal-notice-content">
+                    <div class="modal-notice-title">Unapplied Client Payment</div>
+                    <div class="modal-notice-text">
+                        This payment will be held as unapplied. To apply funds to specific service lines, use Distribute.<br>For insurance payments and adjustments, post directly from the service line.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-field-grid-2col">
+                <div>
+                    <label class="modal-form-label">Payer</label>
+                    <div class="modal-field-value">Pat Patient</div>
+                </div>
+
+                <div>
+                    <label class="modal-form-label">Transaction Type</label>
+                    <div class="modal-field-value">Client Payment</div>
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-date">Date <span class="required">*</span></label>
+                    <input id="new-pmt-date" type="date" ng-model="vm.newPmtDate" ng-class="{error: vm.newPmtErrors.date}" class="modal-field-input">
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-posted">Posted <span class="required">*</span></label>
+                    <input id="new-pmt-posted" type="date" ng-model="vm.newPmtPosted" ng-class="{error: vm.newPmtErrors.posted}" class="modal-field-input">
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-amount">Amount <span class="required">*</span></label>
+                    <div class="modal-field-wrapper">
+                        <span class="modal-field-prefix">$</span>
+                        <input id="new-pmt-amount" type="number" ng-model="vm.newPmtAmount" ng-class="{error: vm.newPmtErrors.amount}" step="0.01" placeholder="0.00" class="modal-field-input with-prefix tabular">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-code">Transaction Code <span class="required">*</span></label>
+                    <select id="new-pmt-code" ng-model="vm.newPmtCode" ng-class="{error: vm.newPmtErrors.code}" class="modal-field-select">
+                        <option value="">Select code...</option>
+                        <option value="Account Payment">Account Payment</option>
+                        <option value="Coinsurance">Coinsurance</option>
+                        <option value="Copay">Copay</option>
+                        <option value="Deductible">Deductible</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-source">Source</label>
+                    <select id="new-pmt-source" ng-model="vm.newPmtSource" class="modal-field-select">
+                        <option value="">Select source...</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="EFT">EFT</option>
+                        <option value="Money Order">Money Order</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="modal-form-label" for="new-pmt-ref">Reference №</label>
+                    <input id="new-pmt-ref" type="text" ng-model="vm.newPmtRefNum" placeholder="Check №, EFT №, etc." class="modal-field-input tabular">
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-spaced">
+                <button ng-click="vm.closeNewPayment()">Cancel</button>
+                <button class="btn-primary" ng-click="vm.saveNewPayment()">Save as Unapplied</button>
+            </div>
+
+            <div class="modal-footer-note">
+                <div class="modal-footer-note-input">
+                    <input type="text" placeholder="Add an optional note about this payment…" ng-model="vm.newPmtNote" ng-keypress="vm.handleNewPmtNoteKeypress($event)">
+                    <button class="btn-primary" ng-click="vm.addNewPmtNote()">Add Note</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Unapplied Refund Modal -->
+    <dialog id="unapplied-refund-dialog">
+        <header>
+            <h2>Refund Payment</h2>
+            <button type="button" ng-click="vm.closeUnappliedRefund()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </header>
+        <div>
+            <p class="placeholder-text">Refund payment content</p>
+            <div style="font-size: 4rem; text-align: center; margin: 2rem 0; animation: dance 0.5s ease-in-out infinite;">🚧</div>
+        </div>
+    </dialog>
+
+    <script>
+        angular.module('ledgerApp', [])
+            .controller('LedgerCtrl', function ($scope) {
+                var vm = this;
+
+                vm.accountFrozen = false;
+                vm.noteFilterOpen = false;
+                vm.paidInfoOpen = false;
+                vm.adjInfoOpen = false;
+                vm.noteFilters = {
+                    signed: true,
+                    finished: true,
+                    inProgress: true
+                };
+                vm.dateSort = 'asc';
+                vm.unappliedDateSort = 'desc';
+                vm.showOpenBalancesOnly = true;
+                vm.showUnappliedOnly = true;
+
+                vm.toggleNoteFilter = function ($event) {
+                    $event.stopPropagation();
+                    vm.noteFilterOpen = !vm.noteFilterOpen;
+                    if (vm.noteFilterOpen) {
+                        document.addEventListener('keydown', vm.handleEscKey);
+                    } else {
+                        document.removeEventListener('keydown', vm.handleEscKey);
+                    }
+                };
+
+                vm.closeNoteFilter = function () {
+                    vm.noteFilterOpen = false;
+                    document.removeEventListener('keydown', vm.handleEscKey);
+                };
+
+                vm.handleEscKey = function (e) {
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        $scope.$apply(function () {
+                            vm.noteFilterOpen = false;
+                            document.removeEventListener('keydown', vm.handleEscKey);
+                        });
+                    }
+                };
+
+                vm.showEncounter = function (enc) {
+                    var noteFilter = true;
+                    if (enc.noteStatus === 'Signed') noteFilter = vm.noteFilters.signed;
+                    if (enc.noteStatus === 'Finished') noteFilter = vm.noteFilters.finished;
+                    if (enc.noteStatus === 'In Progress') noteFilter = vm.noteFilters.inProgress;
+
+                    var balanceFilter = true;
+                    if (vm.showOpenBalancesOnly) {
+                        balanceFilter = enc.totalBal > 0;
+                    }
+
+                    return noteFilter && balanceFilter;
+                };
+
+                vm.calculateTotals = function () {
+                    var totals = { charge: 0, paid: 0, adjusted: 0, client: 0, insurance: 0, total: 0 };
+                    vm.encounters.forEach(function (enc) {
+                        if (vm.showEncounter(enc)) {
+                            totals.charge += enc.charge;
+                            totals.paid += enc.totalPaid;
+                            totals.adjusted += enc.insAdj;
+                            totals.client += enc.clientBal;
+                            totals.insurance += enc.insBal;
+                            totals.total += enc.totalBal;
+                        }
+                    });
+                    return totals;
+                };
+
+                vm.hasVisibleEncounters = function () {
+                    return vm.encounters.some(function (enc) {
+                        return vm.showEncounter(enc);
+                    });
+                };
+
+                vm.getVisibleEncounterCount = function () {
+                    return vm.encounters.filter(function (enc) {
+                        return vm.showEncounter(enc);
+                    }).length;
+                };
+
+                vm.showUnappliedPayment = function (pmt) {
+                    if (vm.showUnappliedOnly) {
+                        return pmt.unapplied > 0;
+                    }
+                    return true;
+                };
+
+                vm.getVisiblePaymentCount = function () {
+                    return vm.unappliedPayments.filter(function (pmt) {
+                        return vm.showUnappliedPayment(pmt);
+                    }).length;
+                };
+
+                vm.getOpenBalanceCount = function () {
+                    return vm.encounters.filter(function (enc) {
+                        return enc.totalBal > 0;
+                    }).length;
+                };
+
+                vm.toggleDateSort = function () {
+                    vm.dateSort = vm.dateSort === 'desc' ? 'asc' : 'desc';
+                    vm.encounters.reverse();
+                };
+
+                vm.toggleUnappliedDateSort = function () {
+                    vm.unappliedDateSort = vm.unappliedDateSort === 'desc' ? 'asc' : 'desc';
+                    vm.unappliedPayments.reverse();
+                };
+
+                vm.toggleAppHistoryDateSort = function () {
+                    vm.appHistoryDateSort = vm.appHistoryDateSort === 'desc' ? 'asc' : 'desc';
+                    vm.appHistoryPostedSort = null;
+                    vm.appHistory.reverse();
+                };
+
+                vm.toggleAppHistoryPostedSort = function () {
+                    vm.appHistoryPostedSort = vm.appHistoryPostedSort === 'desc' ? 'asc' : 'desc';
+                    vm.appHistoryDateSort = null;
+                    vm.appHistory.reverse();
+                };
+
+                vm.toggleSelect = function (enc, $event) {
+                    $event.stopPropagation();
+                    enc.selected = !enc.selected;
+                };
+
+                vm.allSelected = function () {
+                    var visible = vm.encounters.filter(function (enc) {
+                        return vm.showEncounter(enc);
+                    });
+                    return visible.length > 0 && visible.every(function (enc) {
+                        return enc.selected;
+                    });
+                };
+
+                vm.toggleSelectAll = function () {
+                    var allSelected = vm.allSelected();
+                    vm.encounters.forEach(function (enc) {
+                        if (vm.showEncounter(enc)) {
+                            enc.selected = !allSelected;
+                        }
+                    });
+                };
+
+                vm.getSelectedCount = function () {
+                    return vm.encounters.filter(function (enc) {
+                        return enc.selected && vm.showEncounter(enc);
+                    }).length;
+                };
+
+                vm.togglePaidInfo = function ($event) {
+                    $event.stopPropagation();
+                    vm.paidInfoOpen = !vm.paidInfoOpen;
+                    vm.adjInfoOpen = false;
+                    if (vm.paidInfoOpen) {
+                        document.addEventListener('keydown', vm.handleInfoEscKey);
+                    } else {
+                        document.removeEventListener('keydown', vm.handleInfoEscKey);
+                    }
+                };
+
+                vm.closePaidInfo = function () {
+                    vm.paidInfoOpen = false;
+                    document.removeEventListener('keydown', vm.handleInfoEscKey);
+                };
+
+                vm.toggleAdjInfo = function ($event) {
+                    $event.stopPropagation();
+                    vm.adjInfoOpen = !vm.adjInfoOpen;
+                    vm.paidInfoOpen = false;
+                    if (vm.adjInfoOpen) {
+                        document.addEventListener('keydown', vm.handleInfoEscKey);
+                    } else {
+                        document.removeEventListener('keydown', vm.handleInfoEscKey);
+                    }
+                };
+
+                vm.closeAdjInfo = function () {
+                    vm.adjInfoOpen = false;
+                    document.removeEventListener('keydown', vm.handleInfoEscKey);
+                };
+
+                vm.handleInfoEscKey = function (e) {
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        $scope.$apply(function () {
+                            vm.paidInfoOpen = false;
+                            vm.adjInfoOpen = false;
+                            document.removeEventListener('keydown', vm.handleInfoEscKey);
+                        });
+                    }
+                };
+
+                vm.getPaidBreakdown = function () {
+                    var breakdown = { insPay: 0, clientPay: 0, total: 0 };
+                    vm.encounters.forEach(function (enc) {
+                        if (vm.showEncounter(enc)) {
+                            enc.serviceLines.forEach(function (sl) {
+                                sl.payments.forEach(function (pmt) {
+                                    if (pmt.type.includes('Insurance')) {
+                                        breakdown.insPay += pmt.amount;
+                                    } else if (pmt.type.includes('Client')) {
+                                        breakdown.clientPay += pmt.amount;
+                                    }
+                                    breakdown.total += pmt.amount;
+                                });
+                            });
+                        }
+                    });
+                    return breakdown;
+                };
+
+                vm.getAdjBreakdown = function () {
+                    var breakdown = { byCode: {}, total: 0 };
+                    vm.encounters.forEach(function (enc) {
+                        if (vm.showEncounter(enc)) {
+                            enc.serviceLines.forEach(function (sl) {
+                                sl.payments.forEach(function (pmt) {
+                                    if (pmt.adjAmount > 0 && pmt.adjCodes) {
+                                        if (!breakdown.byCode[pmt.adjCodes]) {
+                                            breakdown.byCode[pmt.adjCodes] = 0;
+                                        }
+                                        breakdown.byCode[pmt.adjCodes] += pmt.adjAmount;
+                                        breakdown.total += pmt.adjAmount;
+                                    }
+                                });
+                            });
+                        }
+                    });
+                    return breakdown;
+                };
+
+                vm.encounters = [
+                    {
+                        id: 1,
+                        date: '01/15/2025',
+                        clinician: 'Dr. Smith',
+                        noteStatus: 'Signed',
+                        charge: 350,
+                        totalPaid: 310,
+                        insAdj: 50,
+                        clientBal: 10,
+                        insBal: 0,
+                        totalBal: 10,
+                        expanded: false,
+                        selected: false,
+                        serviceLines: [
+                            {
+                                id: '1a',
+                                cpt: '99213',
+                                desc: 'Office Visit',
+                                charge: 150,
+                                paid: 130,
+                                insAdj: 20,
+                                clientBal: 0,
+                                insBal: 0,
+                                totalBal: 0,
+                                expanded: false,
+                                payments: [
+                                    {
+                                        date: '01/22/2025',
+                                        payer: 'Aetna',
+                                        type: 'Insurance Payment',
+                                        checkNum: '882741',
+                                        source: 'EFT',
+                                        amount: 130,
+                                        adjAmount: 20,
+                                        adjCodes: 'CO-45',
+                                        insuranceLevel: 'Primary'
+                                    }
+                                ],
+                                activity: [
+                                    {
+                                        ts: '01/22/2025 2:14 PM',
+                                        user: 'System',
+                                        action: 'ERA auto-posted $130.00 payment from Aetna'
+                                    },
+                                    {
+                                        ts: '01/15/2025 9:02 AM',
+                                        user: 'Ashley M.',
+                                        action: 'Claim submitted to Aetna'
+                                    }
+                                ]
+                            },
+                            {
+                                id: '1b',
+                                cpt: '90837',
+                                desc: 'Psychotherapy, 60 min.',
+                                charge: 200,
+                                paid: 180,
+                                insAdj: 10,
+                                clientBal: 10,
+                                insBal: 0,
+                                totalBal: 10,
+                                expanded: false,
+                                payments: [
+                                    {
+                                        date: '02/10/2025',
+                                        payer: 'Pat Patient',
+                                        type: 'Client Payment',
+                                        checkNum: '••••7832',
+                                        source: 'Credit Card',
+                                        amount: 10,
+                                        adjAmount: 0,
+                                        adjCodes: '',
+                                        insuranceLevel: ''
+                                    },
+                                    {
+                                        date: '02/03/2025',
+                                        payer: 'Blue Cross',
+                                        type: 'Insurance Payment',
+                                        checkNum: '20551',
+                                        source: 'Check',
+                                        amount: 30,
+                                        adjAmount: 10,
+                                        adjCodes: 'CO-45',
+                                        insuranceLevel: 'Secondary'
+                                    },
+                                    {
+                                        date: '01/22/2025',
+                                        payer: 'Aetna',
+                                        type: 'Insurance Payment',
+                                        checkNum: '882741',
+                                        source: 'EFT',
+                                        amount: 140,
+                                        adjAmount: 30,
+                                        adjCodes: 'CO-45',
+                                        insuranceLevel: 'Primary'
+                                    }
+                                ],
+                                activity: [
+                                    {
+                                        ts: '02/10/2025 3:45 PM',
+                                        user: 'System',
+                                        action: 'Client payment $10.00 applied'
+                                    },
+                                    {
+                                        ts: '02/03/2025 10:15 AM',
+                                        user: 'System',
+                                        action: 'ERA auto-posted $30.00 payment from Blue Cross'
+                                    },
+                                    {
+                                        ts: '01/22/2025 2:14 PM',
+                                        user: 'System',
+                                        action: 'ERA auto-posted $140.00 payment from Aetna'
+                                    },
+                                    {
+                                        ts: '01/15/2025 4:30 PM',
+                                        user: 'Ashley M.',
+                                        action: 'Claim submitted to Aetna'
+                                    },
+                                    {
+                                        ts: '01/15/2025 2:00 PM',
+                                        user: 'Dr. Smith',
+                                        action: 'Note signed'
+                                    },
+                                    {
+                                        ts: '01/15/2025 9:02 AM',
+                                        user: 'Dr. Smith',
+                                        action: 'Session note created'
+                                    },
+                                    {
+                                        ts: '01/14/2025 4:55 PM',
+                                        user: 'Ashley M.',
+                                        action: 'Prior auth verified with Aetna — approved for 8 sessions'
+                                    },
+                                    {
+                                        ts: '01/10/2025 11:20 AM',
+                                        user: 'Ashley M.',
+                                        action: 'Eligibility check passed — active coverage confirmed'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        date: '02/05/2025',
+                        clinician: 'Dr. Tina',
+                        noteStatus: 'Signed',
+                        charge: 175,
+                        totalPaid: 120,
+                        insAdj: 25,
+                        clientBal: 30,
+                        insBal: 0,
+                        totalBal: 30,
+                        expanded: false,
+                        selected: false,
+                        serviceLines: [
+                            {
+                                id: '2a',
+                                cpt: '90834',
+                                desc: 'Psychotherapy, 45 min.',
+                                charge: 175,
+                                paid: 120,
+                                insAdj: 25,
+                                clientBal: 30,
+                                insBal: 0,
+                                totalBal: 30,
+                                expanded: false,
+                                payments: [
+                                    {
+                                        date: '02/12/2025',
+                                        payer: 'Blue Cross',
+                                        type: 'Insurance Payment',
+                                        checkNum: '10294',
+                                        source: 'Check',
+                                        amount: 120,
+                                        adjAmount: 25,
+                                        adjCodes: 'CO-45',
+                                        insuranceLevel: 'Primary'
+                                    }
+                                ],
+                                activity: [
+                                    {
+                                        ts: '02/12/2025 11:30 AM',
+                                        user: 'System',
+                                        action: 'ERA auto-posted $120.00 payment from Blue Cross'
+                                    },
+                                    {
+                                        ts: '02/06/2025 8:45 AM',
+                                        user: 'Joel F.',
+                                        action: 'Claim submitted to Blue Cross'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        date: '02/19/2025',
+                        clinician: 'Dr. Tina',
+                        noteStatus: 'Signed',
+                        charge: 200,
+                        totalPaid: 0,
+                        insAdj: 0,
+                        clientBal: 0,
+                        insBal: 200,
+                        totalBal: 200,
+                        expanded: false,
+                        selected: false,
+                        serviceLines: [
+                            {
+                                id: '3a',
+                                cpt: '90837',
+                                desc: 'Psychotherapy, 60 min.',
+                                charge: 200,
+                                paid: 0,
+                                insAdj: 0,
+                                clientBal: 0,
+                                insBal: 200,
+                                totalBal: 200,
+                                expanded: false,
+                                payments: [],
+                                activity: [
+                                    {
+                                        ts: '02/20/2025 8:30 AM',
+                                        user: 'Joel F.',
+                                        action: 'Claim submitted to Blue Cross'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        date: '03/10/2025',
+                        clinician: 'Dr. Smith',
+                        noteStatus: 'In Progress',
+                        charge: 180,
+                        totalPaid: 0,
+                        insAdj: 0,
+                        clientBal: 0,
+                        insBal: 0,
+                        totalBal: 0,
+                        expanded: false,
+                        selected: false,
+                        serviceLines: [
+                            {
+                                id: '5a',
+                                cpt: '90834',
+                                desc: 'Psychotherapy, 45 min.',
+                                charge: 180,
+                                paid: 0,
+                                insAdj: 0,
+                                clientBal: 0,
+                                insBal: 0,
+                                totalBal: 0,
+                                expanded: false,
+                                payments: [],
+                                activity: []
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        date: '12/15/2024',
+                        clinician: 'Dr. Tina',
+                        noteStatus: 'Finished',
+                        charge: 250,
+                        totalPaid: 0,
+                        insAdj: 0,
+                        clientBal: 0,
+                        insBal: 250,
+                        totalBal: 250,
+                        expanded: false,
+                        selected: false,
+                        serviceLines: [
+                            {
+                                id: '4a',
+                                cpt: '90791',
+                                desc: 'Psychiatric Eval.',
+                                charge: 250,
+                                paid: 0,
+                                insAdj: 0,
+                                clientBal: 0,
+                                insBal: 250,
+                                totalBal: 250,
+                                expanded: false,
+                                payments: [],
+                                activity: [
+                                    {
+                                        ts: '12/15/2024 4:15 PM',
+                                        user: 'Dr. Tina',
+                                        action: 'Note finished, pending signature'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+
+                vm.unappliedPayments = [
+                    {
+                        date: '02/10/2025',
+                        refNum: 'PAY-5590',
+                        type: 'Client Payment',
+                        source: 'Cash',
+                        amount: 570,
+                        unapplied: 289
+                    },
+                    {
+                        date: '12/27/2023',
+                        refNum: '–',
+                        type: 'Client Payment',
+                        source: 'Credit Card',
+                        amount: 10,
+                        unapplied: 10
+                    },
+                    {
+                        date: '01/10/2025',
+                        refNum: 'PAY-4821',
+                        type: 'Client Payment',
+                        source: 'Check',
+                        amount: 30,
+                        unapplied: 30
+                    },
+                    {
+                        date: '11/05/2024',
+                        refNum: 'PAY-3102',
+                        type: 'Client Payment',
+                        source: 'Check',
+                        amount: 75,
+                        unapplied: 0
+                    },
+                    {
+                        date: '08/22/2024',
+                        refNum: 'PAY-2780',
+                        type: 'Client Payment',
+                        source: 'Credit Card',
+                        amount: 40,
+                        unapplied: 0
+                    }
+                ];
+
+                vm.getPaymentWaterfall = function (sl) {
+                    var levels = [];
+                    var seen = {};
+                    var sortedPayments = sl.payments.slice().sort(function (a, b) {
+                        return new Date(a.date) - new Date(b.date);
+                    });
+                    sortedPayments.forEach(function (pmt) {
+                        if (pmt.type.includes('Insurance') && pmt.insuranceLevel && !seen[pmt.insuranceLevel]) {
+                            levels.push(pmt.insuranceLevel);
+                            seen[pmt.insuranceLevel] = true;
+                        }
+                        if (pmt.type.includes('Client') && !seen['Client']) {
+                            levels.push('Client');
+                            seen['Client'] = true;
+                        }
+                    });
+                    return levels;
+                };
+
+                vm.togglePaymentDateSort = function (sl, $event) {
+                    $event.stopPropagation();
+                    sl.payments.reverse();
+                };
+
+                vm.toggleEncounter = function (enc) {
+                    enc.expanded = !enc.expanded;
+                    if (!enc.expanded) {
+                        enc.serviceLines.forEach(function (sl) {
+                            sl.expanded = false;
+                        });
+                    }
+                };
+
+                vm.toggleServiceLine = function (sl) {
+                    sl.expanded = !sl.expanded;
+                };
+
+                vm.addNote = function (sl) {
+                    if (!sl.newNote || !sl.newNote.trim()) return;
+                    var now = new Date();
+                    var ts = (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                        now.getDate().toString().padStart(2, '0') + '/' +
+                        now.getFullYear() + ' ' +
+                        (now.getHours() % 12 || 12) + ':' +
+                        now.getMinutes().toString().padStart(2, '0') + ' ' +
+                        (now.getHours() >= 12 ? 'PM' : 'AM');
+                    sl.activity.unshift({
+                        ts: ts,
+                        user: '[ Current User ]',
+                        action: sl.newNote.trim()
+                    });
+                    sl.newNote = '';
+                };
+
+                vm.handleNoteKeypress = function ($event, sl) {
+                    if ($event.key === 'Enter') {
+                        vm.addNote(sl);
+                    }
+                };
+
+                vm.showPaymentDetail = function (pmt, sl, typeOverride) {
+                    vm.selectedPayment = pmt;
+                    vm.selectedServiceLine = sl;
+                    vm.selectedPaymentType = typeOverride || pmt.type;
+                    var d = document.getElementById('payment-detail-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.closePaymentDetail = function () {
+                    var d = document.getElementById('payment-detail-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                document.getElementById('payment-detail-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closePaymentDetail();
+                });
+
+                vm.showRefundModal = function (pmt, sl) {
+                    vm.refundPayment = pmt;
+                    vm.refundServiceLine = sl;
+                    vm.refundType = 'full';
+                    vm.partialAmount = pmt.amount;
+                    var d = document.getElementById('refund-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.hasDownstreamTransactions = function () {
+                    if (!vm.refundPayment || !vm.refundServiceLine) return false;
+                    var pmtDate = new Date(vm.refundPayment.date);
+                    return vm.refundServiceLine.payments.some(function (p) {
+                        return new Date(p.date) > pmtDate;
+                    });
+                };
+
+                vm.getDownstreamDescription = function () {
+                    if (!vm.refundPayment || !vm.refundServiceLine) return '';
+                    var pmtDate = new Date(vm.refundPayment.date);
+                    var downstream = vm.refundServiceLine.payments.filter(function (p) {
+                        return new Date(p.date) > pmtDate;
+                    });
+                    var types = [];
+                    var hasSecondary = downstream.some(function (p) { return p.insuranceLevel === 'Secondary'; });
+                    var hasClient = downstream.some(function (p) { return p.type.includes('Client'); });
+                    if (hasSecondary) types.push('secondary');
+                    if (hasClient) types.push('patient');
+                    if (types.length === 1) {
+                        return 'a ' + types[0] + ' payment';
+                    }
+                    return types.join(' and ') + ' payments';
+                };
+
+                vm.closeRefundModal = function () {
+                    var d = document.getElementById('refund-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                vm.getRefundAmount = function () {
+                    if (!vm.refundPayment) return 0;
+                    return vm.refundType === 'full' ? vm.refundPayment.amount : (parseFloat(vm.partialAmount) || 0);
+                };
+
+                vm.partialExceedsMax = function () {
+                    if (!vm.refundPayment || vm.refundType !== 'partial') return false;
+                    var amount = parseFloat(vm.partialAmount);
+                    if (amount > vm.refundPayment.amount) {
+                        vm.partialAmount = vm.refundPayment.amount;
+                    }
+                    return false;
+                };
+
+                vm.canRefund = function () {
+                    return vm.getRefundAmount() > 0 && !vm.partialExceedsMax();
+                };
+
+                document.getElementById('refund-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeRefundModal();
+                });
+
+                // Add Transaction Modal
+                vm.toggleTxnDropdown = function (sl, $event) {
+                    $event.stopPropagation();
+                    sl.txnDropdownOpen = !sl.txnDropdownOpen;
+                };
+
+                vm.closeTxnDropdown = function (sl) {
+                    sl.txnDropdownOpen = false;
+                };
+
+                vm.showAddTransaction = function (sl, enc, txnType) {
+                    vm.closeTxnDropdown(sl);
+                    vm.addTxnServiceLine = sl;
+                    vm.addTxnEncounter = enc;
+                    vm.txnType = txnType;
+                    vm.txnCode = '';
+                    vm.txnPayer = '';
+                    vm.txnAmount = '';
+                    vm.txnDate = '';
+                    vm.txnPosted = '';
+                    vm.txnRefNum = '';
+                    vm.txnSource = '';
+                    vm.txnNote = '';
+                    vm.txnErrors = {};
+                    var d = document.getElementById('add-transaction-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.onTxnTypeChange = function () {
+                    vm.txnCode = '';
+                    vm.txnPayer = '';
+                };
+
+                vm.getTxnCodes = function () {
+                    var codeMap = {
+                        'Client Payment': ['Account Payment', 'Coinsurance', 'Copay', 'Deductible'],
+                        'Client Adjustment': ['Bad Debt', 'Courtesy Adjustment', 'Hardship Adjustment', 'Small Balance Write-Off'],
+                        'Insurance Payment': ['Appeal Payment', 'ERA Correction', 'Manual EOB Posting', 'Reconsideration Payment', 'Secondary/Tertiary Payment'],
+                        'Insurance Adjustment': ['Contractual Adjustment', 'Corrected Adjustment', 'Recoupment/Take-back', 'Sequestration', 'Withhold/Capitation Adjustment']
+                    };
+                    return codeMap[vm.txnType] || [];
+                };
+
+                vm.getApplyingAmount = function () {
+                    var amount = parseFloat(vm.txnAmount);
+                    return !isNaN(amount) && amount > 0 ? amount : null;
+                };
+
+                vm.getAfterAmount = function () {
+                    var applying = vm.getApplyingAmount();
+                    if (applying === null) return null;
+                    return Math.max(0, vm.addTxnServiceLine.totalBal - applying);
+                };
+
+                vm.closeAddTransaction = function () {
+                    var d = document.getElementById('add-transaction-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                vm.canSaveTransaction = function () {
+                    return vm.txnType && vm.txnAmount && vm.txnDate && vm.txnPosted;
+                };
+
+                vm.saveTransaction = function () {
+                    vm.txnErrors = {};
+                    if (!vm.txnCode) vm.txnErrors.code = true;
+                    if (vm.txnType.includes('Insurance') && !vm.txnPayer) vm.txnErrors.payer = true;
+                    if (!vm.txnAmount) vm.txnErrors.amount = true;
+                    if (!vm.txnDate) vm.txnErrors.date = true;
+                    if (!vm.txnPosted) vm.txnErrors.posted = true;
+
+                    if (Object.keys(vm.txnErrors).length === 0) {
+                        vm.closeAddTransaction();
+                    }
+                };
+
+                document.getElementById('add-transaction-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeAddTransaction();
+                });
+
+                vm.addModalNote = function (sl, noteText, type) {
+                    var noteVar = type === 'refund' ? 'refundNote' : 'txnNote';
+                    if (!vm[noteVar] || !vm[noteVar].trim()) return;
+                    var now = new Date();
+                    var ts = (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                        now.getDate().toString().padStart(2, '0') + '/' +
+                        now.getFullYear() + ' ' +
+                        (now.getHours() % 12 || 12) + ':' +
+                        now.getMinutes().toString().padStart(2, '0') + ' ' +
+                        (now.getHours() >= 12 ? 'PM' : 'AM');
+                    if (!sl.activity) sl.activity = [];
+                    sl.activity.unshift({
+                        ts: ts,
+                        user: '[ Current User ]',
+                        action: vm[noteVar].trim()
+                    });
+                    vm[noteVar] = '';
+                };
+
+                vm.handleModalNoteKeypress = function ($event, sl, type) {
+                    if ($event.key === 'Enter') {
+                        vm.addModalNote(sl, null, type);
+                    }
+                };
+
+                // Unapplied Payment Details Modal
+                vm.showUnappliedDetails = function (pmt) {
+                    vm.selectedUnappliedPayment = pmt;
+                    vm.appHistoryDateSort = 'desc';
+                    vm.appHistoryPostedSort = null;
+                    if (pmt.refNum === 'PAY-5590') {
+                        vm.appHistory = [
+                            { code: '90834', description: 'Psychotherapy, 45 min.', date: '08/15/2025', posted: '02/13/2026', charge: 175.00, applied: 28.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '12/08/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '11/12/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '10/01/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '09/10/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90837', description: 'Psychotherapy, 60 min.', date: '07/22/2025', posted: '02/13/2026', charge: 200.00, applied: 28.00 },
+                            { code: '90834', description: 'Psychotherapy, 45 min.', date: '06/18/2025', posted: '02/13/2026', charge: 175.00, applied: 23.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '05/14/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90837', description: 'Psychotherapy, 60 min.', date: '04/09/2025', posted: '02/13/2026', charge: 200.00, applied: 28.00 },
+                            { code: '90834', description: 'Psychotherapy, 45 min.', date: '03/05/2025', posted: '02/13/2026', charge: 175.00, applied: 6.00 },
+                            { code: '90791', description: 'Psychiatric Eval.', date: '01/15/2025', posted: '02/13/2026', charge: 145.00, applied: 28.00 },
+                            { code: '90837', description: 'Psychotherapy, 60 min.', date: '01/15/2025', posted: '02/15/2025', charge: 200.00, applied: 28.00 }
+                        ];
+                    } else {
+                        vm.appHistory = [];
+                    }
+                    var d = document.getElementById('unapplied-details-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.closeUnappliedDetails = function () {
+                    var d = document.getElementById('unapplied-details-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                document.getElementById('unapplied-details-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeUnappliedDetails();
+                });
+
+                // Distribute Payment Modal
+                vm.showDistribute = function (pmt) {
+                    vm.distributePayment = pmt;
+                    vm.distMode = 'auto';
+                    vm.distNote = '';
+                    var d = document.getElementById('distribute-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.closeDistribute = function () {
+                    document.activeElement && document.activeElement.blur();
+                    var d = document.getElementById('distribute-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                        vm.distributePayment = null;
+                        vm._distributableLines = null;
+                    }, 200);
+                };
+
+                vm.getDistributableLines = function () {
+                    if (!vm.distributePayment) return [];
+                    if (vm._distributableLines) return vm._distributableLines;
+                    var lines = [];
+                    vm.encounters.forEach(function (enc) {
+                        enc.serviceLines.forEach(function (sl) {
+                            if (sl.clientBal > 0) {
+                                lines.push({
+                                    encDate: enc.date,
+                                    cpt: sl.cpt,
+                                    desc: sl.desc,
+                                    charge: sl.charge,
+                                    clientBal: sl.clientBal,
+                                    distAmount: ''
+                                });
+                            }
+                        });
+                    });
+                    vm._distributableLines = lines;
+                    return lines;
+                };
+
+                vm.getAutoDistAmount = function (line) {
+                    return 0;
+                };
+
+                vm.canDistribute = function () {
+                    return true;
+                };
+
+                vm.addDistNote = function () {
+                    if (!vm.distNote || !vm.distNote.trim()) return;
+                    vm.distNote = '';
+                };
+
+                vm.handleDistNoteKeypress = function ($event) {
+                    if ($event.key === 'Enter') {
+                        vm.addDistNote();
+                    }
+                };
+
+                document.getElementById('distribute-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeDistribute();
+                });
+
+                // New Payment Modal
+                vm.showNewPayment = function () {
+                    vm.newPmtDate = '';
+                    vm.newPmtPosted = '';
+                    vm.newPmtRefNum = '';
+                    vm.newPmtType = 'Client Payment';
+                    vm.newPmtCode = '';
+                    vm.newPmtAmount = '';
+                    vm.newPmtSource = '';
+                    vm.newPmtNote = '';
+                    vm.newPmtErrors = {};
+                    var d = document.getElementById('new-payment-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.closeNewPayment = function () {
+                    var d = document.getElementById('new-payment-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                vm.saveNewPayment = function () {
+                    vm.newPmtErrors = {};
+                    if (!vm.newPmtDate) vm.newPmtErrors.date = true;
+                    if (!vm.newPmtPosted) vm.newPmtErrors.posted = true;
+                    if (!vm.newPmtCode) vm.newPmtErrors.code = true;
+                    if (!vm.newPmtAmount) vm.newPmtErrors.amount = true;
+
+                    if (Object.keys(vm.newPmtErrors).length === 0) {
+                        vm.closeNewPayment();
+                    }
+                };
+
+                vm.addNewPmtNote = function () {
+                    if (!vm.newPmtNote || !vm.newPmtNote.trim()) return;
+                    vm.newPmtNote = '';
+                };
+
+                vm.handleNewPmtNoteKeypress = function ($event) {
+                    if ($event.key === 'Enter') {
+                        vm.addNewPmtNote();
+                    }
+                };
+
+                document.getElementById('new-payment-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeNewPayment();
+                });
+
+                // Unapplied Refund Modal
+                vm.showUnappliedRefund = function (pmt) {
+                    vm.unappliedRefundPayment = pmt;
+                    var d = document.getElementById('unapplied-refund-dialog');
+                    d.classList.remove('animate-in');
+                    d.showModal();
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            d.classList.add('animate-in');
+                        });
+                    });
+                };
+
+                vm.closeUnappliedRefund = function () {
+                    var d = document.getElementById('unapplied-refund-dialog');
+                    d.classList.remove('animate-in');
+                    d.classList.add('closing');
+                    setTimeout(function () {
+                        d.close();
+                        d.classList.remove('closing');
+                    }, 200);
+                };
+
+                document.getElementById('unapplied-refund-dialog').addEventListener('cancel', function (e) {
+                    e.preventDefault();
+                    vm.closeUnappliedRefund();
+                });
+            });
+    </script>
+</body>
+
+</html>

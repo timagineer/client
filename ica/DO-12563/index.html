@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Batch Signing of Notes 1</title>
+   <style>
+      :root {
+         --primary-250: hsl(216, 53%, 29%);
+         --primary-300: hsl(216, 53%, 35%);
+         --primary-350: hsl(216, 53%, 42%);
+         --primary-700: hsl(216, 53%, 96%);
+         --gray-200: hsl(216, 12%, 25%);
+         --gray-400: hsl(216, 12%, 45%);
+         --gray-850: hsl(0, 0%, 100%);
+         --border-subtle: hsl(216, 10%, 85%);
+         --primary-bg: var(--primary-350);
+         --primary-hover: var(--primary-300);
+         --primary-active: var(--primary-250);
+         --primary-text: var(--gray-850);
+         --mono: ui-monospace, monospace;
+         --sans: system-ui, sans-serif;
+         --font-size-10: 0.9375rem;
+         --font-size-15: 1.166rem;
+         --font-size-body: clamp(var(--font-size-10), 0.8722rem + 0.3264vw, var(--font-size-15));
+      }
+
+      body {
+         display: grid;
+         font-family: var(--mono);
+         font-size: var(--font-size-body);
+         min-height: 100dvh;
+         place-items: center;
+         padding: 2rem 1rem;
+      }
+
+      .wrap {
+         max-width: 40rem;
+         width: 100%;
+      }
+
+      .links {
+         margin-block-end: 1.5rem;
+      }
+
+      a.card-link {
+         background-color: var(--primary-bg);
+         border-radius: 1rem;
+         color: var(--primary-text);
+         display: block;
+         font-weight: 600;
+         padding: 1.125rem;
+         margin-block-end: 0.75rem;
+         min-width: fit-content;
+         text-align: center;
+         text-decoration: none;
+      }
+
+      a.card-link:hover {
+         background-color: var(--primary-hover);
+      }
+
+      a.card-link:active {
+         background-color: var(--primary-active);
+         transform: scale(0.99);
+      }
+
+      .summary {
+         background: var(--primary-700);
+         border: 1px solid var(--border-subtle);
+         border-radius: 1rem;
+         padding: 1.5rem 1.75rem;
+      }
+
+      .summary h2 {
+         font-size: 0.95em;
+         letter-spacing: 0.03em;
+         text-transform: uppercase;
+         color: var(--gray-400);
+         margin-block-end: 1rem;
+      }
+
+      .summary p {
+         font-family: var(--sans);
+         line-height: 1.6;
+         color: var(--gray-200);
+         margin-block-end: 0.875rem;
+      }
+
+      .summary p:last-child {
+         margin-block-end: 0;
+      }
+
+      .summary p strong {
+         font-family: var(--mono);
+         font-weight: 600;
+         color: var(--primary-300);
+      }
+
+      .summary .divider {
+         border: none;
+         border-top: 1px solid var(--border-subtle);
+         margin: 1.25rem 0;
+      }
+
+      .summary .scope {
+         font-size: 0.85em;
+         color: var(--gray-400);
+         margin-block-end: 0.5rem;
+      }
+   </style>
+</head>
+
+<body>
+   <div class="wrap">
+      <div class="links">
+         <a class="card-link" href="finished-notes-prototype.html">Finished Notes Table</a>
+         <a class="card-link" href="cosig-table-prototype.html">Co-signature Worklist Table</a>
+      </div>
+
+      <div class="summary">
+         <h2>What's improved</h2>
+         <p><strong>Batch signing.</strong> Clinicians and supervisors can select multiple notes and sign them all in one action, instead of opening and signing each note one at a time.</p>
+         <p><strong>Cleaner interactions.</strong> Client, Note, and Account references now behave like standard links instead of buttons. Small fix, but it removes a real usability gap.</p>
+         <p><strong>Simpler tables.</strong> Columns were reviewed and merged or removed where they weren't adding value, so each table only shows what's needed to review and act on a note.</p>
+         <p><strong>Accessibility.</strong> Link text color now passes WCAG contrast requirements across every table row background and state — closing a gap that exists in production today, not just in these two tables.</p>
+         <hr class="divider">
+         <p class="scope">Finished Notes table only</p>
+         <p><strong>Clearer rules interactions.</strong> Two separate columns ("Reminder To" and "Due By") are now one "Rules" column that reads at a glance, e.g. "Sign by 07/02/2026." The redundant "Set Rule" link is gone — rule details now live behind a single "Rules" action (button). And when a note is overdue, only that cell turns red, not the whole row.</p>
+      </div>
+   </div>
+</body>
+
+</html>
