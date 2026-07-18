@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+- type/status legend dropdowns (we forget them)
+- status/type recede when popover
+ -->
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendar Appointment Status Color System</title>
+  <title>Calendar Appointment Color System</title>
   <style>
     * {
       box-sizing: border-box;
@@ -12,17 +16,80 @@
       padding: 0
     }
 
+    /* ── appt-palettes-tokens ── */
     :root {
-      --appt-1: oklch(52% 0.16 234);
-      --appt-2: oklch(52% 0.16 260);
-      --appt-3: oklch(52% 0.16 310);
-      --appt-4: oklch(52% 0.16 357);
-      --appt-5: oklch(52% 0.16 75);
-      --appt-6: oklch(55% 0.18 148);
-      --appt-7: oklch(52% 0.16 100);
-      --appt-8: oklch(52% 0.16 128);
-      --appt-9: oklch(52% 0.16 170);
-      --appt-10: oklch(52% 0.16 205);
+      --violet-05: oklch(51.1% 0.262 276.966);
+      --violet-95: oklch(95% 0.03 276.966);
+      --blue-05: oklch(58.8% 0.158 241.966);
+      --blue-95: oklch(97% 0.03 241.966);
+      --teal-05: oklch(58.0% 0.118 184.704);
+      --teal-95: oklch(97% 0.03 184.704);
+      --green-05: oklch(62.8% 0.200 131.684);
+      --green-95: oklch(95% 0.03 131.684);
+      --amber-05: oklch(50.7% 0.179 58.318);
+      --amber-95: oklch(97% 0.03 58.318);
+      --vermillion-05: oklch(48.7% 0.222 41.116);
+      --vermillion-95: oklch(97% 0.03 41.116);
+      --crimson-05: oklch(48.2% 0.245 27.325);
+      --crimson-95: oklch(97% 0.03 27.325);
+      --cobalt-05: oklch(52% 0.16 234);
+      --cobalt-95: oklch(97% 0.03 234);
+      --indigo-05: oklch(52% 0.16 260);
+      --indigo-95: oklch(97% 0.03 260);
+      --plum-05: oklch(52% 0.16 310);
+      --plum-95: oklch(97% 0.03 310);
+      --rose-05: oklch(52% 0.16 357);
+      --rose-95: oklch(97% 0.03 357);
+      --gold-05: oklch(52% 0.16 75);
+      --gold-95: oklch(97% 0.03 75);
+      --emerald-05: oklch(55% 0.18 148);
+      --emerald-95: oklch(97% 0.03 148);
+      --lime-05: oklch(52% 0.16 100);
+      --lime-95: oklch(95% 0.03 100);
+      --sage-05: oklch(52% 0.16 128);
+      --sage-95: oklch(95% 0.03 128);
+      --cyan-05: oklch(52% 0.16 170);
+      --cyan-95: oklch(97% 0.03 170);
+      --sky-05: oklch(52% 0.16 205);
+      --sky-95: oklch(97% 0.03 205);
+      --appt-status-scheduled-fg: var(--violet-05);
+      --appt-status-scheduled-bg: var(--violet-95);
+      --appt-status-rescheduled-fg: var(--violet-05);
+      --appt-status-rescheduled-bg: var(--violet-95);
+      --appt-status-confirmed-fg: var(--blue-05);
+      --appt-status-confirmed-bg: var(--blue-95);
+      --appt-status-arrived-fg: var(--teal-05);
+      --appt-status-arrived-bg: var(--teal-95);
+      --appt-status-checkedin-fg: var(--teal-05);
+      --appt-status-checkedin-bg: var(--teal-95);
+      --appt-status-occurred-fg: var(--green-05);
+      --appt-status-occurred-bg: var(--green-95);
+      --appt-status-cancelled-fg: var(--amber-05);
+      --appt-status-cancelled-bg: var(--amber-95);
+      --appt-status-late-fg: var(--vermillion-05);
+      --appt-status-late-bg: var(--vermillion-95);
+      --appt-status-noshow-fg: var(--crimson-05);
+      --appt-status-noshow-bg: var(--crimson-95);
+      --appt-type-1-fg: var(--cobalt-05);
+      --appt-type-1-bg: var(--cobalt-95);
+      --appt-type-2-fg: var(--indigo-05);
+      --appt-type-2-bg: var(--indigo-95);
+      --appt-type-3-fg: var(--plum-05);
+      --appt-type-3-bg: var(--plum-95);
+      --appt-type-4-fg: var(--rose-05);
+      --appt-type-4-bg: var(--rose-95);
+      --appt-type-5-fg: var(--gold-05);
+      --appt-type-5-bg: var(--gold-95);
+      --appt-type-6-fg: var(--emerald-05);
+      --appt-type-6-bg: var(--emerald-95);
+      --appt-type-7-fg: var(--lime-05);
+      --appt-type-7-bg: var(--lime-95);
+      --appt-type-8-fg: var(--sage-05);
+      --appt-type-8-bg: var(--sage-95);
+      --appt-type-9-fg: var(--cyan-05);
+      --appt-type-9-bg: var(--cyan-95);
+      --appt-type-10-fg: var(--sky-05);
+      --appt-type-10-bg: var(--sky-95);
     }
 
     body {
@@ -1058,9 +1125,9 @@
     }
 
     .pop-footer-link {
-      font-size: 10.5px;
+      font-size: 9px;
       font-weight: 500;
-      color: #595959;
+      color: #767676;
       text-decoration: none;
       transition: color 120ms ease
     }
@@ -1181,7 +1248,7 @@
       <div id="legend-type"></div>
       <div class="ref-copy">
         <h2>Appointment type system</h2>
-        <p>A 10-step hue ramp spanning the full 360&deg; wheel. Brand anchors H234 (Established Client) and H128 (Follow Up) are locked; the remaining 8 steps are distributed across both arcs. Non-anchor hues within ~15&deg; of a status hue were nudged; the two anchor conflicts (H234/confirmed, H128/occurred) are accepted. Perceptually faint hues use 95% bg lightness instead of 97% for visual evenness.</p>
+        <p>Each appointment type gets a distinct color drawn from a 10-step palette spanning the full color spectrum. Established Client and Follow Up are anchored to ICANotes brand colors; the remaining types are evenly distributed around the wheel. Colors were chosen to stay visually distinct from the status system, so type and status can be read independently at a glance.</p>
       </div>
     </div>
 
@@ -1196,35 +1263,28 @@
   </div>
 
   <script>
-    // TODO: wire appt-palettes-tokens.css
-    // 1. Import/inline appt-palettes-tokens.css (or @import in <style>)
-    // 2. Replace C{} values with getComputedStyle(root).getPropertyValue('--appt-status-{key}-fg')
-    // 3. Replace BG{} values with --appt-status-{key}-bg
-    // 4. Replace TYPES color/bg with --appt-type-{n}-fg / --appt-type-{n}-bg
-    // 5. Remove hardcoded oklch() from :root --appt-1..10 once token vars are live
-
     // All text colors verified 4.5:1 against #fff (white chip/cell bg)
     const C = {
-      scheduled: 'oklch(51.1% 0.262 276.966)',
-      rescheduled: 'oklch(51.1% 0.262 276.966)',
-      confirmed: 'oklch(58.8% 0.158 241.966)',
-      arrived: 'oklch(58.0% 0.118 184.704)',
-      checkedin: 'oklch(58.0% 0.118 184.704)',
-      occurred: 'oklch(62.8% 0.2   131.684)',
-      cancelled: 'oklch(50.7% 0.179 58.318)',
-      late: 'oklch(48.7% 0.222 41.116)',
-      noshow: 'oklch(48.2% 0.245 27.325)',
+      scheduled: 'var(--appt-status-scheduled-fg)',
+      rescheduled: 'var(--appt-status-rescheduled-fg)',
+      confirmed: 'var(--appt-status-confirmed-fg)',
+      arrived: 'var(--appt-status-arrived-fg)',
+      checkedin: 'var(--appt-status-checkedin-fg)',
+      occurred: 'var(--appt-status-occurred-fg)',
+      cancelled: 'var(--appt-status-cancelled-fg)',
+      late: 'var(--appt-status-late-fg)',
+      noshow: 'var(--appt-status-noshow-fg)',
     };
     const BG = {
-      scheduled: 'oklch(95% 0.03 276.966)',
-      rescheduled: 'oklch(95% 0.03 276.966)',
-      confirmed: 'oklch(97% 0.03 241.966)',
-      arrived: 'oklch(97% 0.03 184.704)',
-      checkedin: 'oklch(97% 0.03 184.704)',
-      occurred: 'oklch(95% 0.03 131.684)',
-      cancelled: 'oklch(97% 0.03 58.318)',
-      late: 'oklch(97% 0.03 41.116)',
-      noshow: 'oklch(97% 0.03 27.325)',
+      scheduled: 'var(--appt-status-scheduled-bg)',
+      rescheduled: 'var(--appt-status-rescheduled-bg)',
+      confirmed: 'var(--appt-status-confirmed-bg)',
+      arrived: 'var(--appt-status-arrived-bg)',
+      checkedin: 'var(--appt-status-checkedin-bg)',
+      occurred: 'var(--appt-status-occurred-bg)',
+      cancelled: 'var(--appt-status-cancelled-bg)',
+      late: 'var(--appt-status-late-bg)',
+      noshow: 'var(--appt-status-noshow-bg)',
     };
     const LBL = {
       scheduled: 'Scheduled', rescheduled: 'Rescheduled', confirmed: 'Confirmed',
@@ -1240,32 +1300,32 @@
     ];
     // ── Type data ──────────────────────────────────────────────────────────────────
     const TYPES = {
-      1: { label: 'Established Client', color: 'var(--appt-1)', hue: 234 },
-      2: { label: 'Example', color: 'var(--appt-2)', hue: 260 },
-      3: { label: 'Group Therapy', color: 'var(--appt-3)', hue: 310 },
-      4: { label: 'Example', color: 'var(--appt-4)', hue: 357 },
-      5: { label: 'Complete Evaluation', color: 'var(--appt-5)', hue: 75 },
-      6: { label: 'New Client', color: 'var(--appt-6)', hue: 148 },
-      7: { label: 'Example', color: 'var(--appt-7)', hue: 100, bg: 'oklch(95% 0.03 100)' },
-      8: { label: 'Follow Up', color: 'var(--appt-8)', hue: 128, bg: 'oklch(95% 0.03 128)' },
-      9: { label: 'Example', color: 'var(--appt-9)', hue: 170 },
-      10: { label: 'Example', color: 'var(--appt-10)', hue: 205 },
+      1: { label: 'Established Client', color: 'var(--appt-type-1-fg)', bg: 'var(--appt-type-1-bg)' },
+      2: { label: 'Example', color: 'var(--appt-type-2-fg)', bg: 'var(--appt-type-2-bg)' },
+      3: { label: 'Group Therapy', color: 'var(--appt-type-3-fg)', bg: 'var(--appt-type-3-bg)' },
+      4: { label: 'Example', color: 'var(--appt-type-4-fg)', bg: 'var(--appt-type-4-bg)' },
+      5: { label: 'Complete Evaluation', color: 'var(--appt-type-5-fg)', bg: 'var(--appt-type-5-bg)' },
+      6: { label: 'New Client', color: 'var(--appt-type-6-fg)', bg: 'var(--appt-type-6-bg)' },
+      7: { label: 'Example', color: 'var(--appt-type-7-fg)', bg: 'var(--appt-type-7-bg)' },
+      8: { label: 'Follow Up', color: 'var(--appt-type-8-fg)', bg: 'var(--appt-type-8-bg)' },
+      9: { label: 'Example', color: 'var(--appt-type-9-fg)', bg: 'var(--appt-type-9-bg)' },
+      10: { label: 'Example', color: 'var(--appt-type-10-fg)', bg: 'var(--appt-type-10-bg)' },
     };
 
     const GROUPS = [
-      { name: 'Scheduling', color: C.scheduled, statuses: 'Scheduled · Rescheduled', desc: 'A slot is held, no commitment made. Rescheduled shares the hue — it’s a revised slot, not a new phase.' },
-      { name: 'Pre-visit', color: C.confirmed, statuses: 'Confirmed', desc: 'Intent is established. The patient or provider has acknowledged the appointment but hasn’t arrived yet.' },
-      { name: 'Engagement', color: C.arrived, statuses: 'Arrived · Checked-in', desc: 'Patient is on-site, call, virtual. Two labels, one hue — sequential steps in the same moment.' },
-      { name: 'Completed', color: C.occurred, statuses: 'Occurred', desc: 'Care was delivered. Green is reserved for this outcome only, so it reads unambiguously across any view.' },
-      { name: 'Did not occur', color: C.cancelled, statuses: 'Cancelled · Late cancel · No-show', desc: 'Shifts amber to red by severity. Cancelled is managed; late cancel disrupts; no-show is most negative.' },
+      { name: 'Scheduling', color: C.scheduled, bg: BG.scheduled, statuses: 'Scheduled · Rescheduled', desc: 'A slot is held, no commitment made. Rescheduled shares the hue — it’s a revised slot, not a new phase.' },
+      { name: 'Pre-visit', color: C.confirmed, bg: BG.confirmed, statuses: 'Confirmed', desc: 'Intent is established. The patient or provider has acknowledged the appointment but hasn’t arrived yet.' },
+      { name: 'Engagement', color: C.arrived, bg: BG.arrived, statuses: 'Arrived · Checked-in', desc: 'Patient is on-site, call, virtual. Two labels, one hue — sequential steps in the same moment.' },
+      { name: 'Completed', color: C.occurred, bg: BG.occurred, statuses: 'Occurred', desc: 'Care was delivered. Green is reserved for this outcome only, so it reads unambiguously across any view.' },
+      { name: 'Did not occur', color: C.cancelled, bg: BG.cancelled, statuses: 'Cancelled · Late cancel · No-show', desc: 'Shifts amber to red by severity. Cancelled is managed; late cancel disrupts, no-show even more so.' },
     ];
 
     // ── Popover mock data ──────────────────────────────────────────────────────────
     const MOCK = {
-      name: 'Alex Johnson', preferred: 'AJ',
-      dob: '6/12/1985', age: 40, id: '4821',
-      provider: 'Dr. Patel',
-      timeRange: '9:00 AM – 10:00 AM',
+      name: 'Samantha Wilkinson', preferred: 'Sam',
+      dob: '6/12/1985',
+      provider: 'Dr. Morganstern',
+      timeRange: '9:00–10:00 AM',
       lastUpdated: '06/23/2026 2:31:54 PM',
     };
 
@@ -1540,18 +1600,18 @@
         `</div>` +
         `<div class="pop-divider"></div>` +
         `<div class="pop-body">` +
-        `<div class="pop-row pop-subhead"><span class="pop-subhead-name">${formatName(MOCK)}</span><span class="pop-subhead-right">${MOCK.dob} (${MOCK.age}) &bull; ID ${MOCK.id}</span></div>` +
-        `<div class="pop-row pop-subhead2"><span>${MOCK.timeRange}</span><span>with ${MOCK.provider}</span></div>` +
+        `<div class="pop-row pop-subhead"><span class="pop-subhead-name">${formatName(MOCK)}</span><span class="pop-subhead-right">${MOCK.timeRange}</span></div>` +
+        `<div class="pop-row pop-subhead2"><span>DOB ${MOCK.dob}</span><span>with ${MOCK.provider}</span></div>` +
         `<div class="pop-row pop-icon-grid">` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/></svg>Note</div>` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>Chart</div>` +
         `</div>` +
         `<div class="pop-row pop-icon-grid">` +
-        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1"/><path d="M16 16a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1"/><path d="M21 6a2 2 0 0 0-.586-1.414l-2-2A2 2 0 0 0 17 2h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/></svg>Documents</div>` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>Demographics</div>` +
         `<div class="pop-icon-tile" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Messages<span class="pop-notif-badge"></span></div>` +
         `</div>` +
         `<div class="pop-row pop-icon-grid">` +
-        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>Demographics</div>` +
+        `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1"/><path d="M16 16a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1"/><path d="M21 6a2 2 0 0 0-.586-1.414l-2-2A2 2 0 0 0 17 2h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/></svg>Documents</div>` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>Account</div>` +
         `</div>` +
         `</div>` +
@@ -1798,10 +1858,9 @@
     }).join('');
 
     document.getElementById('key-status').innerHTML = GROUPS.map(g => {
-      const hue = parseFloat(g.color.split(' ').pop());
       const bg = g.name === 'Did not occur'
         ? `linear-gradient(to right, ${BG.cancelled}, ${BG.noshow})`
-        : `oklch(97% 0.03 ${hue})`;
+        : g.bg;
       const dots = g.name === 'Did not occur'
         ? `<span class="dot" style="background:${C.cancelled}"></span><span class="dot" style="background:${C.late}"></span><span class="dot" style="background:${C.noshow}"></span>`
         : `<span class="dot" style="background:${g.color}"></span>`;
@@ -1811,7 +1870,7 @@
 
     // ── Legends ──────────────────────────────────────────────────────────────────
     let tHtml = '<div class="legend"><span class="legend-label">Appointment type</span>';
-    const typesSorted = Object.values(TYPES).sort((a, b) => b.hue - a.hue);
+    const typesSorted = Object.values(TYPES).slice();
     typesSorted.push(typesSorted.shift());
     typesSorted.forEach(t => {
       tHtml += `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
