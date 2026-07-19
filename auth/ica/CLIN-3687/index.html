@@ -299,7 +299,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1
+      line-height: 1.25
     }
 
     .appt-right {
@@ -665,7 +665,6 @@
       padding: 2px 5px;
       border-radius: 5px;
       flex-shrink: 0;
-      overflow: hidden;
       position: relative;
       z-index: 1
     }
@@ -1695,6 +1694,15 @@
           statusChip.style.background = BG[key];
           statusChip.childNodes[0].textContent = LBL[key];
           statusChip.querySelector('.pop-status-dot').style.background = C[key];
+          // sync card chip
+          const cardChip = popTarget && popTarget.querySelector('.wv-status-chip, .mv-status-chip');
+          if (cardChip) {
+            cardChip.style.background = BG[key];
+            const lbl = cardChip.querySelector('.wv-status-label, .mv-status-label');
+            if (lbl) lbl.textContent = LBL[key];
+            const dot = cardChip.querySelector('span[style*="border-radius:50%"]');
+            if (dot) dot.style.background = C[key];
+          }
         }, true);
       });
 
