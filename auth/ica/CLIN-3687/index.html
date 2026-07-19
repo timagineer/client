@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+- popover pos
+- sync dd change to source card
+- descender
+ -->
 
 <head>
   <meta charset="UTF-8">
@@ -14,6 +19,9 @@
 
     /* ── appt-palettes-tokens ── */
     :root {
+      /* --ica-blue-web: oklch(40.491% 0.07623 234.793);
+      --ica-blue-ui: oklch(49.153% 0.12057 234.793);
+      --primary-aidx: oklch(49.153% 0.12057 258.167); */
       --violet-05: oklch(51.1% 0.262 276.966);
       --violet-95: oklch(95% 0.03 276.966);
       --blue-05: oklch(58.8% 0.158 241.966);
@@ -1394,7 +1402,7 @@
       const t = TYPES[typeFor(a.pt)];
       const statusChip = `<div class="mv-status-chip${conc ? ' conc' : ''}" style="background:${BG[a.s]}">` +
         `<span class="mv-status-label">${LBL[a.s]}</span>` +
-        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div>`;
+        `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div>`;
       if (cardStyle === 'bar') {
         return `<div class="appt" style="background:#fff;gap:0;padding:0;overflow:hidden">` +
           `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:3px 7px 3px 4px"></div>` +
@@ -1641,7 +1649,7 @@
       el.innerHTML =
         `<div class="pop-header">` +
         `<div class="pop-type-chip" id="pop-type-chip" style="background:${typeBg}"><span class="pop-type-sq" style="background:${t.color}"></span>${t.label}</div>` +
-        `<div class="pop-status-chip" id="pop-status-chip" style="background:${BG[a.s]}">${LBL[a.s]}<span class="pop-status-dot" style="background:${C[a.s]}"></span></div>` +
+        `<div class="pop-status-chip" id="pop-status-chip" style="background:${BG[a.s]}"><span class="pop-status-label">${LBL[a.s]}</span><span class="pop-status-dot" style="background:${C[a.s]}"></span></div>` +
         `</div>` +
         `<div class="pop-divider"></div>` +
         `<div class="pop-body">` +
@@ -1667,41 +1675,59 @@
       // wire chip dropdowns
       const typeChip = el.querySelector('#pop-type-chip');
       const statusChip = el.querySelector('#pop-status-chip');
+      const typeLabel = typeChip.querySelector('.pop-type-sq').nextSibling;
+      const typeSwatch = typeChip.querySelector('.pop-type-sq');
+      const statusLabel = statusChip.querySelector('.pop-status-label');
+      const statusDot = statusChip.querySelector('.pop-status-dot');
+
+      // track current type id (not derivable from pt after change)
+      if (!a.t) a.t = typeFor(a.pt);
 
       typeChip.addEventListener('click', e => {
         e.stopPropagation();
-        const items = Object.entries(TYPES).map(([id, t]) => ({
+        const items = [1,2,3,4,5,7,8,6,9,10].map(id => { const t = TYPES[id]; return {
           key: id, label: t.label, fg: t.color, bg: t.bg, sq: true,
-          selected: parseInt(id) === typeFor(a.pt)
-        }));
+          selected: parseInt(id) === a.t
+        }; });
         openDropdown(typeChip, items, el, (key) => {
-          // update chip display
+          a.t = parseInt(key);
           const nt = TYPES[key];
-          typeChip.querySelector('.pop-type-sq').style.background = nt.color;
+          typeSwatch.style.background = nt.color;
           typeChip.style.background = nt.bg;
-          typeChip.childNodes[1].textContent = nt.label;
+          typeLabel.textContent = nt.label;
+          // sync card type
+          if (popTarget) {
+            const cardSwatch = popTarget.querySelector('.wv-type-chip-sq span, .mv-type-badge span');
+            const cardTypeBg = popTarget.querySelector('.wv-type-chip-sq, .mv-type-badge');
+            const cardTypeLabel = popTarget.querySelector('.wv-type-label, .mv-type-label');
+            if (cardSwatch) cardSwatch.style.background = nt.color;
+            if (cardTypeBg) cardTypeBg.style.background = nt.bg;
+            if (cardTypeLabel) cardTypeLabel.textContent = nt.label;
+          }
         });
       });
 
       statusChip.addEventListener('click', e => {
         e.stopPropagation();
         const items = LEGEND.map(s => ({
-          key: s.key, label: s.label, fg: C[s.key], bg: BG[s.key], sq: false,
+          key: s.key, label: s.label, fg: C[s.key], bg: BG[s.key], sq: false, dotRight: true,
           selected: s.key === a.s
         }));
         openDropdown(statusChip, items, el, (key) => {
           a.s = key;
           statusChip.style.background = BG[key];
-          statusChip.childNodes[0].textContent = LBL[key];
-          statusChip.querySelector('.pop-status-dot').style.background = C[key];
-          // sync card chip
-          const cardChip = popTarget && popTarget.querySelector('.wv-status-chip, .mv-status-chip');
-          if (cardChip) {
-            cardChip.style.background = BG[key];
-            const lbl = cardChip.querySelector('.wv-status-label, .mv-status-label');
-            if (lbl) lbl.textContent = LBL[key];
-            const dot = cardChip.querySelector('span[style*="border-radius:50%"]');
-            if (dot) dot.style.background = C[key];
+          statusLabel.textContent = LBL[key];
+          statusDot.style.background = C[key];
+          // sync card status
+          if (popTarget) {
+            const cardChip = popTarget.querySelector('.wv-status-chip, .mv-status-chip');
+            if (cardChip) {
+              cardChip.style.background = BG[key];
+              const lbl = cardChip.querySelector('.wv-status-label, .mv-status-label');
+              if (lbl) lbl.textContent = LBL[key];
+              const dot = cardChip.querySelector('.card-status-dot');
+              if (dot) dot.style.background = C[key];
+            }
           }
         }, true);
       });
@@ -1713,8 +1739,9 @@
       popEl.querySelector('.pop-dd')?.remove();
       const dd = document.createElement('div');
       dd.className = 'pop-dd';
-      dd.innerHTML = items.map(it =>
-        `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}"><span class="pop-dd-swatch${it.sq ? ' sq' : ''}" style="background:${it.fg}"></span>${it.label}<span class="pop-dd-check">✓</span></div>`
+      dd.innerHTML = items.map(it => it.dotRight
+        ? `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}" style="width:100%;box-sizing:border-box;gap:5px"><span class="pop-dd-check" style="margin-left:0;margin-right:auto">✓</span>${it.label}<span class="pop-dd-swatch" style="background:${it.fg};margin-left:0"></span></div>`
+        : `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}"><span class="pop-dd-swatch${it.sq ? ' sq' : ''}" style="background:${it.fg}"></span>${it.label}<span class="pop-dd-check">✓</span></div>`
       ).join('');
       popEl.appendChild(dd);
       // position below anchor
@@ -1808,7 +1835,7 @@
         `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '0' : '5px'} 6px 0 0;overflow:hidden">` +
         `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
         `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad}">${statusLabel}` +
-        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div>` +
+        `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div>` +
         `</div>`;
     }
 
@@ -1828,7 +1855,7 @@
         `<div style="display:flex;align-items:center;flex:1;min-width:0;gap:5px;overflow:hidden">` +
         `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
         `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad};gap:${(conc && !dayView) ? '0' : '4px'}">${statusLabel}` +
-        `<span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div></div>` +
+        `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div></div>` +
         `</div>`;
     }
 
@@ -1967,7 +1994,7 @@
     ['gear-wdays-label', 'wdays-btn-5', 'wdays-btn-7'].forEach(id => document.getElementById(id).style.display = 'none');
 
     // ── Key bar ───────────────────────────────────────────────────────────────────
-    const NAMED_TYPES = [1, 6, 8, 5, 3];
+    const NAMED_TYPES = [1, 3, 5, 8, 6];
     document.getElementById('key-type').innerHTML = NAMED_TYPES.map(id => {
       const t = TYPES[id];
       return `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
@@ -1987,8 +2014,8 @@
 
     // ── Legends ──────────────────────────────────────────────────────────────────
     let tHtml = '<div class="legend"><span class="legend-label">Appointment type</span>';
-    const typesSorted = Object.values(TYPES).slice();
-    typesSorted.push(typesSorted.shift());
+    const HUE_ORDER = [1,2,3,4,5,7,8,6,9,10];
+    const typesSorted = HUE_ORDER.map(id => TYPES[id]);
     typesSorted.forEach(t => {
       tHtml += `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
         `<span class="type-sq" style="background:${t.color}"></span><span>${t.label}</span></div>`;
