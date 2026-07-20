@@ -1838,11 +1838,12 @@
           row.forEach(a => { html += chipM(a, conc); });
           html += '</div>';
         });
-        if (hiddenAppts.length) {
+        if (hiddenRows.length) {
+          const dotAppts = hiddenAppts.slice(0, hiddenRows.length);
           html += '<div class="appt-overflow">' +
-            '<span class="appt-overflow-count">+' + hiddenAppts.length + '</span>' +
+            '<span class="appt-overflow-count">+' + hiddenRows.length + '</span>' +
             '<span class="appt-overflow-dots">' +
-            hiddenAppts.map(a => '<span class="dot" style="background:' + C[a.s] + '"></span>').join('') +
+            dotAppts.map(a => '<span class="dot" style="background:' + C[a.s] + '"></span>').join('') +
             '</span></div>';
         }
         cell.innerHTML = html + '</div>';
