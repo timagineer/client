@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-- popover pos
-- sync dd change to source card
-- descender
- -->
 
 <head>
   <meta charset="UTF-8">
@@ -219,7 +214,7 @@
     }
 
     .cell.today .dn {
-      font-weight: 600;
+      font-weight: 700;
       color: #111
     }
 
@@ -464,6 +459,12 @@
     .wv-head[style*="grid-column:1"],
     .dv-head[style*="grid-column:1"] {
       margin-left: 0
+    }
+
+    /* ── Today column highlight (week) ── */
+    .wv-head.today-col {
+      font-weight: 700;
+      color: #111
     }
 
     /* time column */
@@ -1220,7 +1221,7 @@
 
   <div class="wrap">
     <div class="toolbar">
-      <div class="cal-label" id="cal-label">Wednesday, June 24, 2026</div>
+      <div class="cal-label" id="cal-label">Thursday, June 11, 2026</div>
       <div class="seg" id="view-seg">
         <button class="active" onclick="setView('day')">Day</button>
         <button onclick="setView('week')">Week</button>
@@ -1351,36 +1352,420 @@
       { label: 'Cancelled', key: 'cancelled' }, { label: 'Late cancel', key: 'late' },
       { label: 'No-show', key: 'noshow' },
     ];
-    // ── Type data ──────────────────────────────────────────────────────────────────
     const TYPES = {
       1: { label: 'Established Client', color: 'var(--appt-type-1-fg)', bg: 'var(--appt-type-1-bg)' },
-      2: { label: 'Example', color: 'var(--appt-type-2-fg)', bg: 'var(--appt-type-2-bg)' },
+      2: { label: 'Intake Assessment', color: 'var(--appt-type-2-fg)', bg: 'var(--appt-type-2-bg)' },
       3: { label: 'Group Therapy', color: 'var(--appt-type-3-fg)', bg: 'var(--appt-type-3-bg)' },
-      4: { label: 'Example', color: 'var(--appt-type-4-fg)', bg: 'var(--appt-type-4-bg)' },
+      4: { label: 'Crisis Intervention', color: 'var(--appt-type-4-fg)', bg: 'var(--appt-type-4-bg)' },
       5: { label: 'Complete Evaluation', color: 'var(--appt-type-5-fg)', bg: 'var(--appt-type-5-bg)' },
       6: { label: 'New Client', color: 'var(--appt-type-6-fg)', bg: 'var(--appt-type-6-bg)' },
-      7: { label: 'Example', color: 'var(--appt-type-7-fg)', bg: 'var(--appt-type-7-bg)' },
+      7: { label: 'Med Management', color: 'var(--appt-type-7-fg)', bg: 'var(--appt-type-7-bg)' },
       8: { label: 'Follow Up', color: 'var(--appt-type-8-fg)', bg: 'var(--appt-type-8-bg)' },
-      9: { label: 'Example', color: 'var(--appt-type-9-fg)', bg: 'var(--appt-type-9-bg)' },
-      10: { label: 'Example', color: 'var(--appt-type-10-fg)', bg: 'var(--appt-type-10-bg)' },
+      9: { label: 'Family Session', color: 'var(--appt-type-9-fg)', bg: 'var(--appt-type-9-bg)' },
+      10: { label: 'Telehealth', color: 'var(--appt-type-10-fg)', bg: 'var(--appt-type-10-bg)' },
     };
-
     const GROUPS = [
-      { name: 'Scheduling', color: C.scheduled, bg: BG.scheduled, statuses: 'Scheduled · Rescheduled', desc: 'A slot is held, no commitment made. Rescheduled shares the hue — it’s a revised slot, not a new phase.' },
-      { name: 'Pre-visit', color: C.confirmed, bg: BG.confirmed, statuses: 'Confirmed', desc: 'Intent is established. The patient or provider has acknowledged the appointment but hasn’t arrived yet.' },
-      { name: 'Engagement', color: C.arrived, bg: BG.arrived, statuses: 'Arrived · Checked-in', desc: 'Patient is on-site, call, virtual. Two labels, one hue — sequential steps in the same moment.' },
+      { name: 'Scheduling', color: C.scheduled, bg: BG.scheduled, statuses: 'Scheduled \u00b7 Rescheduled', desc: 'A slot is held, no commitment made. Rescheduled shares the hue \u2014 it\u2019s a revised slot, not a new phase.' },
+      { name: 'Pre-visit', color: C.confirmed, bg: BG.confirmed, statuses: 'Confirmed', desc: 'Intent is established. The patient or provider has acknowledged the appointment but hasn\u2019t arrived yet.' },
+      { name: 'Engagement', color: C.arrived, bg: BG.arrived, statuses: 'Arrived \u00b7 Checked-in', desc: 'Patient is on-site, call, virtual. Two labels, one hue \u2014 sequential steps in the same moment.' },
       { name: 'Completed', color: C.occurred, bg: BG.occurred, statuses: 'Occurred', desc: 'Care was delivered. Green is reserved for this outcome only, so it reads unambiguously across any view.' },
-      { name: 'Did not occur', color: C.cancelled, bg: BG.cancelled, statuses: 'Cancelled · Late cancel · No-show', desc: 'Shifts amber to red by severity. Cancelled is managed; late cancel disrupts, no-show even more so.' },
+      { name: 'Did not occur', color: C.cancelled, bg: BG.cancelled, statuses: 'Cancelled \u00b7 Late cancel \u00b7 No-show', desc: 'Shifts amber to red by severity. Cancelled is managed; late cancel disrupts, no-show even more so.' },
     ];
 
-    // ── Popover mock data ──────────────────────────────────────────────────────────
-    const MOCK = {
-      name: 'Samantha Wilkinson', preferred: 'Sam',
-      dob: '6/12/1985',
-      provider: 'Dr. Morganstern',
-      timeRange: '9:00–10:00 AM',
-      lastUpdated: '06/23/2026 2:31:54 PM',
+    // ══════════════════════════════════════════════════════════════════════════════
+    // UNIFIED DATA MODEL - Single source of truth for all views
+    // Today = Thursday June 11, 2026. Week = Mon 6/8 - Fri 6/12. Month = June 2026.
+    // ══════════════════════════════════════════════════════════════════════════════
+
+    const PROVIDERS = ['Dr. Boyles', 'Dr. Morganstern', 'Dr. Patel'];
+
+    const PT = {
+      1: { name: 'Samantha Wilkinson', preferred: 'Sam', dob: '6/12/1985', type: 1 },
+      2: { name: 'Marcus Chen', preferred: '', dob: '3/4/1978', type: 8 },
+      3: { name: 'Dana Kowalski', preferred: '', dob: '11/22/1990', type: 1 },
+      4: { name: 'Wren Shelby', preferred: '', dob: '8/15/1982', type: 5 },
+      5: { name: 'Derek Callahan', preferred: '', dob: '1/30/1995', type: 3 },
+      6: { name: 'Vera Hernandez', preferred: '', dob: '7/8/1988', type: 6 },
+      7: { name: 'Finn O\u2019Brien', preferred: '', dob: '4/19/1992', type: 2 },
+      8: { name: 'Cora Ellis', preferred: '', dob: '9/3/1975', type: 1 },
+      9: { name: 'Ethan Huang', preferred: '', dob: '12/14/1983', type: 8 },
+      10: { name: 'Mia Lawson', preferred: '', dob: '5/27/1991', type: 1 },
+      11: { name: 'Felix Alvarez', preferred: '', dob: '2/16/1987', type: 5 },
+      12: { name: 'Grant Fowler', preferred: '', dob: '10/5/1980', type: 8 },
+      13: { name: 'Bethany Nichols', preferred: 'Beth', dob: '6/30/1993', type: 1 },
+      14: { name: 'Hugo Delgado', preferred: '', dob: '8/21/1976', type: 7 },
+      15: { name: 'Tina Sato', preferred: '', dob: '3/12/1989', type: 1 },
+      16: { name: 'Nora Jensen', preferred: '', dob: '11/8/1984', type: 8 },
+      17: { name: 'Jesse Franklin', preferred: '', dob: '7/25/1996', type: 9 },
+      18: { name: 'Keith Buckley', preferred: '', dob: '4/2/1981', type: 1 },
+      19: { name: 'Lance Hoffman', preferred: '', dob: '1/18/1977', type: 3 },
+      20: { name: 'Oscar Garcia', preferred: '', dob: '9/14/1986', type: 8 },
+      21: { name: 'Raj Kapoor', preferred: '', dob: '12/7/1990', type: 10 },
+      22: { name: 'Marco Bianchi', preferred: '', dob: '5/11/1983', type: 1 },
+      23: { name: 'Abraham Mitchell', preferred: 'Abe', dob: '2/28/1974', type: 4 },
+      24: { name: 'Hana Russo', preferred: '', dob: '8/9/1992', type: 1 },
+      25: { name: 'Priya Shah', preferred: '', dob: '6/4/1988', type: 6 },
+      26: { name: 'Iris Moreno', preferred: '', dob: '10/17/1985', type: 8 },
+      27: { name: 'Scott Anderson', preferred: 'Scotty', dob: '3/23/1979', type: 1 },
+      28: { name: 'Trent Gallagher', preferred: '', dob: '7/1/1994', type: 5 },
+      29: { name: 'Vince Caruso', preferred: '', dob: '11/29/1982', type: 8 },
+      30: { name: 'Grace Torres', preferred: '', dob: '4/15/1991', type: 2 },
+      31: { name: 'Remy Espinoza', preferred: '', dob: '9/20/1987', type: 1 },
+      32: { name: 'Frank Donovan', preferred: '', dob: '1/6/1976', type: 7 },
+      33: { name: 'Gina Peretti', preferred: '', dob: '8/28/1993', type: 1 },
+      34: { name: 'Karen Blake', preferred: '', dob: '12/3/1980', type: 8 },
+      35: { name: 'Ivan Gonzalez', preferred: '', dob: '5/19/1986', type: 1 },
+      36: { name: 'Lara Volkov', preferred: '', dob: '2/7/1989', type: 9 },
+      37: { name: 'Laura Chen', preferred: '', dob: '10/24/1984', type: 1 },
+      38: { name: 'Janet Greer', preferred: 'Jan', dob: '6/16/1977', type: 4 },
+      39: { name: 'Bette Brooks', preferred: '', dob: '3/31/1992', type: 8 },
+      40: { name: 'Zack Barrett', preferred: '', dob: '7/13/1995', type: 6 },
+      41: { name: 'Yusuf Diallo', preferred: '', dob: '11/2/1981', type: 1 },
+      42: { name: 'Xavier Booth', preferred: '', dob: '4/8/1988', type: 10 },
+      43: { name: 'Umar Farouk', preferred: '', dob: '9/26/1983', type: 8 },
+      44: { name: 'Nigel Ellis', preferred: '', dob: '1/14/1990', type: 1 },
+      45: { name: 'Fiona Hayes', preferred: 'Fi', dob: '8/5/1986', type: 3 },
+      46: { name: 'Caleb Emerson', preferred: '', dob: '12/19/1978', type: 1 },
+      47: { name: 'Luis Reyes', preferred: '', dob: '5/3/1993', type: 7 },
+      48: { name: 'Wade Griffin', preferred: '', dob: '2/22/1982', type: 8 },
+      49: { name: 'Helen Blackwood', preferred: '', dob: '10/10/1987', type: 1 },
+      50: { name: 'Perry Gould', preferred: '', dob: '6/28/1991', type: 5 },
+      51: { name: 'Elena Duarte', preferred: '', dob: '3/7/1984', type: 1 },
+      52: { name: 'Maria Torres', preferred: '', dob: '7/22/1979', type: 2 },
+      53: { name: 'Pamela Park', preferred: 'Pam', dob: '11/15/1985', type: 1 },
+      54: { name: 'Diana Dao', preferred: '', dob: '4/27/1994', type: 8 },
+      55: { name: 'Carla Campos', preferred: '', dob: '9/9/1980', type: 1 },
+      56: { name: 'Henry Walsh', preferred: '', dob: '1/25/1988', type: 9 },
     };
+
+    function ptShort(id) { const p = PT[id]; const parts = p.name.split(' '); return parts[0] + ' ' + parts[1].charAt(0) + '.'; }
+
+    // Master schedule: every appointment in June 2026
+    // Density: ~8-10 appts/day (non-focus weeks), ~12-14 focus week, 1-2 concurrent slots/day max
+    const SCHEDULE = [
+      // Mon Jun 1
+      { date: 1, time: '8:00 AM', dur: 60, prov: 0, ptId: 53, s: 'occurred' },
+      { date: 1, time: '9:00 AM', dur: 45, prov: 1, ptId: 3, s: 'occurred' },
+      { date: 1, time: '9:00 AM', dur: 30, prov: 2, ptId: 4, s: 'occurred' },
+      { date: 1, time: '10:00 AM', dur: 30, prov: 0, ptId: 5, s: 'noshow' },
+      { date: 1, time: '11:00 AM', dur: 30, prov: 1, ptId: 15, s: 'occurred' },
+      { date: 1, time: '1:00 PM', dur: 45, prov: 0, ptId: 12, s: 'occurred' },
+      { date: 1, time: '2:00 PM', dur: 30, prov: 2, ptId: 22, s: 'occurred' },
+      { date: 1, time: '3:00 PM', dur: 45, prov: 1, ptId: 16, s: 'occurred' },
+      { date: 1, time: '4:00 PM', dur: 15, prov: 0, ptId: 29, s: 'occurred' },
+      // Tue Jun 2
+      { date: 2, time: '8:00 AM', dur: 30, prov: 0, ptId: 6, s: 'occurred' },
+      { date: 2, time: '8:00 AM', dur: 45, prov: 1, ptId: 7, s: 'noshow' },
+      { date: 2, time: '9:00 AM', dur: 60, prov: 0, ptId: 54, s: 'occurred' },
+      { date: 2, time: '10:00 AM', dur: 30, prov: 2, ptId: 13, s: 'occurred' },
+      { date: 2, time: '11:00 AM', dur: 30, prov: 1, ptId: 24, s: 'occurred' },
+      { date: 2, time: '1:00 PM', dur: 60, prov: 0, ptId: 37, s: 'occurred' },
+      { date: 2, time: '2:00 PM', dur: 45, prov: 1, ptId: 28, s: 'occurred' },
+      { date: 2, time: '3:00 PM', dur: 30, prov: 2, ptId: 21, s: 'late' },
+      { date: 2, time: '4:00 PM', dur: 15, prov: 0, ptId: 30, s: 'occurred' },
+      // Wed Jun 3
+      { date: 3, time: '8:00 AM', dur: 60, prov: 1, ptId: 10, s: 'occurred' },
+      { date: 3, time: '9:00 AM', dur: 30, prov: 0, ptId: 11, s: 'occurred' },
+      { date: 3, time: '9:00 AM', dur: 45, prov: 2, ptId: 25, s: 'occurred' },
+      { date: 3, time: '10:00 AM', dur: 60, prov: 1, ptId: 1, s: 'occurred' },
+      { date: 3, time: '11:00 AM', dur: 30, prov: 0, ptId: 16, s: 'occurred' },
+      { date: 3, time: '1:00 PM', dur: 45, prov: 2, ptId: 35, s: 'occurred' },
+      { date: 3, time: '2:00 PM', dur: 60, prov: 0, ptId: 39, s: 'occurred' },
+      { date: 3, time: '3:00 PM', dur: 30, prov: 1, ptId: 40, s: 'noshow' },
+      { date: 3, time: '4:00 PM', dur: 15, prov: 0, ptId: 55, s: 'occurred' },
+      // Thu Jun 4
+      { date: 4, time: '8:00 AM', dur: 45, prov: 0, ptId: 12, s: 'occurred' },
+      { date: 4, time: '9:00 AM', dur: 60, prov: 1, ptId: 50, s: 'occurred' },
+      { date: 4, time: '9:30 AM', dur: 30, prov: 2, ptId: 33, s: 'late' },
+      { date: 4, time: '10:30 AM', dur: 30, prov: 0, ptId: 15, s: 'occurred' },
+      { date: 4, time: '11:00 AM', dur: 60, prov: 1, ptId: 24, s: 'occurred' },
+      { date: 4, time: '1:00 PM', dur: 30, prov: 0, ptId: 19, s: 'occurred' },
+      { date: 4, time: '2:00 PM', dur: 60, prov: 2, ptId: 37, s: 'occurred' },
+      { date: 4, time: '3:00 PM', dur: 30, prov: 1, ptId: 34, s: 'occurred' },
+      { date: 4, time: '4:00 PM', dur: 15, prov: 0, ptId: 41, s: 'occurred' },
+      // Fri Jun 5
+      { date: 5, time: '8:00 AM', dur: 30, prov: 0, ptId: 47, s: 'occurred' },
+      { date: 5, time: '8:00 AM', dur: 60, prov: 1, ptId: 15, s: 'occurred' },
+      { date: 5, time: '9:30 AM', dur: 30, prov: 2, ptId: 28, s: 'occurred' },
+      { date: 5, time: '10:00 AM', dur: 30, prov: 0, ptId: 20, s: 'occurred' },
+      { date: 5, time: '11:00 AM', dur: 30, prov: 1, ptId: 36, s: 'occurred' },
+      { date: 5, time: '1:00 PM', dur: 60, prov: 0, ptId: 31, s: 'occurred' },
+      { date: 5, time: '2:00 PM', dur: 30, prov: 2, ptId: 44, s: 'occurred' },
+      { date: 5, time: '3:00 PM', dur: 30, prov: 1, ptId: 51, s: 'cancelled' },
+      { date: 5, time: '4:00 PM', dur: 15, prov: 0, ptId: 29, s: 'occurred' },
+      // Mon Jun 8
+      { date: 8, time: '8:00 AM', dur: 30, prov: 0, ptId: 2, s: 'occurred' },
+      { date: 8, time: '8:00 AM', dur: 45, prov: 1, ptId: 53, s: 'occurred' },
+      { date: 8, time: '9:00 AM', dur: 60, prov: 0, ptId: 10, s: 'occurred' },
+      { date: 8, time: '9:00 AM', dur: 30, prov: 2, ptId: 46, s: 'occurred' },
+      { date: 8, time: '10:00 AM', dur: 30, prov: 1, ptId: 5, s: 'late' },
+      { date: 8, time: '10:30 AM', dur: 30, prov: 0, ptId: 18, s: 'occurred' },
+      { date: 8, time: '11:00 AM', dur: 30, prov: 2, ptId: 30, s: 'noshow' },
+      { date: 8, time: '11:30 AM', dur: 30, prov: 1, ptId: 34, s: 'occurred' },
+      { date: 8, time: '1:00 PM', dur: 60, prov: 0, ptId: 29, s: 'occurred' },
+      { date: 8, time: '2:00 PM', dur: 45, prov: 1, ptId: 19, s: 'occurred' },
+      { date: 8, time: '3:00 PM', dur: 45, prov: 2, ptId: 20, s: 'occurred' },
+      { date: 8, time: '4:00 PM', dur: 15, prov: 0, ptId: 51, s: 'cancelled' },
+      // Tue Jun 9
+      { date: 9, time: '8:00 AM', dur: 45, prov: 0, ptId: 46, s: 'occurred' },
+      { date: 9, time: '8:30 AM', dur: 30, prov: 1, ptId: 10, s: 'occurred' },
+      { date: 9, time: '9:00 AM', dur: 60, prov: 2, ptId: 16, s: 'occurred' },
+      { date: 9, time: '9:30 AM', dur: 15, prov: 1, ptId: 6, s: 'noshow' },
+      { date: 9, time: '10:00 AM', dur: 30, prov: 0, ptId: 18, s: 'occurred' },
+      { date: 9, time: '10:00 AM', dur: 45, prov: 1, ptId: 19, s: 'occurred' },
+      { date: 9, time: '11:00 AM', dur: 30, prov: 2, ptId: 30, s: 'occurred' },
+      { date: 9, time: '11:30 AM', dur: 30, prov: 0, ptId: 44, s: 'occurred' },
+      { date: 9, time: '1:00 PM', dur: 60, prov: 1, ptId: 35, s: 'occurred' },
+      { date: 9, time: '2:00 PM', dur: 30, prov: 0, ptId: 41, s: 'occurred' },
+      { date: 9, time: '2:00 PM', dur: 45, prov: 2, ptId: 56, s: 'occurred' },
+      { date: 9, time: '3:00 PM', dur: 30, prov: 1, ptId: 27, s: 'occurred' },
+      { date: 9, time: '4:00 PM', dur: 15, prov: 0, ptId: 31, s: 'occurred' },
+      // Wed Jun 10
+      { date: 10, time: '8:00 AM', dur: 30, prov: 0, ptId: 44, s: 'occurred' },
+      { date: 10, time: '8:00 AM', dur: 60, prov: 1, ptId: 22, s: 'occurred' },
+      { date: 10, time: '9:00 AM', dur: 45, prov: 0, ptId: 9, s: 'occurred' },
+      { date: 10, time: '9:00 AM', dur: 30, prov: 2, ptId: 25, s: 'noshow' },
+      { date: 10, time: '10:00 AM', dur: 60, prov: 1, ptId: 1, s: 'occurred' },
+      { date: 10, time: '10:30 AM', dur: 30, prov: 2, ptId: 36, s: 'occurred' },
+      { date: 10, time: '11:00 AM', dur: 30, prov: 0, ptId: 43, s: 'occurred' },
+      { date: 10, time: '11:30 AM', dur: 30, prov: 1, ptId: 54, s: 'late' },
+      { date: 10, time: '1:00 PM', dur: 45, prov: 0, ptId: 37, s: 'occurred' },
+      { date: 10, time: '1:00 PM', dur: 60, prov: 2, ptId: 19, s: 'occurred' },
+      { date: 10, time: '2:00 PM', dur: 30, prov: 1, ptId: 48, s: 'occurred' },
+      { date: 10, time: '3:00 PM', dur: 60, prov: 0, ptId: 31, s: 'occurred' },
+      { date: 10, time: '4:00 PM', dur: 15, prov: 1, ptId: 28, s: 'occurred' },
+      // Thu Jun 11 (TODAY) — "now" is ~11:00 AM
+      { date: 11, time: '8:00 AM', dur: 30, prov: 0, ptId: 2, s: 'occurred' },
+      { date: 11, time: '8:00 AM', dur: 60, prov: 1, ptId: 11, s: 'occurred' },
+      { date: 11, time: '8:00 AM', dur: 45, prov: 2, ptId: 9, s: 'occurred' },
+      { date: 11, time: '8:30 AM', dur: 30, prov: 0, ptId: 3, s: 'occurred' },
+      { date: 11, time: '9:00 AM', dur: 60, prov: 0, ptId: 10, s: 'occurred' },
+      { date: 11, time: '9:00 AM', dur: 30, prov: 1, ptId: 17, s: 'noshow' },
+      { date: 11, time: '9:15 AM', dur: 30, prov: 2, ptId: 13, s: 'occurred' },
+      { date: 11, time: '9:30 AM', dur: 45, prov: 1, ptId: 20, s: 'occurred' },
+      { date: 11, time: '10:00 AM', dur: 30, prov: 0, ptId: 16, s: 'occurred' },
+      { date: 11, time: '10:00 AM', dur: 30, prov: 2, ptId: 33, s: 'late' },
+      { date: 11, time: '10:30 AM', dur: 30, prov: 0, ptId: 18, s: 'checkedin' },
+      { date: 11, time: '10:30 AM', dur: 30, prov: 1, ptId: 44, s: 'arrived' },
+      { date: 11, time: '11:00 AM', dur: 15, prov: 0, ptId: 6, s: 'arrived' },
+      { date: 11, time: '11:00 AM', dur: 30, prov: 1, ptId: 35, s: 'checkedin' },
+      { date: 11, time: '11:30 AM', dur: 30, prov: 0, ptId: 15, s: 'confirmed' },
+      { date: 11, time: '11:30 AM', dur: 30, prov: 1, ptId: 24, s: 'confirmed' },
+      { date: 11, time: '1:00 PM', dur: 45, prov: 0, ptId: 12, s: 'confirmed' },
+      { date: 11, time: '1:00 PM', dur: 60, prov: 1, ptId: 19, s: 'confirmed' },
+      { date: 11, time: '1:30 PM', dur: 30, prov: 2, ptId: 36, s: 'scheduled' },
+      { date: 11, time: '2:00 PM', dur: 45, prov: 0, ptId: 31, s: 'scheduled' },
+      { date: 11, time: '2:00 PM', dur: 30, prov: 1, ptId: 29, s: 'scheduled' },
+      { date: 11, time: '2:30 PM', dur: 15, prov: 1, ptId: 38, s: 'cancelled' },
+      { date: 11, time: '3:00 PM', dur: 60, prov: 0, ptId: 27, s: 'scheduled' },
+      { date: 11, time: '3:00 PM', dur: 30, prov: 2, ptId: 22, s: 'rescheduled' },
+      { date: 11, time: '4:00 PM', dur: 15, prov: 0, ptId: 34, s: 'scheduled' },
+      { date: 11, time: '4:00 PM', dur: 15, prov: 1, ptId: 40, s: 'scheduled' },
+      { date: 11, time: '4:30 PM', dur: 15, prov: 0, ptId: 39, s: 'scheduled' },
+      // Fri Jun 12
+      { date: 12, time: '8:00 AM', dur: 30, prov: 0, ptId: 21, s: 'confirmed' },
+      { date: 12, time: '8:00 AM', dur: 60, prov: 1, ptId: 26, s: 'confirmed' },
+      { date: 12, time: '8:30 AM', dur: 30, prov: 2, ptId: 50, s: 'rescheduled' },
+      { date: 12, time: '9:00 AM', dur: 45, prov: 0, ptId: 1, s: 'confirmed' },
+      { date: 12, time: '9:00 AM', dur: 30, prov: 1, ptId: 32, s: 'confirmed' },
+      { date: 12, time: '9:30 AM', dur: 30, prov: 2, ptId: 15, s: 'confirmed' },
+      { date: 12, time: '10:00 AM', dur: 60, prov: 0, ptId: 37, s: 'confirmed' },
+      { date: 12, time: '10:30 AM', dur: 30, prov: 1, ptId: 8, s: 'scheduled' },
+      { date: 12, time: '11:00 AM', dur: 30, prov: 2, ptId: 55, s: 'scheduled' },
+      { date: 12, time: '1:00 PM', dur: 45, prov: 0, ptId: 51, s: 'scheduled' },
+      { date: 12, time: '1:00 PM', dur: 60, prov: 1, ptId: 24, s: 'confirmed' },
+      { date: 12, time: '2:00 PM', dur: 30, prov: 2, ptId: 43, s: 'scheduled' },
+      { date: 12, time: '3:00 PM', dur: 60, prov: 0, ptId: 48, s: 'scheduled' },
+      { date: 12, time: '4:00 PM', dur: 15, prov: 1, ptId: 49, s: 'scheduled' },
+      // Mon Jun 15
+      { date: 15, time: '8:00 AM', dur: 30, prov: 0, ptId: 31, s: 'confirmed' },
+      { date: 15, time: '9:00 AM', dur: 60, prov: 1, ptId: 27, s: 'confirmed' },
+      { date: 15, time: '9:00 AM', dur: 30, prov: 2, ptId: 28, s: 'confirmed' },
+      { date: 15, time: '10:00 AM', dur: 30, prov: 0, ptId: 22, s: 'scheduled' },
+      { date: 15, time: '11:00 AM', dur: 30, prov: 2, ptId: 53, s: 'scheduled' },
+      { date: 15, time: '1:00 PM', dur: 60, prov: 0, ptId: 12, s: 'confirmed' },
+      { date: 15, time: '2:00 PM', dur: 30, prov: 1, ptId: 41, s: 'scheduled' },
+      { date: 15, time: '3:00 PM', dur: 30, prov: 2, ptId: 18, s: 'scheduled' },
+      { date: 15, time: '4:00 PM', dur: 15, prov: 0, ptId: 45, s: 'scheduled' },
+      // Tue Jun 16
+      { date: 16, time: '8:00 AM', dur: 30, prov: 0, ptId: 43, s: 'scheduled' },
+      { date: 16, time: '8:00 AM', dur: 60, prov: 1, ptId: 5, s: 'scheduled' },
+      { date: 16, time: '9:00 AM', dur: 45, prov: 2, ptId: 14, s: 'confirmed' },
+      { date: 16, time: '10:00 AM', dur: 30, prov: 0, ptId: 36, s: 'scheduled' },
+      { date: 16, time: '11:00 AM', dur: 30, prov: 1, ptId: 20, s: 'scheduled' },
+      { date: 16, time: '1:00 PM', dur: 60, prov: 0, ptId: 9, s: 'confirmed' },
+      { date: 16, time: '2:00 PM', dur: 45, prov: 2, ptId: 37, s: 'scheduled' },
+      { date: 16, time: '3:00 PM', dur: 30, prov: 1, ptId: 32, s: 'scheduled' },
+      { date: 16, time: '4:00 PM', dur: 15, prov: 0, ptId: 42, s: 'scheduled' },
+      // Wed Jun 17
+      { date: 17, time: '8:00 AM', dur: 30, prov: 0, ptId: 4, s: 'confirmed' },
+      { date: 17, time: '8:00 AM', dur: 60, prov: 1, ptId: 48, s: 'scheduled' },
+      { date: 17, time: '9:00 AM', dur: 45, prov: 2, ptId: 42, s: 'scheduled' },
+      { date: 17, time: '9:30 AM', dur: 30, prov: 0, ptId: 21, s: 'rescheduled' },
+      { date: 17, time: '10:00 AM', dur: 60, prov: 1, ptId: 15, s: 'scheduled' },
+      { date: 17, time: '11:00 AM', dur: 30, prov: 0, ptId: 29, s: 'cancelled' },
+      { date: 17, time: '1:00 PM', dur: 60, prov: 2, ptId: 10, s: 'confirmed' },
+      { date: 17, time: '2:00 PM', dur: 30, prov: 0, ptId: 35, s: 'scheduled' },
+      { date: 17, time: '3:00 PM', dur: 30, prov: 1, ptId: 19, s: 'scheduled' },
+      { date: 17, time: '4:00 PM', dur: 15, prov: 2, ptId: 38, s: 'scheduled' },
+      // Thu Jun 18
+      { date: 18, time: '8:00 AM', dur: 45, prov: 0, ptId: 41, s: 'scheduled' },
+      { date: 18, time: '9:00 AM', dur: 60, prov: 1, ptId: 24, s: 'confirmed' },
+      { date: 18, time: '9:00 AM', dur: 30, prov: 2, ptId: 7, s: 'cancelled' },
+      { date: 18, time: '10:00 AM', dur: 30, prov: 0, ptId: 49, s: 'scheduled' },
+      { date: 18, time: '11:00 AM', dur: 30, prov: 1, ptId: 6, s: 'scheduled' },
+      { date: 18, time: '1:00 PM', dur: 60, prov: 0, ptId: 28, s: 'confirmed' },
+      { date: 18, time: '2:00 PM', dur: 45, prov: 2, ptId: 22, s: 'scheduled' },
+      { date: 18, time: '3:00 PM', dur: 30, prov: 1, ptId: 45, s: 'scheduled' },
+      { date: 18, time: '4:00 PM', dur: 15, prov: 0, ptId: 31, s: 'scheduled' },
+      // Fri Jun 19
+      { date: 19, time: '8:00 AM', dur: 30, prov: 0, ptId: 25, s: 'scheduled' },
+      { date: 19, time: '9:00 AM', dur: 60, prov: 1, ptId: 19, s: 'cancelled' },
+      { date: 19, time: '10:00 AM', dur: 45, prov: 0, ptId: 37, s: 'scheduled' },
+      { date: 19, time: '10:00 AM', dur: 30, prov: 2, ptId: 43, s: 'rescheduled' },
+      { date: 19, time: '11:00 AM', dur: 30, prov: 1, ptId: 8, s: 'scheduled' },
+      { date: 19, time: '1:00 PM', dur: 60, prov: 0, ptId: 14, s: 'confirmed' },
+      { date: 19, time: '2:00 PM', dur: 30, prov: 2, ptId: 41, s: 'scheduled' },
+      { date: 19, time: '3:00 PM', dur: 30, prov: 1, ptId: 33, s: 'scheduled' },
+      { date: 19, time: '4:00 PM', dur: 15, prov: 0, ptId: 52, s: 'scheduled' },
+      // Mon Jun 22
+      { date: 22, time: '8:00 AM', dur: 30, prov: 0, ptId: 39, s: 'scheduled' },
+      { date: 22, time: '9:00 AM', dur: 60, prov: 1, ptId: 10, s: 'confirmed' },
+      { date: 22, time: '10:00 AM', dur: 30, prov: 2, ptId: 19, s: 'confirmed' },
+      { date: 22, time: '11:00 AM', dur: 30, prov: 0, ptId: 34, s: 'scheduled' },
+      { date: 22, time: '1:00 PM', dur: 60, prov: 1, ptId: 48, s: 'confirmed' },
+      { date: 22, time: '2:00 PM', dur: 30, prov: 0, ptId: 5, s: 'scheduled' },
+      { date: 22, time: '3:00 PM', dur: 30, prov: 2, ptId: 16, s: 'scheduled' },
+      { date: 22, time: '4:00 PM', dur: 15, prov: 1, ptId: 53, s: 'scheduled' },
+      // Tue Jun 23
+      { date: 23, time: '8:00 AM', dur: 45, prov: 0, ptId: 36, s: 'scheduled' },
+      { date: 23, time: '9:00 AM', dur: 60, prov: 1, ptId: 1, s: 'confirmed' },
+      { date: 23, time: '9:00 AM', dur: 30, prov: 2, ptId: 30, s: 'confirmed' },
+      { date: 23, time: '10:00 AM', dur: 30, prov: 0, ptId: 33, s: 'scheduled' },
+      { date: 23, time: '11:00 AM', dur: 30, prov: 1, ptId: 22, s: 'scheduled' },
+      { date: 23, time: '11:30 AM', dur: 15, prov: 2, ptId: 45, s: 'cancelled' },
+      { date: 23, time: '1:00 PM', dur: 60, prov: 0, ptId: 19, s: 'confirmed' },
+      { date: 23, time: '2:00 PM', dur: 30, prov: 1, ptId: 56, s: 'scheduled' },
+      { date: 23, time: '3:00 PM', dur: 30, prov: 2, ptId: 29, s: 'scheduled' },
+      { date: 23, time: '4:00 PM', dur: 15, prov: 0, ptId: 42, s: 'scheduled' },
+      // Wed Jun 24
+      { date: 24, time: '8:00 AM', dur: 60, prov: 0, ptId: 49, s: 'confirmed' },
+      { date: 24, time: '8:00 AM', dur: 30, prov: 1, ptId: 38, s: 'cancelled' },
+      { date: 24, time: '9:00 AM', dur: 45, prov: 2, ptId: 4, s: 'scheduled' },
+      { date: 24, time: '10:00 AM', dur: 30, prov: 0, ptId: 5, s: 'scheduled' },
+      { date: 24, time: '10:30 AM', dur: 30, prov: 1, ptId: 29, s: 'rescheduled' },
+      { date: 24, time: '11:00 AM', dur: 30, prov: 2, ptId: 20, s: 'scheduled' },
+      { date: 24, time: '1:00 PM', dur: 60, prov: 0, ptId: 39, s: 'confirmed' },
+      { date: 24, time: '2:00 PM', dur: 45, prov: 1, ptId: 10, s: 'scheduled' },
+      { date: 24, time: '3:00 PM', dur: 30, prov: 2, ptId: 47, s: 'scheduled' },
+      { date: 24, time: '4:00 PM', dur: 15, prov: 0, ptId: 44, s: 'scheduled' },
+      // Thu Jun 25
+      { date: 25, time: '8:00 AM', dur: 30, prov: 0, ptId: 30, s: 'scheduled' },
+      { date: 25, time: '9:00 AM', dur: 45, prov: 1, ptId: 50, s: 'scheduled' },
+      { date: 25, time: '9:00 AM', dur: 30, prov: 2, ptId: 6, s: 'scheduled' },
+      { date: 25, time: '10:00 AM', dur: 60, prov: 0, ptId: 37, s: 'confirmed' },
+      { date: 25, time: '11:00 AM', dur: 30, prov: 1, ptId: 21, s: 'rescheduled' },
+      { date: 25, time: '1:00 PM', dur: 60, prov: 2, ptId: 35, s: 'confirmed' },
+      { date: 25, time: '2:00 PM', dur: 45, prov: 0, ptId: 24, s: 'scheduled' },
+      { date: 25, time: '3:00 PM', dur: 30, prov: 1, ptId: 52, s: 'scheduled' },
+      { date: 25, time: '4:00 PM', dur: 15, prov: 2, ptId: 9, s: 'scheduled' },
+      // Fri Jun 26
+      { date: 26, time: '8:00 AM', dur: 30, prov: 0, ptId: 47, s: 'confirmed' },
+      { date: 26, time: '9:00 AM', dur: 60, prov: 1, ptId: 22, s: 'scheduled' },
+      { date: 26, time: '9:00 AM', dur: 30, prov: 2, ptId: 33, s: 'confirmed' },
+      { date: 26, time: '10:00 AM', dur: 30, prov: 0, ptId: 34, s: 'scheduled' },
+      { date: 26, time: '10:30 AM', dur: 30, prov: 1, ptId: 23, s: 'cancelled' },
+      { date: 26, time: '11:00 AM', dur: 30, prov: 2, ptId: 43, s: 'scheduled' },
+      { date: 26, time: '1:00 PM', dur: 60, prov: 0, ptId: 24, s: 'confirmed' },
+      { date: 26, time: '2:00 PM', dur: 45, prov: 1, ptId: 19, s: 'scheduled' },
+      { date: 26, time: '3:00 PM', dur: 30, prov: 2, ptId: 27, s: 'scheduled' },
+      // Mon Jun 29
+      { date: 29, time: '8:00 AM', dur: 30, prov: 0, ptId: 44, s: 'scheduled' },
+      { date: 29, time: '9:00 AM', dur: 45, prov: 1, ptId: 16, s: 'scheduled' },
+      { date: 29, time: '9:00 AM', dur: 30, prov: 2, ptId: 46, s: 'scheduled' },
+      { date: 29, time: '10:00 AM', dur: 30, prov: 0, ptId: 9, s: 'rescheduled' },
+      { date: 29, time: '11:00 AM', dur: 30, prov: 1, ptId: 48, s: 'scheduled' },
+      { date: 29, time: '1:00 PM', dur: 60, prov: 0, ptId: 33, s: 'confirmed' },
+      { date: 29, time: '2:00 PM', dur: 30, prov: 2, ptId: 53, s: 'scheduled' },
+      { date: 29, time: '3:00 PM', dur: 30, prov: 1, ptId: 14, s: 'scheduled' },
+      { date: 29, time: '4:00 PM', dur: 15, prov: 0, ptId: 40, s: 'scheduled' },
+      // Tue Jun 30
+      { date: 30, time: '8:00 AM', dur: 30, prov: 0, ptId: 33, s: 'rescheduled' },
+      { date: 30, time: '9:00 AM', dur: 60, prov: 1, ptId: 48, s: 'confirmed' },
+      { date: 30, time: '10:00 AM', dur: 30, prov: 2, ptId: 20, s: 'scheduled' },
+      { date: 30, time: '10:30 AM', dur: 30, prov: 0, ptId: 24, s: 'scheduled' },
+      { date: 30, time: '11:00 AM', dur: 30, prov: 1, ptId: 36, s: 'scheduled' },
+      { date: 30, time: '1:00 PM', dur: 60, prov: 0, ptId: 21, s: 'confirmed' },
+      { date: 30, time: '2:00 PM', dur: 45, prov: 2, ptId: 12, s: 'scheduled' },
+      { date: 30, time: '3:00 PM', dur: 30, prov: 1, ptId: 29, s: 'scheduled' },
+      { date: 30, time: '4:00 PM', dur: 15, prov: 0, ptId: 49, s: 'scheduled' },
+    ];
+    // ── Derived data structures ──────────────────────────────────────────────────
+    const WEEK_DAYS = [
+      { label: 'Monday 8', date: 8 }, { label: 'Tuesday 9', date: 9 }, { label: 'Wednesday 10', date: 10 },
+      { label: 'Thursday 11', date: 11 }, { label: 'Friday 12', date: 12 },
+    ];
+
+    function timeToMin(t) {
+      const [time, ampm] = t.split(' ');
+      let [h, m] = time.split(':').map(Number);
+      if (ampm === 'PM' && h !== 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      return h * 60 + m;
+    }
+    function minToTime(min) {
+      const h = Math.floor(min / 60), m = min % 60;
+      const h12 = h === 12 ? 12 : h % 12 || 12;
+      return h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
+    }
+    function timeRangeStr(time, dur) {
+      const startMin = timeToMin(time);
+      const endMin = startMin + dur;
+      const endH = Math.floor(endMin / 60), endM = endMin % 60;
+      const endH12 = endH === 12 ? 12 : endH % 12 || 12;
+      const endAmpm = endH >= 12 ? 'PM' : 'AM';
+      const startAmpm = time.split(' ')[1];
+      const endStr = endH12 + (endM ? ':' + String(endM).padStart(2, '0') : ':00');
+      if (startAmpm === endAmpm) return time.replace(' ' + startAmpm, '') + '\u2013' + endStr + ' ' + endAmpm;
+      return time + '\u2013' + endStr + ' ' + endAmpm;
+    }
+
+    const WEEK_SLOTS = {};
+    WEEK_DAYS.forEach(d => {
+      WEEK_SLOTS[d.date] = SCHEDULE
+        .filter(a => a.date === d.date)
+        .map(a => ({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId }));
+    });
+
+    const DAY_SLOTS = { 0: [], 1: [], 2: [] };
+    SCHEDULE.filter(a => a.date === 11).forEach(a => {
+      DAY_SLOTS[a.prov].push({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId });
+    });
+
+    // Month: group by day, detect concurrency, cap at 8 rows to avoid overflow
+    const APPTS = {};
+    for (let d = 1; d <= 30; d++) {
+      const dayAppts = SCHEDULE.filter(a => a.date === d);
+      if (!dayAppts.length) continue;
+      const byTime = {};
+      dayAppts.forEach(a => {
+        if (!byTime[a.time]) byTime[a.time] = [];
+        byTime[a.time].push({ s: a.s, pt: ptShort(a.ptId), ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur });
+      });
+      const rows = [];
+      const times = Object.keys(byTime).sort((a, b) => timeToMin(a) - timeToMin(b));
+      // Cap rows per day to create varied overflow (+0 to +6 in 5-day mode where MAX_BASE=7, visible=6)
+      // Target: some days no overflow (<=6 rows), others +1 to +6 (7-12 rows)
+      const caps = [6, 7, 8, 6, 9, 7, 10, 6, 8, 11, 12, 7, 9, 6, 8, 7, 10, 6, 9, 8, 7, 11];
+      const capForDay = caps[(d - 1) % caps.length];
+      const usedTimes = times.slice(0, capForDay);
+      usedTimes.forEach(t => {
+        const slot = byTime[t];
+        if (slot.length >= 2) rows.push([slot[0], slot[1]]);
+        else rows.push(slot[0]);
+      });
+      APPTS[d] = rows;
+    }
 
     function formatName(m) {
       return m.preferred && m.preferred !== m.name.split(' ')[0]
@@ -1390,69 +1775,45 @@
 
     let cardStyle = 'sq';
 
-    // stable pseudo-random type 1-10 from patient name
-    function typeFor(pt) {
+    function typeFor(pt, ptId) {
+      if (ptId && PT[ptId]) return PT[ptId].type;
       let h = 0;
       for (let i = 0; i < pt.length; i++) h = (h * 31 + pt.charCodeAt(i)) & 0xffff;
       return (h % 10) + 1;
     }
-
     // ── Chip renderers ─────────────────────────────────────────────────────────────
     function chipM(a, conc) {
-      const t = TYPES[typeFor(a.pt)];
+      const t = TYPES[typeFor(a.pt, a.ptId)];
       const statusChip = `<div class="mv-status-chip${conc ? ' conc' : ''}" style="background:${BG[a.s]}">` +
         `<span class="mv-status-label">${LBL[a.s]}</span>` +
         `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div>`;
       if (cardStyle === 'bar') {
-        return `<div class="appt" style="background:#fff;gap:0;padding:0;overflow:hidden">` +
+        return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="background:#fff;gap:0;padding:0;overflow:hidden">` +
           `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:3px 7px 3px 4px"></div>` +
           `<span class="pt-name" style="flex:1;padding:2px 0">${a.pt}</span>` +
           statusChip +
           `<div style="width:4px;flex-shrink:0"></div>` +
           `</div>`;
       }
-      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const typeBg = t.bg;
       const typeBadge = `<div class="mv-type-badge" style="background:${typeBg}">` +
         `<span style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:${t.color};display:inline-block"></span>` +
         `<span class="mv-type-label">${t.label}</span></div>`;
-      return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="background:#fff;gap:5px">` +
+      return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="background:#fff;gap:5px">` +
         typeBadge +
         `<span class="pt-name" style="flex:1">${a.pt}</span>` +
         statusChip +
         `</div>`;
     }
-    // ── Month ─────────────────────────────────────────────────────────────────────
-    // flat obj = single chip; nested array = concurrent row
-    const APPTS = {
-      1: [{ s: 'occurred', pt: 'Pamela P.' }, { s: 'confirmed', pt: 'Caleb E.' }, { s: 'scheduled', pt: 'Dana K.' }, { s: 'arrived', pt: 'Wren S.' }, { s: 'noshow', pt: 'Derek C.' }, { s: 'late', pt: 'Sam C.' }],
-      2: [[{ s: 'noshow', pt: 'Vera H.' }, { s: 'scheduled', pt: 'Finn O.' }], [{ s: 'rescheduled', pt: 'Cora E.' }, { s: 'checkedin', pt: 'Diana D.' }]],
-      3: [{ s: 'scheduled', pt: 'Ethan H.' }, [{ s: 'arrived', pt: 'Mia L.' }, { s: 'confirmed', pt: 'Felix A.' }]],
-      4: [{ s: 'confirmed', pt: 'Grant F.' }, { s: 'occurred', pt: 'Beth N.' }, { s: 'late', pt: 'Sam C.' }],
-      5: [[{ s: 'rescheduled', pt: 'Luis R.' }, { s: 'checkedin', pt: 'Tina S.' }], { s: 'scheduled', pt: 'Ben B.' }],
-      8: [{ s: 'confirmed', pt: 'Hugo D.' }, { s: 'scheduled', pt: 'Ben D.' }, [{ s: 'late', pt: 'Gina P.' }, { s: 'occurred', pt: 'Ivan G.' }]],
-      9: [{ s: 'occurred', pt: 'Nora J.' }, { s: 'scheduled', pt: 'Jesse F.' }, { s: 'arrived', pt: 'Keith B.' }, { s: 'confirmed', pt: 'Lance H.' }, { s: 'noshow', pt: 'Raj K.' }],
-      10: [[{ s: 'noshow', pt: 'Ann T.' }, { s: 'arrived', pt: 'Marco B.' }], { s: 'rescheduled', pt: 'Nigel E.' }],
-      11: [{ s: 'cancelled', pt: 'Abraham M.' }, { s: 'occurred', pt: 'Hana R.' }, { s: 'checkedin', pt: 'Oscar G.' }, { s: 'arrived', pt: 'Ben G.' }],
-      12: [{ s: 'rescheduled', pt: 'Raj K.' }, [{ s: 'confirmed', pt: 'Iris M.' }, { s: 'noshow', pt: 'Perry G.' }]],
-      15: [{ s: 'late', pt: 'Remy E.' }, { s: 'occurred', pt: 'Scott A.' }, { s: 'scheduled', pt: 'Trent G.' }, { s: 'confirmed', pt: 'Ben S.' }],
-      16: [[{ s: 'checkedin', pt: 'Umar F.' }, { s: 'scheduled', pt: 'Derek C.' }], { s: 'confirmed', pt: 'Vince C.' }],
-      17: [{ s: 'noshow', pt: 'Wren S.' }, { s: 'confirmed', pt: 'Wade G.' }, { s: 'arrived', pt: 'Xavier B.' }, { s: 'late', pt: 'Frank D.' }, { s: 'occurred', pt: 'Tina S.' }, { s: 'scheduled', pt: 'Derek C.' }, { s: 'checkedin', pt: 'Raj K.' }, { s: 'cancelled', pt: 'Vince C.' }, { s: 'rescheduled', pt: 'Keith B.' }, { s: 'noshow', pt: 'Nigel E.' }],
-      18: [{ s: 'occurred', pt: 'Yusuf D.' }, [{ s: 'arrived', pt: 'Zack B.' }, { s: 'cancelled', pt: 'Carla C.' }]],
-      19: [{ s: 'cancelled', pt: 'Priya S.' }, { s: 'checkedin', pt: 'Lance H.' }, { s: 'occurred', pt: 'Henry W.' }, { s: 'rescheduled', pt: 'Ben T.' }],
-      22: [{ s: 'rescheduled', pt: 'Bette B.' }, [{ s: 'late', pt: 'Frank D.' }, { s: 'scheduled', pt: 'Elena D.' }]],
-      23: [[{ s: 'occurred', pt: 'Lara V.' }, { s: 'confirmed', pt: 'Raj K.' }], { s: 'noshow', pt: 'Fiona H.' }, { s: 'checkedin', pt: 'Yusuf D.' }, { s: 'cancelled', pt: 'Grace T.' }, { s: 'arrived', pt: 'Trent G.' }, { s: 'late', pt: 'Gina P.' }, { s: 'occurred', pt: 'Jesse F.' }, { s: 'confirmed', pt: 'Hana R.' }, { s: 'scheduled', pt: 'Marco B.' }],
-      24: [{ s: 'scheduled', pt: 'Helen B.' }, { s: 'cancelled', pt: 'Janet G.' }, { s: 'occurred', pt: 'Karen B.' }, { s: 'confirmed', pt: 'Hugo D.' }, { s: 'arrived', pt: 'Wren S.' }, { s: 'checkedin', pt: 'Derek C.' }, { s: 'noshow', pt: 'Priya S.' }, { s: 'occurred', pt: 'Wade G.' }, { s: 'rescheduled', pt: 'Bette B.' }, { s: 'late', pt: 'Frank D.' }],
-      25: [{ s: 'noshow', pt: 'Grace T.' }, [{ s: 'checkedin', pt: 'Vince C.' }, { s: 'arrived', pt: 'Grant F.' }]],
-      26: [{ s: 'arrived', pt: 'Trent G.' }, { s: 'occurred', pt: 'Mia L.' }, { s: 'confirmed', pt: 'Marco B.' }],
-      29: [[{ s: 'late', pt: 'Nigel E.' }, { s: 'occurred', pt: 'Nora J.' }], { s: 'rescheduled', pt: 'Ethan H.' }],
-      30: [{ s: 'rescheduled', pt: 'Gina P.' }, { s: 'confirmed', pt: 'Hugo D.' }, { s: 'scheduled', pt: 'Ann T.' }],
-    };
+
+    // ── Month grid ────────────────────────────────────────────────────────────────
     let currentInterval = 15;
     let weekDays = 5;
 
     function buildMonthGrid() {
       const grid = document.getElementById('grid');
       grid.innerHTML = '';
+      // June 2026 starts on Monday (dow=1)
       const startDow = 1, daysInMonth = 30;
       const totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
       const MAX_BASE = weekDays === 5 ? 7 : 5;
@@ -1461,7 +1822,7 @@
         const dayNum = i - startDow + 1;
         const isOther = dayNum < 1 || dayNum > daysInMonth;
         const cell = document.createElement('div');
-        cell.className = 'cell' + (isOther ? ' other' : '') + (isWknd ? ' wknd' : '') + (dayNum === 29 ? ' today' : '');
+        cell.className = 'cell' + (isOther ? ' other' : '') + (isWknd ? ' wknd' : '') + (dayNum === 11 ? ' today' : '');
         const dn = dayNum < 1 ? 31 + dayNum : dayNum > daysInMonth ? dayNum - daysInMonth : dayNum;
         const dayAppts = (!isOther && !isWknd && APPTS[dayNum]) ? APPTS[dayNum] : [];
         const rows = dayAppts.map(a => Array.isArray(a) ? a : [a]);
@@ -1520,114 +1881,6 @@
       }
     }
 
-    // ── Week ──────────────────────────────────────────────────────────────────────
-    const WEEK_DAYS = [
-      { label: 'Monday 22', date: 22 }, { label: 'Tuesday 23', date: 23 }, { label: 'Wednesday 24', date: 24 },
-      { label: 'Thursday 25', date: 25 }, { label: 'Friday 26', date: 26 },
-    ];
-    // Each appt: { s, pt, dur } where dur is minutes
-    // Realistic arc: morning=scheduled/confirmed, mid=arrived/checkedin, afternoon=occurred, exceptions scattered
-    // WEEK_SLOTS: each appt has s, pt, dur (minutes)
-    // 15-min valid durs: 15,30,45,60 | 20-min valid durs: 20,40,60
-    // Day arc: early=scheduled/confirmed, mid=arrived/checkedin, afternoon=occurred
-    const WEEK_SLOTS = {
-      22: [
-        { s: 'confirmed', pt: 'Pamela P.', time: '8:00 AM', dur: 30 },
-        { s: 'arrived', pt: 'Wren S.', time: '8:30 AM', dur: 15 },
-        { s: 'noshow', pt: 'Derek C.', time: '8:30 AM', dur: 15 },
-        { s: 'checkedin', pt: 'Henry W.', time: '9:00 AM', dur: 60 },
-        { s: 'late', pt: 'Sam C.', time: '10:00 AM', dur: 15 },
-        { s: 'occurred', pt: 'Keith B.', time: '10:30 AM', dur: 30 },
-        { s: 'noshow', pt: 'Grace T.', time: '11:00 AM', dur: 15 },
-        { s: 'confirmed', pt: 'Carla C.', time: '11:30 AM', dur: 30 },
-        { s: 'occurred', pt: 'Vince C.', time: '1:00 PM', dur: 60 },
-        { s: 'occurred', pt: 'Wade G.', time: '2:00 PM', dur: 30 },
-        { s: 'scheduled', pt: 'Helen B.', time: '2:30 PM', dur: 15 },
-        { s: 'arrived', pt: 'Oscar G.', time: '3:00 PM', dur: 45 },
-        { s: 'occurred', pt: 'Mia L.', time: '4:00 PM', dur: 15 },
-      ],
-      23: [
-        { s: 'scheduled', pt: 'Caleb E.', time: '8:00 AM', dur: 45 },
-        { s: 'confirmed', pt: 'Oscar G.', time: '8:30 AM', dur: 30 },
-        { s: 'confirmed', pt: 'Mia L.', time: '9:00 AM', dur: 30 },
-        { s: 'noshow', pt: 'Vera H.', time: '9:30 AM', dur: 15 },
-        { s: 'occurred', pt: 'Nora J.', time: '10:00 AM', dur: 60 },
-        { s: 'arrived', pt: 'Hana R.', time: '11:00 AM', dur: 30 },
-        { s: 'late', pt: 'Remy E.', time: '11:30 AM', dur: 15 },
-        { s: 'arrived', pt: 'Grant F.', time: '1:00 PM', dur: 15 },
-        { s: 'occurred', pt: 'Lance H.', time: '1:15 PM', dur: 45 },
-        { s: 'checkedin', pt: 'Laura C.', time: '2:00 PM', dur: 60 },
-        { s: 'noshow', pt: 'Abraham M.', time: '3:00 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Wade G.', time: '3:30 PM', dur: 30 },
-        { s: 'occurred', pt: 'Nora J.', time: '4:00 PM', dur: 15 },
-      ],
-      24: [
-        { s: 'rescheduled', pt: 'Ethan H.', time: '8:00 AM', dur: 60 },
-        { s: 'confirmed', pt: 'Felix A.', time: '9:00 AM', dur: 30 },
-        { s: 'arrived', pt: 'Marco B.', time: '10:30 AM', dur: 45 },
-        { s: 'occurred', pt: 'Laura C.', time: '11:00 AM', dur: 60 },
-        { s: 'noshow', pt: 'Perry G.', time: '1:00 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Wren S.', time: '1:30 PM', dur: 30 },
-        { s: 'occurred', pt: 'Mia L.', time: '2:00 PM', dur: 15 },
-        { s: 'rescheduled', pt: 'Nigel E.', time: '2:15 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Finn O.', time: '2:30 PM', dur: 30 },
-        { s: 'arrived', pt: 'Oscar G.', time: '2:45 PM', dur: 15 },
-        { s: 'occurred', pt: 'Beth N.', time: '3:00 PM', dur: 60 },
-        { s: 'confirmed', pt: 'Ivan G.', time: '4:00 PM', dur: 15 },
-      ],
-      25: [
-        { s: 'scheduled', pt: 'Bette B.', time: '8:00 AM', dur: 15 },
-        { s: 'confirmed', pt: 'Beth N.', time: '8:30 AM', dur: 30 },
-        { s: 'scheduled', pt: 'Felix A.', time: '9:00 AM', dur: 45 },
-        { s: 'checkedin', pt: 'Hugo D.', time: '9:30 AM', dur: 30 },
-        { s: 'noshow', pt: 'Ann T.', time: '9:45 AM', dur: 15 },
-        { s: 'arrived', pt: 'Trent G.', time: '10:00 AM', dur: 60 },
-        { s: 'confirmed', pt: 'Vince C.', time: '11:00 AM', dur: 30 },
-        { s: 'noshow', pt: 'Janet G.', time: '11:30 AM', dur: 15 },
-        { s: 'rescheduled', pt: 'Zack B.', time: '1:00 PM', dur: 60 },
-        { s: 'occurred', pt: 'Derek C.', time: '1:45 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Raj K.', time: '2:00 PM', dur: 45 },
-        { s: 'occurred', pt: 'Grace T.', time: '2:30 PM', dur: 30 },
-        { s: 'confirmed', pt: 'Bette B.', time: '3:00 PM', dur: 60 },
-        { s: 'occurred', pt: 'Helen B.', time: '4:00 PM', dur: 15 },
-        { s: 'scheduled', pt: 'Ben S.', time: '4:30 PM', dur: 15 },
-      ],
-      26: [
-        { s: 'rescheduled', pt: 'Luis R.', time: '8:00 AM', dur: 30 },
-        { s: 'arrived', pt: 'Tina S.', time: '8:30 AM', dur: 45 },
-        { s: 'arrived', pt: 'Frank D.', time: '9:00 AM', dur: 15 },
-        { s: 'late', pt: 'Gina P.', time: '9:15 AM', dur: 15 },
-        { s: 'confirmed', pt: 'Raj K.', time: '9:30 AM', dur: 60 },
-        { s: 'occurred', pt: 'Karen B.', time: '10:00 AM', dur: 30 },
-        { s: 'checkedin', pt: 'Xavier B.', time: '10:30 AM', dur: 30 },
-        { s: 'cancelled', pt: 'Abraham M.', time: '11:00 AM', dur: 15 },
-        { s: 'checkedin', pt: 'Umar F.', time: '11:15 AM', dur: 15 },
-        { s: 'occurred', pt: 'Scott A.', time: '11:30 AM', dur: 30 },
-        { s: 'occurred', pt: 'Hana R.', time: '1:00 PM', dur: 60 },
-        { s: 'noshow', pt: 'Fiona H.', time: '1:30 PM', dur: 15 },
-        { s: 'arrived', pt: 'Sam C.', time: '2:00 PM', dur: 45 },
-        { s: 'cancelled', pt: 'Janet G.', time: '2:30 PM', dur: 15 },
-        { s: 'occurred', pt: 'Karen B.', time: '2:45 PM', dur: 15 },
-        { s: 'occurred', pt: 'Frank D.', time: '3:00 PM', dur: 60 },
-        { s: 'rescheduled', pt: 'Scott A.', time: '4:00 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Ben T.', time: '4:30 PM', dur: 15 },
-      ],
-    };
-
-    function timeToMin(t) {
-      const [time, ampm] = t.split(' ');
-      let [h, m] = time.split(':').map(Number);
-      if (ampm === 'PM' && h !== 12) h += 12;
-      if (ampm === 'AM' && h === 12) h = 0;
-      return h * 60 + m;
-    }
-
-    function minToTime(min) {
-      const h = Math.floor(min / 60), m = min % 60;
-      const h12 = h === 12 ? 12 : h % 12 || 12;
-      return h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
-    }
-
     function setCardStyle(s) {
       cardStyle = s;
       document.getElementById('ab-bar').classList.toggle('active', s === 'bar');
@@ -1641,10 +1894,21 @@
     let popoverEl = null, popTimer = null, popLeaveTimer = null, popTarget = null;
 
     function buildPopover(a) {
-      const t = TYPES[typeFor(a.pt)];
-      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const t = TYPES[typeFor(a.pt, a.ptId)];
+      const typeBg = t.bg;
       const el = document.createElement('div');
       el.className = 'appt-popover';
+      // Resolve patient data for popover
+      const patient = a.ptId ? PT[a.ptId] : null;
+      const popName = patient ? patient.name : a.pt;
+      const popPreferred = patient ? patient.preferred : '';
+      const popDob = patient ? patient.dob : '';
+      const popProvider = (a.prov !== undefined) ? PROVIDERS[a.prov] : 'Dr. Morganstern';
+      const popTime = (a.time && a.dur) ? timeRangeStr(a.time, a.dur) : '';
+      const popUpdated = '06/11/2026 8:04:22 AM';
+      const nameDisplay = popPreferred && popPreferred !== popName.split(' ')[0]
+        ? `${popName} (&#x201C;${popPreferred}&#x201D;)` : popName;
+
       const pencilSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`;
       el.innerHTML =
         `<div class="pop-header">` +
@@ -1653,8 +1917,8 @@
         `</div>` +
         `<div class="pop-divider"></div>` +
         `<div class="pop-body">` +
-        `<div class="pop-row pop-subhead"><span class="pop-subhead-name">${formatName(MOCK)}</span><span class="pop-subhead-right">${MOCK.timeRange}</span></div>` +
-        `<div class="pop-row pop-subhead2"><span>DOB ${MOCK.dob}</span><span>with ${MOCK.provider}</span></div>` +
+        `<div class="pop-row pop-subhead"><span class="pop-subhead-name">${nameDisplay}</span><span class="pop-subhead-right">${popTime}</span></div>` +
+        `<div class="pop-row pop-subhead2"><span>DOB ${popDob}</span><span>with ${popProvider}</span></div>` +
         `<div class="pop-row pop-icon-grid">` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/></svg>Note</div>` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>Chart</div>` +
@@ -1670,7 +1934,7 @@
         `</div>` +
         `<div class="pop-footer">` +
         `<button class="pop-footer-edit" aria-label="Edit appointment">${pencilSvg}</button>` +
-        `<a class="pop-footer-link" href="#">${MOCK.lastUpdated}</a>` +
+        `<a class="pop-footer-link" href="#">${popUpdated}</a>` +
         `</div>`;
       // wire chip dropdowns
       const typeChip = el.querySelector('#pop-type-chip');
@@ -1680,22 +1944,22 @@
       const statusLabel = statusChip.querySelector('.pop-status-label');
       const statusDot = statusChip.querySelector('.pop-status-dot');
 
-      // track current type id (not derivable from pt after change)
-      if (!a.t) a.t = typeFor(a.pt);
+      if (!a.t) a.t = typeFor(a.pt, a.ptId);
 
       typeChip.addEventListener('click', e => {
         e.stopPropagation();
-        const items = [1,2,3,4,5,7,8,6,9,10].map(id => { const t = TYPES[id]; return {
-          key: id, label: t.label, fg: t.color, bg: t.bg, sq: true,
-          selected: parseInt(id) === a.t
-        }; });
+        const items = [1, 2, 3, 4, 5, 7, 8, 6, 9, 10].map(id => {
+          const t = TYPES[id]; return {
+            key: id, label: t.label, fg: t.color, bg: t.bg, sq: true,
+            selected: parseInt(id) === a.t
+          };
+        });
         openDropdown(typeChip, items, el, (key) => {
           a.t = parseInt(key);
           const nt = TYPES[key];
           typeSwatch.style.background = nt.color;
           typeChip.style.background = nt.bg;
           typeLabel.textContent = nt.label;
-          // sync card type
           if (popTarget) {
             const cardSwatch = popTarget.querySelector('.wv-type-chip-sq span, .mv-type-badge span');
             const cardTypeBg = popTarget.querySelector('.wv-type-chip-sq, .mv-type-badge');
@@ -1718,7 +1982,6 @@
           statusChip.style.background = BG[key];
           statusLabel.textContent = LBL[key];
           statusDot.style.background = C[key];
-          // sync card status
           if (popTarget) {
             const cardChip = popTarget.querySelector('.wv-status-chip, .mv-status-chip');
             if (cardChip) {
@@ -1740,11 +2003,10 @@
       const dd = document.createElement('div');
       dd.className = 'pop-dd';
       dd.innerHTML = items.map(it => it.dotRight
-        ? `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}" style="width:100%;box-sizing:border-box;gap:5px"><span class="pop-dd-check" style="margin-left:0;margin-right:auto">✓</span>${it.label}<span class="pop-dd-swatch" style="background:${it.fg};margin-left:0"></span></div>`
-        : `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}"><span class="pop-dd-swatch${it.sq ? ' sq' : ''}" style="background:${it.fg}"></span>${it.label}<span class="pop-dd-check">✓</span></div>`
+        ? `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}" style="width:100%;box-sizing:border-box;gap:5px"><span class="pop-dd-check" style="margin-left:0;margin-right:auto">\u2713</span>${it.label}<span class="pop-dd-swatch" style="background:${it.fg};margin-left:0"></span></div>`
+        : `<div class="pop-dd-item${it.selected ? ' selected' : ''}" data-key="${it.key}"><span class="pop-dd-swatch${it.sq ? ' sq' : ''}" style="background:${it.fg}"></span>${it.label}<span class="pop-dd-check">\u2713</span></div>`
       ).join('');
       popEl.appendChild(dd);
-      // position below anchor
       const ar = anchor.getBoundingClientRect();
       const pr = popEl.getBoundingClientRect();
       if (alignRight) {
@@ -1824,13 +2086,14 @@
     }
 
     function chipW_bar(a, half, span, dayView) {
-      const t = TYPES[typeFor(a.pt)];
+      const t = TYPES[typeFor(a.pt, a.ptId)];
       const inset = half === 'left' ? '2px calc(50% + 3px) 2px 6px' : half === 'right' ? '2px 6px 2px calc(50% + 3px)' : '2px 6px';
       const single = (span || 1) === 1;
       const conc = half !== '';
+      const hideLabel = conc && !dayView;
       const chipPad = conc ? '2px' : '2px 5px';
-      const statusLabel = `<span class="wv-status-label">${LBL[a.s]}</span>`;
-      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+      const statusLabel = hideLabel ? '' : `<span class="wv-status-label">${LBL[a.s]}</span>`;
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
         `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:4px 7px 4px 5px"></div>` +
         `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '0' : '5px'} 6px 0 0;overflow:hidden">` +
         `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
@@ -1840,34 +2103,33 @@
     }
 
     function chipW_sq(a, half, span, dayView) {
-      const t = TYPES[typeFor(a.pt)];
-      const typeBg = t.bg || `oklch(97% 0.03 ${t.hue})`;
+      const t = TYPES[typeFor(a.pt, a.ptId)];
+      const typeBg = t.bg;
       const inset = half === 'left' ? '2px calc(50% + 3px) 2px 6px' : half === 'right' ? '2px 6px 2px calc(50% + 3px)' : '2px 6px';
       const single = (span || 1) === 1;
       const conc = half !== '';
+      const hideLabel = conc && !dayView;
       const chipPad = '2px 5px';
-      const statusLabel = `<span class="wv-status-label">${LBL[a.s]}</span>`;
-      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+      const statusLabel = hideLabel ? '' : `<span class="wv-status-label">${LBL[a.s]}</span>`;
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
         `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '3px 6px' : '5px 6px 0 6px'};gap:5px">` +
         `<div class="wv-type-chip-sq" style="background:${typeBg}">` +
         `<span style="width:9px;height:9px;border-radius:2px;background:${t.color};flex-shrink:0"></span>` +
         `<span class="wv-type-label">${t.label}</span></div>` +
         `<div style="display:flex;align-items:center;flex:1;min-width:0;gap:5px;overflow:hidden">` +
         `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
-        `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad};gap:${(conc && !dayView) ? '0' : '4px'}">${statusLabel}` +
+        `<div class="wv-status-chip" style="background:${BG[a.s]};padding:${chipPad};gap:${hideLabel ? '0' : '4px'}">${statusLabel}` +
         `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div></div></div>` +
         `</div>`;
     }
 
-    // Emit all cells for a week/day grid with explicit grid-row/grid-column placement
-    function buildGrid(gridEl, prefix, slots, colHeaders, getAppts) {
-      // row 1 = headers, data rows start at 2
+    // ── Grid builder (shared by week & day) ────────────────────────────────────────
+    function buildGrid(gridEl, prefix, slots, colHeaders, getAppts, todayCol) {
       let html = '<div class="' + prefix + '-head" style="grid-row:1;grid-column:1"></div>';
       colHeaders.forEach((lbl, ci) => {
-        html += '<div class="' + prefix + '-head" style="grid-row:1;grid-column:' + (ci + 2) + '">' + lbl + '</div>';
+        const tc = ci === todayCol ? ' today-col' : '';
+        html += '<div class="' + prefix + '-head' + tc + '" style="grid-row:1;grid-column:' + (ci + 2) + '">' + lbl + '</div>';
       });
-
-      // For each column, map slotIndex -> span
       const spans = colHeaders.map((_, ci) => {
         const map = {};
         (getAppts(ci) || []).forEach(a => {
@@ -1879,25 +2141,23 @@
         });
         return map;
       });
-
       slots.forEach((slot, si) => {
         const row = si + 2;
         const cls = slot.lunch ? ' lunch' : slot.lunchMinor ? ' lunch-minor' : slot.minor ? ' minor' : '';
         const timeText = (slot.minor || slot.lunchMinor) ? '' : slot.time;
         html += '<div class="' + prefix + '-time' + cls + '" style="grid-row:' + row + ';grid-column:1">' + timeText + '</div>';
-
         colHeaders.forEach((_, ci) => {
           const col = ci + 2;
+          const tc = ci === todayCol ? ' today-col' : '';
           let covered = false;
           for (let prev = 0; prev < si; prev++) {
             const sp = spans[ci][prev] || 1;
             if (sp > 1 && prev + sp > si) { covered = true; break; }
           }
           if (covered) {
-            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + ';grid-column:' + col + ';overflow:hidden"></div>';
+            html += '<div class="' + prefix + '-cell' + cls + tc + '" style="grid-row:' + row + ';grid-column:' + col + ';overflow:hidden"></div>';
             return;
           }
-
           const appts = (getAppts(ci) || []).filter(a => a.time === slot.time);
           if (appts.length) {
             const span = spans[ci][si];
@@ -1905,9 +2165,9 @@
             const chips = appts.length === 1
               ? chipW(appts[0], '', span, dv)
               : chipW(appts[0], 'left', span, dv) + chipW(appts[1], 'right', span, dv);
-            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + '/span ' + span + ';grid-column:' + col + ';z-index:1">' + chips + '</div>';
+            html += '<div class="' + prefix + '-cell' + cls + tc + '" style="grid-row:' + row + '/span ' + span + ';grid-column:' + col + ';z-index:1">' + chips + '</div>';
           } else {
-            html += '<div class="' + prefix + '-cell' + cls + '" style="grid-row:' + row + ';grid-column:' + col + '"></div>';
+            html += '<div class="' + prefix + '-cell' + cls + tc + '" style="grid-row:' + row + ';grid-column:' + col + '"></div>';
           }
         });
       });
@@ -1918,67 +2178,30 @@
       });
     }
 
+    function generateTimeSlots(interval) {
+      const slots = [];
+      for (let min = 8 * 60; min < 17 * 60; min += interval) {
+        const h = Math.floor(min / 60), m = min % 60;
+        const h12 = h === 12 ? 12 : h % 12;
+        const label = h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
+        const isLunch = h === 12;
+        slots.push({ time: label, minor: m !== 0 && !isLunch, lunch: isLunch && m === 0, lunchMinor: isLunch && m !== 0 });
+      }
+      return slots;
+    }
+
     function buildWeekGrid(interval) {
       const slots = generateTimeSlots(interval);
       slots._interval = interval;
+      const todayIdx = WEEK_DAYS.findIndex(d => d.date === 11);
       buildGrid(
         document.getElementById('week-grid'), 'wv',
         slots, WEEK_DAYS.map(d => d.label),
-        ci => WEEK_SLOTS[WEEK_DAYS[ci].date]
+        ci => WEEK_SLOTS[WEEK_DAYS[ci].date],
+        todayIdx
       );
     }
     buildWeekGrid(15);
-
-    // ── Day ────────────────────────────────────────────────────────────────────────
-    const PROVIDERS = ['Dr. Boyles', 'Dr. Morganstern', 'Dr. Patel'];
-    const DAY_SLOTS = {
-      0: [ // Dr. Okafor
-        { s: 'scheduled', pt: 'Marcus C.', time: '8:00 AM', dur: 30 },
-        { s: 'occurred', pt: 'Dana K.', time: '8:30 AM', dur: 30 },
-        { s: 'confirmed', pt: 'Mia L.', time: '9:00 AM', dur: 60 },
-        { s: 'rescheduled', pt: 'Jesse F.', time: '9:00 AM', dur: 30 },
-        { s: 'occurred', pt: 'Nora J.', time: '10:00 AM', dur: 30 },
-        { s: 'noshow', pt: 'Vera H.', time: '11:00 AM', dur: 15 },
-        { s: 'checkedin', pt: 'Tina S.', time: '11:30 AM', dur: 30 },
-        { s: 'arrived', pt: 'Grant F.', time: '1:00 PM', dur: 45 },
-        { s: 'confirmed', pt: 'Trent G.', time: '1:30 PM', dur: 30 },
-        { s: 'late', pt: 'Remy E.', time: '2:30 PM', dur: 15 },
-        { s: 'occurred', pt: 'Scott A.', time: '3:00 PM', dur: 60 },
-        { s: 'occurred', pt: 'Karen B.', time: '4:00 PM', dur: 15 },
-        { s: 'confirmed', pt: 'Ben B.', time: '4:30 PM', dur: 15 },
-      ],
-      1: [ // Dr. Morganstern
-        { s: 'confirmed', pt: 'Felix A.', time: '8:00 AM', dur: 60 },
-        { s: 'noshow', pt: 'Keith B.', time: '8:00 AM', dur: 30 },
-        { s: 'arrived', pt: 'Keith B.', time: '8:30 AM', dur: 30 },
-        { s: 'checkedin', pt: 'Oscar G.', time: '9:30 AM', dur: 45 },
-        { s: 'rescheduled', pt: 'Nigel E.', time: '10:00 AM', dur: 30 },
-        { s: 'arrived', pt: 'Sam C.', time: '10:30 AM', dur: 30 },
-        { s: 'occurred', pt: 'Ivan G.', time: '11:30 AM', dur: 30 },
-        { s: 'occurred', pt: 'Lance H.', time: '1:00 PM', dur: 60 },
-        { s: 'scheduled', pt: 'Jesse F.', time: '2:00 PM', dur: 45 },
-        { s: 'confirmed', pt: 'Vince C.', time: '2:30 PM', dur: 30 },
-        { s: 'cancelled', pt: 'Janet G.', time: '3:00 PM', dur: 15 },
-        { s: 'noshow', pt: 'Maria T.', time: '3:30 PM', dur: 15 },
-        { s: 'scheduled', pt: 'Ben D.', time: '4:00 PM', dur: 15 },
-      ],
-      2: [ // Dr. Nguyen
-        { s: 'rescheduled', pt: 'Felix A.', time: '8:00 AM', dur: 45 },
-        { s: 'noshow', pt: 'Finn O.', time: '9:00 AM', dur: 15 },
-        { s: 'occurred', pt: 'Beth N.', time: '9:30 AM', dur: 30 },
-        { s: 'late', pt: 'Gina P.', time: '10:30 AM', dur: 15 },
-        { s: 'confirmed', pt: 'Hugo D.', time: '11:00 AM', dur: 60 },
-        { s: 'scheduled', pt: 'Ann T.', time: '1:00 PM', dur: 30 },
-        { s: 'cancelled', pt: 'Raj K.', time: '1:30 PM', dur: 15 },
-        { s: 'occurred', pt: 'Iris M.', time: '2:00 PM', dur: 60 },
-        { s: 'arrived', pt: 'Marco B.', time: '3:00 PM', dur: 45 },
-        { s: 'occurred', pt: 'Lara V.', time: '3:30 PM', dur: 30 },
-        { s: 'rescheduled', pt: 'Laura C.', time: '4:00 PM', dur: 15 },
-        { s: 'arrived', pt: 'Ben G.', time: '4:15 PM', dur: 15 },
-        { s: 'checkedin', pt: 'Ben S.', time: '4:30 PM', dur: 15 },
-        { s: 'occurred', pt: 'Ben T.', time: '4:45 PM', dur: 15 },
-      ],
-    };
 
     function buildDayGrid(interval) {
       const slots = generateTimeSlots(interval);
@@ -1997,7 +2220,7 @@
     const NAMED_TYPES = [1, 3, 5, 8, 6];
     document.getElementById('key-type').innerHTML = NAMED_TYPES.map(id => {
       const t = TYPES[id];
-      return `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
+      return `<div class="leg" style="background:${t.bg}">` +
         `<span class="type-sq" style="background:${t.color}"></span><span>${t.label}</span></div>`;
     }).join('');
 
@@ -2014,10 +2237,10 @@
 
     // ── Legends ──────────────────────────────────────────────────────────────────
     let tHtml = '<div class="legend"><span class="legend-label">Appointment type</span>';
-    const HUE_ORDER = [1,2,3,4,5,7,8,6,9,10];
+    const HUE_ORDER = [1, 2, 3, 4, 5, 7, 8, 6, 9, 10];
     const typesSorted = HUE_ORDER.map(id => TYPES[id]);
     typesSorted.forEach(t => {
-      tHtml += `<div class="leg" style="background:${t.bg || `oklch(97% 0.03 ${t.hue})`}">` +
+      tHtml += `<div class="leg" style="background:${t.bg}">` +
         `<span class="type-sq" style="background:${t.color}"></span><span>${t.label}</span></div>`;
     });
     tHtml += '</div>';
@@ -2041,21 +2264,8 @@
         '<div class="group-desc">' + g.desc + '</div></div>';
     });
 
-    // ── Time slot generator ────────────────────────────────────────────────────────
-    function generateTimeSlots(interval) {
-      const slots = [];
-      for (let min = 8 * 60; min < 17 * 60; min += interval) {
-        const h = Math.floor(min / 60), m = min % 60;
-        const h12 = h === 12 ? 12 : h % 12;
-        const label = h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + (h >= 12 ? ' PM' : ' AM');
-        const isLunch = h === 12;
-        slots.push({ time: label, minor: m !== 0 && !isLunch, lunch: isLunch && m === 0, lunchMinor: isLunch && m !== 0 });
-      }
-      return slots;
-    }
-
     // ── View switcher ──────────────────────────────────────────────────────────────
-    const LABELS = { month: 'June 2026', week: 'Week of June 22, 2026', day: 'Tuesday, June 23, 2026' };
+    const LABELS = { month: 'June 2026', week: 'Week of June 8, 2026', day: 'Thursday, June 11, 2026' };
     function setWeekDays(n) {
       const update = () => {
         weekDays = n;
