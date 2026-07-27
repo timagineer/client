@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+- settings IA: replace tabs+sidebar with breadcrumb nav (dropdown on last crumb for siblings)
+- Clinical Supervision header lockup (add controls top right)
+  -->
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ICANotes+ — Settings › Providers › Internal Providers</title>
+  <title>Internal Providers > Clinical Supervision</title>
   <style>
     /* * {
             outline: .5px dashed deeppink
@@ -2905,8 +2909,8 @@
       </div>
 
       <div class="topbar-context">
-        <p class="topbar-context-primary">Hello, Erin &middot; InsightCCW at East Liverpool &middot; 2:10 PM EDT &middot; Fri Jul 24</p>
-        <p class="topbar-context-secondary"><a href="#">Next</a><a href="#">Last</a><a href="#">Inbox</a><a href="#">Scheduling</a><a href="#">Billing</a><a href="#">Analytics</a><a href="#">Admin</a></p>
+        <p class="topbar-context-primary">Hello, Erin &middot; InsightCCW at East Liverpool &middot; <span id="live-datetime"></span></p>
+        <p class="topbar-context-secondary"><a href="#">Next</a><a href="#">Last</a><a href="#">Inbox</a><a href="#">Scheduling</a><a href="#">Billing</a><a href="#">Reports</a><a href="#">Analytics</a><a href="#">Admin</a></p>
       </div>
 
       <div class="topbar-actions">
@@ -2985,11 +2989,11 @@
     <main class="app-main" id="main-content">
 
       <nav class="settings-tabs" aria-label="Settings sections">
-        <button class="settings-tab">Practice</button>
+        <button class="settings-tab">Practice Info.</button>
         <button class="settings-tab">Calendar</button>
         <button class="settings-tab">Portal</button>
         <button class="settings-tab active">Providers</button>
-        <button class="settings-tab">Practice</button>
+        <button class="settings-tab">Practice Settings</button>
         <button class="settings-tab">Data</button>
         <button class="settings-tab">RCM</button>
         <button class="settings-tab">Forms</button>
@@ -3011,19 +3015,21 @@
           </div>
 
           <div class="proto-card">
-            <table class="proto-table" id="nested-table">
-              <thead>
-                <tr>
-                  <th class="chevron-col"></th>
-                  <th>Last name</th>
-                  <th>First name</th>
-                  <th>Supervised by</th>
-                  <th>Supervises</th>
-                </tr>
-              </thead>
-              <tbody id="nested-tbody"></tbody>
-            </table>
+            <div class="proto-table-scroll">
+              <table class="proto-table" id="nested-table">
+                <thead>
+                  <tr>
+                    <th class="chevron-col"></th>
+                    <th>Last name</th>
+                    <th>First name</th>
+                    <th>Supervises</th>
+                    <th>Supervised by</th>
+                  </tr>
+                </thead>
+                <tbody id="nested-tbody"></tbody>
+              </table>
             </div>
+          </div>
 
         </div>
       </div>
@@ -3257,13 +3263,13 @@
     .settings-tab:hover {
       color: var(--text);
       background: none;
-      border-block-end-color: var(--gray-400);
+      border-block-end: 3px solid var(--gray-400);
       border-radius: 0
     }
 
     .settings-tab.active {
-      color: var(--primary-300);
-      border-block-end: 3px solid var(--primary-300);
+      color: var(--primary-350);
+      border-block-end: 3px solid var(--primary-350);
       font-weight: var(--font-weight-semibold)
     }
 
@@ -3300,13 +3306,14 @@
       background: var(--gray-750);
       color: var(--text);
       text-decoration: none;
-      border-radius: 0
+      border-radius: 0;
+      box-shadow: inset -2px 0 0 var(--gray-400)
     }
 
     .settings-sidebar-item.active {
       color: var(--text);
       font-weight: var(--font-weight-semibold);
-      box-shadow: inset -3px 0 0 var(--primary-350);
+      box-shadow: inset -2px 0 0 var(--primary-350);
       background: var(--gray-750);
       border-radius: 0
     }
@@ -3412,6 +3419,17 @@
       border-radius: var(--radius-lg)
     }
 
+    .proto-table-scroll {
+      max-height: 73vh;
+      overflow-y: auto
+    }
+
+    .proto-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1
+    }
+
     .proto-table {
       width: 100%;
       border-collapse: collapse
@@ -3422,10 +3440,12 @@
       font-size: var(--text-ui-xs);
       text-transform: uppercase;
       letter-spacing: var(--tracking-wide);
-      color: var(--text-tertiary);
+      line-height: var(--leading-none);
+      vertical-align: middle;
+      color: var(--text-secondary);
       background: var(--gray-750);
-      padding: var(--space-30) var(--space-40);
-      border-block-end: 1px solid var(--border-subtle)
+      padding: var(--space-35) var(--space-40);
+      box-shadow: inset 0 -1px 0 var(--border-subtle)
     }
 
     .proto-table th:first-child {
@@ -3510,7 +3530,8 @@
       block-size: 1rem;
       transition: transform 150ms ease;
       flex-shrink: 0;
-      transform: rotate(-90deg)
+      transform: rotate(-90deg);
+      vertical-align: middle
     }
 
     .proto-chevron svg {
@@ -3523,7 +3544,7 @@
     }
 
     .remove-btn {
-      background: none;
+      background: var(--surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
       color: var(--text-tertiary);
@@ -3541,6 +3562,22 @@
       background: var(--warning-700);
       border-color: hsl(352, 60%, 80%);
       color: var(--warning-300)
+    }
+
+    .remove-btn:active {
+      background: var(--warning-200);
+      border-color: var(--warning-200);
+      color: var(--warning-800)
+    }
+
+    .supervisee-row:has(.remove-btn:hover),
+    .supervisee-row:has(.remove-btn:active) {
+      background: transparent
+    }
+
+    .supervisee-row:has(.remove-btn:hover) .supervisee-main,
+    .supervisee-row:has(.remove-btn:active) .supervisee-main {
+      background: var(--surface)
     }
 
     .remove-btn:active {
@@ -3763,7 +3800,9 @@
     .chevron-col {
       inline-size: 2rem;
       text-align: center;
-      padding-inline: var(--space-20) !important
+      vertical-align: middle;
+      padding-inline-start: var(--space-40) !important;
+      padding-inline-end: 0 !important
     }
 
     .sup-toggle {
@@ -3785,16 +3824,20 @@
       flex-direction: column;
       gap: var(--space-30)
     }
-  
+
     .supervised-by-col {
       width: 14rem;
       color: var(--text-secondary)
+    }
+
+    .empty-dash {
+      color: var(--text-tertiary)
     }
   </style>
 
   <script>
     const NOTE_TYPES = ['ASAM', 'Complete Evaluation', 'Progress Note', 'Case Management', 'Couples/Family Therapy', 'Quick Note', 'SOAP Note', 'Clinical Message', 'Group Therapy Progress Note', 'Clinical Summary'];
-    const clinicians = [{ id: 'u1', last: 'Marte', first: 'Timo' }, { id: 'u2', last: 'Ennals', first: 'Will' }, { id: 'u3', last: 'Rickerd', first: 'John' }, { id: 'u4', last: 'Whitfield', first: 'Dana' }, { id: 'u5', last: 'Yun', first: 'Marcus' }, { id: 'u6', last: 'Nair', first: 'Priya' }, { id: 'u7', last: 'Chen', first: 'Lisa' }, { id: 'u8', last: 'Okafor', first: 'Emeka' }, { id: 'u9', last: 'Patel', first: 'Ravi' }, { id: 'u10', last: 'Torres', first: 'Camila' }, { id: 'u11', last: 'Kim', first: 'Jae' }, { id: 'u12', last: 'Novak', first: 'Stefan' }];
+    const clinicians = [{ id: 'u1', last: 'Marte', first: 'Timo' }, { id: 'u2', last: 'Ennals', first: 'Will' }, { id: 'u3', last: 'Rickerd', first: 'John' }, { id: 'u4', last: 'Whitfield', first: 'Dana' }, { id: 'u5', last: 'Yun', first: 'Marcus' }, { id: 'u6', last: 'Nair', first: 'Priya' }, { id: 'u7', last: 'Chen', first: 'Lisa' }, { id: 'u8', last: 'Okafor', first: 'Emeka' }, { id: 'u9', last: 'Patel', first: 'Ravi' }, { id: 'u10', last: 'Torres', first: 'Camila' }, { id: 'u11', last: 'Kim', first: 'Jae' }, { id: 'u12', last: 'Novak', first: 'Stefan' }, { id: 'u13', last: 'Williams', first: 'Sarah' }, { id: 'u14', last: 'Garcia', first: 'Miguel' }, { id: 'u15', last: 'Johnson', first: 'Alex' }, { id: 'u16', last: 'Lee', first: 'Hannah' }, { id: 'u17', last: 'Brown', first: 'David' }, { id: 'u18', last: 'Martinez', first: 'Elena' }, { id: 'u19', last: 'Anderson', first: 'Chris' }, { id: 'u20', last: 'Taylor', first: 'Jordan' }, { id: 'u21', last: 'Thomas', first: 'Maya' }, { id: 'u22', last: 'Moore', first: 'Ryan' }, { id: 'u23', last: 'Jackson', first: 'Olivia' }, { id: 'u24', last: 'White', first: 'Nathan' }];
     const assignments = { u1: [{ superviseeId: 'u2', exceptions: [] }, { superviseeId: 'u3', exceptions: ['Quick Note'] }, { superviseeId: 'u7', exceptions: ['ASAM'] }, { superviseeId: 'u9', exceptions: [] }, { superviseeId: 'u10', exceptions: ['Clinical Message', 'SOAP Note'] }, { superviseeId: 'u11', exceptions: [] }], u4: [{ superviseeId: 'u3', exceptions: [] }, { superviseeId: 'u5', exceptions: ['Progress Note'] }, { superviseeId: 'u8', exceptions: [] }], u6: [{ superviseeId: 'u12', exceptions: ['Complete Evaluation'] }] };
     let openPanels = {}, supervisorFilter = '';
     function matchFilter(id) { if (!supervisorFilter) return true; if (clinicianName(id).toLowerCase().includes(supervisorFilter)) return true; const rows = assignments[id] || []; if (rows.some(p => clinicianName(p.superviseeId).toLowerCase().includes(supervisorFilter))) return true; return supervisorsOf(id).some(s => clinicianName(s.supervisorId).toLowerCase().includes(supervisorFilter)); }
@@ -3804,8 +3847,8 @@
     function removePair(sup, sub) { assignments[sup] = (assignments[sup] || []).filter(p => p.superviseeId !== sub); }
     function addPair(sup, sub) { if (!assignments[sup]) assignments[sup] = []; assignments[sup].push({ superviseeId: sub, exceptions: [] }); }
     function toggleException(sup, sub, nt, checked) { const p = (assignments[sup] || []).find(x => x.superviseeId === sub); if (!p) return; if (checked) { p.exceptions = p.exceptions.filter(x => x !== nt); } else if (!p.exceptions.includes(nt)) { p.exceptions.push(nt); } }
-        function renderAll() { renderNested(); }
-    function renderNested() { const tbody = document.getElementById('nested-tbody'); tbody.innerHTML = ''; const visible = clinicians.filter(c => matchFilter(c.id)); if (supervisorFilter && visible.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:20px 16px;color:var(--text-tertiary)">No match</td></tr>'; return; } visible.forEach(sup => { const rows = assignments[sup.id] || []; const supKey = 'sup:' + sup.id; const supOpen = openPanels[supKey] === true; const tr = document.createElement('tr'); tr.className = 'sup-row'; tr.dataset.supKey = supKey; const supContent = supOpen ? `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '\u2014'}</span><div class="sup-detail"><div class="add-search-wrap"><input type="text" class="add-search-input" placeholder="Search clinicians to add..." data-supervisor="${sup.id}" autocomplete="off"/><div class="proto-dropdown" style="display:none"></div></div><div class="supervisee-list"></div></div>` : `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '\u2014'}</span>`; tr.innerHTML = `<td class="chevron-col"><span class="proto-chevron sup-toggle ${supOpen ? 'open' : ''}" data-sup-key="${supKey}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></td><td class="name-col">${sup.last}</td><td class="name-col">${sup.first}</td><td class="supervised-by-col">${supervisorsOf(sup.id).length ? supervisorsOf(sup.id).map(s => clinicianName(s.supervisorId)).join(', ') : '\u2014'}</td><td>${supContent}</td>`; tbody.appendChild(tr); if (supOpen) { const list = tr.querySelector('.supervisee-list'); rows.forEach(pair => { const key = `${sup.id}:${pair.superviseeId}`, isOpen = !!openPanels[key]; const row = document.createElement('div'); row.className = 'supervisee-row'; row.innerHTML = `<div class="supervisee-main"><div class="supervisee-head" data-key="${key}"><div><span class="supervisee-name">${clinicianName(pair.superviseeId)}</span><span class="supervisee-summary">${summaryFor(pair.exceptions)}</span></div><span class="proto-chevron ${isOpen ? 'open' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="note-type-panel ${isOpen ? 'open' : ''}"><p class="note-type-hint">Co-sign required for:</p><div class="note-type-grid">${NOTE_TYPES.map(nt => `<label class="note-type-chip"><input type="checkbox" data-supervisor="${sup.id}" data-supervisee="${pair.superviseeId}" data-notetype="${nt}" ${pair.exceptions.includes(nt) ? '' : 'checked'}/>${nt}</label>`).join('')}</div></div></div><button class="remove-btn" data-remove-supervisor="${sup.id}" data-remove-supervisee="${pair.superviseeId}" title="Remove" aria-label="Remove ${clinicianName(pair.superviseeId)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`; list.appendChild(row); }); } }); wireNested(); }
+    function renderAll() { renderNested(); }
+    function renderNested() { const tbody = document.getElementById('nested-tbody'); tbody.innerHTML = ''; const visible = clinicians.filter(c => matchFilter(c.id)); if (supervisorFilter && visible.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:20px 16px;color:var(--text-tertiary)">No match</td></tr>'; return; } visible.forEach(sup => { const rows = assignments[sup.id] || []; const supKey = 'sup:' + sup.id; const supOpen = openPanels[supKey] === true; const tr = document.createElement('tr'); tr.className = 'sup-row'; tr.dataset.supKey = supKey; const supContent = supOpen ? `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</span><div class="sup-detail"><div class="add-search-wrap"><input type="text" class="add-search-input" placeholder="Search clinicians to add..." data-supervisor="${sup.id}" autocomplete="off"/><div class="proto-dropdown" style="display:none"></div></div><div class="supervisee-list"></div></div>` : `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</span>`; tr.innerHTML = `<td class="chevron-col"><span class="proto-chevron sup-toggle ${supOpen ? 'open' : ''}" data-sup-key="${supKey}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></td><td class="name-col">${sup.last}</td><td class="name-col">${sup.first}</td><td>${supContent}</td><td class="supervised-by-col">${supervisorsOf(sup.id).length ? supervisorsOf(sup.id).map(s => clinicianName(s.supervisorId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</td>`; tbody.appendChild(tr); if (supOpen) { const list = tr.querySelector('.supervisee-list'); rows.forEach(pair => { const key = `${sup.id}:${pair.superviseeId}`, isOpen = !!openPanels[key]; const row = document.createElement('div'); row.className = 'supervisee-row'; row.innerHTML = `<div class="supervisee-main"><div class="supervisee-head" data-key="${key}"><div><span class="supervisee-name">${clinicianName(pair.superviseeId)}</span><span class="supervisee-summary">${summaryFor(pair.exceptions)}</span></div><span class="proto-chevron ${isOpen ? 'open' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="note-type-panel ${isOpen ? 'open' : ''}"><p class="note-type-hint">Co-sign required for:</p><div class="note-type-grid">${NOTE_TYPES.map(nt => `<label class="note-type-chip"><input type="checkbox" data-supervisor="${sup.id}" data-supervisee="${pair.superviseeId}" data-notetype="${nt}" ${pair.exceptions.includes(nt) ? '' : 'checked'}/>${nt}</label>`).join('')}</div></div></div><button class="remove-btn" data-remove-supervisor="${sup.id}" data-remove-supervisee="${pair.superviseeId}" title="Remove" aria-label="Remove ${clinicianName(pair.superviseeId)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`; list.appendChild(row); }); } }); wireNested(); }
     function wireNested() { document.querySelectorAll('.sup-toggle').forEach(ch => { ch.addEventListener('click', () => { const k = ch.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.sup-row').forEach(r => { r.style.cursor = 'pointer'; r.addEventListener('click', e => { if (e.target.closest('.sup-toggle,.sup-detail,.supervisee-row,.add-search-wrap')) return; const k = r.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.supervisee-head').forEach(h => { h.addEventListener('click', () => { openPanels[h.dataset.key] = !openPanels[h.dataset.key]; renderNested(); }); }); document.querySelectorAll('.remove-btn[data-remove-supervisor]').forEach(b => { b.addEventListener('click', () => { removePair(b.dataset.removeSupervisor, b.dataset.removeSupervisee); renderAll(); }); }); document.querySelectorAll('.note-type-chip input').forEach(cb => { cb.addEventListener('click', e => e.stopPropagation()); cb.addEventListener('change', () => { toggleException(cb.dataset.supervisor, cb.dataset.supervisee, cb.dataset.notetype, cb.checked); renderNested(); }); }); document.querySelectorAll('#nested-tbody .add-search-input').forEach(i => { i.addEventListener('input', () => showDD(i, 'supervisor')); i.addEventListener('focus', () => showDD(i, 'supervisor')); }); }
 
 
@@ -3814,6 +3857,20 @@
     document.addEventListener('click', e => { if (!e.target.closest('.add-search-wrap')) document.querySelectorAll('.proto-dropdown').forEach(d => d.style.display = 'none'); });
     document.getElementById('supervisor-filter').addEventListener('input', e => { supervisorFilter = e.target.value.trim().toLowerCase(); renderAll(); });
     renderAll();
+
+    // Live datetime
+    function updateDateTime() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      const tz = now.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
+      const weekday = now.toLocaleDateString('en-US', { weekday: 'short' });
+      const month = now.toLocaleDateString('en-US', { month: 'short' });
+      const day = now.getDate();
+      document.getElementById('live-datetime').textContent = `${time} ${tz} · ${weekday} ${month} ${day}`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
     setTimeout(() => { const el = document.getElementById('logo-symbol'); if (!el || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return; el.classList.add('is-spinning'); }, 3000);
 
     // Tooltip hover
