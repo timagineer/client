@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+- add/edit
+- status ia
+- resize
+- drag n drop
+ -->
 
 <head>
   <meta charset="UTF-8">
@@ -1154,6 +1160,38 @@
       color: #111
     }
 
+    .pop-icon-no-portal {
+      border-style: dashed;
+      border-color: #d4d4d0;
+      cursor: pointer
+    }
+
+    .pop-icon-no-portal svg,
+    .pop-icon-no-portal .pop-tile-label {
+      opacity: 0.35
+    }
+
+    .pop-icon-no-portal:hover {
+      border-style: solid
+    }
+
+    .pop-icon-no-portal:hover svg,
+    .pop-icon-no-portal:hover .pop-tile-label {
+      opacity: 0.35
+    }
+
+    .pop-activate-pill {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--cobalt-05) !important;
+      letter-spacing: 0.02em;
+      transition: color 120ms ease
+    }
+
+    .pop-icon-no-portal:hover .pop-activate-pill {
+      color: oklch(42% 0.16 234) !important
+    }
+
     .pop-notif-badge {
       position: absolute;
       top: -4px;
@@ -1381,62 +1419,62 @@
     const PROVIDERS = ['Dr. Boyles', 'Dr. Morganstern', 'Dr. Patel'];
 
     const PT = {
-      1: { name: 'Samantha Wilkinson', preferred: 'Sam', dob: '6/12/1985', type: 1 },
-      2: { name: 'Marcus Chen', preferred: '', dob: '3/4/1978', type: 8 },
-      3: { name: 'Dana Kowalski', preferred: '', dob: '11/22/1990', type: 1 },
-      4: { name: 'Wren Shelby', preferred: '', dob: '8/15/1982', type: 5 },
-      5: { name: 'Derek Callahan', preferred: '', dob: '1/30/1995', type: 3 },
-      6: { name: 'Vera Hernandez', preferred: '', dob: '7/8/1988', type: 6 },
-      7: { name: 'Finn O\u2019Brien', preferred: '', dob: '4/19/1992', type: 2 },
-      8: { name: 'Cora Ellis', preferred: '', dob: '9/3/1975', type: 1 },
-      9: { name: 'Ethan Huang', preferred: '', dob: '12/14/1983', type: 8 },
-      10: { name: 'Mia Lawson', preferred: '', dob: '5/27/1991', type: 1 },
-      11: { name: 'Felix Alvarez', preferred: '', dob: '2/16/1987', type: 5 },
-      12: { name: 'Grant Fowler', preferred: '', dob: '10/5/1980', type: 8 },
-      13: { name: 'Bethany Nichols', preferred: 'Beth', dob: '6/30/1993', type: 1 },
-      14: { name: 'Hugo Delgado', preferred: '', dob: '8/21/1976', type: 7 },
-      15: { name: 'Tina Sato', preferred: '', dob: '3/12/1989', type: 1 },
-      16: { name: 'Nora Jensen', preferred: '', dob: '11/8/1984', type: 8 },
-      17: { name: 'Jesse Franklin', preferred: '', dob: '7/25/1996', type: 9 },
-      18: { name: 'Keith Buckley', preferred: '', dob: '4/2/1981', type: 1 },
-      19: { name: 'Lance Hoffman', preferred: '', dob: '1/18/1977', type: 3 },
-      20: { name: 'Oscar Garcia', preferred: '', dob: '9/14/1986', type: 8 },
-      21: { name: 'Raj Kapoor', preferred: '', dob: '12/7/1990', type: 10 },
-      22: { name: 'Marco Bianchi', preferred: '', dob: '5/11/1983', type: 1 },
-      23: { name: 'Abraham Mitchell', preferred: 'Abe', dob: '2/28/1974', type: 4 },
-      24: { name: 'Hana Russo', preferred: '', dob: '8/9/1992', type: 1 },
-      25: { name: 'Priya Shah', preferred: '', dob: '6/4/1988', type: 6 },
-      26: { name: 'Iris Moreno', preferred: '', dob: '10/17/1985', type: 8 },
-      27: { name: 'Scott Anderson', preferred: 'Scotty', dob: '3/23/1979', type: 1 },
-      28: { name: 'Trent Gallagher', preferred: '', dob: '7/1/1994', type: 5 },
-      29: { name: 'Vince Caruso', preferred: '', dob: '11/29/1982', type: 8 },
-      30: { name: 'Grace Torres', preferred: '', dob: '4/15/1991', type: 2 },
-      31: { name: 'Remy Espinoza', preferred: '', dob: '9/20/1987', type: 1 },
-      32: { name: 'Frank Donovan', preferred: '', dob: '1/6/1976', type: 7 },
-      33: { name: 'Gina Peretti', preferred: '', dob: '8/28/1993', type: 1 },
-      34: { name: 'Karen Blake', preferred: '', dob: '12/3/1980', type: 8 },
-      35: { name: 'Ivan Gonzalez', preferred: '', dob: '5/19/1986', type: 1 },
-      36: { name: 'Lara Volkov', preferred: '', dob: '2/7/1989', type: 9 },
-      37: { name: 'Laura Chen', preferred: '', dob: '10/24/1984', type: 1 },
-      38: { name: 'Janet Greer', preferred: 'Jan', dob: '6/16/1977', type: 4 },
-      39: { name: 'Bette Brooks', preferred: '', dob: '3/31/1992', type: 8 },
-      40: { name: 'Zack Barrett', preferred: '', dob: '7/13/1995', type: 6 },
-      41: { name: 'Yusuf Diallo', preferred: '', dob: '11/2/1981', type: 1 },
-      42: { name: 'Xavier Booth', preferred: '', dob: '4/8/1988', type: 10 },
-      43: { name: 'Umar Farouk', preferred: '', dob: '9/26/1983', type: 8 },
-      44: { name: 'Nigel Ellis', preferred: '', dob: '1/14/1990', type: 1 },
-      45: { name: 'Fiona Hayes', preferred: 'Fi', dob: '8/5/1986', type: 3 },
-      46: { name: 'Caleb Emerson', preferred: '', dob: '12/19/1978', type: 1 },
-      47: { name: 'Luis Reyes', preferred: '', dob: '5/3/1993', type: 7 },
-      48: { name: 'Wade Griffin', preferred: '', dob: '2/22/1982', type: 8 },
-      49: { name: 'Helen Blackwood', preferred: '', dob: '10/10/1987', type: 1 },
-      50: { name: 'Perry Gould', preferred: '', dob: '6/28/1991', type: 5 },
-      51: { name: 'Elena Duarte', preferred: '', dob: '3/7/1984', type: 1 },
-      52: { name: 'Maria Torres', preferred: '', dob: '7/22/1979', type: 2 },
-      53: { name: 'Pamela Park', preferred: 'Pam', dob: '11/15/1985', type: 1 },
-      54: { name: 'Diana Dao', preferred: '', dob: '4/27/1994', type: 8 },
-      55: { name: 'Carla Campos', preferred: '', dob: '9/9/1980', type: 1 },
-      56: { name: 'Henry Walsh', preferred: '', dob: '1/25/1988', type: 9 },
+      1: { name: 'Samantha Wilkinson', preferred: 'Sam', dob: '6/12/1985', type: 1, portal: true },
+      2: { name: 'Marcus Chen', preferred: '', dob: '3/4/1978', type: 8, portal: true },
+      3: { name: 'Dana Kowalski', preferred: '', dob: '11/22/1990', type: 1, portal: true },
+      4: { name: 'Wren Shelby', preferred: '', dob: '8/15/1982', type: 5, portal: true },
+      5: { name: 'Derek Callahan', preferred: '', dob: '1/30/1995', type: 3, portal: false },
+      6: { name: 'Vera Hernandez', preferred: '', dob: '7/8/1988', type: 6, portal: true },
+      7: { name: 'Finn O\u2019Brien', preferred: '', dob: '4/19/1992', type: 2, portal: false },
+      8: { name: 'Cora Ellis', preferred: '', dob: '9/3/1975', type: 1, portal: true },
+      9: { name: 'Ethan Huang', preferred: '', dob: '12/14/1983', type: 8, portal: true },
+      10: { name: 'Mia Lawson', preferred: '', dob: '5/27/1991', type: 1, portal: true },
+      11: { name: 'Felix Alvarez', preferred: '', dob: '2/16/1987', type: 5, portal: false },
+      12: { name: 'Grant Fowler', preferred: '', dob: '10/5/1980', type: 8, portal: true },
+      13: { name: 'Bethany Nichols', preferred: 'Beth', dob: '6/30/1993', type: 1, portal: true },
+      14: { name: 'Hugo Delgado', preferred: '', dob: '8/21/1976', type: 7, portal: false },
+      15: { name: 'Tina Sato', preferred: '', dob: '3/12/1989', type: 1, portal: true },
+      16: { name: 'Nora Jensen', preferred: '', dob: '11/8/1984', type: 8, portal: true },
+      17: { name: 'Jesse Franklin', preferred: '', dob: '7/25/1996', type: 9, portal: false },
+      18: { name: 'Keith Buckley', preferred: '', dob: '4/2/1981', type: 1, portal: true },
+      19: { name: 'Lance Hoffman', preferred: '', dob: '1/18/1977', type: 3, portal: false },
+      20: { name: 'Oscar Garcia', preferred: '', dob: '9/14/1986', type: 8, portal: true },
+      21: { name: 'Raj Kapoor', preferred: '', dob: '12/7/1990', type: 10, portal: false },
+      22: { name: 'Marco Bianchi', preferred: '', dob: '5/11/1983', type: 1, portal: true },
+      23: { name: 'Abraham Mitchell', preferred: 'Abe', dob: '2/28/1974', type: 4, portal: false },
+      24: { name: 'Hana Russo', preferred: '', dob: '8/9/1992', type: 1, portal: true },
+      25: { name: 'Priya Shah', preferred: '', dob: '6/4/1988', type: 6, portal: true },
+      26: { name: 'Iris Moreno', preferred: '', dob: '10/17/1985', type: 8, portal: false },
+      27: { name: 'Scott Anderson', preferred: 'Scotty', dob: '3/23/1979', type: 1, portal: true },
+      28: { name: 'Trent Gallagher', preferred: '', dob: '7/1/1994', type: 5, portal: true },
+      29: { name: 'Vince Caruso', preferred: '', dob: '11/29/1982', type: 8, portal: true },
+      30: { name: 'Grace Torres', preferred: '', dob: '4/15/1991', type: 2, portal: false },
+      31: { name: 'Remy Espinoza', preferred: '', dob: '9/20/1987', type: 1, portal: true },
+      32: { name: 'Frank Donovan', preferred: '', dob: '1/6/1976', type: 7, portal: false },
+      33: { name: 'Gina Peretti', preferred: '', dob: '8/28/1993', type: 1, portal: true },
+      34: { name: 'Karen Blake', preferred: '', dob: '12/3/1980', type: 8, portal: false },
+      35: { name: 'Ivan Gonzalez', preferred: '', dob: '5/19/1986', type: 1, portal: true },
+      36: { name: 'Lara Volkov', preferred: '', dob: '2/7/1989', type: 9, portal: false },
+      37: { name: 'Laura Chen', preferred: '', dob: '10/24/1984', type: 1, portal: true },
+      38: { name: 'Janet Greer', preferred: 'Jan', dob: '6/16/1977', type: 4, portal: false },
+      39: { name: 'Bette Brooks', preferred: '', dob: '3/31/1992', type: 8, portal: true },
+      40: { name: 'Zack Barrett', preferred: '', dob: '7/13/1995', type: 6, portal: true },
+      41: { name: 'Yusuf Diallo', preferred: '', dob: '11/2/1981', type: 1, portal: true },
+      42: { name: 'Xavier Booth', preferred: '', dob: '4/8/1988', type: 10, portal: false },
+      43: { name: 'Umar Farouk', preferred: '', dob: '9/26/1983', type: 8, portal: true },
+      44: { name: 'Nigel Ellis', preferred: '', dob: '1/14/1990', type: 1, portal: true },
+      45: { name: 'Fiona Hayes', preferred: 'Fi', dob: '8/5/1986', type: 3, portal: false },
+      46: { name: 'Caleb Emerson', preferred: '', dob: '12/19/1978', type: 1, portal: true },
+      47: { name: 'Luis Reyes', preferred: '', dob: '5/3/1993', type: 7, portal: false },
+      48: { name: 'Wade Griffin', preferred: '', dob: '2/22/1982', type: 8, portal: true },
+      49: { name: 'Helen Blackwood', preferred: '', dob: '10/10/1987', type: 1, portal: true },
+      50: { name: 'Perry Gould', preferred: '', dob: '6/28/1991', type: 5, portal: false },
+      51: { name: 'Elena Duarte', preferred: '', dob: '3/7/1984', type: 1, portal: true },
+      52: { name: 'Maria Torres', preferred: '', dob: '7/22/1979', type: 2, portal: false },
+      53: { name: 'Pamela Park', preferred: 'Pam', dob: '11/15/1985', type: 1, portal: true },
+      54: { name: 'Diana Dao', preferred: '', dob: '4/27/1994', type: 8, portal: false },
+      55: { name: 'Carla Campos', preferred: '', dob: '9/9/1980', type: 1, portal: true },
+      56: { name: 'Henry Walsh', preferred: '', dob: '1/25/1988', type: 9, portal: false },
     };
 
     function ptShort(id) { const p = PT[id]; const parts = p.name.split(' '); return parts[0] + ' ' + parts[1].charAt(0) + '.'; }
@@ -1735,12 +1773,12 @@
     WEEK_DAYS.forEach(d => {
       WEEK_SLOTS[d.date] = SCHEDULE
         .filter(a => a.date === d.date)
-        .map(a => ({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId }));
+        .map(a => ({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId, portal: PT[a.ptId].portal, unread: Math.random() < 0.5 }));
     });
 
     const DAY_SLOTS = { 0: [], 1: [], 2: [] };
     SCHEDULE.filter(a => a.date === 11).forEach(a => {
-      DAY_SLOTS[a.prov].push({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId });
+      DAY_SLOTS[a.prov].push({ s: a.s, pt: ptShort(a.ptId), time: a.time, dur: a.dur, prov: a.prov, ptId: a.ptId, portal: PT[a.ptId].portal, unread: Math.random() < 0.5 });
     });
 
     // Month: group by day, detect concurrency, cap at 8 rows to avoid overflow
@@ -1751,7 +1789,7 @@
       const byTime = {};
       dayAppts.forEach(a => {
         if (!byTime[a.time]) byTime[a.time] = [];
-        byTime[a.time].push({ s: a.s, pt: ptShort(a.ptId), ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur });
+        byTime[a.time].push({ s: a.s, pt: ptShort(a.ptId), ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur, portal: PT[a.ptId].portal, unread: Math.random() < 0.5 });
       });
       const rows = [];
       const times = Object.keys(byTime).sort((a, b) => timeToMin(a) - timeToMin(b));
@@ -1789,7 +1827,7 @@
         `<span class="mv-status-label">${LBL[a.s]}</span>` +
         `<span class="card-status-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:${C[a.s]}"></span></div>`;
       if (cardStyle === 'bar') {
-        return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="background:#fff;gap:0;padding:0;overflow:hidden">` +
+        return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur, portal: a.portal, unread: a.unread })}' style="background:#fff;gap:0;padding:0;overflow:hidden">` +
           `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:3px 7px 3px 4px"></div>` +
           `<span class="pt-name" style="flex:1;padding:2px 0">${a.pt}</span>` +
           statusChip +
@@ -1800,7 +1838,7 @@
       const typeBadge = `<div class="mv-type-badge" style="background:${typeBg}">` +
         `<span style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:${t.color};display:inline-block"></span>` +
         `<span class="mv-type-label">${t.label}</span></div>`;
-      return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="background:#fff;gap:5px">` +
+      return `<div class="appt" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur, portal: a.portal, unread: a.unread })}' style="background:#fff;gap:5px">` +
         typeBadge +
         `<span class="pt-name" style="flex:1">${a.pt}</span>` +
         statusChip +
@@ -1927,7 +1965,9 @@
         `</div>` +
         `<div class="pop-row pop-icon-grid">` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>Demographics</div>` +
-        `<div class="pop-icon-tile" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Messages<span class="pop-notif-badge"></span></div>` +
+        (a.portal
+          ? `<div class="pop-icon-tile" style="position:relative"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Messages${a.unread ? '<span class="pop-notif-badge"></span>' : ''}</div>`
+          : `<div class="pop-icon-tile pop-icon-no-portal"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg><span class="pop-tile-label">Messages</span><span class="pop-activate-pill">Activate</span></div>`) +
         `</div>` +
         `<div class="pop-row pop-icon-grid">` +
         `<div class="pop-icon-tile"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1"/><path d="M16 16a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1"/><path d="M21 6a2 2 0 0 0-.586-1.414l-2-2A2 2 0 0 0 17 2h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z"/></svg>Documents</div>` +
@@ -2095,7 +2135,7 @@
       const hideLabel = conc && !dayView;
       const chipPad = conc ? '2px' : '2px 5px';
       const statusLabel = hideLabel ? '' : `<span class="wv-status-label">${LBL[a.s]}</span>`;
-      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur, portal: a.portal, unread: a.unread })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
         `<div style="width:4px;background:${t.color};flex-shrink:0;align-self:stretch;border-radius:2px;margin:4px 7px 4px 5px"></div>` +
         `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '0' : '5px'} 6px 0 0;overflow:hidden">` +
         `<span style="flex:1;min-width:0;font-size:10.5px;font-weight:500;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.pt}</span>` +
@@ -2113,7 +2153,7 @@
       const hideLabel = conc && !dayView;
       const chipPad = '2px 5px';
       const statusLabel = hideLabel ? '' : `<span class="wv-status-label">${LBL[a.s]}</span>`;
-      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
+      return `<div class="wv-appt" data-span="${span || 1}" data-appt='${JSON.stringify({ s: a.s, pt: a.pt, ptId: a.ptId, prov: a.prov, time: a.time, dur: a.dur, portal: a.portal, unread: a.unread })}' style="inset:${inset};flex-direction:row;align-items:${single ? 'center' : 'flex-start'}">` +
         `<div style="display:flex;align-items:center;flex:1;min-width:0;padding:${single ? '3px 6px' : '5px 6px 0 6px'};gap:5px">` +
         `<div class="wv-type-chip-sq" style="background:${typeBg}">` +
         `<span style="width:9px;height:9px;border-radius:2px;background:${t.color};flex-shrink:0"></span>` +
