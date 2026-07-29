@@ -1175,21 +1175,28 @@
       border-style: solid
     }
 
-    .pop-icon-no-portal:hover svg,
-    .pop-icon-no-portal:hover .pop-tile-label {
+    .pop-icon-no-portal:hover svg {
       opacity: 0.35
     }
 
-    .pop-activate-pill {
-      font-size: 9px;
-      font-weight: 600;
-      color: var(--cobalt-05) !important;
-      letter-spacing: 0.02em;
-      transition: color 120ms ease
+    .pop-icon-no-portal .pop-activate-pill {
+      display: none
+    }
+
+    .pop-icon-no-portal:hover .pop-tile-label {
+      display: none
     }
 
     .pop-icon-no-portal:hover .pop-activate-pill {
-      color: oklch(42% 0.16 234) !important
+      display: inline;
+      color: var(--cobalt-05)
+    }
+
+    .pop-activate-pill {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--cobalt-05);
+      letter-spacing: 0.02em
     }
 
     .pop-notif-badge {
