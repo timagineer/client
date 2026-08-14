@@ -324,7 +324,7 @@
     /* ── Status badge ── */
     .badge-signed {
       display: inline-block;
-      background: #196d96;
+      background: #178734;
       color: #fff;
       font-size: var(--fs-2xs);
       font-weight: 600;
@@ -509,6 +509,119 @@
     .dlg-footer button {
       padding: 0.375rem 0.875rem;
     }
+
+    /* ── Progress indicator ── */
+    .progress-container {
+      display: none;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.375rem 1.25rem 1.25rem;
+      background: var(--surface);
+      text-align: center;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .progress-container.active {
+      display: flex;
+    }
+
+    .progress-icon {
+      display: flex;
+      justify-content: center;
+    }
+
+    .spinner {
+      width: 2.5rem;
+      height: 2.5rem;
+      border: 3px solid var(--gray-550);
+      border-top-color: var(--primary-300);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .success-icon {
+      display: none;
+      color: #178734;
+      animation: pop 0.3s var(--ease);
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-icon svg {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .progress-container.complete .spinner {
+      display: none;
+    }
+
+    .progress-container.complete .success-icon {
+      display: block;
+    }
+
+    .progress-status {
+      font-size: var(--fs-base);
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .progress-detail {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--gray-550);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary-300);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s var(--ease);
+    }
+
+    .progress-container.complete .progress-bar-fill {
+      background: #178734;
+    }
+
+    .progress-done-btn {
+      margin-top: 0.5rem;
+      display: none;
+      padding: 0.375rem 0.875rem;
+    }
+
+    .progress-container.complete .progress-done-btn {
+      display: inline-flex;
+      align-self: center;
+    }
+
+    /* Hide confirm content when in progress */
+    .dlg-confirm.hidden {
+      display: none;
+    }
   </style>
 </head>
 
@@ -552,7 +665,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Tim Nurse</td>
             <td>
-              <div class="client-cell"><a href="#">Maria Johnson</a></div>
+              <div class="client-cell"><a href="#">Maria Johnson</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">Progress Note · 06/24/2026</a></td>
             <td><span class="req-at">06/24/2026 04:26 PM</span></td>
@@ -568,7 +681,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Tim Nurse</td>
             <td>
-              <div class="client-cell"><a href="#">David Kim</a></div>
+              <div class="client-cell"><a href="#">David Kim</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">SOAP Note · 06/24/2026</a></td>
             <td><span class="req-at">06/24/2026 02:11 PM</span></td>
@@ -584,7 +697,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Sam Intern</td>
             <td>
-              <div class="client-cell"><a href="#">Aisha Patel</a></div>
+              <div class="client-cell"><a href="#">Aisha Patel</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">Intake Note · 06/23/2026</a></td>
             <td><span class="req-at">06/23/2026 09:45 AM</span></td>
@@ -600,7 +713,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Sam Intern</td>
             <td>
-              <div class="client-cell"><a href="#">Marcus Webb</a></div>
+              <div class="client-cell"><a href="#">Marcus Webb</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">Progress Note · 06/23/2026</a></td>
             <td><span class="req-at">06/23/2026 09:12 AM</span></td>
@@ -616,7 +729,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Tim Nurse</td>
             <td>
-              <div class="client-cell"><a href="#">Sofia Reyes</a></div>
+              <div class="client-cell"><a href="#">Sofia Reyes</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">Treatment Plan · 06/22/2026</a></td>
             <td><span class="req-at">06/22/2026 03:58 PM</span></td>
@@ -632,7 +745,7 @@
             <td><span class="badge-signed">Signed</span></td>
             <td>Sam Intern</td>
             <td>
-              <div class="client-cell"><a href="#">Ben Carter</a></div>
+              <div class="client-cell"><a href="#">Ben Carter</a><button class="btn-acct">$</button></div>
             </td>
             <td><a href="#" class="note-link">Quick Note · 06/21/2026</a></td>
             <td><span class="req-at">06/21/2026 11:30 AM</span></td>
@@ -665,19 +778,42 @@
   <dialog id="dlg">
     <div class="dlg-header">
       <h2 id="dlg-title">Sign Notes?</h2>
-      <button class="dlg-close" onclick="closeDlg()" aria-label="Close">
+      <button class="dlg-close" id="dlg-close-btn" onclick="closeDlg()" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
     </div>
-    <div class="dlg-body">
-      <p id="dlg-msg"></p>
+
+    <!-- Confirmation view -->
+    <div class="dlg-confirm" id="dlg-confirm">
+      <div class="dlg-body">
+        <p id="dlg-msg"></p>
+      </div>
+      <div class="dlg-footer">
+        <button onclick="closeDlg()">Cancel</button>
+        <button class="btn-primary" onclick="startSigning()">Sign All</button>
+      </div>
     </div>
-    <div class="dlg-footer">
-      <button onclick="closeDlg()">Cancel</button>
-      <button class="btn-primary" onclick="closeDlg()">Sign All</button>
+
+    <!-- Progress view -->
+    <div class="progress-container" id="progress-container" role="status" aria-live="polite">
+      <div class="progress-icon">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+            <path d="m9 11 3 3L22 4" />
+          </svg>
+        </div>
+      </div>
+      <div class="progress-status" id="progress-status">Signing notes...</div>
+      <div class="progress-detail" id="progress-detail">0 of 0 complete</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <button class="btn-primary progress-done-btn" onclick="closeDlg()">Done</button>
     </div>
   </dialog>
 
@@ -685,8 +821,18 @@
     const sel = new Set();
     const TOTAL_ALL_PAGES = 6;
     let allPagesSelected = false;
+    let signingInProgress = false;
+
     const btn = document.getElementById('sign-all-btn');
     const hdrCb = document.getElementById('hdr-cb');
+    const dlg = document.getElementById('dlg');
+    const dlgConfirm = document.getElementById('dlg-confirm');
+    const progressContainer = document.getElementById('progress-container');
+    const progressStatus = document.getElementById('progress-status');
+    const progressDetail = document.getElementById('progress-detail');
+    const progressBar = document.getElementById('progress-bar');
+    const dlgCloseBtn = document.getElementById('dlg-close-btn');
+
     const rows = () => [...document.querySelectorAll('#tbl tbody tr')];
 
     function sync() {
@@ -702,7 +848,8 @@
 
     function toggleRow(cb) {
       allPagesSelected = false;
-      const row = cb.closest('tr'), on = !cb.classList.contains('checked');
+      const row = cb.closest('tr');
+      const on = !cb.classList.contains('checked');
       cb.classList.toggle('checked', on);
       cb.setAttribute('aria-checked', on ? 'true' : 'false');
       on ? sel.add(row) : sel.delete(row);
@@ -733,20 +880,95 @@
     function openConfirm() {
       const n = allPagesSelected ? TOTAL_ALL_PAGES : sel.size;
       document.getElementById('dlg-title').textContent = `Sign ${n} Note${n !== 1 ? 's' : ''}?`;
-      document.getElementById('dlg-msg').innerHTML =
-        `You are about to sign <strong>${n} note${n !== 1 ? 's' : ''}</strong>. Proceed?`;
-      const d = document.getElementById('dlg');
-      d.showModal();
-      requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('in')));
+      document.getElementById('dlg-msg').innerHTML = `You are about to sign <strong>${n} note${n !== 1 ? 's' : ''}</strong>. Proceed?`;
+
+      // Reset to confirmation view
+      signingInProgress = false;
+      dlgConfirm.classList.remove('hidden');
+      progressContainer.classList.remove('active', 'complete');
+      progressBar.style.width = '0%';
+      dlgCloseBtn.style.display = '';
+
+      dlg.showModal();
+      requestAnimationFrame(() => requestAnimationFrame(() => dlg.classList.add('in')));
     }
 
     function closeDlg() {
-      const d = document.getElementById('dlg');
-      d.classList.remove('in'); d.classList.add('out');
-      setTimeout(() => { d.close(); d.classList.remove('out'); }, 200);
+      // Prevent closing during signing
+      if (signingInProgress) return;
+
+      dlg.classList.remove('in');
+      dlg.classList.add('out');
+      setTimeout(() => {
+        dlg.close();
+        dlg.classList.remove('out');
+      }, 200);
     }
 
-    document.getElementById('dlg').addEventListener('cancel', e => { e.preventDefault(); closeDlg(); });
+    function startSigning() {
+      const total = allPagesSelected ? TOTAL_ALL_PAGES : sel.size;
+      let completed = 0;
+      signingInProgress = true;
+
+      // Switch to progress view
+      dlgConfirm.classList.add('hidden');
+      progressContainer.classList.add('active');
+      progressContainer.classList.remove('complete');
+
+      // Hide close button during signing
+      dlgCloseBtn.style.display = 'none';
+
+      // Update title
+      document.getElementById('dlg-title').textContent = 'Signing Notes';
+
+      // Reset progress
+      progressStatus.textContent = 'Signing notes...';
+      progressDetail.textContent = `0 of ${total} complete`;
+      progressBar.style.width = '0%';
+
+      // Simulate signing each note with staggered timing
+      function signNext() {
+        if (completed < total) {
+          completed++;
+          const pct = Math.round((completed / total) * 100);
+          progressBar.style.width = `${pct}%`;
+          progressDetail.textContent = `${completed} of ${total} complete`;
+
+          // Random delay between 150-400ms to simulate API calls
+          const delay = 150 + Math.random() * 250;
+          setTimeout(signNext, delay);
+        } else {
+          // All done
+          signingInProgress = false;
+          progressContainer.classList.add('complete');
+          progressStatus.textContent = 'All notes signed';
+          dlgCloseBtn.style.display = '';
+
+          // Clear selection after successful signing
+          rows().forEach(r => {
+            const cb = r.querySelector('.checkbox');
+            cb.classList.remove('checked');
+            cb.setAttribute('aria-checked', 'false');
+          });
+          sel.clear();
+          allPagesSelected = false;
+          sync();
+        }
+      }
+
+      // Start after a brief pause
+      setTimeout(signNext, 300);
+    }
+
+    // Prevent dialog close via Escape during signing
+    dlg.addEventListener('cancel', e => {
+      if (signingInProgress) {
+        e.preventDefault();
+      } else {
+        e.preventDefault();
+        closeDlg();
+      }
+    });
   </script>
 </body>
 
