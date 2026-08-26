@@ -1,8 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <!--
-- settings IA: replace tabs+sidebar with breadcrumb nav (dropdown on last crumb for siblings)
-- Clinical Supervision header lockup (add controls top right)
+- settings IA: replace tabs+sidebar with breadcrumb nav (dropdown on last crumb for siblings)?
   -->
 
 <head>
@@ -3052,6 +3052,18 @@
   <div id="tt-support" popover>Support</div>
   <div id="tt-user" popover>User menu</div>
 
+  <!-- Remove supervisee confirmation -->
+  <dialog id="remove-supervisee-dialog" class="confirm-dialog" aria-labelledby="remove-supervisee-title">
+    <div>
+      <h2 id="remove-supervisee-title">Remove Supervisee?</h2>
+      <p id="remove-supervisee-body"></p>
+      <div class="confirm-dialog-footer">
+        <button type="button" id="remove-supervisee-cancel">Cancel</button>
+        <button type="button" class="btn-danger" id="remove-supervisee-confirm">Remove</button>
+      </div>
+    </div>
+  </dialog>
+
   <!-- SVG Symbols -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
     <symbol id="icon-search">
@@ -3833,6 +3845,100 @@
     .empty-dash {
       color: var(--text-tertiary)
     }
+
+    /* ── Remove-supervisee confirmation dialog ── */
+    .confirm-dialog {
+      border: none;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1.25rem 1.5625rem -0.3125rem rgba(0, 0, 0, 0.1);
+      margin: auto;
+      padding: 0;
+      inline-size: min(26rem, calc(100% - 2rem));
+      opacity: 0;
+      transform: translateY(0.3125rem) scale(0.99);
+      color: var(--text);
+      outline: none
+    }
+
+    .confirm-dialog[open] {
+      display: block
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .confirm-dialog {
+        transition: opacity 200ms ease, transform 200ms var(--ease-out)
+      }
+
+      .confirm-dialog::backdrop {
+        transition: opacity 200ms ease
+      }
+    }
+
+    .confirm-dialog.animate-in {
+      opacity: 1;
+      transform: none
+    }
+
+    .confirm-dialog.closing {
+      opacity: 0;
+      transform: translateY(0.3125rem) scale(0.99)
+    }
+
+    .confirm-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.2)
+    }
+
+    .confirm-dialog:not(.animate-in)::backdrop {
+      opacity: 0
+    }
+
+    .confirm-dialog.animate-in::backdrop {
+      opacity: 1
+    }
+
+    .confirm-dialog.closing::backdrop {
+      opacity: 0
+    }
+
+    .confirm-dialog>div {
+      padding: var(--space-55)
+    }
+
+    .confirm-dialog h2 {
+      font-size: var(--font-size-15);
+      font-weight: var(--font-weight-semibold);
+      margin-block-end: var(--space-30)
+    }
+
+    .confirm-dialog p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-15);
+      line-height: var(--leading-normal);
+      margin-block-end: var(--space-50)
+    }
+
+    .confirm-dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-25)
+    }
+
+    .btn-danger {
+      color: var(--warning-300)
+    }
+
+    .btn-danger:hover {
+      color: var(--gray-850);
+      background: var(--warning-300);
+      border-color: var(--warning-250)
+    }
+
+    .btn-danger:active {
+      color: var(--gray-850);
+      background: var(--warning-150);
+      border-color: var(--warning-100);
+      transform: none
+    }
   </style>
 
   <script>
@@ -3842,14 +3948,37 @@
     let openPanels = {}, supervisorFilter = '';
     function matchFilter(id) { if (!supervisorFilter) return true; if (clinicianName(id).toLowerCase().includes(supervisorFilter)) return true; const rows = assignments[id] || []; if (rows.some(p => clinicianName(p.superviseeId).toLowerCase().includes(supervisorFilter))) return true; return supervisorsOf(id).some(s => clinicianName(s.supervisorId).toLowerCase().includes(supervisorFilter)); }
     function clinicianName(id) { const c = clinicians.find(x => x.id === id); return c ? `${c.first} ${c.last}` : id; }
+    function possessive(name) { return name.endsWith('s') ? `${name}'` : `${name}'s`; }
     function summaryFor(ex) { if (!ex.length) return 'All note types'; if (ex.length === NOTE_TYPES.length) return 'No cosignature required'; const included = NOTE_TYPES.filter(nt => !ex.includes(nt)); if (included.length <= ex.length) return `Only ${included.join(', ')}`; return `All except ${ex.join(', ')}`; }
     function supervisorsOf(id) { const out = []; Object.entries(assignments).forEach(([s, pairs]) => { const p = pairs.find(x => x.superviseeId === id); if (p) out.push({ supervisorId: s, exceptions: p.exceptions }); }); return out; }
     function removePair(sup, sub) { assignments[sup] = (assignments[sup] || []).filter(p => p.superviseeId !== sub); }
+    let pendingRemoval = null;
+    function requestRemove(sup, sub) {
+      pendingRemoval = { sup, sub };
+      document.getElementById('remove-supervisee-body').textContent =
+        `${possessive(clinicianName(sub))} notes will no longer require ${possessive(clinicianName(sup))} co-signature.`;
+      openConfirmDialog();
+    }
+    function openConfirmDialog() {
+      const dlg = document.getElementById('remove-supervisee-dialog');
+      dlg.classList.remove('animate-in', 'closing');
+      dlg.showModal();
+      requestAnimationFrame(() => requestAnimationFrame(() => dlg.classList.add('animate-in')));
+    }
+    function closeConfirmDialog() {
+      const dlg = document.getElementById('remove-supervisee-dialog');
+      dlg.classList.remove('animate-in');
+      dlg.classList.add('closing');
+      setTimeout(() => { dlg.close(); dlg.classList.remove('closing'); }, 180);
+    }
+    document.getElementById('remove-supervisee-cancel').addEventListener('click', () => { pendingRemoval = null; closeConfirmDialog(); });
+    document.getElementById('remove-supervisee-confirm').addEventListener('click', () => { if (pendingRemoval) removePair(pendingRemoval.sup, pendingRemoval.sub); pendingRemoval = null; closeConfirmDialog(); renderAll(); });
+    document.getElementById('remove-supervisee-dialog').addEventListener('cancel', e => { e.preventDefault(); pendingRemoval = null; closeConfirmDialog(); });
     function addPair(sup, sub) { if (!assignments[sup]) assignments[sup] = []; assignments[sup].push({ superviseeId: sub, exceptions: [] }); }
     function toggleException(sup, sub, nt, checked) { const p = (assignments[sup] || []).find(x => x.superviseeId === sub); if (!p) return; if (checked) { p.exceptions = p.exceptions.filter(x => x !== nt); } else if (!p.exceptions.includes(nt)) { p.exceptions.push(nt); } }
     function renderAll() { renderNested(); }
     function renderNested() { const tbody = document.getElementById('nested-tbody'); tbody.innerHTML = ''; const visible = clinicians.filter(c => matchFilter(c.id)); if (supervisorFilter && visible.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:20px 16px;color:var(--text-tertiary)">No match</td></tr>'; return; } visible.forEach(sup => { const rows = assignments[sup.id] || []; const supKey = 'sup:' + sup.id; const supOpen = openPanels[supKey] === true; const tr = document.createElement('tr'); tr.className = 'sup-row'; tr.dataset.supKey = supKey; const supContent = supOpen ? `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</span><div class="sup-detail"><div class="add-search-wrap"><input type="text" class="add-search-input" placeholder="Search clinicians to add..." data-supervisor="${sup.id}" autocomplete="off"/><div class="proto-dropdown" style="display:none"></div></div><div class="supervisee-list"></div></div>` : `<span class="sup-count">${rows.length ? rows.map(p => clinicianName(p.superviseeId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</span>`; tr.innerHTML = `<td class="chevron-col"><span class="proto-chevron sup-toggle ${supOpen ? 'open' : ''}" data-sup-key="${supKey}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></td><td class="name-col">${sup.last}</td><td class="name-col">${sup.first}</td><td>${supContent}</td><td class="supervised-by-col">${supervisorsOf(sup.id).length ? supervisorsOf(sup.id).map(s => clinicianName(s.supervisorId)).join(', ') : '<span class="empty-dash">\u2014</span>'}</td>`; tbody.appendChild(tr); if (supOpen) { const list = tr.querySelector('.supervisee-list'); rows.forEach(pair => { const key = `${sup.id}:${pair.superviseeId}`, isOpen = !!openPanels[key]; const row = document.createElement('div'); row.className = 'supervisee-row'; row.innerHTML = `<div class="supervisee-main"><div class="supervisee-head" data-key="${key}"><div><span class="supervisee-name">${clinicianName(pair.superviseeId)}</span><span class="supervisee-summary">${summaryFor(pair.exceptions)}</span></div><span class="proto-chevron ${isOpen ? 'open' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="note-type-panel ${isOpen ? 'open' : ''}"><p class="note-type-hint">Co-signature required for:</p><div class="note-type-grid">${NOTE_TYPES.map(nt => `<label class="note-type-chip"><input type="checkbox" data-supervisor="${sup.id}" data-supervisee="${pair.superviseeId}" data-notetype="${nt}" ${pair.exceptions.includes(nt) ? '' : 'checked'}/>${nt}</label>`).join('')}</div></div></div><button class="remove-btn" data-remove-supervisor="${sup.id}" data-remove-supervisee="${pair.superviseeId}" title="Remove" aria-label="Remove ${clinicianName(pair.superviseeId)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`; list.appendChild(row); }); } }); wireNested(); }
-    function wireNested() { document.querySelectorAll('.sup-toggle').forEach(ch => { ch.addEventListener('click', () => { const k = ch.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.sup-row').forEach(r => { r.style.cursor = 'pointer'; r.addEventListener('click', e => { if (e.target.closest('.sup-toggle,.sup-detail,.supervisee-row,.add-search-wrap')) return; const k = r.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.supervisee-head').forEach(h => { h.addEventListener('click', () => { openPanels[h.dataset.key] = !openPanels[h.dataset.key]; renderNested(); }); }); document.querySelectorAll('.remove-btn[data-remove-supervisor]').forEach(b => { b.addEventListener('click', () => { removePair(b.dataset.removeSupervisor, b.dataset.removeSupervisee); renderAll(); }); }); document.querySelectorAll('.note-type-chip input').forEach(cb => { cb.addEventListener('click', e => e.stopPropagation()); cb.addEventListener('change', () => { toggleException(cb.dataset.supervisor, cb.dataset.supervisee, cb.dataset.notetype, cb.checked); renderNested(); }); }); document.querySelectorAll('#nested-tbody .add-search-input').forEach(i => { i.addEventListener('input', () => showDD(i, 'supervisor')); i.addEventListener('focus', () => showDD(i, 'supervisor')); }); }
+    function wireNested() { document.querySelectorAll('.sup-toggle').forEach(ch => { ch.addEventListener('click', () => { const k = ch.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.sup-row').forEach(r => { r.style.cursor = 'pointer'; r.addEventListener('click', e => { if (e.target.closest('.sup-toggle,.sup-detail,.supervisee-row,.add-search-wrap')) return; const k = r.dataset.supKey; openPanels[k] = !openPanels[k]; renderNested(); }); }); document.querySelectorAll('.supervisee-head').forEach(h => { h.addEventListener('click', () => { openPanels[h.dataset.key] = !openPanels[h.dataset.key]; renderNested(); }); }); document.querySelectorAll('.remove-btn[data-remove-supervisor]').forEach(b => { b.addEventListener('click', () => { requestRemove(b.dataset.removeSupervisor, b.dataset.removeSupervisee); }); }); document.querySelectorAll('.note-type-chip input').forEach(cb => { cb.addEventListener('click', e => e.stopPropagation()); cb.addEventListener('change', () => { toggleException(cb.dataset.supervisor, cb.dataset.supervisee, cb.dataset.notetype, cb.checked); renderNested(); }); }); document.querySelectorAll('#nested-tbody .add-search-input').forEach(i => { i.addEventListener('input', () => showDD(i, 'supervisor')); i.addEventListener('focus', () => showDD(i, 'supervisor')); }); }
 
 
 
@@ -3877,6 +4006,7 @@
     document.addEventListener('mouseover', function (e) { var trigger = e.target.closest('[popovertarget],[data-tooltip]'); if (!trigger) return; if (e.relatedTarget && trigger.contains(e.relatedTarget)) return; var id = trigger.getAttribute('popovertarget') || trigger.getAttribute('data-tooltip'); var popover = document.getElementById(id); if (!popover || popover.id === 'create-menu') return; clearTimeout(trigger._ttTimer); trigger._ttTimer = setTimeout(function () { try { popover.showPopover(); } catch (err) { return; } requestAnimationFrame(function () { var r = trigger.getBoundingClientRect(); var p = popover.getBoundingClientRect(); var isFab = trigger.classList.contains('fab-support'); var left = r.left + scrollX + r.width / 2 - p.width / 2; var top = isFab ? r.top + scrollY - p.height - 8 : r.bottom + scrollY + 6; left = Math.max(scrollX + 8, Math.min(left, scrollX + innerWidth - p.width - 8)); popover.style.left = left + 'px'; popover.style.top = top + 'px'; }); }, 240); });
     document.addEventListener('mouseout', function (e) { var trigger = e.target.closest('[popovertarget],[data-tooltip]'); if (!trigger) return; if (e.relatedTarget && trigger.contains(e.relatedTarget)) return; clearTimeout(trigger._ttTimer); var id = trigger.getAttribute('popovertarget') || trigger.getAttribute('data-tooltip'); var popover = document.getElementById(id); if (popover && popover.id !== 'create-menu') { trigger._ttTimer = setTimeout(function () { try { popover.hidePopover(); } catch (err) { } }, 60); } });
   </script>
+  <script>(function () { function c() { var b = a.contentDocument || (a.contentWindow && a.contentWindow.document); if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a2d43c0b3905e665',t:'MTc4NzA5MDg3OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>
