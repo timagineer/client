@@ -6,7 +6,1088 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Demographics Reloaded [DO-13613]</title>
 
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      /* Colors - all contrast checked */
+      --primary: #0a6d94;
+      --primary-hover: #085a7a;
+      --primary-on: #fff;
+
+      --text-1: #1a1a1a;
+      /* 16:1 on white */
+      --text-2: #4a4a4a;
+      /* 9:1 on white */
+      --text-3: #595959;
+      /* 7:1 on white - muted */
+
+      --bg-app: hsl(0, 0%, 98%);
+      --bg-surface: #fff;
+      --bg-subtle: #f7f7f7;
+
+      --border: #767676;
+      /* 4.5:1 */
+      --border-light: hsl(0, 0%, 78%);
+      /* Lighter dividers */
+
+      /* Chips - borders 3:1 against row hover (#f7f7f7) */
+      --chip-preferred-bg: #d4eaff;
+      --chip-preferred-fg: #0a5a8c;
+      --chip-preferred-border: #7eb8e0;
+
+      --chip-payment-bg: #d4edda;
+      --chip-payment-fg: #155724;
+      --chip-payment-border: #7dc383;
+
+      --chip-sms-bg: #e9ecef;
+      --chip-sms-fg: #383d41;
+      --chip-sms-border: #a0a8b0;
+
+      --chip-error-bg: #fff3cd;
+      --chip-error-fg: #6b5300;
+      --chip-error-border: #d4a800;
+
+      --chip-info-bg: #d1ecf1;
+      --chip-info-fg: #0c5460;
+      --chip-info-border: #6cbfcf;
+
+      --chip-neutral-bg: #e9ecef;
+      --chip-neutral-fg: #383d41;
+      --chip-neutral-border: #a0a8b0;
+
+      /* Wireframe grays */
+      --wire-bg: #e8e8e8;
+      --wire-fg: #666;
+
+      /* Typography */
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --text-base: 1rem;
+      --text-sm: 0.875rem;
+      --text-xs: 0.75rem;
+
+      /* Spacing */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+
+      /* Radius */
+      --rad: 4px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--text-1);
+      background: var(--bg-app);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    /* ==========================================================================
+   App Shell (wireframe - shapes only, no text/icons)
+   ========================================================================== */
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header - white bg like the real app */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .wire-logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: -4px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: #124e6a;
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: #7fb619;
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: #e8e8e8;
+      border-radius: var(--rad);
+      flex: 1;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: #d0d0d0;
+      border-radius: var(--rad);
+    }
+
+    .wire-user-name {
+      width: 26px;
+      height: 26px;
+      background: #d0d0d0;
+      border-radius: 50%;
+    }
+
+    /* Body */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar - light gray like the real app */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: #e0e0e0;
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: rgba(10, 109, 148, 0.15);
+    }
+
+    /* Main */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+   Patient Header Bar (wireframe shapes - matches app layout)
+   ========================================================================== */
+
+    .patient-header-bar {
+      display: flex;
+      gap: var(--sp-5);
+      padding: var(--sp-3) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    /* Part 1: Patient Info */
+    .patient-info-section {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .wire-avatar {
+      width: 48px;
+      height: 48px;
+      background: #e0e0e0;
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .patient-info-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      width: 280px;
+    }
+
+    .patient-info-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .wire-icon-sm {
+      width: 18px;
+      height: 18px;
+      background: #d0d0d0;
+      border-radius: var(--rad);
+    }
+
+    .wire-patient-name {
+      width: 140px;
+      height: 16px;
+      background: #999;
+      border-radius: 2px;
+    }
+
+    .wire-text-label {
+      width: 30px;
+      height: 12px;
+      background: #ccc;
+      border-radius: 2px;
+    }
+
+    .wire-text-value {
+      width: 50px;
+      height: 14px;
+      background: #bbb;
+      border-radius: 2px;
+    }
+
+    .wire-status {
+      width: 70px;
+      height: 22px;
+      background: #e0e0e0;
+      border-radius: var(--rad);
+    }
+
+    /* Part 2: Actions (fills space) */
+    .patient-actions-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      justify-content: center;
+    }
+
+    .patient-actions-row {
+      display: flex;
+      gap: var(--sp-2);
+    }
+
+    .wire-btn-action {
+      flex: 1;
+      height: 22px;
+      background: #e8e8e8;
+      border-radius: var(--rad);
+    }
+
+    .wire-btn-action-wide {
+      flex: 1;
+      height: 22px;
+      background: #e8e8e8;
+      border-radius: var(--rad);
+    }
+
+    /* ==========================================================================
+   Chart Tabs
+   ========================================================================== */
+
+    .chart-tabs {
+      display: flex;
+      gap: 0;
+      background: hsl(0, 0%, 97%);
+      padding: var(--sp-3) var(--sp-5) 0;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .chart-tab {
+      padding: var(--sp-2) var(--sp-4);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      background: #e8e8e8;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      border-radius: var(--rad) var(--rad) 0 0;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-right: 2px;
+    }
+
+    .chart-tab:hover:not(.disabled):not(.active) {
+      background: #e8e8e8;
+    }
+
+    .chart-tab.active {
+      color: var(--text-1);
+      background: #fff;
+      border-color: var(--border-light);
+      font-weight: 600;
+      position: relative;
+    }
+
+    .chart-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #fff;
+    }
+
+    .chart-tab.disabled {
+      color: var(--text-3);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .chart-tab:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+   Tab Content
+   ========================================================================== */
+
+    .tab-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-top: none;
+      border-left: none;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .tab-content.hidden {
+      display: none;
+    }
+
+    .placeholder {
+      padding: var(--sp-6);
+      text-align: center;
+      color: var(--text-3);
+    }
+
+    /* ==========================================================================
+   Sticky Header Group (contains priority header + section tabs)
+   ========================================================================== */
+
+    .sticky-header-group {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg-surface);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ==========================================================================
+   Priority Header
+   ========================================================================== */
+
+    .priority-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: var(--sp-3) var(--sp-5);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .priority-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-2) var(--sp-4);
+      align-items: center;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .priority-label {
+      font-size: 1rem;
+      color: var(--text-3);
+    }
+
+    .priority-label::after {
+      content: ':';
+    }
+
+    .priority-value {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    a.priority-value {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a.priority-value:hover {
+      text-decoration: underline;
+    }
+
+    .preferred-name {
+      color: var(--text-2);
+      font-weight: 600;
+      margin-left: 0.25em;
+    }
+
+    .priority-age {
+      color: var(--text-2);
+    }
+
+    .priority-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border-light);
+    }
+
+    /* ==========================================================================
+   Section Tabs
+   ========================================================================== */
+
+    .section-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-light);
+      padding: 0 var(--sp-5);
+      background: var(--bg-surface);
+    }
+
+    .section-tab {
+      padding: var(--sp-3) var(--sp-4);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-2);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      margin-bottom: -1px;
+    }
+
+    .section-tab:hover {
+      color: var(--text-1);
+    }
+
+    .section-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .section-tab:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+
+    /* ==========================================================================
+   Sections
+   ========================================================================== */
+
+    .sections-container {
+      padding: var(--sp-4) var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+
+    .demo-section {
+      scroll-margin-top: 100px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: var(--sp-2);
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: var(--sp-3);
+      margin-left: calc(-1 * var(--sp-2));
+      margin-right: calc(-1 * var(--sp-2));
+      padding-left: var(--sp-2);
+      padding-right: var(--sp-2);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .section-header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .section-body {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .subsection-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: var(--sp-4) 0 var(--sp-2) 0;
+      color: var(--text-1);
+    }
+
+    /* ==========================================================================
+   Field Grid
+   ========================================================================== */
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--sp-3) var(--sp-4);
+      margin: 0;
+      padding: 0;
+    }
+
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .field-item.field-wide {
+      grid-column: 1 / -1;
+      margin-top: var(--sp-3);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .field-label {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .field-value {
+      font-size: 1rem;
+      color: var(--text-1);
+      margin: 0;
+    }
+
+    .field-value.empty {
+      color: var(--text-3);
+    }
+
+    .field-textarea {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      padding: var(--sp-2) var(--sp-3);
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    /* ==========================================================================
+   Data Table
+   ========================================================================== */
+
+    .data-table {
+      width: calc(100% + var(--sp-2) * 2);
+      margin-left: calc(-1 * var(--sp-2));
+      margin-right: calc(-1 * var(--sp-2));
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    .data-table th:first-child,
+    .data-table td:first-child {
+      padding-left: var(--sp-2);
+    }
+
+    .data-table th:last-child,
+    .data-table td:last-child {
+      text-align: right;
+      width: 70px;
+      padding-right: var(--sp-2);
+    }
+
+    .data-table th,
+    .data-table td {
+      text-align: left;
+      padding: var(--sp-2) var(--sp-3);
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table th {
+      font-weight: 600;
+      color: var(--text-2);
+      background: transparent;
+      font-size: var(--text-base);
+    }
+
+    .data-table th[data-sort] {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .data-table th[data-sort]:hover {
+      color: var(--text-1);
+    }
+
+    .data-table th[data-sort] .sort-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-left: 4px;
+      vertical-align: middle;
+      opacity: 0.65;
+    }
+
+    .data-table th[data-sort]:hover .sort-icon,
+    .data-table th[data-sort].asc .sort-icon,
+    .data-table th[data-sort].desc .sort-icon {
+      opacity: 1;
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-subtle);
+    }
+
+    .data-table td.invalid {
+      color: var(--text-3);
+      text-decoration: line-through;
+    }
+
+    /* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-sm {
+      padding: 2px var(--sp-3);
+      font-size: var(--text-sm);
+      border-radius: var(--rad);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-on);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-light);
+      color: var(--text-2);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border);
+      color: var(--text-1);
+    }
+
+    /* ==========================================================================
+   Chips
+   ========================================================================== */
+
+    .chip {
+      display: inline-flex;
+      padding: 1px var(--sp-2);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      border-radius: var(--rad);
+      border: 1px solid;
+    }
+
+    .chip-preferred {
+      background: var(--chip-preferred-bg);
+      color: var(--chip-preferred-fg);
+      border-color: var(--chip-preferred-border);
+    }
+
+    .chip-payment {
+      background: var(--chip-payment-bg);
+      color: var(--chip-payment-fg);
+      border-color: var(--chip-payment-border);
+    }
+
+    .chip-sms {
+      background: var(--chip-sms-bg);
+      color: var(--chip-sms-fg);
+      border-color: var(--chip-sms-border);
+    }
+
+    .chip-error {
+      background: var(--chip-error-bg);
+      color: var(--chip-error-fg);
+      border-color: var(--chip-error-border);
+    }
+
+    .chip-info {
+      background: var(--chip-info-bg);
+      color: var(--chip-info-fg);
+      border-color: var(--chip-info-border);
+    }
+
+    .chip-neutral {
+      background: var(--chip-neutral-bg);
+      color: var(--chip-neutral-fg);
+      border-color: var(--chip-neutral-border);
+    }
+
+    /* ==========================================================================
+   Checkbox
+   ========================================================================== */
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--rad);
+      background: var(--bg-surface);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .checkbox-label input:checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-label input:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-label input:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+    @media (max-width: 1000px) {
+      .field-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .shell-sidebar {
+        width: 56px;
+      }
+
+      .sidebar-link span {
+        display: none;
+      }
+
+      .chart-tabs {
+        padding: var(--sp-1) var(--sp-2);
+      }
+
+      .chart-tab {
+        padding: var(--sp-2);
+        font-size: 1rem;
+      }
+    }
+
+    /* ==========================================================================
+   Modal
+   ========================================================================== */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-surface);
+      border-radius: var(--rad);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 480px;
+      z-index: 101;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: var(--text-2);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-1);
+    }
+
+    .modal-body {
+      padding: var(--sp-4);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--sp-2);
+      padding: var(--sp-4);
+      border-top: 1px solid var(--border-light);
+    }
+
+    .btn-secondary {
+      padding: var(--sp-2) var(--sp-3);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-1);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+    }
+
+    /* ==========================================================================
+   Tile Layout
+   ========================================================================== */
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--sp-4);
+      padding: var(--sp-4) var(--sp-5);
+    }
+
+    .tile-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      padding: var(--sp-4) var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Row 1: General (1/3 = 2 cols) | Demographics (2/3 = 4 cols) */
+    .tile-card.tile-general {
+      grid-column: span 2;
+    }
+
+    .tile-card.tile-demographics {
+      grid-column: span 4;
+    }
+
+    /* Row 2: Insurance (1/3 = 2 cols) | Contact (2/3 = 4 cols) */
+    .tile-card.tile-insurance {
+      grid-column: span 2;
+    }
+
+    .tile-card.tile-contact {
+      grid-column: span 4;
+    }
+
+    /* Row 3: Custom Fields (100% = 6 cols) */
+    .tile-card.tile-custom {
+      grid-column: 1 / -1;
+    }
+
+    /* Adjust inner field grids for narrower tiles */
+    .tile-card .field-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Demographics gets more room = 3 columns */
+    .tile-card.tile-demographics .field-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Custom fields full width = more columns */
+    .tile-card.tile-custom .field-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* ==========================================================================
+   Insurance Card
+   ========================================================================== */
+
+    .insurance-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+    }
+
+    .insurance-item {
+      padding-bottom: var(--sp-3);
+      border-bottom: 1px solid var(--border-light);
+      margin-left: calc(-1 * var(--sp-2));
+      margin-right: calc(-1 * var(--sp-2));
+      padding-left: var(--sp-2);
+      padding-right: var(--sp-2);
+    }
+
+    .insurance-item:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .insurance-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-2);
+    }
+
+    .insurance-name {
+      font-weight: 600;
+      color: var(--text-2);
+    }
+
+    .insurance-details {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--sp-2) var(--sp-4);
+      margin: 0;
+      padding: 0;
+    }
+
+    .insurance-details .field-item {
+      min-width: 0;
+    }
+
+    .insurance-details .field-item:nth-child(2n) {
+      text-align: right;
+    }
+
+    /* Primary/Secondary chips */
+    .chip-primary {
+      background: var(--chip-payment-bg);
+      color: var(--chip-payment-fg);
+      border-color: var(--chip-payment-border);
+    }
+
+    .chip-secondary {
+      background: var(--chip-preferred-bg);
+      color: var(--chip-preferred-fg);
+      border-color: var(--chip-preferred-border);
+    }
+  </style>
 </head>
 
 <body>
@@ -132,7 +1213,7 @@
           <!-- Tile Layout -->
           <div class="tile-grid">
 
-            <!-- Row 1: General | Demographics (50/50) -->
+            <!-- Row 1: General | Demographics (1/3 | 2/3) -->
             <section class="tile-card tile-general">
               <div class="section-header">
                 <h2 class="section-title">General</h2>
@@ -404,7 +1485,229 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    /**
+     * ICANotes Demographics Prototype
+     * Interactive behavior for tile layout
+     */
+
+    (function () {
+      'use strict';
+
+      // DOM Elements
+      const chartTabs = document.querySelectorAll('.chart-tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      /**
+       * Chart Tab Navigation
+       * Switches between main content areas (Chart Face, Demographics, Documents, etc.)
+       */
+      function initChartTabs() {
+        chartTabs.forEach(tab => {
+          tab.addEventListener('click', function (e) {
+            if (this.classList.contains('disabled')) {
+              e.preventDefault();
+              return;
+            }
+
+            const tabId = this.dataset.tab;
+
+            // Update active states
+            chartTabs.forEach(t => {
+              t.classList.remove('active');
+              t.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+
+            // Show/hide content areas
+            tabContents.forEach(content => {
+              if (content.id === `${tabId}-content`) {
+                content.classList.remove('hidden');
+              } else {
+                content.classList.add('hidden');
+              }
+            });
+          });
+        });
+      }
+
+      /**
+       * Keyboard Navigation
+       * Adds arrow key navigation for tabs
+       */
+      function initKeyboardNav() {
+        function handleTabKeyboard(tabs, e) {
+          const currentIndex = Array.from(tabs).findIndex(tab => tab === document.activeElement);
+          let newIndex;
+
+          switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+              e.preventDefault();
+              newIndex = (currentIndex + 1) % tabs.length;
+              while (tabs[newIndex].classList.contains('disabled') && newIndex !== currentIndex) {
+                newIndex = (newIndex + 1) % tabs.length;
+              }
+              tabs[newIndex].focus();
+              break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+              e.preventDefault();
+              newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+              while (tabs[newIndex].classList.contains('disabled') && newIndex !== currentIndex) {
+                newIndex = (newIndex - 1 + tabs.length) % tabs.length;
+              }
+              tabs[newIndex].focus();
+              break;
+            case 'Enter':
+            case ' ':
+              e.preventDefault();
+              document.activeElement.click();
+              break;
+          }
+        }
+
+        document.querySelector('.chart-tabs')?.addEventListener('keydown', e => {
+          handleTabKeyboard(chartTabs, e);
+        });
+      }
+
+      /**
+       * Edit Button Handlers
+       * Shows alert for editing sections
+       */
+      function initEditButtons() {
+        const editButtons = document.querySelectorAll('.btn-primary, .btn-outline');
+
+        editButtons.forEach(button => {
+          if (button.textContent.trim() === 'Edit') {
+            button.addEventListener('click', function (e) {
+              e.preventDefault();
+              const section = this.closest('.tile-card');
+              const row = this.closest('tr');
+
+              if (row) {
+                const type = row.cells[0]?.textContent || 'Contact';
+                const value = row.cells[1]?.textContent?.split('\n')[0] || '';
+                alert(`Edit ${type}: ${value}`);
+              } else {
+                const sectionTitle = section?.querySelector('.section-title')?.textContent || 'Section';
+                alert(`Edit ${sectionTitle} Modal`);
+              }
+            });
+          }
+        });
+      }
+
+      /**
+       * Table Sort
+       * Sortable columns - sorts by column value properly
+       */
+      function initTableSort() {
+        const table = document.getElementById('contact-table');
+        if (!table) return;
+
+        const headers = table.querySelectorAll('th[data-sort]');
+        const tbody = table.querySelector('tbody');
+
+        // Initial sort: Preferred first
+        sortTableByPreferred(tbody);
+
+        headers.forEach((header, index) => {
+          header.addEventListener('click', () => {
+            const currentDir = header.classList.contains('asc') ? 'asc' :
+              header.classList.contains('desc') ? 'desc' : null;
+
+            // Clear all sort indicators
+            headers.forEach(h => h.classList.remove('asc', 'desc'));
+
+            // Toggle direction
+            const newDir = currentDir === 'asc' ? 'desc' : 'asc';
+            header.classList.add(newDir);
+
+            sortTable(tbody, index, newDir);
+          });
+        });
+      }
+
+      // Initial sort: Preferred at top, Invalid at bottom, rest by Type
+      function sortTableByPreferred(tbody) {
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+          const aPreferred = a.dataset.preferred === 'true';
+          const bPreferred = b.dataset.preferred === 'true';
+          if (aPreferred && !bPreferred) return -1;
+          if (!aPreferred && bPreferred) return 1;
+
+          const aInvalid = a.dataset.invalid === 'true';
+          const bInvalid = b.dataset.invalid === 'true';
+          if (aInvalid && !bInvalid) return 1;
+          if (!aInvalid && bInvalid) return -1;
+
+          // Then by Type
+          const aType = a.cells[0]?.textContent?.trim().toLowerCase() || '';
+          const bType = b.cells[0]?.textContent?.trim().toLowerCase() || '';
+          return aType.localeCompare(bType);
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+      }
+
+      // User-triggered sort: column is primary, Preferred/Invalid is secondary
+      function sortTable(tbody, colIndex, direction) {
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+          // Primary: sort by selected column
+          const aVal = a.cells[colIndex]?.textContent?.trim().toLowerCase() || '';
+          const bVal = b.cells[colIndex]?.textContent?.trim().toLowerCase() || '';
+
+          const colResult = direction === 'asc'
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+
+          // If column values differ, use that
+          if (colResult !== 0) return colResult;
+
+          // Secondary: within same column value, Preferred first, Invalid last
+          const aPreferred = a.dataset.preferred === 'true';
+          const bPreferred = b.dataset.preferred === 'true';
+          if (aPreferred && !bPreferred) return -1;
+          if (!aPreferred && bPreferred) return 1;
+
+          const aInvalid = a.dataset.invalid === 'true';
+          const bInvalid = b.dataset.invalid === 'true';
+          if (aInvalid && !bInvalid) return 1;
+          if (!aInvalid && bInvalid) return -1;
+
+          return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+      }
+
+      /**
+       * Initialize All
+       */
+      function init() {
+        initChartTabs();
+        initKeyboardNav();
+        initEditButtons();
+        initTableSort();
+
+        console.log('Demographics Prototype initialized');
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 
 </html>
