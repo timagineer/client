@@ -1,1 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Demographics Reloaded [DO-13613]</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header (wireframe shapes only) -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-user-name"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar (wireframe shapes only) -->
+      <aside class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="shell-main">
+
+        <!-- Patient Header Bar (wireframe shapes) -->
+        <div class="patient-header-bar">
+          <!-- Part 1: Patient Info -->
+          <div class="patient-info-section">
+            <div class="wire-avatar"></div>
+            <div class="patient-info-details">
+              <div class="patient-info-row">
+                <div class="wire-icon-sm"></div>
+                <div class="wire-patient-name"></div>
+                <div class="wire-text-label"></div>
+                <div class="wire-text-value"></div>
+                <div class="wire-icon-sm"></div>
+              </div>
+              <div class="patient-info-row">
+                <div class="wire-status"></div>
+                <div class="wire-text-label"></div>
+                <div class="wire-text-value"></div>
+                <div class="wire-text-label"></div>
+                <div class="wire-text-value"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Part 2: Actions (fills remaining space) -->
+          <div class="patient-actions-section">
+            <div class="patient-actions-row">
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+            </div>
+            <div class="patient-actions-row">
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+              <div class="wire-btn-action"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Tabs -->
+        <nav class="chart-tabs" role="tablist" aria-label="Chart sections">
+          <button class="chart-tab" role="tab" aria-selected="false" data-tab="chart-face">
+            Chart Face
+          </button>
+          <button class="chart-tab active" role="tab" aria-selected="true" data-tab="demographics">
+            Demographics
+          </button>
+          <button class="chart-tab" role="tab" aria-selected="false" data-tab="documents">
+            Documents
+          </button>
+          <button class="chart-tab" role="tab" aria-selected="false" data-tab="communications">
+            Communications
+          </button>
+          <button class="chart-tab" role="tab" aria-selected="false" data-tab="treatment-plan">
+            Treatment Plan
+          </button>
+        </nav>
+
+        <!-- Demographics Tab Content -->
+        <div class="tab-content" id="demographics-content">
+
+          <!-- Priority Header -->
+          <div class="priority-header">
+            <div class="priority-grid">
+              <div class="priority-item">
+                <span class="priority-value">María José Martinez-O'Connor ("MJ")</span>
+              </div>
+              <div class="priority-divider"></div>
+              <div class="priority-item">
+                <span class="priority-value">Mar 15, 1987 (37)</span>
+              </div>
+              <div class="priority-divider"></div>
+              <div class="priority-item">
+                <a href="tel:+15125551234" class="priority-value">(512) 555-1234</a>
+              </div>
+              <div class="priority-divider"></div>
+              <div class="priority-item">
+                <a href="mailto:mj.martinez@gmail.com" class="priority-value">mj.martinez@gmail.com</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile Layout -->
+          <div class="tile-grid">
+
+            <!-- Row 1: General | Demographics (50/50) -->
+            <section class="tile-card tile-general">
+              <div class="section-header">
+                <h2 class="section-title">General</h2>
+                <button class="btn btn-primary btn-sm">Edit</button>
+              </div>
+              <div class="section-body">
+                <dl class="field-grid">
+                  <div class="field-item">
+                    <dt class="field-label">Legal First Name</dt>
+                    <dd class="field-value">María José</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Legal Last Name</dt>
+                    <dd class="field-value">Martinez-O'Connor</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Preferred Name</dt>
+                    <dd class="field-value">"MJ"</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Legal Middle Name/Initial</dt>
+                    <dd class="field-value">Elena</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Date of Birth</dt>
+                    <dd class="field-value">Mar 15, 1987</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Legal Sex</dt>
+                    <dd class="field-value">Female</dd>
+                  </div>
+                </dl>
+                <div class="field-item field-wide">
+                  <dt class="field-label">Patient Calendar Notes</dt>
+                  <dd class="field-textarea">Prefers morning appointments (before 10am). Has difficulty with parking garage – arrives 15min early. Uses wheelchair accessible entrance.</dd>
+                </div>
+              </div>
+            </section>
+
+            <section class="tile-card tile-demographics">
+              <div class="section-header">
+                <h2 class="section-title">Demographics</h2>
+                <button class="btn btn-primary btn-sm">Edit</button>
+              </div>
+              <div class="section-body">
+                <dl class="field-grid">
+                  <div class="field-item">
+                    <dt class="field-label">Social Security #</dt>
+                    <dd class="field-value">***-**-4521</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Gender</dt>
+                    <dd class="field-value">Female</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Sexual Orientation</dt>
+                    <dd class="field-value">Heterosexual</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Employment Status</dt>
+                    <dd class="field-value">Full-Time</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Income Range</dt>
+                    <dd class="field-value">$50,000 – $74,999</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Race 1</dt>
+                    <dd class="field-value">White</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Race 2</dt>
+                    <dd class="field-value empty">–</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Preferred Language</dt>
+                    <dd class="field-value">English</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Education Level</dt>
+                    <dd class="field-value">Bachelor's Degree</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Ethnicity 1</dt>
+                    <dd class="field-value">Hispanic or Latino</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Ethnicity 2</dt>
+                    <dd class="field-value empty">–</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Marital Status</dt>
+                    <dd class="field-value">Married</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Family Size</dt>
+                    <dd class="field-value">4</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Religion</dt>
+                    <dd class="field-value">Catholic</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Nationality</dt>
+                    <dd class="field-value">United States</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Disability</dt>
+                    <dd class="field-value">Mobility Impairment</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Veteran Status</dt>
+                    <dd class="field-value">No</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+
+            <!-- Row 2: Insurance (1/3) | Contact (2/3) -->
+            <section class="tile-card tile-insurance">
+              <div class="section-header">
+                <h2 class="section-title">Insurance</h2>
+                <button class="btn btn-primary btn-sm">Edit</button>
+              </div>
+              <div class="section-body">
+                <div class="insurance-list">
+                  <div class="insurance-item">
+                    <div class="insurance-header">
+                      <span class="insurance-name">Blue Cross Blue Shield of Texas</span>
+                      <span class="chip chip-primary">Primary</span>
+                    </div>
+                    <dl class="insurance-details">
+                      <div class="field-item">
+                        <dt class="field-label">Member ID</dt>
+                        <dd class="field-value">XYZ123456789</dd>
+                      </div>
+                      <div class="field-item">
+                        <dt class="field-label">Copay</dt>
+                        <dd class="field-value">$25</dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <div class="insurance-item">
+                    <div class="insurance-header">
+                      <span class="insurance-name">Aetna</span>
+                      <span class="chip chip-secondary">Secondary</span>
+                    </div>
+                    <dl class="insurance-details">
+                      <div class="field-item">
+                        <dt class="field-label">Member ID</dt>
+                        <dd class="field-value">W987654321</dd>
+                      </div>
+                      <div class="field-item">
+                        <dt class="field-label">Copay</dt>
+                        <dd class="field-value">$15</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="tile-card tile-contact">
+              <div class="section-header">
+                <h2 class="section-title">Contact</h2>
+                <div class="section-header-right">
+                  <label class="checkbox-label">
+                    <input type="checkbox">
+                    <span>Client is Homeless</span>
+                  </label>
+                </div>
+              </div>
+              <div class="section-body">
+                <table class="data-table sortable" id="contact-table">
+                  <thead>
+                    <tr>
+                      <th data-sort="type">Type</th>
+                      <th data-sort="value">Value</th>
+                      <th data-sort="category">Category</th>
+                      <th data-sort="status">Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Email -->
+                    <tr data-preferred="true">
+                      <td>Email</td>
+                      <td><a href="mailto:mj.martinez@gmail.com">mj.martinez@gmail.com</a></td>
+                      <td>Personal</td>
+                      <td>
+                        <span class="chip chip-preferred">Preferred</span>
+                        <span class="chip chip-payment">Payment</span>
+                      </td>
+                      <td><button class="btn btn-outline btn-sm">Edit</button></td>
+                    </tr>
+                    <!-- Phones -->
+                    <tr data-preferred="true">
+                      <td>Phone</td>
+                      <td><a href="tel:+15125551234">(512) 555-1234</a></td>
+                      <td>Mobile</td>
+                      <td>
+                        <span class="chip chip-preferred">Preferred</span>
+                        <span class="chip chip-sms">SMS</span>
+                      </td>
+                      <td><button class="btn btn-outline btn-sm">Edit</button></td>
+                    </tr>
+                    <tr data-invalid="true">
+                      <td>Phone</td>
+                      <td class="invalid">(512) 555-0000</td>
+                      <td>Mobile</td>
+                      <td><span class="chip chip-error">Invalid</span></td>
+                      <td><button class="btn btn-outline btn-sm">Edit</button></td>
+                    </tr>
+                    <!-- Address -->
+                    <tr data-preferred="true">
+                      <td>Address</td>
+                      <td>1847 Bluebonnet Lane, Apt 4B, Austin, TX 78704</td>
+                      <td></td>
+                      <td><span class="chip chip-preferred">Preferred</span></td>
+                      <td><button class="btn btn-outline btn-sm">Edit</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Row 3: Custom Fields (100%) -->
+            <section class="tile-card tile-custom">
+              <div class="section-header">
+                <h2 class="section-title">Custom Fields</h2>
+                <button class="btn btn-primary btn-sm">Edit</button>
+              </div>
+              <div class="section-body">
+                <dl class="field-grid">
+                  <div class="field-item">
+                    <dt class="field-label">Referral Source</dt>
+                    <dd class="field-value">Dr. James Wilson (PCP)</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Employer Name</dt>
+                    <dd class="field-value">TechCorp Industries</dd>
+                  </div>
+                  <div class="field-item">
+                    <dt class="field-label">Special Accommodations</dt>
+                    <dd class="field-value">Wheelchair accessible</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- Placeholder tabs -->
+        <div class="tab-content hidden" id="chart-face-content">
+          <p class="placeholder">Chart Face content</p>
+        </div>
+        <div class="tab-content hidden" id="documents-content">
+          <p class="placeholder">Documents content</p>
+        </div>
+        <div class="tab-content hidden" id="communications-content">
+          <p class="placeholder">Communications content</p>
+        </div>
+        <div class="tab-content hidden" id="treatment-plan-content">
+          <p class="placeholder">Treatment Plan content</p>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
