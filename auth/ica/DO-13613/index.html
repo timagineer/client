@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-v4, EIE?
--->
+v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view, go to icons, hero,headers.accordian heights?-->
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="view  port" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Demographics Reloaded [DO-13613]</title>
 
   <style>
+    /* * {
+      outline: .5px dashed deeppink;
+    } */
+
     /* ==========================================================================
    ICANotes Demographics Prototype
    WCAG 1.4.3 (4.5:1 text) and 1.4.11 (3:1 non-text) compliant
@@ -21,11 +24,11 @@ v4, EIE?
       --primary-hover: #085a7a;
       --primary-on: #fff;
 
-      --text-1: #1a1a1a;
+      --text-1: hsl(0, 0%, 15%);
       /* 16:1 on white */
-      --text-2: #4a4a4a;
+      --text-2: hsl(0, 0%, 35%);
       /* 9:1 on white */
-      --text-3: #595959;
+      --text-3: hsl(0, 0%, 43%);
       /* 7:1 on white - muted */
 
       --bg-app: hsl(0, 0%, 98%);
@@ -257,8 +260,8 @@ v4, EIE?
       position: fixed;
       bottom: 10px;
       right: 24px;
-      width: 56px;
-      height: 56px;
+      width: 48px;
+      height: 48px;
       background: #d0d0d0;
       border-radius: 50%;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -295,10 +298,10 @@ v4, EIE?
     }
 
     .wire-avatar {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       background: #e0e0e0;
-      border-radius: var(--rad);
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
@@ -538,26 +541,23 @@ v4, EIE?
       border: 1px solid var(--border-light);
       border-radius: var(--rad);
       padding: var(--sp-5);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
     .identity-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 1fr 1.618fr;
+      align-items: center;
       gap: var(--sp-4);
-      margin-bottom: var(--sp-4);
     }
 
-    .identity-name-group {
-      flex: 1;
-    }
+    .identity-name-group {}
 
     .identity-name {
       font-size: 20px;
       font-weight: 600;
-      color: var(--text-1);
-      margin: 0 0 var(--sp-1) 0;
+      color: var(--text-2);
+      margin: 0;
       line-height: 1.125;
     }
 
@@ -574,28 +574,31 @@ v4, EIE?
       align-items: center;
     }
 
+    /* Right column: details + edit button */
+    .identity-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+    }
+
     .identity-actions {
       display: flex;
       gap: var(--sp-2);
       align-items: center;
+      margin-left: auto;
     }
 
+    /* Inline identity details */
     .identity-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: var(--sp-3) var(--sp-5);
-      padding-top: var(--sp-3);
-      border-top: 1px solid var(--border-light);
-      margin-left: -8px;
-      margin-right: -8px;
-      padding-left: 8px;
-      padding-right: 8px;
+      display: flex;
+      gap: var(--sp-5);
+      align-items: center;
     }
 
     .identity-detail-item {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 0;
     }
 
     .identity-detail-label {
@@ -604,11 +607,14 @@ v4, EIE?
       color: var(--text-3);
       text-transform: uppercase;
       letter-spacing: 0.3px;
+      line-height: 1.2;
     }
 
     .identity-detail-value {
-      font-size: 1rem;
+      font-size: var(--text-base);
       color: var(--text-1);
+      white-space: nowrap;
+      line-height: 1.3;
     }
 
     .identity-detail-value a {
@@ -624,6 +630,13 @@ v4, EIE?
     /* ==========================================================================
    Collapsible Sections
    ========================================================================== */
+
+    .collapsible-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      align-items: start;
+    }
 
     .collapsible-card {
       background: var(--bg-surface);
@@ -685,6 +698,7 @@ v4, EIE?
     .collapsible-body {
       display: none;
       padding: var(--sp-4);
+      padding-left: calc(16px + var(--sp-2) + var(--sp-4));
     }
 
     .collapsible-card.expanded .collapsible-body {
@@ -791,6 +805,7 @@ v4, EIE?
     .section-title {
       font-size: 1rem;
       font-weight: 600;
+      color: var(--text-2);
       margin: 0;
     }
 
@@ -867,7 +882,8 @@ v4, EIE?
     }
 
     .field-value.empty {
-      color: var(--text-3);
+      color: #737373;
+      /* 5:1 against white */
     }
 
     .field-textarea {
@@ -1351,14 +1367,14 @@ v4, EIE?
     }
 
     .scheduling-time {
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       font-weight: 600;
       color: var(--text-1);
     }
 
     .scheduling-type {
-      font-size: var(--text-sm);
-      color: var(--text-2);
+      font-size: var(--text-base);
+      color: var(--text-1);
     }
 
     /* Status chip - tinted pill, clickable */
@@ -1466,8 +1482,8 @@ v4, EIE?
     }
 
     .scheduling-status .status-dot {
-      width: 9px;
-      height: 9px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -1519,8 +1535,8 @@ v4, EIE?
     }
 
     .status-dropdown-item .status-dot {
-      width: 9px;
-      height: 9px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -1537,8 +1553,8 @@ v4, EIE?
     }
 
     .scheduling-provider {
-      font-size: var(--text-sm);
-      color: var(--text-3);
+      font-size: var(--text-base);
+      color: var(--text-2);
     }
 
     .scheduling-notes-header {
@@ -1621,9 +1637,14 @@ v4, EIE?
       color: var(--primary);
     }
 
+    .tile-card.tile-add-view:hover .add-view-content svg {
+      opacity: 1;
+    }
+
     .add-view-content svg {
       width: 32px;
       height: 32px;
+      opacity: 0.7;
     }
 
     .add-view-content span {
@@ -1680,7 +1701,7 @@ v4, EIE?
 
     .insurance-name {
       font-weight: 600;
-      color: var(--text-2);
+      color: var(--text-1);
     }
 
     .insurance-details {
@@ -1863,7 +1884,7 @@ v4, EIE?
             </svg>
             Communications
           </button>
-          <button class="chart-tabs-reset" title="Reset to default order">Reset</button>
+          <button class="chart-tabs-reset" title="Reset to default order">Reset Tabs</button>
         </nav>
 
         <!-- Demographics Tab Content -->
@@ -1878,33 +1899,31 @@ v4, EIE?
                 <div class="identity-name-group">
                   <h1 class="identity-name">María José Martinez-O'Connor <span class="identity-preferred">("MJ")</span></h1>
                 </div>
-                <div class="identity-actions">
-                  <button class="btn-icon" data-tooltip="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-                      <path d="m15 5 4 4" />
-                    </svg></button>
-                </div>
-              </div>
-              <div class="identity-details" style="grid-template-columns: repeat(5, 1fr);">
-                <div class="identity-detail-item">
-                  <span class="identity-detail-label">Date of Birth</span>
-                  <span class="identity-detail-value">Mar 15, 1987 (37)</span>
-                </div>
-                <div class="identity-detail-item">
-                  <span class="identity-detail-label">Sex (Legal)</span>
-                  <span class="identity-detail-value">Female</span>
-                </div>
-                <div class="identity-detail-item">
-                  <span class="identity-detail-label">Phone</span>
-                  <span class="identity-detail-value"><a href="tel:+15128173301">(512) 817-3301</a></span>
-                </div>
-                <div class="identity-detail-item">
-                  <span class="identity-detail-label">Email</span>
-                  <span class="identity-detail-value"><a href="mailto:mj.martinez@gmail.com">mj.martinez@gmail.com</a></span>
-                </div>
-                <div class="identity-detail-item">
-                  <span class="identity-detail-label">SSN</span>
-                  <span class="identity-detail-value">***-**-4521</span>
+                <div class="identity-right">
+                  <div class="identity-details">
+                    <div class="identity-detail-item">
+                      <span class="identity-detail-label">DOB</span>
+                      <span class="identity-detail-value">Mar 15, 1987 (37)</span>
+                    </div>
+                    <div class="identity-detail-item">
+                      <span class="identity-detail-label">Sex</span>
+                      <span class="identity-detail-value">Female</span>
+                    </div>
+                    <div class="identity-detail-item">
+                      <span class="identity-detail-label">Phone</span>
+                      <span class="identity-detail-value"><a href="tel:+15128173301">(512) 817-3301</a></span>
+                    </div>
+                    <div class="identity-detail-item">
+                      <span class="identity-detail-label">Email</span>
+                      <span class="identity-detail-value"><a href="mailto:mj.martinez@gmail.com">mj.martinez@gmail.com</a></span>
+                    </div>
+                  </div>
+                  <div class="identity-actions">
+                    <button class="btn-icon" data-tooltip="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1938,7 +1957,7 @@ v4, EIE?
                   <!-- Today's appointment -->
                   <div class="scheduling-today">
                     <div class="scheduling-row">
-                      <span class="scheduling-time">2:30–3:30 PM</span>
+                      <span class="scheduling-time">2:30–3:00 PM</span>
                       <div class="scheduling-status-wrap">
                         <span class="scheduling-status" data-status="checkedin">
                           <span class="status-dot"></span>
@@ -2137,109 +2156,116 @@ v4, EIE?
               </section>
             </div>
 
-            <!-- Clinical & Compliance (collapsible, collapsed by default) -->
-            <div class="collapsible-card" data-collapsible>
-              <div class="collapsible-header">
-                <div class="collapsible-title-group">
-                  <svg class="collapsible-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                  <h2 class="collapsible-title">Clinical & Compliance</h2>
-                  <span class="collapsible-subtitle">SOGI, Language, Disability, Veteran</span>
+            <!-- Collapsible sections in 50/50 grid -->
+            <div class="collapsible-grid">
+              <!-- Census & Reporting (collapsible, collapsed by default) -->
+              <div class="collapsible-card" data-collapsible>
+                <div class="collapsible-header">
+                  <div class="collapsible-title-group">
+                    <svg class="collapsible-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                    <h2 class="collapsible-title">Census & Reporting</h2>
+                    <span class="collapsible-subtitle">Race, Ethnicity, Family, Employment</span>
+                  </div>
+                  <button class="btn-icon" data-tooltip="Edit" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                      <path d="m15 5 4 4" />
+                    </svg></button>
                 </div>
-                <button class="btn-icon" data-tooltip="Edit" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-                    <path d="m15 5 4 4" />
-                  </svg></button>
+                <div class="collapsible-body">
+                  <dl class="field-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="field-item">
+                      <dt class="field-label">Race 1</dt>
+                      <dd class="field-value">White</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Marital Status</dt>
+                      <dd class="field-value">Married</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Employment Status</dt>
+                      <dd class="field-value">Full-Time</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Race 2</dt>
+                      <dd class="field-value empty">–</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Family Size</dt>
+                      <dd class="field-value">4</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Income Range</dt>
+                      <dd class="field-value">$50,000 – $74,999</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Ethnicity 1</dt>
+                      <dd class="field-value">Hispanic or Latino</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Religion</dt>
+                      <dd class="field-value">Catholic</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Education Level</dt>
+                      <dd class="field-value">Bachelor's Degree</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Ethnicity 2</dt>
+                      <dd class="field-value empty">–</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Nationality</dt>
+                      <dd class="field-value">United States</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">SSN</dt>
+                      <dd class="field-value">***-**-4521</dd>
+                    </div>
+                  </dl>
+                </div>
               </div>
-              <div class="collapsible-body">
-                <dl class="field-grid" style="grid-template-columns: repeat(5, 1fr);">
-                  <div class="field-item">
-                    <dt class="field-label">Gender</dt>
-                    <dd class="field-value">Female</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Sexual Orientation</dt>
-                    <dd class="field-value">Heterosexual</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Preferred Language</dt>
-                    <dd class="field-value">English</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Disability</dt>
-                    <dd class="field-value">Mobility Impairment</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Veteran Status</dt>
-                    <dd class="field-value">Yes</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
 
-            <!-- Census & Reporting (collapsible, collapsed by default) -->
-            <div class="collapsible-card" data-collapsible>
-              <div class="collapsible-header">
-                <div class="collapsible-title-group">
-                  <svg class="collapsible-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                  <h2 class="collapsible-title">Census & Reporting</h2>
-                  <span class="collapsible-subtitle">Race, Ethnicity, Family, Employment, Education</span>
+              <!-- Clinical & Compliance (collapsible, collapsed by default) -->
+              <div class="collapsible-card" data-collapsible>
+                <div class="collapsible-header">
+                  <div class="collapsible-title-group">
+                    <svg class="collapsible-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                    <h2 class="collapsible-title">Clinical & Compliance</h2>
+                    <span class="collapsible-subtitle">SOGI, Language, Disability, Veteran</span>
+                  </div>
+                  <button class="btn-icon" data-tooltip="Edit" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                      <path d="m15 5 4 4" />
+                    </svg></button>
                 </div>
-                <button class="btn-icon" data-tooltip="Edit" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-                    <path d="m15 5 4 4" />
-                  </svg></button>
-              </div>
-              <div class="collapsible-body">
-                <dl class="field-grid" style="grid-template-columns: repeat(4, 1fr);">
-                  <div class="field-item">
-                    <dt class="field-label">Race 1</dt>
-                    <dd class="field-value">White</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Race 2</dt>
-                    <dd class="field-value empty">–</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Ethnicity 1</dt>
-                    <dd class="field-value">Hispanic or Latino</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Ethnicity 2</dt>
-                    <dd class="field-value empty">–</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Marital Status</dt>
-                    <dd class="field-value">Married</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Family Size</dt>
-                    <dd class="field-value">4</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Religion</dt>
-                    <dd class="field-value">Catholic</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Nationality</dt>
-                    <dd class="field-value">United States</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Employment Status</dt>
-                    <dd class="field-value">Full-Time</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Income Range</dt>
-                    <dd class="field-value">$50,000 – $74,999</dd>
-                  </div>
-                  <div class="field-item">
-                    <dt class="field-label">Education Level</dt>
-                    <dd class="field-value">Bachelor's Degree</dd>
-                  </div>
-                </dl>
+                <div class="collapsible-body">
+                  <dl class="field-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="field-item">
+                      <dt class="field-label">Gender</dt>
+                      <dd class="field-value">Female</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Sexual Orientation</dt>
+                      <dd class="field-value">Heterosexual</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Preferred Language</dt>
+                      <dd class="field-value">English</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Disability</dt>
+                      <dd class="field-value">Mobility Impairment</dd>
+                    </div>
+                    <div class="field-item">
+                      <dt class="field-label">Veteran Status</dt>
+                      <dd class="field-value">Yes</dd>
+                    </div>
+                  </dl>
+                </div>
               </div>
             </div>
 
