@@ -1750,17 +1750,6 @@ v4, EIE?
             </svg>
             Treatment Plan
           </button>
-          <button class="chart-tab active" role="tab" aria-selected="true" data-tab="demographics" draggable="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="grip-icon">
-              <circle cx="9" cy="12" r="1" />
-              <circle cx="9" cy="5" r="1" />
-              <circle cx="9" cy="19" r="1" />
-              <circle cx="15" cy="12" r="1" />
-              <circle cx="15" cy="5" r="1" />
-              <circle cx="15" cy="19" r="1" />
-            </svg>
-            Demographics
-          </button>
           <button class="chart-tab" role="tab" aria-selected="false" data-tab="documents" draggable="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="grip-icon">
               <circle cx="9" cy="12" r="1" />
@@ -1771,6 +1760,17 @@ v4, EIE?
               <circle cx="15" cy="19" r="1" />
             </svg>
             Documents
+          </button>
+          <button class="chart-tab active" role="tab" aria-selected="true" data-tab="demographics" draggable="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="grip-icon">
+              <circle cx="9" cy="12" r="1" />
+              <circle cx="9" cy="5" r="1" />
+              <circle cx="9" cy="19" r="1" />
+              <circle cx="15" cy="12" r="1" />
+              <circle cx="15" cy="5" r="1" />
+              <circle cx="15" cy="19" r="1" />
+            </svg>
+            Demographics
           </button>
           <button class="chart-tab" role="tab" aria-selected="false" data-tab="communications" draggable="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="grip-icon">
@@ -2409,7 +2409,7 @@ v4, EIE?
         const STORAGE_KEY = 'icanotes-tab-order';
 
         // Default clinician order
-        const DEFAULT_ORDER = ['chart-face', 'treatment-plan', 'demographics', 'documents', 'communications'];
+        const DEFAULT_ORDER = ['chart-face', 'treatment-plan', 'documents', 'demographics', 'communications'];
 
         let draggedTab = null;
 
