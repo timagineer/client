@@ -1377,12 +1377,92 @@ v4, EIE?
       font-size: var(--text-sm);
       color: var(--text-1);
       cursor: pointer;
-      background: var(--appt-arrived-bg);
       transition: filter 0.15s;
     }
 
     .scheduling-status:hover {
       filter: brightness(0.97);
+    }
+
+    /* Status chip colors by data-status */
+    .scheduling-status[data-status="requested"] {
+      background: var(--appt-requested-bg);
+    }
+
+    .scheduling-status[data-status="scheduled"] {
+      background: var(--appt-scheduled-bg);
+    }
+
+    .scheduling-status[data-status="rescheduled"] {
+      background: var(--appt-rescheduled-bg);
+    }
+
+    .scheduling-status[data-status="confirmed"] {
+      background: var(--appt-confirmed-bg);
+    }
+
+    .scheduling-status[data-status="arrived"] {
+      background: var(--appt-arrived-bg);
+    }
+
+    .scheduling-status[data-status="checkedin"] {
+      background: var(--appt-checkedin-bg);
+    }
+
+    .scheduling-status[data-status="occurred"] {
+      background: var(--appt-occurred-bg);
+    }
+
+    .scheduling-status[data-status="cancelled"] {
+      background: var(--appt-cancelled-bg);
+    }
+
+    .scheduling-status[data-status="latecancel"] {
+      background: var(--appt-latecancel-bg);
+    }
+
+    .scheduling-status[data-status="noshow"] {
+      background: var(--appt-noshow-bg);
+    }
+
+    .scheduling-status[data-status="requested"] .status-dot {
+      background: var(--appt-requested-fg);
+    }
+
+    .scheduling-status[data-status="scheduled"] .status-dot {
+      background: var(--appt-scheduled-fg);
+    }
+
+    .scheduling-status[data-status="rescheduled"] .status-dot {
+      background: var(--appt-rescheduled-fg);
+    }
+
+    .scheduling-status[data-status="confirmed"] .status-dot {
+      background: var(--appt-confirmed-fg);
+    }
+
+    .scheduling-status[data-status="arrived"] .status-dot {
+      background: var(--appt-arrived-fg);
+    }
+
+    .scheduling-status[data-status="checkedin"] .status-dot {
+      background: var(--appt-checkedin-fg);
+    }
+
+    .scheduling-status[data-status="occurred"] .status-dot {
+      background: var(--appt-occurred-fg);
+    }
+
+    .scheduling-status[data-status="cancelled"] .status-dot {
+      background: var(--appt-cancelled-fg);
+    }
+
+    .scheduling-status[data-status="latecancel"] .status-dot {
+      background: var(--appt-latecancel-fg);
+    }
+
+    .scheduling-status[data-status="noshow"] .status-dot {
+      background: var(--appt-noshow-fg);
     }
 
     .scheduling-status .status-dot {
@@ -1860,8 +1940,8 @@ v4, EIE?
                     <div class="scheduling-row">
                       <span class="scheduling-time">2:30–3:30 PM</span>
                       <div class="scheduling-status-wrap">
-                        <span class="scheduling-status" style="background: var(--appt-checkedin-bg);">
-                          <span class="status-dot" style="background: var(--appt-checkedin-fg);"></span>
+                        <span class="scheduling-status" data-status="checkedin">
+                          <span class="status-dot"></span>
                           <span class="status-label">Checked-in</span>
                         </span>
                         <div class="status-dropdown" id="statusDropdown">
@@ -2365,13 +2445,10 @@ v4, EIE?
           dropdown.querySelectorAll('.status-dropdown-item').forEach(i => i.classList.remove('selected'));
           item.classList.add('selected');
 
-          // Update the chip
+          // Update the chip via data-status (CSS handles colors)
           const label = chip.querySelector('.status-label');
-          const dot = chip.querySelector('.status-dot');
-
           label.textContent = item.querySelector('span:nth-child(2)').textContent;
-          dot.style.background = item.dataset.fg;
-          chip.style.background = item.dataset.bg;
+          chip.dataset.status = item.dataset.status;
 
           // Close dropdown
           dropdown.classList.remove('open');
