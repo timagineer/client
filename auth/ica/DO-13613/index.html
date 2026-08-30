@@ -1318,6 +1318,226 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
     }
 
     /* ==========================================================================
+   Command Palette (Next/Recent)
+   ========================================================================== */
+
+    .cmd-palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s, visibility 0.15s;
+    }
+
+    .cmd-palette-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cmd-palette {
+      position: fixed;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.96);
+      background: var(--bg-surface);
+      border-radius: var(--rad);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 800px;
+      z-index: 201;
+      opacity: 0;
+      visibility: hidden;
+      overflow: hidden;
+      transition: opacity 0.15s, visibility 0.15s, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cmd-palette-backdrop.open .cmd-palette {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .cmd-palette-search {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .cmd-palette-search svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-3);
+      flex-shrink: 0;
+    }
+
+    .cmd-palette-search input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: var(--text-base);
+      color: var(--text-1);
+      outline: none;
+    }
+
+    .cmd-palette-search input::placeholder {
+      color: var(--text-3);
+    }
+
+    .cmd-palette-kbd {
+      font-size: var(--text-xs);
+      color: var(--text-3);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+
+    .cmd-palette-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 420px;
+      overflow: hidden;
+    }
+
+    .cmd-palette-col {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .cmd-palette-col:first-child {
+      border-right: 1px solid var(--border-light);
+    }
+
+    .cmd-palette-col-header {
+      background: var(--bg-surface);
+      padding: var(--sp-3) var(--sp-4);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .cmd-palette-list {
+      padding: var(--sp-2);
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .cmd-palette-item {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .cmd-palette-item:hover {
+      background: hsl(0, 0%, 97%);
+    }
+
+    .cmd-palette-item.selected {
+      background: hsl(197, 50%, 96%);
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    .cmd-palette-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, hsl(197, 50%, 94%), hsl(197, 40%, 88%));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .cmd-palette-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cmd-palette-item-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cmd-palette-item-meta {
+      font-size: 12px;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .cmd-palette-item-action {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 500;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .cmd-palette-item:hover .cmd-palette-item-action {
+      opacity: 1;
+    }
+
+    .cmd-palette-item--new .cmd-palette-item-icon {
+      background: transparent;
+      border: 2px dashed hsl(197, 40%, 75%);
+      color: hsl(197, 50%, 45%);
+    }
+
+    .cmd-palette-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-3) var(--sp-4);
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-subtle);
+      font-size: var(--text-xs);
+      color: var(--text-3);
+    }
+
+    .cmd-palette-footer-hints {
+      display: flex;
+      gap: var(--sp-4);
+    }
+
+    .cmd-palette-footer-hint {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+
+    .cmd-palette-footer-hint kbd {
+      font-size: 10px;
+      font-family: inherit;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 3px;
+      padding: 1px 4px;
+    }
+
+    /* ==========================================================================
    Tile Layout
    ========================================================================== */
 
@@ -2338,6 +2558,186 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
     <div class="wire-fab"></div>
   </div>
 
+  <!-- Command Palette (Next/Recent) -->
+  <div class="cmd-palette-backdrop" id="cmdPalette">
+    <div class="cmd-palette" role="dialog" aria-label="Quick access">
+      <div class="cmd-palette-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input type="text" placeholder="Jump to patient or note..." autofocus>
+        <span class="cmd-palette-kbd">ESC</span>
+      </div>
+      <div class="cmd-palette-body">
+        <!-- Next column -->
+        <div class="cmd-palette-col">
+          <div class="cmd-palette-col-header">Next</div>
+          <div class="cmd-palette-list">
+            <div class="cmd-palette-item selected">
+              <div class="cmd-palette-item-icon">MJ</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">María José Martinez-O'Connor</div>
+                <div class="cmd-palette-item-meta">Today 2:30 PM · Follow Up</div>
+              </div>
+              <span class="cmd-palette-item-action">Continue →</span>
+            </div>
+            <div class="cmd-palette-item cmd-palette-item--new">
+              <div class="cmd-palette-item-icon">JS</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">John Smith</div>
+                <div class="cmd-palette-item-meta">Tomorrow 9:00 AM · Intake Assessment</div>
+              </div>
+              <span class="cmd-palette-item-action">Start →</span>
+            </div>
+            <div class="cmd-palette-item cmd-palette-item--new">
+              <div class="cmd-palette-item-icon">AC</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Alex Chen</div>
+                <div class="cmd-palette-item-meta">Tomorrow 10:30 AM · Med Management</div>
+              </div>
+              <span class="cmd-palette-item-action">Start →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">LW</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Lisa Wang</div>
+                <div class="cmd-palette-item-meta">Wed 1:00 PM · Established Client</div>
+              </div>
+              <span class="cmd-palette-item-action">Continue →</span>
+            </div>
+            <div class="cmd-palette-item cmd-palette-item--new">
+              <div class="cmd-palette-item-icon">RM</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Robert Mitchell</div>
+                <div class="cmd-palette-item-meta">Wed 3:00 PM · New Client</div>
+              </div>
+              <span class="cmd-palette-item-action">Start →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">SK</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Sarah Kim</div>
+                <div class="cmd-palette-item-meta">Thu 9:30 AM · Family Session</div>
+              </div>
+              <span class="cmd-palette-item-action">Continue →</span>
+            </div>
+            <div class="cmd-palette-item cmd-palette-item--new">
+              <div class="cmd-palette-item-icon">DP</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">David Park</div>
+                <div class="cmd-palette-item-meta">Thu 11:00 AM · Crisis Intervention</div>
+              </div>
+              <span class="cmd-palette-item-action">Start →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">EN</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Emily Nguyen</div>
+                <div class="cmd-palette-item-meta">Thu 2:00 PM · Telehealth</div>
+              </div>
+              <span class="cmd-palette-item-action">Continue →</span>
+            </div>
+          </div>
+        </div>
+        <!-- Recent column -->
+        <div class="cmd-palette-col">
+          <div class="cmd-palette-col-header">Recent</div>
+          <div class="cmd-palette-list">
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">MJ</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">María José Martinez-O'Connor</div>
+                <div class="cmd-palette-item-meta">Progress Note · Apr 15</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">JS</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">John Smith</div>
+                <div class="cmd-palette-item-meta">SOAP Note · Apr 14</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">JD</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Jane Doe</div>
+                <div class="cmd-palette-item-meta">Quick Note · Apr 14</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">MJ</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">María José Martinez-O'Connor</div>
+                <div class="cmd-palette-item-meta">Progress Note · Apr 10</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">AC</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Alex Chen</div>
+                <div class="cmd-palette-item-meta">Case Management · Apr 9</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">LW</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Lisa Wang</div>
+                <div class="cmd-palette-item-meta">Complete Evaluation · Apr 8</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">RM</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Robert Mitchell</div>
+                <div class="cmd-palette-item-meta">Discharge Summary · Apr 7</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">SK</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Sarah Kim</div>
+                <div class="cmd-palette-item-meta">Couples/Family Therapy · Apr 5</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">DP</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">David Park</div>
+                <div class="cmd-palette-item-meta">Clinical Message · Apr 4</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+            <div class="cmd-palette-item">
+              <div class="cmd-palette-item-icon">EN</div>
+              <div class="cmd-palette-item-content">
+                <div class="cmd-palette-item-title">Emily Nguyen</div>
+                <div class="cmd-palette-item-meta">Primary Care Note · Apr 3</div>
+              </div>
+              <span class="cmd-palette-item-action">Open →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cmd-palette-footer">
+        <div class="cmd-palette-footer-hints">
+          <span class="cmd-palette-footer-hint"><kbd>↑↓</kbd> Navigate</span>
+          <span class="cmd-palette-footer-hint"><kbd>←→</kbd> Switch column</span>
+          <span class="cmd-palette-footer-hint"><kbd>↵</kbd> Open</span>
+        </div>
+        <span>⌘K to toggle</span>
+      </div>
+    </div>
+  </div>
+
   <script>
     /**
      * ICANotes Demographics Prototype
@@ -2436,15 +2836,44 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
         editButtons.forEach(button => {
           button.addEventListener('click', function (e) {
             e.preventDefault();
+            const tooltip = this.dataset.tooltip;
             const section = this.closest('.tile-card');
+            const collapsible = this.closest('.collapsible-card');
             const row = this.closest('tr');
+            const notesHeader = this.closest('.scheduling-notes-header');
+            const identityActions = this.closest('.identity-actions');
+
+            // Handle specific tooltip actions
+            if (tooltip === 'New Appointment') {
+              alert('Schedule new appointment for María José Martinez-O\'Connor');
+              return;
+            }
+            if (tooltip === 'History') {
+              alert('View appointment history for María José Martinez-O\'Connor');
+              return;
+            }
 
             if (row) {
-              const value = row.cells[0]?.textContent?.trim() || 'Contact';
-              alert(`Edit: ${value}`);
+              // Table row edit (contacts)
+              const label = row.cells[0]?.textContent?.trim() || 'Contact';
+              alert(`Edit ${label} contact information`);
+            } else if (notesHeader) {
+              // Scheduling notes edit
+              alert('Edit scheduling notes');
+            } else if (identityActions) {
+              // Identity/hero edit
+              alert('Edit patient identity information');
+            } else if (collapsible) {
+              // Collapsible section edit
+              const title = collapsible.querySelector('.collapsible-title')?.textContent || 'Section';
+              alert(`Edit ${title}`);
+            } else if (section) {
+              // Card section edit
+              const sectionTitle = section.querySelector('.section-title')?.textContent ||
+                section.querySelector('h2')?.textContent || 'Section';
+              alert(`Edit ${sectionTitle}`);
             } else {
-              const sectionTitle = section?.querySelector('.section-title')?.textContent || 'Section';
-              alert(`Edit ${sectionTitle} Modal`);
+              alert('Edit');
             }
           });
         });
@@ -2637,8 +3066,60 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
         initCollapsibles();
         initStatusDropdown();
         initDragDropTabs();
+        initCommandPalette();
 
-        console.log('Demographics Prototype v004 initialized');
+        console.log('Demographics Prototype v009 initialized');
+      }
+
+      /**
+       * Command Palette (⌘K)
+       * Quick access to Next appointments and Recent notes
+       */
+      function initCommandPalette() {
+        const backdrop = document.getElementById('cmdPalette');
+        if (!backdrop) return;
+
+        const input = backdrop.querySelector('input');
+        const items = backdrop.querySelectorAll('.cmd-palette-item');
+
+        // Toggle with Cmd+K (Mac) or Ctrl+K (Windows)
+        document.addEventListener('keydown', (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            backdrop.classList.toggle('open');
+            if (backdrop.classList.contains('open')) {
+              input?.focus();
+            }
+          }
+          // Close on Escape
+          if (e.key === 'Escape' && backdrop.classList.contains('open')) {
+            backdrop.classList.remove('open');
+          }
+        });
+
+        // Close on backdrop click
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) {
+            backdrop.classList.remove('open');
+          }
+        });
+
+        // Item click
+        items.forEach(item => {
+          item.addEventListener('click', () => {
+            const title = item.querySelector('.cmd-palette-item-title')?.textContent;
+            const meta = item.querySelector('.cmd-palette-item-meta')?.textContent;
+            const action = item.querySelector('.cmd-palette-item-action')?.textContent?.replace(' →', '') || 'Open';
+            const isNext = item.closest('.cmd-palette-col')?.querySelector('.cmd-palette-col-header')?.textContent === 'Next';
+
+            if (isNext) {
+              alert(`${action} note for ${title}\nAppointment: ${meta}`);
+            } else {
+              alert(`Open note for ${title}\n${meta}`);
+            }
+            backdrop.classList.remove('open');
+          });
+        });
       }
 
       // Initialize when DOM is ready
