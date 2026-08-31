@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view, go to icons, hero,headers.accordian heights?-->
+v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view, go to icons, hero,headers.accordian heights?-->
 
 <head>
   <meta charset="UTF-8">
@@ -39,6 +39,8 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
       /* 4.5:1 */
       --border-light: hwb(0 78% 22%);
       /* Lighter dividers */
+      --border-btn: hsl(0, 0%, 59%);
+      /* Button borders - 3:1 against white */
 
       /* Chips - borders 3:1 against row hover (#f7f7f7) */
       --chip-preferred-bg: hsl(209, 100%, 92%);
@@ -1041,7 +1043,7 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
 
     .btn-outline {
       background: var(--bg-surface);
-      border-color: var(--border-light);
+      border-color: var(--border-btn);
       color: var(--text-2);
     }
 
@@ -1058,8 +1060,8 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
       width: 28px;
       height: 28px;
       padding: 0;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-light);
+      background: hsl(0, 0%, 98%);
+      border: 1px solid var(--border-btn);
       border-radius: var(--rad);
       color: var(--text-3);
       cursor: pointer;
@@ -1068,9 +1070,13 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
     }
 
     .btn-icon:hover {
-      background: var(--bg-subtle);
-      border-color: var(--border);
+      background: hsl(0, 0%, 95%);
+      border-color: hsl(0, 0%, 50%);
       color: var(--text-1);
+    }
+
+    .btn-icon:active {
+      background: hsl(0, 0%, 92%);
     }
 
     .btn-icon:focus-visible {
@@ -1308,7 +1314,7 @@ v4, EIE?, actvity monitor, notes area/scroll/content pressure testing, .../view,
       font-weight: 500;
       color: var(--text-1);
       background: var(--bg-surface);
-      border: 1px solid var(--border-light);
+      border: 1px solid var(--border-btn);
       border-radius: var(--rad);
       cursor: pointer;
     }
