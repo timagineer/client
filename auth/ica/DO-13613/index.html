@@ -97,6 +97,18 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       --appt-noshow-fg: oklch(48.2% 0.245 27.325);
       --appt-noshow-bg: oklch(97% 0.03 27.325);
 
+      /* Appointment Types (from cal.html) */
+      --appt-type-established-fg: oklch(52% 0.16 234);
+      --appt-type-intake-fg: oklch(52% 0.16 260);
+      --appt-type-group-fg: oklch(52% 0.16 310);
+      --appt-type-crisis-fg: oklch(52% 0.16 357);
+      --appt-type-evaluation-fg: oklch(52% 0.16 75);
+      --appt-type-newclient-fg: oklch(55% 0.18 148);
+      --appt-type-medmgmt-fg: oklch(52% 0.16 100);
+      --appt-type-followup-fg: oklch(52% 0.16 128);
+      --appt-type-family-fg: oklch(52% 0.16 170);
+      --appt-type-telehealth-fg: oklch(52% 0.16 205);
+
       /* Wireframe grays */
       --wire-bg: hsl(0, 0%, 91%);
       --wire-fg: hsl(0, 0%, 40%);
@@ -1605,9 +1617,175 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       color: var(--text-1);
     }
 
+    .scheduling-type-wrap {
+      position: relative;
+    }
+
     .scheduling-type {
-      font-size: var(--text-base);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: var(--text-sm);
       color: var(--text-1);
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+
+    /* Type chip bg colors by data-type */
+    .scheduling-type[data-type="established"] {
+      background: oklch(97% 0.03 234);
+    }
+
+    .scheduling-type[data-type="intake"] {
+      background: oklch(97% 0.03 260);
+    }
+
+    .scheduling-type[data-type="group"] {
+      background: oklch(97% 0.03 310);
+    }
+
+    .scheduling-type[data-type="crisis"] {
+      background: oklch(97% 0.03 357);
+    }
+
+    .scheduling-type[data-type="evaluation"] {
+      background: oklch(97% 0.03 75);
+    }
+
+    .scheduling-type[data-type="newclient"] {
+      background: oklch(97% 0.03 148);
+    }
+
+    .scheduling-type[data-type="medmgmt"] {
+      background: oklch(97% 0.03 100);
+    }
+
+    .scheduling-type[data-type="followup"] {
+      background: oklch(97% 0.03 128);
+    }
+
+    .scheduling-type[data-type="family"] {
+      background: oklch(97% 0.03 170);
+    }
+
+    .scheduling-type[data-type="telehealth"] {
+      background: oklch(97% 0.03 205);
+    }
+
+    .scheduling-type:hover {
+      filter: brightness(0.97);
+    }
+
+    .scheduling-type .type-square {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Type colors by data-type */
+    .scheduling-type[data-type="established"] .type-square {
+      background: var(--appt-type-established-fg);
+    }
+
+    .scheduling-type[data-type="intake"] .type-square {
+      background: var(--appt-type-intake-fg);
+    }
+
+    .scheduling-type[data-type="group"] .type-square {
+      background: var(--appt-type-group-fg);
+    }
+
+    .scheduling-type[data-type="crisis"] .type-square {
+      background: var(--appt-type-crisis-fg);
+    }
+
+    .scheduling-type[data-type="evaluation"] .type-square {
+      background: var(--appt-type-evaluation-fg);
+    }
+
+    .scheduling-type[data-type="newclient"] .type-square {
+      background: var(--appt-type-newclient-fg);
+    }
+
+    .scheduling-type[data-type="medmgmt"] .type-square {
+      background: var(--appt-type-medmgmt-fg);
+    }
+
+    .scheduling-type[data-type="followup"] .type-square {
+      background: var(--appt-type-followup-fg);
+    }
+
+    .scheduling-type[data-type="family"] .type-square {
+      background: var(--appt-type-family-fg);
+    }
+
+    .scheduling-type[data-type="telehealth"] .type-square {
+      background: var(--appt-type-telehealth-fg);
+    }
+
+    /* Type dropdown */
+    .type-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      padding: 4px;
+      z-index: 1000;
+      min-width: 180px;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition: opacity 160ms cubic-bezier(0.33, 1, 0.68, 1), transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
+      pointer-events: none;
+    }
+
+    .type-dropdown.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .type-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 5px;
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+
+    .type-dropdown-item:hover {
+      background: hsl(0, 0%, 97%);
+    }
+
+    .type-dropdown-item.selected {
+      font-weight: 500;
+    }
+
+    .type-dropdown-item .type-square {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .type-dropdown-item .type-check {
+      margin-left: auto;
+      opacity: 0;
+      font-size: 13px;
+      color: var(--text-1);
+    }
+
+    .type-dropdown-item.selected .type-check {
+      opacity: 1;
     }
 
     /* Status chip - tinted pill, clickable */
@@ -1777,8 +1955,8 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
     .status-dropdown-item .status-check {
       margin-left: auto;
       opacity: 0;
-      font-size: 11px;
-      color: var(--text-2);
+      font-size: 13px;
+      color: var(--text-1);
     }
 
     .status-dropdown-item.selected .status-check {
@@ -2252,7 +2430,64 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
                           </div>
                         </div>
                       </div>
-                      <span class="scheduling-type">Follow Up</span>
+                      <div class="scheduling-type-wrap">
+                        <span class="scheduling-type" data-type="evaluation">
+                          <span class="type-square"></span>
+                          <span class="type-label">Complete Evaluation</span>
+                        </span>
+                        <div class="type-dropdown" id="typeDropdown">
+                          <div class="type-dropdown-item" data-type="established">
+                            <span class="type-square" style="background: var(--appt-type-established-fg);"></span>
+                            <span>Established Client</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="intake">
+                            <span class="type-square" style="background: var(--appt-type-intake-fg);"></span>
+                            <span>Intake Assessment</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="group">
+                            <span class="type-square" style="background: var(--appt-type-group-fg);"></span>
+                            <span>Group Therapy</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="crisis">
+                            <span class="type-square" style="background: var(--appt-type-crisis-fg);"></span>
+                            <span>Crisis Intervention</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item selected" data-type="evaluation">
+                            <span class="type-square" style="background: var(--appt-type-evaluation-fg);"></span>
+                            <span>Complete Evaluation</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="newclient">
+                            <span class="type-square" style="background: var(--appt-type-newclient-fg);"></span>
+                            <span>New Client</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="medmgmt">
+                            <span class="type-square" style="background: var(--appt-type-medmgmt-fg);"></span>
+                            <span>Med Management</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="followup">
+                            <span class="type-square" style="background: var(--appt-type-followup-fg);"></span>
+                            <span>Follow Up</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="family">
+                            <span class="type-square" style="background: var(--appt-type-family-fg);"></span>
+                            <span>Family Session</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                          <div class="type-dropdown-item" data-type="telehealth">
+                            <span class="type-square" style="background: var(--appt-type-telehealth-fg);"></span>
+                            <span>Telehealth</span>
+                            <span class="type-check">✓</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -2901,6 +3136,8 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
         // Toggle dropdown on chip click
         chip.addEventListener('click', (e) => {
           e.stopPropagation();
+          // Close type dropdown if open
+          document.querySelector('.type-dropdown')?.classList.remove('open');
           dropdown.classList.toggle('open');
         });
 
@@ -2925,6 +3162,50 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
         // Close on click outside
         document.addEventListener('click', (e) => {
           if (!e.target.closest('.scheduling-status-wrap')) {
+            dropdown.classList.remove('open');
+          }
+        });
+      }
+
+      /**
+       * Type Dropdown
+       */
+      function initTypeDropdown() {
+        const wrap = document.querySelector('.scheduling-type-wrap');
+        if (!wrap) return;
+
+        const chip = wrap.querySelector('.scheduling-type');
+        const dropdown = wrap.querySelector('.type-dropdown');
+
+        // Toggle dropdown on chip click
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          // Close status dropdown if open
+          document.querySelector('.status-dropdown')?.classList.remove('open');
+          dropdown.classList.toggle('open');
+        });
+
+        // Handle item selection
+        dropdown.addEventListener('click', (e) => {
+          const item = e.target.closest('.type-dropdown-item');
+          if (!item) return;
+
+          // Update selected state
+          dropdown.querySelectorAll('.type-dropdown-item').forEach(i => i.classList.remove('selected'));
+          item.classList.add('selected');
+
+          // Update the chip via data-type (CSS handles colors)
+          const label = chip.querySelector('.type-label');
+          label.textContent = item.querySelector('span:nth-child(2)').textContent;
+          chip.dataset.type = item.dataset.type;
+
+          // Close dropdown
+          dropdown.classList.remove('open');
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.scheduling-type-wrap')) {
             dropdown.classList.remove('open');
           }
         });
@@ -3074,6 +3355,7 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
         initEditButtons();
         initCollapsibles();
         initStatusDropdown();
+        initTypeDropdown();
         initDragDropTabs();
         initCommandPalette();
         initAddView();
