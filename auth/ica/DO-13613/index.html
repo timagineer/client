@@ -2742,7 +2742,7 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
           <span class="cmd-palette-footer-hint"><kbd>←→</kbd> Switch column</span>
           <span class="cmd-palette-footer-hint"><kbd>↵</kbd> Open</span>
         </div>
-        <span>⌘K to toggle</span>
+        <span class="cmd-palette-shortcut">⌘K to toggle</span>
       </div>
     </div>
   </div>
@@ -3101,7 +3101,7 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       }
 
       /**
-       * Command Palette (⌘K)
+       * Command Palette (⌘K / Ctrl+K)
        * Quick access to Next appointments and Recent notes
        */
       function initCommandPalette() {
@@ -3110,6 +3110,13 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
 
         const input = backdrop.querySelector('input');
         const items = backdrop.querySelectorAll('.cmd-palette-item');
+        const shortcutLabel = backdrop.querySelector('.cmd-palette-shortcut');
+
+        // Detect platform and update shortcut label
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        if (shortcutLabel) {
+          shortcutLabel.textContent = isMac ? '⌘K to toggle' : 'Ctrl+K to toggle';
+        }
 
         // Toggle with Cmd+K (Mac) or Ctrl+K (Windows)
         document.addEventListener('keydown', (e) => {
