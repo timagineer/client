@@ -569,7 +569,11 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       gap: var(--sp-4);
     }
 
-    .identity-name-group {}
+    .identity-name-group {
+      display: flex;
+      align-items: center;
+      min-height: 100%;
+    }
 
     .identity-name {
       font-size: 20px;
@@ -577,11 +581,24 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       color: var(--text-2);
       margin: 0;
       line-height: 1.125;
+      position: relative;
     }
 
     .identity-preferred {
       font-weight: 400;
       color: var(--text-2);
+    }
+
+    .identity-flag {
+      position: absolute;
+      top: -8px;
+      margin-left: 2px;
+      color: hsl(0, 72%, 51%);
+    }
+
+    .identity-flag svg {
+      width: 14px;
+      height: 14px;
     }
 
     .identity-subtitle {
@@ -715,8 +732,7 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
 
     .collapsible-body {
       display: none;
-      padding: var(--sp-4);
-      padding-left: calc(16px + var(--sp-2) + var(--sp-4));
+      padding: var(--sp-5);
     }
 
     .collapsible-card.expanded .collapsible-body {
@@ -851,6 +867,11 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       padding-bottom: var(--sp-3);
     }
 
+    /* Contact table first column wider */
+    .tile-contact .data-table td:first-child {
+      width: 55%;
+    }
+
     .subsection-title {
       font-size: 1rem;
       font-weight: 600;
@@ -897,6 +918,15 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       font-size: 1rem;
       color: var(--text-1);
       margin: 0;
+      background: hsl(0, 0%, 97%);
+      border: 1px solid hsl(0, 0%, 97%);
+      padding: 0 10px;
+      border-radius: 4px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
     }
 
     .field-value.empty {
@@ -937,11 +967,6 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
       text-align: right;
       width: auto;
       padding-right: var(--sp-2);
-    }
-
-    /* Contact table first column wider */
-    .tile-contact .data-table td:first-child {
-      width: 55%;
     }
 
     .data-table th,
@@ -2128,7 +2153,8 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
     }
 
     .insurance-details .field-item:nth-child(2n) {
-      text-align: right;
+      text-align: left;
+      justify-self: end;
     }
 
     /* Primary/Secondary chips */
@@ -2308,7 +2334,9 @@ v4, EIE?, actvity widget, notes area/scroll/content pressure testing, .../view/g
             <div class="identity-hero">
               <div class="identity-main">
                 <div class="identity-name-group">
-                  <h1 class="identity-name">María José Martinez-O'Connor <span class="identity-preferred">("MJ")</span></h1>
+                  <h1 class="identity-name">María José Martinez-O'Connor <span class="identity-preferred">("MJ")</span><span class="identity-flag"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528" />
+                      </svg></span></h1>
                 </div>
                 <div class="identity-right">
                   <div class="identity-details">
