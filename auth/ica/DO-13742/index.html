@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=375, initial-scale=1.0">
-  <title>Upload Modal - iPhone SE Mock</title>
+  <title>My Documents - iPhone SE Mock</title>
   <style>
     :root {
       --primary: hsl(197, 87%, 31%);
@@ -48,12 +48,401 @@
       font-size: 16px;
       line-height: 1.5;
       color: var(--text-1);
-      background: rgba(0, 0, 0, 0.5);
+      background: var(--bg-app);
       min-height: 100vh;
+    }
+
+    /* ==========================================================================
+       App Shell
+       ========================================================================== */
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-header-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 0;
+    }
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: var(--rad);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-app);
+      color: var(--text-1);
+    }
+
+    .btn-icon:active {
+      background: hsl(0, 0%, 90%);
+    }
+
+    .btn-icon:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .btn-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ==========================================================================
+       Page Content
+       ========================================================================== */
+
+    .page-content {
+      padding: var(--sp-4);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--sp-2);
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-1);
+      margin: 0;
+    }
+
+    .page-subtitle {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      margin-bottom: var(--sp-4);
+    }
+
+    .page-subtitle a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .page-subtitle a:hover {
+      text-decoration: underline;
+    }
+
+    /* Filter */
+    .filter-row {
+      margin-bottom: var(--sp-4);
+    }
+
+    .filter-select {
+      display: block;
+      width: 100%;
+      padding: var(--sp-2) var(--sp-3);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--text-1);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    .filter-select:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+       Document Cards
+       ========================================================================== */
+
+    .doc-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .doc-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      padding: var(--sp-3);
+    }
+
+    .doc-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-2);
+    }
+
+    .doc-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: hsl(197, 50%, 95%);
+      border-radius: var(--rad);
+      color: var(--primary);
+    }
+
+    .doc-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .doc-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .doc-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-1);
+      margin: 0 0 2px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-date {
+      font-size: var(--text-xs);
+      color: var(--text-3);
+    }
+
+    .doc-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .doc-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 100px;
+    }
+
+    .doc-badge--shared {
+      background: hsl(197, 50%, 93%);
+      color: hsl(197, 87%, 28%);
+    }
+
+    .doc-badge--uploaded {
+      background: hsl(145, 50%, 93%);
+      color: hsl(145, 60%, 30%);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: var(--sp-1) var(--sp-2);
+      font-family: inherit;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--primary);
+      background: none;
+      border: none;
+      border-radius: var(--rad);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .btn-download:hover {
+      background: hsl(197, 50%, 95%);
+    }
+
+    .btn-download:active {
+      background: hsl(197, 50%, 90%);
+    }
+
+    .btn-download:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .btn-download svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ==========================================================================
+       Pagination
+       ========================================================================== */
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      margin-top: var(--sp-5);
+    }
+
+    .pagination-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .pagination-btn:hover {
+      background: var(--bg-app);
+      border-color: var(--text-3);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .pagination-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-on);
+    }
+
+    .pagination-btn:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .pagination-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ==========================================================================
+       Buttons
+       ========================================================================== */
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: var(--sp-2) var(--sp-3);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-1);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      cursor: pointer;
+      height: 36px;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-app);
+      border-color: var(--text-3);
+    }
+
+    .btn-secondary:active {
+      background: hsl(0, 0%, 90%);
+    }
+
+    .btn-secondary:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: var(--sp-2) var(--sp-4);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--primary-on);
+      background: var(--primary);
+      border: none;
+      border-radius: var(--rad);
+      cursor: pointer;
+      min-width: 80px;
+      height: 36px;
+      transition: background 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary:active {
+      background: hsl(197, 88%, 22%);
+    }
+
+    .btn-primary:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+       Modal Overlay
+       ========================================================================== */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: var(--sp-4);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
     }
 
     /* ==========================================================================
@@ -65,12 +454,17 @@
       border-radius: var(--rad);
       width: 100%;
       max-width: 343px;
-      /* iPhone SE width minus padding */
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
       overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.2s;
     }
 
-    /* Header */
+    .modal-overlay.open .upload-modal {
+      transform: scale(1);
+    }
+
+    /* Modal Header */
     .modal-header {
       display: flex;
       align-items: center;
@@ -121,7 +515,7 @@
       height: 20px;
     }
 
-    /* Body - file list */
+    /* Modal Body - file list */
     .modal-body {
       padding: var(--sp-3) var(--sp-4);
       min-height: 120px;
@@ -220,7 +614,7 @@
 
     /* Dropzone */
     .dropzone {
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -230,6 +624,10 @@
       background: hsl(0, 0%, 99%);
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
+    }
+
+    .dropzone.hidden {
+      display: none;
     }
 
     .dropzone:hover {
@@ -275,7 +673,7 @@
       line-height: 1.4;
     }
 
-    /* Footer - actions */
+    /* Modal Footer - actions */
     .modal-footer {
       display: flex;
       align-items: center;
@@ -283,94 +681,6 @@
       padding: var(--sp-3) var(--sp-4);
       border-top: 1px solid var(--border-light);
       background: var(--bg-surface);
-    }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: var(--sp-2) var(--sp-3);
-      font-family: inherit;
-      font-size: var(--text-sm);
-      font-weight: 500;
-      color: var(--text-2);
-      background: none;
-      border: none;
-      border-radius: var(--rad);
-      cursor: pointer;
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg-app);
-      color: var(--text-1);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: var(--sp-2) var(--sp-3);
-      font-family: inherit;
-      font-size: var(--text-sm);
-      font-weight: 500;
-      color: var(--text-1);
-      background: var(--bg-surface);
-      border: 1px solid var(--border-btn);
-      border-radius: var(--rad);
-      cursor: pointer;
-      height: 36px;
-      transition: background 0.1s, border-color 0.1s;
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-app);
-      border-color: var(--text-3);
-    }
-
-    .btn-secondary:active {
-      background: hsl(0, 0%, 90%);
-    }
-
-    .btn-secondary:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: var(--sp-2) var(--sp-4);
-      font-family: inherit;
-      font-size: var(--text-sm);
-      font-weight: 600;
-      color: var(--primary-on);
-      background: var(--primary);
-      border: none;
-      border-radius: var(--rad);
-      cursor: pointer;
-      min-width: 80px;
-      height: 36px;
-      transition: background 0.15s;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-primary:active {
-      background: hsl(197, 88%, 22%);
-    }
-
-    .btn-primary:disabled {
-      cursor: not-allowed;
-    }
-
-    .btn-primary:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
     }
 
     /* Loading spinner */
@@ -411,216 +721,241 @@
 
 <body>
 
-  <div class="upload-modal">
-    <!-- Header -->
-    <div class="modal-header">
-      <h2 class="modal-title">Upload</h2>
-      <button class="btn-close" aria-label="Close">
+  <!-- App Header -->
+  <header class="app-header">
+    <button class="btn-icon" aria-label="Menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" x2="20" y1="12" y2="12" />
+        <line x1="4" x2="20" y1="6" y2="6" />
+        <line x1="4" x2="20" y1="18" y2="18" />
+      </svg>
+    </button>
+    <h1 class="app-header-title">Therhappy Portal</h1>
+    <button class="btn-icon" aria-label="Log out">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" x2="9" y1="12" y2="12" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Page Content -->
+  <main class="page-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2 class="page-title">My Documents</h2>
+      <button class="btn-primary" id="openUploadBtn">Upload</button>
+    </div>
+
+    <p class="page-subtitle">Missing a document? <a href="#">Send your provider a message.</a></p>
+
+    <!-- Filter -->
+    <div class="filter-row">
+      <select class="filter-select">
+        <option>All documents</option>
+        <option>Shared by provider</option>
+        <option>Uploaded by me</option>
+      </select>
+    </div>
+
+    <!-- Document List -->
+    <div class="doc-list">
+      <!-- Document 1 -->
+      <article class="doc-card">
+        <div class="doc-card-header">
+          <div class="doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              <path d="M10 9H8" />
+              <path d="M16 13H8" />
+              <path d="M16 17H8" />
+            </svg>
+          </div>
+          <div class="doc-info">
+            <h3 class="doc-name">Treatment Plan - August 2026.pdf</h3>
+            <p class="doc-date">Shared Aug 3, 2026</p>
+          </div>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-badge doc-badge--shared">Shared</span>
+          <button class="btn-download">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Download
+          </button>
+        </div>
+      </article>
+
+      <!-- Document 2 -->
+      <article class="doc-card">
+        <div class="doc-card-header">
+          <div class="doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              <path d="M10 9H8" />
+              <path d="M16 13H8" />
+              <path d="M16 17H8" />
+            </svg>
+          </div>
+          <div class="doc-info">
+            <h3 class="doc-name">Insurance Card - Front.jpg</h3>
+            <p class="doc-date">Uploaded Jul 28, 2026</p>
+          </div>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-badge doc-badge--uploaded">Uploaded</span>
+          <button class="btn-download">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Download
+          </button>
+        </div>
+      </article>
+
+      <!-- Document 3 -->
+      <article class="doc-card">
+        <div class="doc-card-header">
+          <div class="doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              <path d="M10 9H8" />
+              <path d="M16 13H8" />
+              <path d="M16 17H8" />
+            </svg>
+          </div>
+          <div class="doc-info">
+            <h3 class="doc-name">Consent for Treatment.pdf</h3>
+            <p class="doc-date">Shared Jul 15, 2026</p>
+          </div>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-badge doc-badge--shared">Shared</span>
+          <button class="btn-download">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Download
+          </button>
+        </div>
+      </article>
+
+      <!-- Document 4 -->
+      <article class="doc-card">
+        <div class="doc-card-header">
+          <div class="doc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              <path d="M10 9H8" />
+              <path d="M16 13H8" />
+              <path d="M16 17H8" />
+            </svg>
+          </div>
+          <div class="doc-info">
+            <h3 class="doc-name">Lab Results - Quest Diagnostics.pdf</h3>
+            <p class="doc-date">Uploaded Jul 10, 2026</p>
+          </div>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-badge doc-badge--uploaded">Uploaded</span>
+          <button class="btn-download">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Download
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pagination" aria-label="Page navigation">
+      <button class="pagination-btn" disabled aria-label="Previous page">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
+          <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
-    </div>
-
-    <!-- Body -->
-    <div class="modal-body">
-      <div class="file-list" id="fileList">
-        <!-- File 1 - long filename pressure test -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">medical_records_from_previous_provider_2024.docx</span>
-            <span class="file-size">2.4 MB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 2 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">insurance_card_front.jpg</span>
-            <span class="file-size">1.2 MB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 3 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">insurance_card_back.jpg</span>
-            <span class="file-size">1.1 MB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 4 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">lab_results.pdf</span>
-            <span class="file-size">856 KB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 5 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">referral_letter_dr_johnson.pdf</span>
-            <span class="file-size">245 KB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 6 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">medication_list.xlsx</span>
-            <span class="file-size">128 KB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- File 7 -->
-        <div class="file-item">
-          <div class="file-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-              <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
-            </svg>
-          </div>
-          <div class="file-info">
-            <span class="file-name">consent_form_signed.pdf</span>
-            <span class="file-size">312 KB</span>
-          </div>
-          <button class="btn-remove" aria-label="Remove file">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Dropzone (shown when no files) -->
-      <div class="dropzone" id="dropzone">
-        <div class="dropzone-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" x2="12" y1="3" y2="15" />
-          </svg>
-        </div>
-        <div class="dropzone-text">Tap to select files</div>
-        <div class="dropzone-hint">PDF, Word, Excel, images · 20 MB max</div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="modal-footer">
-      <button class="btn-secondary" id="addBtn">Add</button>
-      <input type="file" id="fileInput" multiple hidden>
-      <button class="btn-primary" id="uploadBtn">
-        <span class="btn-text">Upload</span>
-        <div class="spinner"></div>
+      <button class="pagination-btn active" aria-current="page">1</button>
+      <button class="pagination-btn">2</button>
+      <button class="pagination-btn">3</button>
+      <button class="pagination-btn" aria-label="Next page">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m9 18 6-6-6-6" />
+        </svg>
       </button>
+    </nav>
+  </main>
+
+  <!-- Upload Modal Overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="upload-modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Upload</h2>
+        <button class="btn-close" id="closeModalBtn" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <div class="file-list hidden" id="fileList"></div>
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Select files to upload">
+          <div class="dropzone-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" x2="12" y1="3" y2="15" />
+            </svg>
+          </div>
+          <div class="dropzone-text">Tap to select files</div>
+          <div class="dropzone-hint">PDF, Word, Excel, images · 20 MB max</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-secondary" id="addBtn">Add</button>
+        <input type="file" id="fileInput" multiple hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp,.avif,.txt">
+        <button class="btn-primary" id="uploadBtn" disabled>
+          <span class="btn-text">Upload</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
+    // Elements
+    const openUploadBtn = document.getElementById('openUploadBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
     const fileList = document.getElementById('fileList');
     const dropzone = document.getElementById('dropzone');
     const uploadBtn = document.getElementById('uploadBtn');
     const addBtn = document.getElementById('addBtn');
     const fileInput = document.getElementById('fileInput');
 
-    // File icon SVG template
+    // SVG templates
     const fileIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
       <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
@@ -634,9 +969,43 @@
       <path d="m6 6 12 12"/>
     </svg>`;
 
+    // Modal controls
+    function openModal() {
+      modalOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      closeModalBtn.focus();
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      // Clear files on close
+      fileList.innerHTML = '';
+      updateState();
+      openUploadBtn.focus();
+    }
+
+    openUploadBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close on backdrop click
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    // File handling
     function formatFileSize(bytes) {
       if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+      if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
       return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
@@ -652,7 +1021,6 @@
         <button class="btn-remove" aria-label="Remove file">${removeIconSvg}</button>
       `;
 
-      // Wire up remove button
       item.querySelector('.btn-remove').addEventListener('click', () => {
         item.style.opacity = '0';
         item.style.transform = 'translateX(10px)';
@@ -671,41 +1039,32 @@
         fileList.appendChild(createFileItem(file));
       });
       updateState();
-      // Scroll to bottom to show new files
       fileList.parentElement.scrollTop = fileList.parentElement.scrollHeight;
     }
 
     function updateState() {
       const hasFiles = fileList.querySelectorAll('.file-item').length > 0;
-      dropzone.style.display = hasFiles ? 'none' : 'flex';
+      fileList.classList.toggle('hidden', !hasFiles);
+      dropzone.classList.toggle('hidden', hasFiles);
       uploadBtn.disabled = !hasFiles || uploadBtn.classList.contains('loading');
-      uploadBtn.style.opacity = hasFiles ? '1' : '0.5';
     }
 
-    // Wire Add button and dropzone to file picker
+    // File input handlers
     addBtn.addEventListener('click', () => fileInput.click());
     dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
 
     fileInput.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
       if (files.length) {
         addFiles(files);
-        fileInput.value = ''; // Reset so same file can be added again
+        fileInput.value = '';
       }
-    });
-
-    // Wire up existing remove buttons
-    document.querySelectorAll('.btn-remove').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const fileItem = e.currentTarget.closest('.file-item');
-        fileItem.style.opacity = '0';
-        fileItem.style.transform = 'translateX(10px)';
-        fileItem.style.transition = 'opacity 0.15s, transform 0.15s';
-        setTimeout(() => {
-          fileItem.remove();
-          updateState();
-        }, 150);
-      });
     });
 
     // Upload button
@@ -716,7 +1075,8 @@
 
       setTimeout(() => {
         uploadBtn.classList.remove('loading');
-        updateState();
+        closeModal();
+        // In real app, would add uploaded docs to the list
       }, 2000);
     });
 
