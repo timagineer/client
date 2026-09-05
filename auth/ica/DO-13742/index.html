@@ -207,7 +207,7 @@
       justify-content: center;
       background: hsl(197, 50%, 95%);
       border-radius: var(--rad);
-      color: var(--primary);
+      color: hsl(197, 50%, 43%);
     }
 
     .doc-icon svg {
@@ -545,7 +545,7 @@
     }
 
     .file-icon {
-      color: var(--text-3);
+      color: hsl(0, 0%, 57%);
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -771,9 +771,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
             </svg>
           </div>
           <div class="doc-info">
@@ -801,9 +798,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
             </svg>
           </div>
           <div class="doc-info">
@@ -831,9 +825,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
             </svg>
           </div>
           <div class="doc-info">
@@ -861,9 +852,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-              <path d="M10 9H8" />
-              <path d="M16 13H8" />
-              <path d="M16 17H8" />
             </svg>
           </div>
           <div class="doc-info">
@@ -919,10 +907,68 @@
 
       <!-- Body -->
       <div class="modal-body">
-        <div class="file-list hidden" id="fileList"></div>
+        <div class="file-list" id="fileList">
+          <!-- Preloaded file 1 -->
+          <div class="file-item">
+            <div class="file-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              </svg>
+            </div>
+            <div class="file-info">
+              <span class="file-name">insurance-card.jpg</span>
+              <span class="file-size">1.2 MB</span>
+            </div>
+            <button class="btn-remove" aria-label="Remove file">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+          <!-- Preloaded file 2 -->
+          <div class="file-item">
+            <div class="file-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              </svg>
+            </div>
+            <div class="file-info">
+              <span class="file-name">intake-forms-08-31-2026.docx</span>
+              <span class="file-size">845 KB</span>
+            </div>
+            <button class="btn-remove" aria-label="Remove file">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+          <!-- Preloaded file 3 -->
+          <div class="file-item">
+            <div class="file-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+              </svg>
+            </div>
+            <div class="file-info">
+              <span class="file-name">lab-results-jul-2025.pdf</span>
+              <span class="file-size">256 KB</span>
+            </div>
+            <button class="btn-remove" aria-label="Remove file">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
         <!-- Dropzone -->
-        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Select files to upload">
+        <div class="dropzone hidden" id="dropzone" tabindex="0" role="button" aria-label="Select files to upload">
           <div class="dropzone-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -1081,6 +1127,20 @@
         closeModal();
         // In real app, would add uploaded docs to the list
       }, 2000);
+    });
+
+    // Wire up preloaded remove buttons
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const item = e.currentTarget.closest('.file-item');
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(10px)';
+        item.style.transition = 'opacity 0.15s, transform 0.15s';
+        setTimeout(() => {
+          item.remove();
+          updateState();
+        }, 150);
+      });
     });
 
     // Initial state
