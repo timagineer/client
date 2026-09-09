@@ -118,6 +118,7 @@
       color: #475569;
       max-width: 65ch;
       text-wrap: balance;
+      line-height: 1.4;
     }
 
     h2 {
@@ -147,6 +148,16 @@
       margin-top: 0;
     }
 
+    .variant-unit {
+      display: block;
+    }
+
+    .variant-unit .filter-accordion,
+    .variant-unit .table-container {
+      display: block;
+      width: 100%;
+    }
+
     .table-header {
       display: flex;
       align-items: center;
@@ -157,7 +168,7 @@
 
     .mock-table {
       border-collapse: collapse;
-      width: auto;
+      width: 100%;
     }
 
     .mock-table th,
@@ -166,6 +177,7 @@
       text-align: left;
       border-bottom: 1px solid #f1f5f9;
       font-size: var(--font-size-table-cell);
+      white-space: nowrap;
     }
 
     .mock-table th {
@@ -939,6 +951,7 @@
   </style>
 </head>
 
+
 <body>
 
   <h1>Billing Worklist — Generated Claims Filter Controls</h1>
@@ -949,607 +962,587 @@
 
   <div class="variants-grid">
 
+    <!-- VARIANT 1 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>1. Radio Cards with Floating Badge</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-radio" role="radiogroup" aria-label="Filter by status">
-            <div class="filter-card-radio" data-status="pending">
-              <input type="radio" name="filter-1" id="f1-pending" value="pending">
-              <label for="f1-pending">
-                <span class="radio-visual"></span>
-                <span>To Generate</span>
-              </label>
-              <span class="badge">12</span>
-            </div>
-            <div class="filter-card-radio" data-status="errors">
-              <input type="radio" name="filter-1" id="f1-errors" value="errors" checked>
-              <label for="f1-errors">
-                <span class="radio-visual"></span>
-                <span>Errors</span>
-              </label>
-              <span class="badge">3</span>
-            </div>
-            <div class="filter-card-radio" data-status="ready">
-              <input type="radio" name="filter-1" id="f1-ready" value="ready">
-              <label for="f1-ready">
-                <span class="radio-visual"></span>
-                <span>Ready</span>
-              </label>
-              <span class="badge">8</span>
-            </div>
-            <div class="filter-card-radio" data-status="billed">
-              <input type="radio" name="filter-1" id="f1-billed" value="billed">
-              <label for="f1-billed">
-                <span class="radio-visual"></span>
-                <span>Billed</span>
-              </label>
-              <span class="badge">47</span>
-            </div>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-radio" role="radiogroup" aria-label="Filter by status">
+              <div class="filter-card-radio" data-status="pending">
+                <input type="radio" name="filter-1" id="f1-pending" value="pending">
+                <label for="f1-pending"><span class="radio-visual"></span><span>To Generate</span></label>
+                <span class="badge">12</span>
+              </div>
+              <div class="filter-card-radio" data-status="errors">
+                <input type="radio" name="filter-1" id="f1-errors" value="errors" checked>
+                <label for="f1-errors"><span class="radio-visual"></span><span>Errors</span></label>
+                <span class="badge">3</span>
+              </div>
+              <div class="filter-card-radio" data-status="ready">
+                <input type="radio" name="filter-1" id="f1-ready" value="ready">
+                <label for="f1-ready"><span class="radio-visual"></span><span>Ready</span></label>
+                <span class="badge">8</span>
+              </div>
+              <div class="filter-card-radio" data-status="billed">
+                <input type="radio" name="filter-1" id="f1-billed" value="billed">
+                <label for="f1-billed"><span class="radio-visual"></span><span>Billed</span></label>
+                <span class="badge">47</span>
+              </div>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 2 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>2. Pill Toggle with Inline Badge</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-pill">
-            <button class="filter-btn-pill" data-status="pending">To Generate <span class="badge">12</span></button>
-            <button class="filter-btn-pill selected" data-status="errors">Errors <span class="badge">3</span></button>
-            <button class="filter-btn-pill" data-status="ready">Ready <span class="badge">8</span></button>
-            <button class="filter-btn-pill" data-status="billed">Billed <span class="badge">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-pill">
+              <button class="filter-btn-pill" data-status="pending">To Generate <span class="badge">12</span></button>
+              <button class="filter-btn-pill selected" data-status="errors">Errors <span class="badge">3</span></button>
+              <button class="filter-btn-pill" data-status="ready">Ready <span class="badge">8</span></button>
+              <button class="filter-btn-pill" data-status="billed">Billed <span class="badge">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 3 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>3. Chips with Text Count, Border-Only Selection</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-chip-border">
-            <button class="filter-btn-chip-border" data-status="pending">To Generate <span class="count">12</span></button>
-            <button class="filter-btn-chip-border selected" data-status="errors">Errors <span class="count">3</span></button>
-            <button class="filter-btn-chip-border" data-status="ready">Ready <span class="count">8</span></button>
-            <button class="filter-btn-chip-border" data-status="billed">Billed <span class="count">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-chip-border">
+              <button class="filter-btn-chip-border" data-status="pending">To Generate <span class="count">12</span></button>
+              <button class="filter-btn-chip-border selected" data-status="errors">Errors <span class="count">3</span></button>
+              <button class="filter-btn-chip-border" data-status="ready">Ready <span class="count">8</span></button>
+              <button class="filter-btn-chip-border" data-status="billed">Billed <span class="count">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 4 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>4. Chips with Text Count, Full Semantic Selection</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-chip">
-            <button class="filter-btn-chip" data-status="pending">To Generate <span class="count">12</span></button>
-            <button class="filter-btn-chip selected" data-status="errors">Errors <span class="count">3</span></button>
-            <button class="filter-btn-chip" data-status="ready">Ready <span class="count">8</span></button>
-            <button class="filter-btn-chip" data-status="billed">Billed <span class="count">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-chip">
+              <button class="filter-btn-chip" data-status="pending">To Generate <span class="count">12</span></button>
+              <button class="filter-btn-chip selected" data-status="errors">Errors <span class="count">3</span></button>
+              <button class="filter-btn-chip" data-status="ready">Ready <span class="count">8</span></button>
+              <button class="filter-btn-chip" data-status="billed">Billed <span class="count">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 5 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>5. Chips with Badge, Border-Only Selection</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-chip-badge-border">
-            <button class="filter-btn-chip-badge-border" data-status="pending">To Generate <span class="badge">12</span></button>
-            <button class="filter-btn-chip-badge-border selected" data-status="errors">Errors <span class="badge">3</span></button>
-            <button class="filter-btn-chip-badge-border" data-status="ready">Ready <span class="badge">8</span></button>
-            <button class="filter-btn-chip-badge-border" data-status="billed">Billed <span class="badge">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-chip-badge-border">
+              <button class="filter-btn-chip-badge-border" data-status="pending">To Generate <span class="badge">12</span></button>
+              <button class="filter-btn-chip-badge-border selected" data-status="errors">Errors <span class="badge">3</span></button>
+              <button class="filter-btn-chip-badge-border" data-status="ready">Ready <span class="badge">8</span></button>
+              <button class="filter-btn-chip-badge-border" data-status="billed">Billed <span class="badge">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 6 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>6. Chips with Badge, Full Semantic Selection</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-chip-badge">
-            <button class="filter-btn-chip-badge" data-status="pending">To Generate <span class="badge">12</span></button>
-            <button class="filter-btn-chip-badge selected" data-status="errors">Errors <span class="badge">3</span></button>
-            <button class="filter-btn-chip-badge" data-status="ready">Ready <span class="badge">8</span></button>
-            <button class="filter-btn-chip-badge" data-status="billed">Billed <span class="badge">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-chip-badge">
+              <button class="filter-btn-chip-badge" data-status="pending">To Generate <span class="badge">12</span></button>
+              <button class="filter-btn-chip-badge selected" data-status="errors">Errors <span class="badge">3</span></button>
+              <button class="filter-btn-chip-badge" data-status="ready">Ready <span class="badge">8</span></button>
+              <button class="filter-btn-chip-badge" data-status="billed">Billed <span class="badge">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 7 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>7. Large Buttons with Floating Badge</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header" style="padding: 1.25rem;">
-          <div class="filter-group-large">
-            <button class="filter-btn-large" data-status="pending">To Generate <span class="badge">12</span></button>
-            <button class="filter-btn-large selected" data-status="errors">Errors <span class="badge">3</span></button>
-            <button class="filter-btn-large" data-status="ready">Ready <span class="badge">8</span></button>
-            <button class="filter-btn-large" data-status="billed">Billed <span class="badge">47</span></button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header" style="padding: 1.25rem;">
+            <div class="filter-group-large">
+              <button class="filter-btn-large" data-status="pending">To Generate <span class="badge">12</span></button>
+              <button class="filter-btn-large selected" data-status="errors">Errors <span class="badge">3</span></button>
+              <button class="filter-btn-large" data-status="ready">Ready <span class="badge">8</span></button>
+              <button class="filter-btn-large" data-status="billed">Billed <span class="badge">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- VARIANT 8 -->
     <div class="variant-cell">
-      <!-- ========================================== -->
       <h2>8. Icon Only with Count</h2>
-
-      <!-- Mock Filter Accordion (collapsed) -->
-      <div class="filter-accordion">
-        <div class="filter-accordion-header">
-          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 5H3" />
-            <path d="M12 19H3" />
-            <path d="M14 3v4" />
-            <path d="M16 17v4" />
-            <path d="M21 12h-9" />
-            <path d="M21 19h-5" />
-            <path d="M21 5h-7" />
-            <path d="M8 10v4" />
-            <path d="M8 12H3" />
-          </svg>
-          <span class="filter-accordion-label">Filters</span>
-          <span class="filter-accordion-badge">3</span>
-          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-header">
-          <div class="filter-group-icon">
-            <button class="filter-btn-icon" data-status="pending"><sl-icon name="hourglass-split"></sl-icon> 12</button>
-            <button class="filter-btn-icon selected" data-status="errors"><sl-icon name="exclamation-circle-fill"></sl-icon> 3</button>
-            <button class="filter-btn-icon" data-status="ready"><sl-icon name="check-circle"></sl-icon> 8</button>
-            <button class="filter-btn-icon" data-status="billed"><sl-icon name="receipt"></sl-icon> 47</button>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </div>
         </div>
-        <table class="mock-table">
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>DOS</th>
-              <th>Provider</th>
-              <th>Status</th>
-              <th>Error</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Smith, John</td>
-              <td>09/05/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Missing diagnosis code</td>
-            </tr>
-            <tr>
-              <td>Johnson, Mary</td>
-              <td>09/04/2026</td>
-              <td>Dr. Chen</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Invalid modifier</td>
-            </tr>
-            <tr>
-              <td>Davis, Robert</td>
-              <td>09/03/2026</td>
-              <td>Dr. Williams</td>
-              <td><span class="status-badge error">Error</span></td>
-              <td style="color: var(--text-error);">Authorization required</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-icon">
+              <button class="filter-btn-icon" data-status="pending"><sl-icon name="hourglass-split"></sl-icon> 12</button>
+              <button class="filter-btn-icon selected" data-status="errors"><sl-icon name="exclamation-circle-fill"></sl-icon> 3</button>
+              <button class="filter-btn-icon" data-status="ready"><sl-icon name="check-circle"></sl-icon> 8</button>
+              <button class="filter-btn-icon" data-status="billed"><sl-icon name="receipt"></sl-icon> 47</button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -1562,7 +1555,7 @@
     <div class="rationale-grid">
       <div class="rationale-item">
         <strong>1. Radio Cards</strong>
-        <p>Explicit radio affordance leaves no ambiguity about single-select behavior. Floating badge pops but costs horizontal density.</p>
+        <p>Explicit radio affordance leaves no ambiguity about single-select behavior. Floating badge pops but costs horizontal and vertical density.</p>
       </div>
       <div class="rationale-item">
         <strong>2. Pill Toggle</strong>
@@ -1582,7 +1575,7 @@
       </div>
       <div class="rationale-item">
         <strong>7. Large + Floating Badge</strong>
-        <p>High visual impact—badges really pop. But costs the most space and floating badges break the horizontal rhythm.</p>
+        <p>High visual impact—badges really pop. But costs the most space (horizontal and vertical) and floating badges break the horizontal rhythm.</p>
       </div>
       <div class="rationale-item">
         <strong>8. Icon + Count</strong>
