@@ -1,1 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing Worklist — Generated Claims Filter Controls</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/light.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace-autoloader.js"></script>
+  <style>
+    :root {
+      /* ===========================================
+         COLOR RAMPS (OKLCH)
+         =========================================== */
+
+      /* Neutral */
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      /* Error - Hue 8.96° (red) */
+      --error-40: oklch(0.5192 0.1790 8.40);
+      --error-50: oklch(0.6068 0.1790 8.96);
+      --error-60: oklch(0.6996 0.1615 9.51);
+      --error-90: oklch(0.9542 0.0229 11.18);
+      --error-95: oklch(0.9772 0.0100 11.46);
+
+      /* Warning - Hue 38.96° (amber) */
+      --warning-40: oklch(0.5192 0.1544 38.40);
+      --warning-50: oklch(0.6068 0.1745 38.96);
+      --warning-60: oklch(0.6996 0.1744 39.51);
+      --warning-90: oklch(0.9542 0.0237 41.18);
+      --warning-95: oklch(0.9772 0.0100 41.46);
+
+      /* Success - Green */
+      --success-40: oklch(0.5192 0.1349 127.94);
+      --success-50: oklch(0.6068 0.1586 128.61);
+      --success-60: oklch(0.6996 0.1808 129.27);
+      --success-90: oklch(0.9542 0.0515 131.27);
+      --success-95: oklch(0.9772 0.0100 131.61);
+
+      /* Info - Hue 248.96° (blue-violet) */
+      --info-40: oklch(0.5192 0.0906 248.51);
+      --info-50: oklch(0.6068 0.0811 248.96);
+      --info-60: oklch(0.6996 0.0679 249.40);
+      --info-90: oklch(0.9542 0.0186 250.74);
+      --info-95: oklch(0.9772 0.0100 250.96);
+
+      /* ===========================================
+         SEMANTIC COLOR ALIASES
+         =========================================== */
+      --color-neutral: var(--neutral-50);
+      --color-neutral-bg: var(--neutral-95);
+      --color-error: var(--error-50);
+      --color-error-bg: var(--error-95);
+      --color-error-light: var(--error-90);
+      --color-warning: var(--warning-50);
+      --color-warning-bg: var(--warning-95);
+      --color-warning-light: var(--warning-90);
+      --color-success: var(--success-50);
+      --color-success-bg: var(--success-95);
+      --color-success-light: var(--success-90);
+      --color-info: var(--info-50);
+      --color-info-bg: var(--info-95);
+
+      /* Text colors for use on white/light backgrounds (WCAG 1.4.3: 4.5:1)
+         -50 (L=0.6068) fails on white; -40 (L=0.5192) passes */
+      --text-error: var(--error-40);
+      --text-warning: var(--warning-40);
+      --text-success: var(--success-40);
+      --text-info: var(--info-40);
+
+      /* Badge colors - use -40 stops for white text contrast (WCAG 1.4.3: 4.5:1)
+         -50 (L=0.6068) fails against white; -40 (L=0.5192) passes */
+      --badge-error: var(--error-40);
+      --badge-warning: var(--warning-40);
+      --badge-success: var(--success-40);
+      --badge-info: var(--info-40);
+
+      /* Typography tokens - CONSISTENT throughout */
+      --font-size-filter: 0.875rem;
+      /* 14px - filter labels (controls) */
+      --font-size-badge: 0.75rem;
+      /* 12px - badge counts */
+      --font-size-table-cell: 1rem;
+      /* 16px - table body (content) */
+      --font-size-table-head: 0.75rem;
+      /* 12px - table headers */
+      --font-weight-filter: 500;
+      --font-weight-badge: 600;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      padding: 2rem;
+      color: #1e293b;
+      font-size: 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .context-note {
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      color: #475569;
+      max-width: 65ch;
+      text-wrap: balance;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 2.5rem 0 0.75rem;
+    }
+
+    /* ==========================================
+       TABLE CONTEXT
+       ========================================== */
+    .table-container {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+
+    .variants-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .variant-cell h2 {
+      margin-top: 0;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .mock-table {
+      border-collapse: collapse;
+      width: auto;
+    }
+
+    .mock-table th,
+    .mock-table td {
+      padding: 0.875rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: var(--font-size-table-cell);
+    }
+
+    .mock-table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+      font-size: var(--font-size-table-head);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .mock-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mock-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.625rem;
+      border-radius: 12px;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-badge);
+    }
+
+    .status-badge.error {
+      background: var(--color-error-light);
+      color: var(--text-error);
+    }
+
+    /* ==========================================
+       A: RADIO CARDS (with floating badge)
+       My pick - explicit selection + proper a11y
+       ========================================== */
+    .filter-group-radio {
+      display: flex;
+      gap: 1rem;
+      /* wider gap for floating badges */
+    }
+
+    .filter-card-radio {
+      position: relative;
+    }
+
+    .filter-card-radio input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .filter-card-radio label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      /* tighter gap between radio and label */
+      padding: 0.625rem 0.875rem;
+      /* less left padding */
+      padding-right: 1.25rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-card-radio label:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .filter-card-radio .radio-visual {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .filter-card-radio .radio-visual::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+
+    .filter-card-radio .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-card-radio[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-card-radio[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-card-radio[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-card-radio[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    .filter-card-radio input:checked+label {
+      border-color: var(--selected-color, var(--color-info));
+      background: var(--selected-bg, var(--color-info-bg));
+      color: #1e293b;
+    }
+
+    .filter-card-radio input:checked+label .radio-visual {
+      border-color: var(--selected-color, var(--color-info));
+    }
+
+    .filter-card-radio input:checked+label .radio-visual::after {
+      background: var(--selected-color, var(--color-info));
+    }
+
+    .filter-card-radio[data-status="pending"] {
+      --selected-color: var(--color-info);
+      --selected-bg: var(--color-info-bg);
+    }
+
+    .filter-card-radio[data-status="errors"] {
+      --selected-color: var(--color-error);
+      --selected-bg: var(--color-error-bg);
+    }
+
+    .filter-card-radio[data-status="ready"] {
+      --selected-color: var(--color-warning);
+      --selected-bg: var(--color-warning-bg);
+    }
+
+    .filter-card-radio[data-status="billed"] {
+      --selected-color: var(--color-success);
+      --selected-bg: var(--color-success-bg);
+    }
+
+    .filter-card-radio input:focus-visible+label {
+      outline: 2px solid var(--color-info);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================
+       B: PILL TOGGLE (iOS-style segmented)
+       ========================================== */
+    .filter-group-pill {
+      display: inline-flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .filter-btn-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-pill:hover:not(.selected) {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .filter-btn-pill.selected {
+      background: #fff;
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-btn-pill .badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-btn-pill[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-btn-pill[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-btn-pill[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-btn-pill[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    /* ==========================================
+       C: SEMANTIC CHIPS
+       ========================================== */
+    .filter-group-chip {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      background: #f1f5f9;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-chip:hover:not(.selected) {
+      background: #e2e8f0;
+    }
+
+    .filter-btn-chip .count {
+      font-weight: var(--font-weight-badge);
+    }
+
+    .filter-btn-chip[data-status="pending"].selected {
+      background: var(--color-info-bg);
+      border-color: var(--color-info);
+      color: var(--text-info);
+    }
+
+    .filter-btn-chip[data-status="errors"].selected {
+      background: var(--color-error-bg);
+      border-color: var(--color-error);
+      color: var(--text-error);
+    }
+
+    .filter-btn-chip[data-status="ready"].selected {
+      background: var(--color-warning-bg);
+      border-color: var(--color-warning);
+      color: var(--text-warning);
+    }
+
+    .filter-btn-chip[data-status="billed"].selected {
+      background: var(--color-success-bg);
+      border-color: var(--color-success);
+      color: var(--text-success);
+    }
+
+    /* ==========================================
+       CHIPS + TEXT COUNT (border-only selection)
+       ========================================== */
+    .filter-group-chip-border {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn-chip-border {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      background: #f1f5f9;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-chip-border:hover:not(.selected) {
+      background: #e2e8f0;
+    }
+
+    .filter-btn-chip-border .count {
+      font-weight: var(--font-weight-badge);
+    }
+
+    .filter-btn-chip-border[data-status="pending"].selected {
+      background: #fff;
+      border-color: var(--color-info);
+    }
+
+    .filter-btn-chip-border[data-status="errors"].selected {
+      background: #fff;
+      border-color: var(--color-error);
+    }
+
+    .filter-btn-chip-border[data-status="ready"].selected {
+      background: #fff;
+      border-color: var(--color-warning);
+    }
+
+    .filter-btn-chip-border[data-status="billed"].selected {
+      background: #fff;
+      border-color: var(--color-success);
+    }
+
+    /* ==========================================
+       CHIPS + BADGE (full semantic selection)
+       ========================================== */
+    .filter-group-chip-badge {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn-chip-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      background: #f1f5f9;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-chip-badge:hover:not(.selected) {
+      background: #e2e8f0;
+    }
+
+    .filter-btn-chip-badge .badge {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-btn-chip-badge[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-btn-chip-badge[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-btn-chip-badge[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-btn-chip-badge[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    .filter-btn-chip-badge[data-status="pending"].selected {
+      background: var(--color-info-bg);
+      border-color: var(--color-info);
+      color: var(--text-info);
+    }
+
+    .filter-btn-chip-badge[data-status="errors"].selected {
+      background: var(--color-error-bg);
+      border-color: var(--color-error);
+      color: var(--text-error);
+    }
+
+    .filter-btn-chip-badge[data-status="ready"].selected {
+      background: var(--color-warning-bg);
+      border-color: var(--color-warning);
+      color: var(--text-warning);
+    }
+
+    .filter-btn-chip-badge[data-status="billed"].selected {
+      background: var(--color-success-bg);
+      border-color: var(--color-success);
+      color: var(--text-success);
+    }
+
+    /* ==========================================
+       CHIPS + BADGE (border-only selection)
+       ========================================== */
+    .filter-group-chip-badge-border {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn-chip-badge-border {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      background: #f1f5f9;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #64748b;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-chip-badge-border:hover:not(.selected) {
+      background: #e2e8f0;
+    }
+
+    .filter-btn-chip-badge-border .badge {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-btn-chip-badge-border[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-btn-chip-badge-border[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-btn-chip-badge-border[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-btn-chip-badge-border[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    .filter-btn-chip-badge-border[data-status="pending"].selected {
+      background: #fff;
+      border-color: var(--color-info);
+    }
+
+    .filter-btn-chip-badge-border[data-status="errors"].selected {
+      background: #fff;
+      border-color: var(--color-error);
+    }
+
+    .filter-btn-chip-badge-border[data-status="ready"].selected {
+      background: #fff;
+      border-color: var(--color-warning);
+    }
+
+    .filter-btn-chip-badge-border[data-status="billed"].selected {
+      background: #fff;
+      border-color: var(--color-success);
+    }
+
+    /* ==========================================
+       LARGE BUTTONS + FLOATING BADGE
+       ========================================== */
+    .filter-group-large {
+      display: flex;
+      gap: 1rem;
+      /* wider gap for floating badges */
+    }
+
+    .filter-btn-large {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 100px;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 8px;
+      background: #e9ecef;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #6c757d;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-large:hover:not(.selected) {
+      background: #dee2e6;
+    }
+
+    .filter-btn-large .badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      min-width: 26px;
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 13px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-btn-large[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-btn-large[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-btn-large[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-btn-large[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    .filter-btn-large.selected {
+      background: #fff;
+      box-shadow: 0 0 0 3px var(--selected-ring, var(--color-info));
+      color: #1e293b;
+    }
+
+    .filter-btn-large[data-status="pending"].selected {
+      --selected-ring: var(--color-info);
+    }
+
+    .filter-btn-large[data-status="errors"].selected {
+      --selected-ring: var(--color-error);
+    }
+
+    .filter-btn-large[data-status="ready"].selected {
+      --selected-ring: var(--color-warning);
+    }
+
+    .filter-btn-large[data-status="billed"].selected {
+      --selected-ring: var(--color-success);
+    }
+
+    /* ==========================================
+       E: MINIMAL ICON + COUNT
+       ========================================== */
+    .filter-group-icon {
+      display: flex;
+      gap: 0.25rem;
+      background: #fff;
+      padding: 0.25rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .filter-btn-icon {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-badge);
+      color: #94a3b8;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-icon:hover:not(.selected) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .filter-btn-icon sl-icon {
+      font-size: 1rem;
+    }
+
+    .filter-btn-icon.selected {
+      color: var(--selected-color, #1e293b);
+      background: var(--selected-bg, #f1f5f9);
+    }
+
+    .filter-btn-icon[data-status="pending"].selected {
+      --selected-color: var(--color-info);
+      --selected-bg: var(--color-info-bg);
+    }
+
+    .filter-btn-icon[data-status="errors"].selected {
+      --selected-color: var(--color-error);
+      --selected-bg: var(--color-error-bg);
+    }
+
+    .filter-btn-icon[data-status="ready"].selected {
+      --selected-color: var(--color-warning);
+      --selected-bg: var(--color-warning-bg);
+    }
+
+    .filter-btn-icon[data-status="billed"].selected {
+      --selected-color: var(--color-success);
+      --selected-bg: var(--color-success-bg);
+    }
+
+    /* ==========================================
+       HIDDEN RATIONALE (press 'r' to reveal)
+       ========================================== */
+    .rationale {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      border-radius: 12px;
+      color: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .rationale.hidden {
+      display: none;
+    }
+
+    .rationale h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1.125rem;
+      color: #fff;
+    }
+
+    .rationale-goal {
+      margin: 0 0 1.5rem;
+      font-size: 1rem;
+      color: #e2e8f0;
+    }
+
+    .rationale-goal strong {
+      color: #fff;
+    }
+
+    .rationale-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .rationale-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .rationale-item strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      font-size: 0.875rem;
+    }
+
+    .rationale-item p {
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+
+    .rationale-item.winner {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .rationale-item.winner strong {
+      color: #4ade80;
+    }
+
+    .rationale-item.winner p {
+      color: #bbf7d0;
+    }
+
+    /* ==========================================
+       MOCK FILTER ACCORDION (Kendo PanelBar style)
+       ========================================== */
+    .filter-accordion {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-accordion-header {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .filter-accordion-header:hover {
+      background: #f8fafc;
+    }
+
+    .filter-accordion-icon {
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .filter-accordion-label {
+      font-size: var(--font-size-filter);
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .filter-accordion-badge {
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      background: var(--badge-info);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-accordion-chevron {
+      margin-left: auto;
+      color: #94a3b8;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .filter-accordion.open .filter-accordion-chevron {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Billing Worklist — Generated Claims Filter Controls</h1>
+
+  <p class="context-note">Filter controls for Generated Claims results in the billing worklist. Placed above table (not in accordion). Single-select behavior. Default to "Errors" to surface items needing attention.</p>
+
+  <p class="context-note" style="font-style: italic; color: #64748b;">After you've made your choice, press <kbd style="background: #e2e8f0; padding: 0.125rem 0.375rem; border-radius: 4px; font-family: inherit; font-size: 0.875rem;">r</kbd> to reveal design thinking (at bottom).</p>
+
+  <div class="variants-grid">
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>1. Radio Cards with Floating Badge</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-radio" role="radiogroup" aria-label="Filter by status">
+            <div class="filter-card-radio" data-status="pending">
+              <input type="radio" name="filter-1" id="f1-pending" value="pending">
+              <label for="f1-pending">
+                <span class="radio-visual"></span>
+                <span>To Generate</span>
+              </label>
+              <span class="badge">12</span>
+            </div>
+            <div class="filter-card-radio" data-status="errors">
+              <input type="radio" name="filter-1" id="f1-errors" value="errors" checked>
+              <label for="f1-errors">
+                <span class="radio-visual"></span>
+                <span>Errors</span>
+              </label>
+              <span class="badge">3</span>
+            </div>
+            <div class="filter-card-radio" data-status="ready">
+              <input type="radio" name="filter-1" id="f1-ready" value="ready">
+              <label for="f1-ready">
+                <span class="radio-visual"></span>
+                <span>Ready</span>
+              </label>
+              <span class="badge">8</span>
+            </div>
+            <div class="filter-card-radio" data-status="billed">
+              <input type="radio" name="filter-1" id="f1-billed" value="billed">
+              <label for="f1-billed">
+                <span class="radio-visual"></span>
+                <span>Billed</span>
+              </label>
+              <span class="badge">47</span>
+            </div>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>2. Pill Toggle with Inline Badge</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-pill">
+            <button class="filter-btn-pill" data-status="pending">To Generate <span class="badge">12</span></button>
+            <button class="filter-btn-pill selected" data-status="errors">Errors <span class="badge">3</span></button>
+            <button class="filter-btn-pill" data-status="ready">Ready <span class="badge">8</span></button>
+            <button class="filter-btn-pill" data-status="billed">Billed <span class="badge">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>3. Chips with Text Count, Border-Only Selection</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-chip-border">
+            <button class="filter-btn-chip-border" data-status="pending">To Generate <span class="count">12</span></button>
+            <button class="filter-btn-chip-border selected" data-status="errors">Errors <span class="count">3</span></button>
+            <button class="filter-btn-chip-border" data-status="ready">Ready <span class="count">8</span></button>
+            <button class="filter-btn-chip-border" data-status="billed">Billed <span class="count">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>4. Chips with Text Count, Full Semantic Selection</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-chip">
+            <button class="filter-btn-chip" data-status="pending">To Generate <span class="count">12</span></button>
+            <button class="filter-btn-chip selected" data-status="errors">Errors <span class="count">3</span></button>
+            <button class="filter-btn-chip" data-status="ready">Ready <span class="count">8</span></button>
+            <button class="filter-btn-chip" data-status="billed">Billed <span class="count">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>5. Chips with Badge, Border-Only Selection</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-chip-badge-border">
+            <button class="filter-btn-chip-badge-border" data-status="pending">To Generate <span class="badge">12</span></button>
+            <button class="filter-btn-chip-badge-border selected" data-status="errors">Errors <span class="badge">3</span></button>
+            <button class="filter-btn-chip-badge-border" data-status="ready">Ready <span class="badge">8</span></button>
+            <button class="filter-btn-chip-badge-border" data-status="billed">Billed <span class="badge">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>6. Chips with Badge, Full Semantic Selection</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-chip-badge">
+            <button class="filter-btn-chip-badge" data-status="pending">To Generate <span class="badge">12</span></button>
+            <button class="filter-btn-chip-badge selected" data-status="errors">Errors <span class="badge">3</span></button>
+            <button class="filter-btn-chip-badge" data-status="ready">Ready <span class="badge">8</span></button>
+            <button class="filter-btn-chip-badge" data-status="billed">Billed <span class="badge">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>7. Large Buttons with Floating Badge</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header" style="padding: 1.25rem;">
+          <div class="filter-group-large">
+            <button class="filter-btn-large" data-status="pending">To Generate <span class="badge">12</span></button>
+            <button class="filter-btn-large selected" data-status="errors">Errors <span class="badge">3</span></button>
+            <button class="filter-btn-large" data-status="ready">Ready <span class="badge">8</span></button>
+            <button class="filter-btn-large" data-status="billed">Billed <span class="badge">47</span></button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="variant-cell">
+      <!-- ========================================== -->
+      <h2>8. Icon Only with Count</h2>
+
+      <!-- Mock Filter Accordion (collapsed) -->
+      <div class="filter-accordion">
+        <div class="filter-accordion-header">
+          <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5H3" />
+            <path d="M12 19H3" />
+            <path d="M14 3v4" />
+            <path d="M16 17v4" />
+            <path d="M21 12h-9" />
+            <path d="M21 19h-5" />
+            <path d="M21 5h-7" />
+            <path d="M8 10v4" />
+            <path d="M8 12H3" />
+          </svg>
+          <span class="filter-accordion-label">Filters</span>
+          <span class="filter-accordion-badge">3</span>
+          <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="filter-group-icon">
+            <button class="filter-btn-icon" data-status="pending"><sl-icon name="hourglass-split"></sl-icon> 12</button>
+            <button class="filter-btn-icon selected" data-status="errors"><sl-icon name="exclamation-circle-fill"></sl-icon> 3</button>
+            <button class="filter-btn-icon" data-status="ready"><sl-icon name="check-circle"></sl-icon> 8</button>
+            <button class="filter-btn-icon" data-status="billed"><sl-icon name="receipt"></sl-icon> 47</button>
+          </div>
+        </div>
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>DOS</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Smith, John</td>
+              <td>09/05/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Missing diagnosis code</td>
+            </tr>
+            <tr>
+              <td>Johnson, Mary</td>
+              <td>09/04/2026</td>
+              <td>Dr. Chen</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Invalid modifier</td>
+            </tr>
+            <tr>
+              <td>Davis, Robert</td>
+              <td>09/03/2026</td>
+              <td>Dr. Williams</td>
+              <td><span class="status-badge error">Error</span></td>
+              <td style="color: var(--text-error);">Authorization required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end variants-grid -->
+
+  <!-- Hidden design rationale - press 'r' to reveal -->
+  <div id="rationale" class="rationale hidden">
+    <h3>Design Rationale (Press 'r' to hide)</h3>
+    <p class="rationale-goal"><strong>The Goal:</strong> Status distribution at a glance + one-click filtering + obvious selection state.</p>
+    <div class="rationale-grid">
+      <div class="rationale-item">
+        <strong>1. Radio Cards</strong>
+        <p>Explicit radio affordance leaves no ambiguity about single-select behavior. Floating badge pops but costs horizontal density.</p>
+      </div>
+      <div class="rationale-item">
+        <strong>2. Pill Toggle</strong>
+        <p>Compact, familiar iOS pattern. The containing tray groups options as one unit. But selection state is weak—just white bg.</p>
+      </div>
+      <div class="rationale-item">
+        <strong>3–4. Chips, Text Count</strong>
+        <p>Clean inline layout. Plain text count is quiet—doesn't draw the eye to the numbers. Border-only (3) vs full semantic (4) is about emphasis.</p>
+      </div>
+      <div class="rationale-item winner">
+        <strong>6. Chips + Badge, Full Semantic</strong>
+        <p>Inline badge gives count visual weight, semantic border + bg on selection reinforces context. Horizontal scan line stays clean.</p>
+      </div>
+      <div class="rationale-item">
+        <strong>5. Chips + Badge, Border-Only</strong>
+        <p>Same badge benefit as 6, but subtler selection. Less visual noise, but selected state less obvious.</p>
+      </div>
+      <div class="rationale-item">
+        <strong>7. Large + Floating Badge</strong>
+        <p>High visual impact—badges really pop. But costs the most space and floating badges break the horizontal rhythm.</p>
+      </div>
+      <div class="rationale-item">
+        <strong>8. Icon + Count</strong>
+        <p>Ultra-compact. Great for dense UIs. But requires users to learn icon meanings. Not ideal for primary navigation.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Click handlers for button-based variants
+    document.querySelectorAll('.filter-group-pill, .filter-group-chip, .filter-group-chip-border, .filter-group-chip-badge, .filter-group-chip-badge-border, .filter-group-large, .filter-group-icon').forEach(group => {
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Press 'r' to toggle rationale
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        document.getElementById('rationale').classList.toggle('hidden');
+      }
+    });
+  </script>
+
+</body>
+
+</html>
