@@ -839,6 +839,90 @@
     }
 
     /* ==========================================
+       PILL TOGGLE + SEMANTIC (variant 2 + 6 hybrid)
+       Compact tray container with semantic bg/border on selection
+       ========================================== */
+    .filter-group-pill-semantic {
+      display: inline-flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .filter-btn-pill-semantic {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      font-size: var(--font-size-filter);
+      font-weight: var(--font-weight-filter);
+      color: #475569;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn-pill-semantic:hover:not(.selected) {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .filter-btn-pill-semantic .badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
+      font-size: var(--font-size-badge);
+      font-weight: var(--font-weight-badge);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-btn-pill-semantic[data-status="pending"] .badge {
+      background: var(--badge-info);
+    }
+
+    .filter-btn-pill-semantic[data-status="errors"] .badge {
+      background: var(--badge-error);
+    }
+
+    .filter-btn-pill-semantic[data-status="ready"] .badge {
+      background: var(--badge-warning);
+    }
+
+    .filter-btn-pill-semantic[data-status="billed"] .badge {
+      background: var(--badge-success);
+    }
+
+    .filter-btn-pill-semantic[data-status="pending"].selected {
+      background: var(--color-info-bg);
+      border-color: var(--color-info);
+      color: var(--text-info);
+    }
+
+    .filter-btn-pill-semantic[data-status="errors"].selected {
+      background: var(--color-error-bg);
+      border-color: var(--color-error);
+      color: var(--text-error);
+    }
+
+    .filter-btn-pill-semantic[data-status="ready"].selected {
+      background: var(--color-warning-bg);
+      border-color: var(--color-warning);
+      color: var(--text-warning);
+    }
+
+    .filter-btn-pill-semantic[data-status="billed"].selected {
+      background: var(--color-success-bg);
+      border-color: var(--color-success);
+      color: var(--text-success);
+    }
+
+    /* ==========================================
        HIDDEN RATIONALE (press 'r' to reveal)
        ========================================== */
     .rationale {
@@ -1583,6 +1667,77 @@
       </div>
     </div>
 
+    <!-- VARIANT 9 -->
+    <div class="variant-cell">
+      <h2>9. Pill Toggle with Semantic Selection</h2>
+      <div class="variant-unit">
+        <div class="filter-accordion">
+          <div class="filter-accordion-header">
+            <svg class="filter-accordion-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 5H3" />
+              <path d="M12 19H3" />
+              <path d="M14 3v4" />
+              <path d="M16 17v4" />
+              <path d="M21 12h-9" />
+              <path d="M21 19h-5" />
+              <path d="M21 5h-7" />
+              <path d="M8 10v4" />
+              <path d="M8 12H3" />
+            </svg>
+            <span class="filter-accordion-label">Filters</span>
+            <span class="filter-accordion-badge">3</span>
+            <svg class="filter-accordion-chevron" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="table-header">
+            <div class="filter-group-pill-semantic">
+              <button class="filter-btn-pill-semantic" data-status="pending">To Generate <span class="badge">12</span></button>
+              <button class="filter-btn-pill-semantic selected" data-status="errors">Errors <span class="badge">3</span></button>
+              <button class="filter-btn-pill-semantic" data-status="ready">Ready <span class="badge">8</span></button>
+              <button class="filter-btn-pill-semantic" data-status="billed">Billed <span class="badge">47</span></button>
+            </div>
+          </div>
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>DOS</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Smith, John</td>
+                <td>09/05/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Missing diagnosis code</td>
+              </tr>
+              <tr>
+                <td>Johnson, Mary</td>
+                <td>09/04/2026</td>
+                <td>Dr. Chen</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Invalid modifier</td>
+              </tr>
+              <tr>
+                <td>Davis, Robert</td>
+                <td>09/03/2026</td>
+                <td>Dr. Williams</td>
+                <td><span class="status-badge error">Error</span></td>
+                <td style="color: var(--text-error);">Authorization required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end variants-grid -->
 
   <!-- Hidden design rationale - press 'r' to reveal -->
@@ -1602,7 +1757,7 @@
         <strong>3–4. Chips, Text Count</strong>
         <p>Clean inline layout. Plain text count is quiet—doesn't draw the eye to the numbers. Border-only (3) vs full semantic (4) is about emphasis.</p>
       </div>
-      <div class="rationale-item winner">
+      <div class="rationale-item">
         <strong>6. Chips + Badge, Full Semantic</strong>
         <p>Inline badge gives count visual weight, semantic border + bg on selection reinforces context. Horizontal scan line stays clean.</p>
       </div>
@@ -1617,6 +1772,10 @@
       <div class="rationale-item">
         <strong>8. Icon + Count</strong>
         <p>Ultra-compact. Great for dense UIs. But requires users to learn icon meanings. Not ideal for primary navigation.</p>
+      </div>
+      <div class="rationale-item winner">
+        <strong>9. Pill Toggle + Semantic</strong>
+        <p>Hybrid of 2 + 6. Compact tray container groups options as one unit, semantic bg/border on selection adds contextual reinforcement. Tighter density + clear single-select affordance.</p>
       </div>
     </div>
   </div>
@@ -1686,7 +1845,7 @@
     }
 
     // Click handlers for button-based variants
-    document.querySelectorAll('.filter-group-pill, .filter-group-chip, .filter-group-chip-border, .filter-group-chip-badge, .filter-group-chip-badge-border, .filter-group-large, .filter-group-icon').forEach(group => {
+    document.querySelectorAll('.filter-group-pill, .filter-group-pill-semantic, .filter-group-chip, .filter-group-chip-border, .filter-group-chip-badge, .filter-group-chip-badge-border, .filter-group-large, .filter-group-icon').forEach(group => {
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('button');
         if (!btn) return;
