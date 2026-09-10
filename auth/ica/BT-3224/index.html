@@ -9,37 +9,43 @@
     :root {
       /* ===========================================
          COLOR RAMPS (OKLCH)
+         Tightened for ~7:1 contrast (matching demographics chip system)
          =========================================== */
 
       /* Neutral */
+      --neutral-35: oklch(0.45 0.0178 234.18);
       --neutral-40: oklch(0.5192 0.0178 234.18);
       --neutral-50: oklch(0.6068 0.0178 233.96);
       --neutral-60: oklch(0.6996 0.0160 233.74);
       --neutral-90: oklch(0.9542 0.0034 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
 
-      /* Error - Hue 8.96° (red) */
+      /* Error - Hue 8.96° (red) — tightened to ~7:1 */
+      --error-35: oklch(0.45 0.18 8.40);
       --error-40: oklch(0.5192 0.1790 8.40);
       --error-50: oklch(0.6068 0.1790 8.96);
       --error-60: oklch(0.6996 0.1615 9.51);
       --error-90: oklch(0.9542 0.0229 11.18);
       --error-95: oklch(0.9772 0.0100 11.46);
 
-      /* Warning - Hue 38.96° (amber) */
+      /* Warning - Hue 38.96° (amber) — tightened to ~7:1 */
+      --warning-35: oklch(0.45 0.155 38.40);
       --warning-40: oklch(0.5192 0.1544 38.40);
       --warning-50: oklch(0.6068 0.1745 38.96);
       --warning-60: oklch(0.6996 0.1744 39.51);
       --warning-90: oklch(0.9542 0.0237 41.18);
       --warning-95: oklch(0.9772 0.0100 41.46);
 
-      /* Success - Green */
+      /* Success - Green — tightened to ~7:1 */
+      --success-35: oklch(0.45 0.135 127.94);
       --success-40: oklch(0.5192 0.1349 127.94);
       --success-50: oklch(0.6068 0.1586 128.61);
       --success-60: oklch(0.6996 0.1808 129.27);
       --success-90: oklch(0.9542 0.0515 131.27);
       --success-95: oklch(0.9772 0.0100 131.61);
 
-      /* Info - Hue 248.96° (blue-violet) */
+      /* Info - Hue 248.96° (blue-violet) — tightened to ~7:1 */
+      --info-35: oklch(0.45 0.091 248.51);
       --info-40: oklch(0.5192 0.0906 248.51);
       --info-50: oklch(0.6068 0.0811 248.96);
       --info-60: oklch(0.6996 0.0679 249.40);
@@ -64,11 +70,11 @@
       --color-info-bg: var(--info-95);
 
       /* Text colors for use on white/light backgrounds (WCAG 1.4.3: 4.5:1)
-         -50 (L=0.6068) fails on white; -40 (L=0.5192) passes */
-      --text-error: var(--error-40);
-      --text-warning: var(--warning-40);
-      --text-success: var(--success-40);
-      --text-info: var(--info-40);
+         Using -35 stops (L≈0.45) for ~7:1 contrast, matching demographics chips */
+      --text-error: var(--error-35);
+      --text-warning: var(--warning-35);
+      --text-success: var(--success-35);
+      --text-info: var(--info-35);
 
       /* Badge colors - use -40 stops for white text contrast (WCAG 1.4.3: 4.5:1)
          -50 (L=0.6068) fails against white; -40 (L=0.5192) passes */
@@ -204,9 +210,24 @@
       font-weight: var(--font-weight-badge);
     }
 
+    .status-badge.pending {
+      background: var(--info-90);
+      color: var(--text-info);
+    }
+
     .status-badge.error {
-      background: var(--color-error-light);
+      background: var(--error-90);
       color: var(--text-error);
+    }
+
+    .status-badge.ready {
+      background: var(--warning-90);
+      color: var(--text-warning);
+    }
+
+    .status-badge.billed {
+      background: var(--success-90);
+      color: var(--text-success);
     }
 
     /* ==========================================
@@ -1601,6 +1622,69 @@
   </div>
 
   <script>
+    // Sample data for each filter status
+    const tableData = {
+      pending: [
+        { patient: 'Anderson, Lisa', dos: '09/08/2026', provider: 'Dr. Patel', status: 'pending', statusLabel: 'To Generate', detail: 'Awaiting submission' },
+        { patient: 'Thompson, Michael', dos: '09/07/2026', provider: 'Dr. Williams', status: 'pending', statusLabel: 'To Generate', detail: 'Pending review' },
+        { patient: 'Garcia, Sofia', dos: '09/06/2026', provider: 'Dr. Chen', status: 'pending', statusLabel: 'To Generate', detail: 'Ready for batch' }
+      ],
+      errors: [
+        { patient: 'Smith, John', dos: '09/05/2026', provider: 'Dr. Williams', status: 'error', statusLabel: 'Error', detail: 'Missing diagnosis code' },
+        { patient: 'Johnson, Mary', dos: '09/04/2026', provider: 'Dr. Chen', status: 'error', statusLabel: 'Error', detail: 'Invalid modifier' },
+        { patient: 'Davis, Robert', dos: '09/03/2026', provider: 'Dr. Williams', status: 'error', statusLabel: 'Error', detail: 'Authorization required' }
+      ],
+      ready: [
+        { patient: 'Wilson, Emma', dos: '09/02/2026', provider: 'Dr. Patel', status: 'ready', statusLabel: 'Ready', detail: 'Ready to submit' },
+        { patient: 'Brown, James', dos: '09/01/2026', provider: 'Dr. Chen', status: 'ready', statusLabel: 'Ready', detail: 'Verified complete' },
+        { patient: 'Miller, Sarah', dos: '08/31/2026', provider: 'Dr. Williams', status: 'ready', statusLabel: 'Ready', detail: 'Approved for billing' }
+      ],
+      billed: [
+        { patient: 'Taylor, David', dos: '08/30/2026', provider: 'Dr. Patel', status: 'billed', statusLabel: 'Billed', detail: '08/31/26' },
+        { patient: 'Moore, Jennifer', dos: '08/29/2026', provider: 'Dr. Chen', status: 'billed', statusLabel: 'Billed', detail: '08/30/26' },
+        { patient: 'Clark, William', dos: '08/28/2026', provider: 'Dr. Williams', status: 'billed', statusLabel: 'Billed', detail: '08/29/26' }
+      ]
+    };
+
+    // Get detail column header based on status
+    function getDetailHeader(status) {
+      switch (status) {
+        case 'errors': return 'Error';
+        case 'pending': return 'Note';
+        case 'ready': return 'Note';
+        case 'billed': return 'Submitted';
+        default: return 'Detail';
+      }
+    }
+
+    // Render table rows for a given status
+    function renderTableRows(status) {
+      const data = tableData[status] || tableData.errors;
+      return data.map(row => {
+        const detailStyle = row.status === 'error' ? ' style="color: var(--text-error);"' : '';
+        return `<tr>
+          <td>${row.patient}</td>
+          <td>${row.dos}</td>
+          <td>${row.provider}</td>
+          <td><span class="status-badge ${row.status}">${row.statusLabel}</span></td>
+          <td${detailStyle}>${row.detail}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Update table when filter changes
+    function updateTable(variantUnit, status) {
+      const tbody = variantUnit.querySelector('.mock-table tbody');
+      const detailHeader = variantUnit.querySelector('.mock-table th:last-child');
+
+      if (tbody) {
+        tbody.innerHTML = renderTableRows(status);
+      }
+      if (detailHeader) {
+        detailHeader.textContent = getDetailHeader(status);
+      }
+    }
+
     // Click handlers for button-based variants
     document.querySelectorAll('.filter-group-pill, .filter-group-chip, .filter-group-chip-border, .filter-group-chip-badge, .filter-group-chip-badge-border, .filter-group-large, .filter-group-icon').forEach(group => {
       group.addEventListener('click', (e) => {
@@ -1608,6 +1692,24 @@
         if (!btn) return;
         group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
+
+        // Update table
+        const variantUnit = group.closest('.variant-unit');
+        const status = btn.dataset.status;
+        if (variantUnit && status) {
+          updateTable(variantUnit, status);
+        }
+      });
+    });
+
+    // Radio button handlers (variant 1)
+    document.querySelectorAll('.filter-group-radio input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const variantUnit = e.target.closest('.variant-unit');
+        const status = e.target.value;
+        if (variantUnit && status) {
+          updateTable(variantUnit, status);
+        }
       });
     });
 
