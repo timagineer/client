@@ -537,6 +537,9 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
       justify-content: flex-end;
       font-size: var(--text-xs);
       color: var(--text-3);
+    }
+
+    .cal-time-slot:not(:first-child) {
       transform: translateY(-0.5em);
     }
 
@@ -1202,7 +1205,6 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
             <!-- Day body -->
             <div class="cal-day-body">
               <div class="cal-time-gutter">
-                <div class="cal-time-slot" style="height: calc(var(--cal-hour-height) * 1)"></div>
                 <div class="cal-time-slot">7 AM</div>
                 <div class="cal-time-slot">8 AM</div>
                 <div class="cal-time-slot">9 AM</div>
@@ -1218,24 +1220,24 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
               </div>
               <div class="cal-day-column" id="dayColumn">
                 <div class="avail-layer" id="availLayer">
-                  <div class="avail-block" data-color="4" id="block-crisis" style="top: 60px; height: 120px; left: 4px; right: calc(50% + 2px);" data-name="Crisis" data-start="1" data-end="3" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
+                  <div class="avail-block" data-color="4" id="block-crisis" style="top: 0px; height: 120px; left: 4px; right: calc(50% + 2px);" data-name="Crisis" data-start="1" data-end="3" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
                     <span class="avail-block-name">Dr. Morningstar · Crisis · 7:00–9:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="1" id="block-intakes" style="top: 120px; height: 180px; left: calc(50% + 2px); right: 4px;" data-name="Intakes" data-start="2" data-end="5" data-time="8:00–11:00 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
+                  <div class="avail-block" data-color="1" id="block-intakes" style="top: 60px; height: 180px; left: calc(50% + 2px); right: 4px;" data-name="Intakes" data-start="2" data-end="5" data-time="8:00–11:00 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
                     <span class="avail-block-name">Dr. Boyles · Intakes · 8:00–11:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="5" id="block-group" style="top: 60px; height: 180px; left: 4px; right: 4px;" data-name="Group" data-start="1" data-end="4" data-time="7:00–10:00 AM" data-clinician="Dr. Franklin" data-location="Main Office" data-types="Group Therapy">
+                  <div class="avail-block" data-color="5" id="block-group" style="top: 0px; height: 180px; left: 4px; right: 4px;" data-name="Group" data-start="1" data-end="4" data-time="7:00–10:00 AM" data-clinician="Dr. Franklin" data-location="Main Office" data-types="Group Therapy">
                     <span class="avail-block-name">Dr. Franklin · Group · 7:00–10:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="2" id="block-established" style="top: 360px; height: 240px; left: 4px; right: calc(50% + 2px);" data-name="Established" data-start="6" data-end="10" data-time="12:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Follow-up, Med Management">
+                  <div class="avail-block" data-color="2" id="block-established" style="top: 300px; height: 240px; left: 4px; right: calc(50% + 2px);" data-name="Established" data-start="6" data-end="10" data-time="12:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Follow-up, Med Management">
                     <span class="avail-block-name">Dr. Boyles · Established · 12:00–4:00 PM</span>
                   </div>
-                  <div class="avail-block" data-color="3" id="block-telehealth" style="top: 420px; height: 120px; left: calc(50% + 2px); right: 4px;" data-name="Telehealth" data-start="7" data-end="9" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth Session">
+                  <div class="avail-block" data-color="3" id="block-telehealth" style="top: 360px; height: 120px; left: calc(50% + 2px); right: 4px;" data-name="Telehealth" data-start="7" data-end="9" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth Session">
                     <span class="avail-block-name">Dr. Morningstar · Telehealth · 1:00–3:00 PM</span>
                   </div>
                 </div>
                 <div class="appt-layer">
-                  <div class="appt-block" data-type="intake" data-status="arrived" style="top: calc(var(--cal-hour-height) * 2 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="intake" data-status="arrived" style="top: calc(var(--cal-hour-height) * 1 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
                       <div class="appt-title">Martinez, Sofia</div>
                       <div class="appt-time">8:00–9:00 AM</div>
@@ -1245,13 +1247,13 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
                       <div class="appt-status" data-status="arrived">Arrived</div>
                     </div>
                   </div>
-                  <div class="appt-block short" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                  <div class="appt-block short" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
                     <div class="appt-row">
                       <div class="appt-title">Chen, David</div>
                       <div class="appt-time">1:30–2:00 PM</div>
                     </div>
                   </div>
-                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 8.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
                       <div class="appt-title">Johnson, Michael</div>
                       <div class="appt-time">2:30–3:30 PM</div>
@@ -1261,7 +1263,7 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
                       <div class="appt-status" data-status="confirmed">Confirmed</div>
                     </div>
                   </div>
-                  <div class="appt-block" data-type="established" data-status="cancelled" style="top: calc(var(--cal-hour-height) * 4 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="established" data-status="cancelled" style="top: calc(var(--cal-hour-height) * 3 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
                       <div class="appt-title">Adams, Robert</div>
                       <div class="appt-time">10:00–11:00 AM</div>
@@ -1275,15 +1277,15 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
               </div>
               <div class="cal-day-column" id="dayColumn2">
                 <div class="avail-layer" id="availLayer2">
-                  <div class="avail-block" data-color="1" data-orig-color="1" style="top: 60px; height: 240px; left: 4px; right: 4px;" data-name="Intakes" data-start="1" data-end="5" data-time="7:00–11:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
+                  <div class="avail-block" data-color="1" data-orig-color="1" style="top: 0px; height: 240px; left: 4px; right: 4px;" data-name="Intakes" data-start="1" data-end="5" data-time="7:00–11:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
                     <span class="avail-block-name">Dr. Morningstar · Intakes · 7:00–11:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="2" data-orig-color="2" style="top: 360px; height: 180px; left: 4px; right: 4px;" data-name="Established" data-start="6" data-end="9" data-time="12:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Follow-up, Med Management">
+                  <div class="avail-block" data-color="2" data-orig-color="2" style="top: 300px; height: 180px; left: 4px; right: 4px;" data-name="Established" data-start="6" data-end="9" data-time="12:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Follow-up, Med Management">
                     <span class="avail-block-name">Dr. Morningstar · Established · 12:00–3:00 PM</span>
                   </div>
                 </div>
                 <div class="appt-layer">
-                  <div class="appt-block" data-type="intake" data-status="checkedin" style="top: calc(var(--cal-hour-height) * 1.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="intake" data-status="checkedin" style="top: calc(var(--cal-hour-height) * 0.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
                       <div class="appt-title">Williams, James</div>
                       <div class="appt-time">7:30–8:30 AM</div>
@@ -1495,7 +1497,7 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
         const el = document.getElementById(b.id);
         if (!el) return;
 
-        const top = b.start * HOUR_HEIGHT;
+        const top = (b.start - 1) * HOUR_HEIGHT;
         const height = (b.end - b.start) * HOUR_HEIGHT;
 
         el.style.top = `${top}px`;
@@ -1717,13 +1719,9 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
 
       // Render time slots
       timeGutter.innerHTML = '';
-      const emptySlot = document.createElement('div');
-      emptySlot.className = 'cal-time-slot';
-      emptySlot.style.height = 'calc(var(--cal-hour-height) * 1)';
-      timeGutter.appendChild(emptySlot);
 
       const hours = ['7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM'];
-      hours.forEach(h => {
+      hours.forEach((h, i) => {
         const slot = document.createElement('div');
         slot.className = 'cal-time-slot';
         slot.textContent = h;
@@ -1859,7 +1857,7 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
           // Full label: "Clinician · Type · Time"
           block.dataset.fullLabel = `${b.clinician || dayData.clinician} · ${b.name} · ${timeStr}`;
 
-          const top = b.start * HOUR_HEIGHT;
+          const top = (b.start - 1) * HOUR_HEIGHT;
           const height = (b.end - b.start) * HOUR_HEIGHT;
           block.style.top = `${top}px`;
           block.style.height = `${height}px`;
@@ -1982,7 +1980,7 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
           if (appt.type) apptEl.dataset.type = appt.type;
           if (appt.status) apptEl.dataset.status = appt.status;
           apptEl.style.pointerEvents = 'auto';
-          apptEl.style.top = `${appt.start * HOUR_HEIGHT + 2}px`;
+          apptEl.style.top = `${(appt.start - 1) * HOUR_HEIGHT + 2}px`;
           apptEl.style.height = `${appt.duration * HOUR_HEIGHT - 4}px`;
 
           // Format time: "8:00–9:00 AM"
