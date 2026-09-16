@@ -1,1 +1,2191 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+Availability Blocks Prototype - Exploring overlapping availability visualization
+Core question: Do overlapping blocks need distinct visual treatment, or is name-in-corner + tooltip sufficient?
+-->
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Calendar Availability Blocks [CLIN-3854]</title>
+
+  <style>
+    /* ==========================================================================
+   Variables & Reset
+   ========================================================================== */
+
+    :root {
+      /* Colors */
+      --primary: hsl(197, 87%, 31%);
+      --primary-hover: hsl(197, 88%, 25%);
+      --primary-on: hsl(0, 0%, 100%);
+
+      --text-1: hsl(0, 0%, 15%);
+      --text-2: hsl(0, 0%, 35%);
+      --text-3: hsl(0, 0%, 43%);
+
+      --bg-app: hsl(0, 0%, 98%);
+      --bg-surface: hsl(0, 0%, 100%);
+      --bg-subtle: hsl(0, 0%, 97%);
+
+      --border: #767676;
+      --border-light: hwb(0 78% 22%);
+      --border-btn: hsl(0, 0%, 59%);
+
+      /* Availability block colors - OKLCH based
+         Using -90 lightness for backgrounds, -40 for text (WCAG compliant)
+
+         1: Intakes = cerulean
+         2: Established = violet
+         3: Telehealth = jade
+         4: Crisis = orange
+         5: Group = fuchsia
+      */
+
+      /* Cerulean (Intakes) */
+      --cerulean-95: oklch(0.9771 0.0081 217.18);
+      --cerulean-90: oklch(0.9542 0.0162 217.18);
+      --cerulean-70: oklch(0.7974 0.0406 218.07);
+      --cerulean-40: oklch(0.5192 0.0674 219.40);
+
+      /* Violet (Established) */
+      --violet-95: oklch(0.9771 0.0121 295.74);
+      --violet-90: oklch(0.9542 0.0242 295.74);
+      --violet-70: oklch(0.7974 0.1089 294.85);
+      --violet-40: oklch(0.5192 0.1851 293.51);
+
+      /* Jade (Telehealth) */
+      --jade-95: oklch(0.9771 0.0188 161.63);
+      --jade-90: oklch(0.9542 0.0375 161.63);
+      --jade-70: oklch(0.7974 0.1224 160.29);
+      --jade-40: oklch(0.5192 0.1199 158.29);
+
+      /* Orange (Crisis) */
+      --orange-95: oklch(0.9771 0.0136 56.63);
+      --orange-90: oklch(0.9542 0.0271 56.63);
+      --orange-70: oklch(0.7974 0.1294 55.29);
+      --orange-40: oklch(0.5192 0.1307 53.29);
+
+      /* Fuchsia (Group) */
+      --fuchsia-95: oklch(0.9771 0.0159 336.74);
+      --fuchsia-90: oklch(0.9542 0.0317 336.74);
+      --fuchsia-70: oklch(0.7974 0.1132 337.85);
+      --fuchsia-40: oklch(0.5192 0.1751 339.51);
+
+      /* Map to avail tokens */
+      --avail-1: var(--cerulean-95);
+      --avail-1-border: var(--cerulean-70);
+      --avail-1-text: var(--cerulean-40);
+
+      --avail-2: var(--violet-95);
+      --avail-2-border: var(--violet-70);
+      --avail-2-text: var(--violet-40);
+
+      --avail-3: var(--jade-95);
+      --avail-3-border: var(--jade-70);
+      --avail-3-text: var(--jade-40);
+
+      --avail-4: var(--orange-95);
+      --avail-4-border: var(--orange-70);
+      --avail-4-text: var(--orange-40);
+
+      --avail-5: var(--fuchsia-95);
+      --avail-5-border: var(--fuchsia-70);
+      --avail-5-text: var(--fuchsia-40);
+
+      /* Transparent versions for stacked/blending mode (B) - using -40 colors at 12% */
+      --avail-1-alpha: oklch(0.5192 0.0674 219.40 / 0.12);
+      --avail-2-alpha: oklch(0.5192 0.1851 293.51 / 0.12);
+      --avail-3-alpha: oklch(0.5192 0.1199 158.29 / 0.12);
+      --avail-4-alpha: oklch(0.5192 0.1307 53.29 / 0.12);
+      --avail-5-alpha: oklch(0.5192 0.1751 339.51 / 0.12);
+
+      /* Appointment type border colors (using -40 step) */
+      --appt-type-intake: var(--cerulean-40);
+      --appt-type-established: var(--violet-40);
+      --appt-type-telehealth: var(--jade-40);
+      --appt-type-crisis: var(--orange-40);
+      --appt-type-group: var(--fuchsia-40);
+
+      /* Appointment status colors (right border) */
+      --status-scheduled: oklch(0.52 0.16 276);
+      /* violet */
+      --status-confirmed: oklch(0.52 0.14 234);
+      /* blue */
+      --status-arrived: oklch(0.52 0.12 185);
+      /* teal */
+      --status-checkedin: oklch(0.52 0.12 185);
+      /* teal */
+      --status-occurred: oklch(0.55 0.18 148);
+      /* green */
+      --status-cancelled: oklch(0.52 0.16 58);
+      /* amber */
+      --status-late: oklch(0.50 0.18 41);
+      /* vermillion */
+      --status-noshow: oklch(0.48 0.20 27);
+      /* crimson */
+
+      /* Typography */
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --text-base: 1rem;
+      --text-sm: 0.875rem;
+      --text-xs: 0.75rem;
+
+      /* Spacing */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+
+      /* Radius */
+      --rad: 4px;
+
+      /* Calendar */
+      --cal-hour-height: 60px;
+      --cal-time-gutter: 60px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--text-1);
+      background: var(--bg-app);
+    }
+
+    /* ==========================================================================
+   App Shell
+   ========================================================================== */
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .wire-logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: -4px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: #124e6a;
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: #7fb619;
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: #e8e8e8;
+      border-radius: var(--rad);
+      flex: 1;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: #d0d0d0;
+      border-radius: var(--rad);
+    }
+
+    .wire-user-name {
+      width: 26px;
+      height: 26px;
+      background: #d0d0d0;
+      border-radius: 50%;
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: #e0e0e0;
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: rgba(10, 109, 148, 0.15);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+   Calendar Toolbar
+   ========================================================================== */
+
+    .cal-toolbar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .cal-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .cal-toolbar-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-3);
+    }
+
+    .cal-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .cal-date-title {
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      height: 32px;
+      padding: 0 var(--sp-3);
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      background: #fff;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border);
+      color: var(--text-1);
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+    }
+
+    .btn-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-subtle);
+      border-color: transparent;
+    }
+
+    /* Toggle switch */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      cursor: pointer;
+    }
+
+    .toggle-label {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      user-select: none;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.active {
+      background: var(--primary);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle.active::after {
+      transform: translateX(16px);
+    }
+
+    /* View switcher tabs */
+    .view-switcher {
+      display: flex;
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      overflow: hidden;
+      height: 32px;
+    }
+
+    .view-switcher-btn {
+      padding: 0 var(--sp-3);
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      background: #fff;
+      border: none;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .view-switcher-btn:not(:last-child) {
+      border-right: 1px solid var(--border-light);
+    }
+
+    .view-switcher-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    .view-switcher-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Toolbar divider */
+    .toolbar-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-light);
+    }
+
+    /* ==========================================================================
+   Day View Calendar
+   ========================================================================== */
+
+    .cal-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+      margin: var(--sp-4);
+      border-radius: var(--rad);
+      border: 1px solid var(--border-light);
+    }
+
+    .cal-day-view {
+      flex: 1;
+      display: flex;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      position: relative;
+    }
+
+    /* Day view scroll container (matches week view) */
+    .cal-day-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-day-header-row {
+      display: flex;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      z-index: 10;
+    }
+
+    .cal-day-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .cal-day-body .cal-day-column {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+    }
+
+    .cal-day-body .cal-day-column+.cal-day-column {
+      border-left: 1px solid var(--border-light);
+    }
+
+    /* Time gutter */
+    .cal-time-gutter {
+      width: var(--cal-time-gutter);
+      flex-shrink: 0;
+      background: var(--bg-subtle);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .cal-time-slot {
+      height: var(--cal-hour-height);
+      padding-right: var(--sp-2);
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      font-size: var(--text-xs);
+      color: var(--text-3);
+      transform: translateY(-0.5em);
+    }
+
+    /* Day header for week view */
+    .cal-day-header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--sp-2) var(--sp-1);
+      text-align: center;
+      z-index: 5;
+    }
+
+    .cal-day-header-name {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    .cal-day-header-date {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .cal-day-header.today .cal-day-header-date {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    /* Week view header row */
+    .cal-week-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-week-header {
+      display: flex;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      z-index: 10;
+    }
+
+    .cal-week-header-gutter {
+      width: var(--cal-time-gutter);
+      flex-shrink: 0;
+      background: var(--bg-subtle);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .cal-week-header-day {
+      flex: 1;
+      padding: var(--sp-2) var(--sp-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+    }
+
+    .cal-week-header-day+.cal-week-header-day {
+      border-left: 1px solid var(--border-light);
+    }
+
+    .cal-day-header-name {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .cal-day-header-date {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .cal-week-header-day.today .cal-day-header-name,
+    .cal-week-header-day.today .cal-day-header-date {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    /* Week view body */
+    .cal-week-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .cal-week-body .cal-time-gutter {
+      flex-shrink: 0;
+    }
+
+    .cal-week-body .cal-week-column {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+    }
+
+    .cal-week-body .cal-week-column+.cal-week-column {
+      border-left: 1px solid var(--border-light);
+    }
+
+    /* Hour lines */
+    .cal-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    /* Half-hour lines (lighter) */
+    .cal-half-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: hsl(0, 0%, 92%);
+    }
+
+    /* ==========================================================================
+   Availability Blocks (Background Layer)
+   ========================================================================== */
+
+    .avail-block {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      border-radius: var(--rad);
+      border: 1px solid;
+      pointer-events: none;
+      /* Clicks pass through to grid */
+    }
+
+    .avail-block-name {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      left: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: var(--text-1);
+      pointer-events: auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right;
+      cursor: default;
+    }
+
+    /* Overlap indicator badge */
+    .avail-overlap-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-2);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid var(--border-light);
+      pointer-events: auto;
+      cursor: default;
+    }
+
+    /* Color variants */
+    .avail-block[data-color="0"] {
+      background: hsla(197, 40%, 50%, 0.1);
+      border-color: hsla(197, 40%, 40%, 0.25);
+    }
+
+    .avail-block[data-color="0"] .avail-block-name {
+      color: hsl(197, 35%, 40%);
+    }
+
+    .avail-block[data-color="1"] {
+      background: var(--avail-1);
+      border-color: var(--avail-1-border);
+    }
+
+    .avail-block[data-color="2"] {
+      background: var(--avail-2);
+      border-color: var(--avail-2-border);
+    }
+
+    .avail-block[data-color="3"] {
+      background: var(--avail-3);
+      border-color: var(--avail-3-border);
+    }
+
+    .avail-block[data-color="4"] {
+      background: var(--avail-4);
+      border-color: var(--avail-4-border);
+    }
+
+    .avail-block[data-color="5"] {
+      background: var(--avail-5);
+      border-color: var(--avail-5-border);
+    }
+
+    /* Transparent variants for stacked/blending mode (B) */
+    .avail-block.blend[data-color="1"] {
+      background: var(--avail-1-alpha);
+      border-color: var(--avail-1-border);
+    }
+
+    .avail-block.blend[data-color="2"] {
+      background: var(--avail-2-alpha);
+      border-color: var(--avail-2-border);
+    }
+
+    .avail-block.blend[data-color="3"] {
+      background: var(--avail-3-alpha);
+      border-color: var(--avail-3-border);
+    }
+
+    .avail-block.blend[data-color="4"] {
+      background: var(--avail-4-alpha);
+      border-color: var(--avail-4-border);
+    }
+
+    .avail-block.blend[data-color="5"] {
+      background: var(--avail-5-alpha);
+      border-color: var(--avail-5-border);
+    }
+
+    /* ==========================================================================
+   Appointments (Foreground Layer)
+   ========================================================================== */
+
+    .appt-block {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      background: #fff;
+      border-radius: var(--rad);
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      padding: var(--sp-1) var(--sp-2);
+      cursor: pointer;
+      z-index: 200;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* Center content for short appointments (30min = 30px height, so ≤34px with padding) */
+    .appt-block.short {
+      justify-content: center;
+    }
+
+    .appt-block:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Appointment type border colors */
+    .appt-block[data-type="intake"] {
+      border-left-color: var(--appt-type-intake);
+    }
+
+    .appt-block[data-type="established"] {
+      border-left-color: var(--appt-type-established);
+    }
+
+    .appt-block[data-type="telehealth"] {
+      border-left-color: var(--appt-type-telehealth);
+    }
+
+    .appt-block[data-type="crisis"] {
+      border-left-color: var(--appt-type-crisis);
+    }
+
+    .appt-block[data-type="group"] {
+      border-left-color: var(--appt-type-group);
+    }
+
+    /* Appointment status border colors (right side) */
+    .appt-block[data-status="scheduled"] {
+      border-right: 4px solid var(--status-scheduled);
+    }
+
+    .appt-block[data-status="confirmed"] {
+      border-right: 4px solid var(--status-confirmed);
+    }
+
+    .appt-block[data-status="arrived"] {
+      border-right: 4px solid var(--status-arrived);
+    }
+
+    .appt-block[data-status="checkedin"] {
+      border-right: 4px solid var(--status-checkedin);
+    }
+
+    .appt-block[data-status="occurred"] {
+      border-right: 4px solid var(--status-occurred);
+    }
+
+    .appt-block[data-status="cancelled"] {
+      border-right: 4px solid var(--status-cancelled);
+    }
+
+    .appt-block[data-status="late"] {
+      border-right: 4px solid var(--status-late);
+    }
+
+    .appt-block[data-status="noshow"] {
+      border-right: 4px solid var(--status-noshow);
+    }
+
+    /* Primary row: name left, time right, same baseline */
+    .appt-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sp-2);
+    }
+
+    .appt-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .appt-time {
+      font-size: var(--text-sm);
+      font-weight: 400;
+      color: var(--text-3);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .appt-type {
+      font-size: var(--text-xs);
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    /* Type + Status row for day view */
+    .appt-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: var(--text-xs);
+      margin-top: 1px;
+    }
+
+    .appt-detail-row .appt-type {
+      margin-top: 0;
+    }
+
+    .appt-status {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-2);
+      text-transform: capitalize;
+    }
+
+    /* ==========================================================================
+   Tooltip
+   ========================================================================== */
+
+    .tooltip {
+      position: fixed;
+      background: var(--text-1);
+      color: #fff;
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: var(--rad);
+      font-size: var(--text-sm);
+      max-width: 280px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .tooltip-meta {
+      font-size: var(--text-xs);
+      opacity: 0.85;
+    }
+
+    .tooltip-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: var(--sp-2) 0;
+    }
+
+    /* ==========================================================================
+   Design Notes / Concept Switcher Panel
+   ========================================================================== */
+
+    .design-notes {
+      position: fixed;
+      bottom: var(--sp-4);
+      right: var(--sp-4);
+      width: 340px;
+      background: #fff;
+      border-radius: var(--rad);
+      border: 1px solid var(--border-light);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-size: var(--text-sm);
+      z-index: 9999;
+    }
+
+    .design-notes-header {
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .design-notes-title {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .design-notes-toggle {
+      background: none;
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .design-notes.collapsed .design-notes-toggle {
+      transform: rotate(180deg);
+    }
+
+    .design-notes-body {
+      padding: var(--sp-3) var(--sp-4);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .design-notes-body p {
+      margin: 0 0 var(--sp-2);
+      color: var(--text-2);
+    }
+
+    .design-notes-body strong {
+      color: var(--text-1);
+    }
+
+    .design-notes-body ul {
+      margin: 0 0 var(--sp-3);
+      padding-left: 18px;
+      color: var(--text-2);
+    }
+
+    .design-notes.collapsed .design-notes-body {
+      display: none;
+    }
+
+    /* Concept switcher */
+    .concept-switcher {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-3);
+    }
+
+    .concept-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text-3);
+    }
+
+    .concept-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    .concept-option {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sp-2);
+      padding: var(--sp-2);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .concept-option:hover {
+      background: var(--bg-subtle);
+    }
+
+    .concept-option.active {
+      border-color: var(--primary);
+      background: hsl(197, 50%, 97%);
+    }
+
+    .concept-option input {
+      margin: 2px 0 0;
+    }
+
+    .concept-option-content {
+      flex: 1;
+    }
+
+    .concept-option-title {
+      font-weight: 500;
+      color: var(--text-1);
+      margin-bottom: 2px;
+    }
+
+    .concept-option-desc {
+      font-size: var(--text-xs);
+      color: var(--text-3);
+      line-height: 1.4;
+    }
+
+    .concept-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: var(--sp-2) 0;
+    }
+
+    /* Clickable time slot overlay */
+    .cal-day-column,
+    .cal-week-column {
+      cursor: pointer;
+    }
+
+    .cal-day-column:hover,
+    .cal-week-column:hover {
+      background: hsla(197, 50%, 50%, 0.03);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header (wireframe) -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-user-name"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar (wireframe) -->
+      <aside class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </aside>
+
+      <!-- Main Content: Calendar -->
+      <main class="shell-main">
+
+        <!-- Calendar Toolbar -->
+        <div class="cal-toolbar">
+          <div class="cal-toolbar-left">
+            <button class="btn">Today</button>
+            <button class="btn btn-icon" title="Previous">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button class="btn btn-icon" title="Next">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <button class="btn btn-ghost" style="gap: 6px; color: var(--text-1); font-weight: 600;">
+              <span>Wednesday, Sep 16, 2026</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="cal-toolbar-center">
+            <div class="view-switcher">
+              <button class="view-switcher-btn active" onclick="setCalView('day')">D</button>
+              <button class="view-switcher-btn" onclick="setCalView('week')">W</button>
+              <button class="view-switcher-btn" onclick="setCalView('month')">M</button>
+            </div>
+          </div>
+
+          <div class="cal-toolbar-right">
+            <div class="toggle-wrap" onclick="toggleAvailability()">
+              <span class="toggle-label">Availability</span>
+              <div class="toggle active" id="availToggle"></div>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <button class="btn btn-primary" onclick="addAppointmentFromToolbar()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Appointment
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Day View (2 providers) -->
+        <div class="cal-container" id="dayViewContainer">
+          <div class="cal-day-scroll">
+            <!-- Provider headers (sticky) -->
+            <div class="cal-day-header-row">
+              <div class="cal-week-header-gutter"></div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Boyles</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Morningstar</span>
+              </div>
+            </div>
+            <!-- Day body -->
+            <div class="cal-day-body">
+              <div class="cal-time-gutter">
+                <div class="cal-time-slot" style="height: calc(var(--cal-hour-height) * 1)"></div>
+                <div class="cal-time-slot">7 AM</div>
+                <div class="cal-time-slot">8 AM</div>
+                <div class="cal-time-slot">9 AM</div>
+                <div class="cal-time-slot">10 AM</div>
+                <div class="cal-time-slot">11 AM</div>
+                <div class="cal-time-slot">12 PM</div>
+                <div class="cal-time-slot">1 PM</div>
+                <div class="cal-time-slot">2 PM</div>
+                <div class="cal-time-slot">3 PM</div>
+                <div class="cal-time-slot">4 PM</div>
+                <div class="cal-time-slot">5 PM</div>
+                <div class="cal-time-slot">6 PM</div>
+              </div>
+              <div class="cal-day-column" id="dayColumn">
+                <div class="avail-layer" id="availLayer">
+                  <div class="avail-block" data-color="4" id="block-crisis" style="top: 60px; height: 120px; left: 4px; right: calc(50% + 2px);" data-name="Crisis" data-start="1" data-end="3" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
+                    <span class="avail-block-name">Dr. Morningstar · Crisis · 7:00–9:00 AM</span>
+                  </div>
+                  <div class="avail-block" data-color="1" id="block-intakes" style="top: 120px; height: 180px; left: calc(50% + 2px); right: 4px;" data-name="Intakes" data-start="2" data-end="5" data-time="8:00–11:00 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
+                    <span class="avail-block-name">Dr. Boyles · Intakes · 8:00–11:00 AM</span>
+                  </div>
+                  <div class="avail-block" data-color="5" id="block-group" style="top: 60px; height: 180px; left: 4px; right: 4px;" data-name="Group" data-start="1" data-end="4" data-time="7:00–10:00 AM" data-clinician="Dr. Franklin" data-location="Main Office" data-types="Group Therapy">
+                    <span class="avail-block-name">Dr. Franklin · Group · 7:00–10:00 AM</span>
+                  </div>
+                  <div class="avail-block" data-color="2" id="block-established" style="top: 360px; height: 240px; left: 4px; right: calc(50% + 2px);" data-name="Established" data-start="6" data-end="10" data-time="12:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Follow-up, Med Management">
+                    <span class="avail-block-name">Dr. Boyles · Established · 12:00–4:00 PM</span>
+                  </div>
+                  <div class="avail-block" data-color="3" id="block-telehealth" style="top: 420px; height: 120px; left: calc(50% + 2px); right: 4px;" data-name="Telehealth" data-start="7" data-end="9" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth Session">
+                    <span class="avail-block-name">Dr. Morningstar · Telehealth · 1:00–3:00 PM</span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block" data-type="intake" data-status="arrived" style="top: calc(var(--cal-hour-height) * 2 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Martinez, Sofia</div>
+                      <div class="appt-time">8:00–9:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Initial Evaluation</div>
+                      <div class="appt-status" data-status="arrived">Arrived</div>
+                    </div>
+                  </div>
+                  <div class="appt-block short" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Chen, David</div>
+                      <div class="appt-time">1:30–2:00 PM</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 8.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Johnson, Michael</div>
+                      <div class="appt-time">2:30–3:30 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Follow-up</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="cancelled" style="top: calc(var(--cal-hour-height) * 4 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Adams, Robert</div>
+                      <div class="appt-time">10:00–11:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Follow-up</div>
+                      <div class="appt-status" data-status="cancelled">Cancelled</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="cal-day-column" id="dayColumn2">
+                <div class="avail-layer" id="availLayer2">
+                  <div class="avail-block" data-color="1" data-orig-color="1" style="top: 60px; height: 240px; left: 4px; right: 4px;" data-name="Intakes" data-start="1" data-end="5" data-time="7:00–11:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
+                    <span class="avail-block-name">Dr. Morningstar · Intakes · 7:00–11:00 AM</span>
+                  </div>
+                  <div class="avail-block" data-color="2" data-orig-color="2" style="top: 360px; height: 180px; left: 4px; right: 4px;" data-name="Established" data-start="6" data-end="9" data-time="12:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Follow-up, Med Management">
+                    <span class="avail-block-name">Dr. Morningstar · Established · 12:00–3:00 PM</span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block" data-type="intake" data-status="checkedin" style="top: calc(var(--cal-hour-height) * 1.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Williams, James</div>
+                      <div class="appt-time">7:30–8:30 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">New Client Intake</div>
+                      <div class="appt-status" data-status="checkedin">Checked In</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="intake" data-status="noshow" style="top: calc(var(--cal-hour-height) * 3 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Thompson, Sarah</div>
+                      <div class="appt-time">9:00–10:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Initial Evaluation</div>
+                      <div class="appt-status" data-status="noshow">No Show</div>
+                    </div>
+                  </div>
+                  <div class="appt-block short" data-type="established" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Garcia, Maria</div>
+                      <div class="appt-time">12:30–1:00 PM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Week View (hidden by default) -->
+        <div class="cal-container" id="weekViewContainer" style="display: none;">
+          <!-- Single scroll container for header + body -->
+          <div class="cal-week-scroll">
+            <!-- Week header (sticky) -->
+            <div class="cal-week-header">
+              <div class="cal-week-header-gutter"></div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Monday</span>
+                <span class="cal-day-header-date">14</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Tuesday</span>
+                <span class="cal-day-header-date">15</span>
+              </div>
+              <div class="cal-week-header-day today">
+                <span class="cal-day-header-name">Wednesday</span>
+                <span class="cal-day-header-date">16</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Thursday</span>
+                <span class="cal-day-header-date">17</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Friday</span>
+                <span class="cal-day-header-date">18</span>
+              </div>
+            </div>
+            <!-- Week body -->
+            <div class="cal-week-body">
+              <div class="cal-time-gutter" id="weekTimeGutter">
+                <!-- Time slots rendered by JS -->
+              </div>
+              <div class="cal-week-column" data-day="0"></div>
+              <div class="cal-week-column" data-day="1"></div>
+              <div class="cal-week-column" data-day="2"></div>
+              <div class="cal-week-column" data-day="3"></div>
+              <div class="cal-week-column" data-day="4"></div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip">
+    <div class="tooltip-title"></div>
+    <div class="tooltip-meta"></div>
+  </div>
+
+  <!-- Design Notes / Concept Switcher -->
+  <div class="design-notes" id="designNotes">
+    <div class="design-notes-header" onclick="toggleNotes()">
+      <span class="design-notes-title">Block Concepts</span>
+      <button class="design-notes-toggle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    </div>
+    <div class="design-notes-body">
+      <p style="font-size: 11px; color: var(--text-3); margin-bottom: var(--sp-3);">Toggle between modes to compare. Press <kbd style="background: #e0e0e0; padding: 1px 4px; border-radius: 3px; font-family: inherit;">a</kbd> to toggle availability.</p>
+
+      <div class="concept-switcher">
+        <span class="concept-label">How should overlaps render?</span>
+        <div class="concept-options">
+          <label class="concept-option" data-mode="sidebyside">
+            <input type="radio" name="overlapMode" onchange="setOverlapMode('sidebyside')">
+            <div class="concept-option-content">
+              <div class="concept-option-title">A. Side-by-Side</div>
+              <div class="concept-option-desc">Overlapping blocks split the space horizontally. Each block visible, but narrower.</div>
+            </div>
+          </label>
+          <label class="concept-option" data-mode="stacked">
+            <input type="radio" name="overlapMode" onchange="setOverlapMode('stacked')">
+            <div class="concept-option-content">
+              <div class="concept-option-title">B. Stacked (Transparent)</div>
+              <div class="concept-option-desc">Blocks layer at full width. Colors blend where they overlap.</div>
+            </div>
+          </label>
+          <label class="concept-option active" data-mode="topmost">
+            <input type="radio" name="overlapMode" checked onchange="setOverlapMode('topmost')">
+            <div class="concept-option-content">
+              <div class="concept-option-title">B2. Topmost Wins</div>
+              <div class="concept-option-desc">Shortest block on top (opaque). Indicator shows hidden blocks.</div>
+            </div>
+          </label>
+          <label class="concept-option" data-mode="offset">
+            <input type="radio" name="overlapMode" onchange="setOverlapMode('offset')">
+            <div class="concept-option-content">
+              <div class="concept-option-title">B3. Offset Stacking</div>
+              <div class="concept-option-desc">Blocks offset slightly to show layering. No color blending.</div>
+            </div>
+          </label>
+          <label class="concept-option" data-mode="unified">
+            <input type="radio" name="overlapMode" onchange="setOverlapMode('unified')">
+            <div class="concept-option-content">
+              <div class="concept-option-title">C. Unified "Available"</div>
+              <div class="concept-option-desc">Single neutral color shows "availability exists". Names appear in tooltip only.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="concept-divider"></div>
+
+      <p><strong>Current scenario:</strong></p>
+      <ul>
+        <li>7–10 AM: Triple overlap (Crisis + Intakes + Group)</li>
+        <li>1–3 PM: Telehealth overlaps Established</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Block positioning data
+    const blocks = [
+      { id: 'block-crisis', name: 'Crisis', start: 1, end: 3, color: 4 },
+      { id: 'block-intakes', name: 'Intakes', start: 2, end: 5, color: 1 },
+      { id: 'block-group', name: 'Group', start: 1, end: 4, color: 5 },
+      { id: 'block-established', name: 'Established', start: 6, end: 10, color: 2 },
+      { id: 'block-telehealth', name: 'Telehealth', start: 7, end: 9, color: 3 }
+    ];
+
+    const HOUR_HEIGHT = 60;
+
+    // Render hour lines for day view columns
+    document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+      for (let i = 0; i <= 12; i++) {
+        const line = document.createElement('div');
+        line.className = 'cal-hour-line';
+        line.style.top = `calc(var(--cal-hour-height) * ${i})`;
+        col.appendChild(line);
+
+        if (i < 12) {
+          const halfLine = document.createElement('div');
+          halfLine.className = 'cal-half-hour-line';
+          halfLine.style.top = `calc(var(--cal-hour-height) * ${i} + var(--cal-hour-height) / 2)`;
+          col.appendChild(halfLine);
+        }
+      }
+    });
+
+    // Find which blocks overlap
+    function getOverlapGroups() {
+      const groups = {};
+      blocks.forEach(b => groups[b.id] = new Set());
+
+      for (let i = 0; i < blocks.length; i++) {
+        for (let j = i + 1; j < blocks.length; j++) {
+          const a = blocks[i], b = blocks[j];
+          // Check if they overlap
+          if (a.start < b.end && b.start < a.end) {
+            groups[a.id].add(b.id);
+            groups[b.id].add(a.id);
+          }
+        }
+      }
+      return groups;
+    }
+
+    // Get z-index for topmost mode (shorter duration = higher z-index)
+    function getZIndex(block) {
+      const duration = block.end - block.start;
+      return 100 - duration; // Shorter = higher
+    }
+
+    // Position blocks based on mode
+    function setOverlapMode(mode) {
+      const overlapGroups = getOverlapGroups();
+
+      // Remove any existing badges
+      document.querySelectorAll('.avail-overlap-badge').forEach(b => b.remove());
+
+      blocks.forEach(b => {
+        const el = document.getElementById(b.id);
+        if (!el) return;
+
+        const top = b.start * HOUR_HEIGHT;
+        const height = (b.end - b.start) * HOUR_HEIGHT;
+
+        el.style.top = `${top}px`;
+        el.style.height = `${height}px`;
+
+        // Reset to defaults
+        el.style.left = '4px';
+        el.style.right = '4px';
+        el.style.zIndex = '';
+        el.dataset.color = b.color;
+        el.classList.remove('blend');
+        const nameEl = el.querySelector('.avail-block-name');
+        // Use full label: Clinician · Type · Time
+        const fullLabel = `${el.dataset.clinician} · ${b.name} · ${el.dataset.time}`;
+        nameEl.textContent = fullLabel;
+        nameEl.style.display = '';
+
+        const overlaps = overlapGroups[b.id];
+
+        if (mode === 'sidebyside' && overlaps.size > 0) {
+          // Side by side: split width among overlapping blocks
+          const group = [b.id, ...overlaps].sort();
+          const index = group.indexOf(b.id);
+          const total = group.length;
+          const widthPct = 100 / total;
+          const leftPct = index * widthPct;
+
+          el.style.left = `calc(${leftPct}% + 2px)`;
+          el.style.right = `calc(${100 - leftPct - widthPct}% + 2px)`;
+        } else if (mode === 'stacked') {
+          // Full width, overlaps visible through transparency
+          el.style.left = '4px';
+          el.style.right = '4px';
+          el.classList.add('blend'); // Use transparent colors
+        } else if (mode === 'topmost') {
+          // Topmost wins: opaque blocks with z-index
+          el.style.zIndex = getZIndex(b);
+
+          // Add badge if this block has overlaps and is on top
+          if (overlaps.size > 0) {
+            const myZ = getZIndex(b);
+            const overlappingBlocks = [...overlaps].map(id => blocks.find(bl => bl.id === id));
+            const higherBlocks = overlappingBlocks.filter(ob => getZIndex(ob) > myZ);
+
+            // If no blocks are higher, this is the top one - show badge
+            if (higherBlocks.length === 0) {
+              const badge = document.createElement('span');
+              badge.className = 'avail-overlap-badge';
+              badge.textContent = `+${overlaps.size} more`;
+
+              // Store hidden block data for tooltip
+              const hiddenBlocksData = overlappingBlocks.map(ob => ({
+                name: ob.name,
+                clinician: el.dataset.clinician,
+                time: document.getElementById(ob.id)?.dataset.time || ''
+              }));
+              badge.dataset.hiddenBlocks = JSON.stringify(hiddenBlocksData);
+
+              // Add tooltip events
+              badge.addEventListener('mouseenter', (e) => {
+                const hidden = JSON.parse(badge.dataset.hiddenBlocks);
+                const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
+                tooltip.querySelector('.tooltip-title').textContent = 'Hidden blocks';
+                tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
+                tooltip.classList.add('visible');
+              });
+              badge.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 12 + 'px';
+                tooltip.style.top = e.clientY + 12 + 'px';
+              });
+              badge.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+              });
+
+              el.appendChild(badge);
+            }
+          }
+        } else if (mode === 'offset') {
+          // Offset stacking: opaque with visual offset
+
+          if (overlaps.size > 0) {
+            const group = [b.id, ...overlaps].sort();
+            const index = group.indexOf(b.id);
+            const offset = index * 4;
+
+            el.style.left = `${4 + offset}px`;
+            el.style.right = `${4 - offset}px`;
+            el.style.top = `${top + offset}px`;
+            el.style.zIndex = index;
+          }
+        } else if (mode === 'unified') {
+          // Single neutral color, generic "Available" label
+          el.dataset.color = '0';
+          el.querySelector('.avail-block-name').textContent = 'Available';
+        }
+      });
+
+      // Also update second column blocks (Dr. Roberts) for all modes
+      const col2Blocks = document.querySelectorAll('#availLayer2 .avail-block');
+      col2Blocks.forEach(el => {
+        const origColor = el.dataset.origColor || el.dataset.color;
+        if (!el.dataset.origColor) el.dataset.origColor = origColor;
+
+        el.classList.remove('blend');
+
+        // Build full label: Clinician · Type · Time
+        const fullLabel = `${el.dataset.clinician} · ${el.dataset.name} · ${el.dataset.time}`;
+
+        if (mode === 'unified') {
+          el.dataset.color = '0';
+          el.querySelector('.avail-block-name').textContent = 'Available';
+        } else if (mode === 'stacked') {
+          el.dataset.color = origColor;
+          el.classList.add('blend');
+          el.querySelector('.avail-block-name').textContent = fullLabel;
+        } else {
+          el.dataset.color = origColor;
+          el.querySelector('.avail-block-name').textContent = fullLabel;
+        }
+      });
+
+      // Update UI
+      document.querySelectorAll('.concept-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.mode === mode);
+      });
+
+      // Also update week view if rendered
+      updateWeekViewMode(mode);
+    }
+
+    let currentOverlapMode = 'sidebyside';
+
+    function updateWeekViewMode(mode) {
+      currentOverlapMode = mode;
+
+      // Force re-render week view to apply new mode
+      if (weekViewRendered) {
+        weekViewRendered = false;
+        // Clear the static columns' contents
+        document.querySelectorAll('.cal-week-body .cal-week-column').forEach(col => col.innerHTML = '');
+        document.getElementById('weekTimeGutter').innerHTML = '';
+        if (currentView === 'week') {
+          renderWeekView();
+          // Respect current visibility state
+          const isVisible = document.getElementById('availToggle').classList.contains('active');
+          document.querySelectorAll('.week-avail-layer').forEach(l => {
+            l.style.display = isVisible ? 'block' : 'none';
+          });
+        }
+      }
+    }
+
+    // Toggle availability visibility
+    function toggleAvailability() {
+      const toggle = document.getElementById('availToggle');
+      const dayLayers = document.querySelectorAll('.avail-layer');
+      const weekLayers = document.querySelectorAll('.week-avail-layer');
+      toggle.classList.toggle('active');
+      const show = toggle.classList.contains('active');
+      dayLayers.forEach(l => l.style.display = show ? 'block' : 'none');
+      weekLayers.forEach(l => l.style.display = show ? 'block' : 'none');
+    }
+
+    // Keyboard shortcut: 'a' to toggle availability
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'a' || e.key === 'A') {
+        toggleAvailability();
+      }
+    });
+
+    // Toggle design notes
+    function toggleNotes() {
+      document.getElementById('designNotes').classList.toggle('collapsed');
+    }
+
+    // =========================================================================
+    // View Switching (Day/Week/Month)
+    // =========================================================================
+    let currentView = 'day';
+
+    function setCalView(view) {
+      currentView = view;
+
+      // Update button states
+      document.querySelectorAll('.view-switcher-btn').forEach(btn => {
+        btn.classList.toggle('active',
+          (view === 'day' && btn.textContent === 'D') ||
+          (view === 'week' && btn.textContent === 'W') ||
+          (view === 'month' && btn.textContent === 'M')
+        );
+      });
+
+      // Show/hide views
+      document.getElementById('dayViewContainer').style.display = view === 'day' ? '' : 'none';
+      document.getElementById('weekViewContainer').style.display = view === 'week' ? '' : 'none';
+
+      if (view === 'week') {
+        renderWeekView();
+        // Respect current availability toggle state
+        const isVisible = document.getElementById('availToggle').classList.contains('active');
+        document.querySelectorAll('.week-avail-layer').forEach(l => {
+          l.style.display = isVisible ? 'block' : 'none';
+        });
+      }
+    }
+
+    // =========================================================================
+    // Week View Rendering
+    // =========================================================================
+    let weekViewRendered = false;
+
+    function renderWeekView() {
+      if (weekViewRendered) return;
+      weekViewRendered = true;
+
+      const timeGutter = document.getElementById('weekTimeGutter');
+
+      // Render time slots
+      timeGutter.innerHTML = '';
+      const emptySlot = document.createElement('div');
+      emptySlot.className = 'cal-time-slot';
+      emptySlot.style.height = 'calc(var(--cal-hour-height) * 1)';
+      timeGutter.appendChild(emptySlot);
+
+      const hours = ['7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM'];
+      hours.forEach(h => {
+        const slot = document.createElement('div');
+        slot.className = 'cal-time-slot';
+        slot.textContent = h;
+        timeGutter.appendChild(slot);
+      });
+
+      // Week data: Mon-Fri only
+      const weekData = [
+        {
+          day: 'Mon', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Intakes', start: 2, end: 5, color: 1 },
+            { name: 'Established', start: 6, end: 10, color: 2 }
+          ],
+          appts: [
+            { title: 'Lee, Kevin', start: 2, duration: 1, type: 'intake', status: 'occurred' },
+            { title: 'Park, Jenny', start: 6.5, duration: 0.5, type: 'established', status: 'confirmed' }
+          ]
+        },
+        {
+          day: 'Tue', clinician: 'Dr. Morningstar', blocks: [
+            { name: 'Group', start: 3, end: 5, color: 5 },
+            { name: 'Established', start: 6, end: 9, color: 2 }
+          ],
+          appts: [
+            { title: 'Smith, Anna', start: 3, duration: 2, type: 'group', status: 'arrived' },
+            { title: 'Brown, Tom', start: 7, duration: 1, type: 'established', status: 'scheduled' }
+          ]
+        },
+        {
+          day: 'Wed', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Crisis', start: 1, end: 3, color: 4, clinician: 'Dr. Morningstar' },
+            { name: 'Intakes', start: 2, end: 5, color: 1, clinician: 'Dr. Boyles' },
+            { name: 'Group', start: 1, end: 4, color: 5, clinician: 'Dr. Franklin' },
+            { name: 'Established', start: 6, end: 10, color: 2, clinician: 'Dr. Boyles' },
+            { name: 'Telehealth', start: 7, end: 9, color: 3, clinician: 'Dr. Morningstar' }
+          ],
+          appts: [
+            { title: 'Martinez, Sofia', start: 2, duration: 1, type: 'intake', status: 'arrived' },
+            { title: 'Chen, David', start: 7.5, duration: 0.5, type: 'telehealth', status: 'confirmed' },
+            { title: 'Johnson, Michael', start: 8.5, duration: 1, type: 'established', status: 'confirmed' }
+          ]
+        },
+        {
+          day: 'Thu', clinician: 'Dr. Morningstar', blocks: [
+            { name: 'Crisis', start: 1, end: 3, color: 4 },
+            { name: 'Intakes', start: 2, end: 5, color: 1 },
+            { name: 'Established', start: 5, end: 10, color: 2 }
+          ],
+          appts: [
+            { title: 'Davis, Lisa', start: 3.5, duration: 1, type: 'intake', status: 'late' },
+            { title: 'Wilson, Mark', start: 6, duration: 1, type: 'established', status: 'noshow' }
+          ]
+        },
+        {
+          day: 'Fri', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Telehealth', start: 2, end: 6, color: 3 }
+          ],
+          appts: [
+            { title: 'Taylor, Chris', start: 2, duration: 0.5, type: 'telehealth', status: 'occurred' },
+            { title: 'Moore, Pat', start: 4, duration: 1, type: 'telehealth', status: 'cancelled' }
+          ]
+        }
+      ];
+
+      // Get static columns from HTML
+      const columns = document.querySelectorAll('.cal-week-body .cal-week-column');
+
+      // Render into each column
+      weekData.forEach((dayData, dayIndex) => {
+        const col = columns[dayIndex];
+        if (!col) return;
+
+        col.innerHTML = '';
+
+        // Hour lines
+        for (let i = 0; i <= 12; i++) {
+          const line = document.createElement('div');
+          line.className = 'cal-hour-line';
+          line.style.top = `${i * HOUR_HEIGHT}px`;
+          col.appendChild(line);
+
+          if (i < 12) {
+            const halfLine = document.createElement('div');
+            halfLine.className = 'cal-half-hour-line';
+            halfLine.style.top = `${i * HOUR_HEIGHT + HOUR_HEIGHT / 2}px`;
+            col.appendChild(halfLine);
+          }
+        }
+
+        // Availability layer
+        const availLayer = document.createElement('div');
+        availLayer.className = 'week-avail-layer';
+        availLayer.style.position = 'absolute';
+        availLayer.style.inset = '0';
+
+        // Find overlaps for this day
+        const dayBlocks = dayData.blocks;
+        const overlaps = {};
+        dayBlocks.forEach(b => overlaps[b.name] = new Set());
+        for (let i = 0; i < dayBlocks.length; i++) {
+          for (let j = i + 1; j < dayBlocks.length; j++) {
+            const a = dayBlocks[i], b = dayBlocks[j];
+            if (a.start < b.end && b.start < a.end) {
+              overlaps[a.name].add(b.name);
+              overlaps[b.name].add(a.name);
+            }
+          }
+        }
+
+        dayBlocks.forEach(b => {
+          const block = document.createElement('div');
+          block.className = 'avail-block';
+          block.dataset.color = b.color;
+          block.dataset.origColor = b.color;
+          block.dataset.name = b.name;
+
+          // Format time as "8:00 AM–12:00 PM"
+          const startH = 6 + b.start;
+          const endH = 6 + b.end;
+          const formatHour = h => {
+            const h12 = h > 12 ? h - 12 : h;
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            return `${h12}:00 ${ampm}`;
+          };
+          const timeStr = `${formatHour(startH)}–${formatHour(endH)}`.replace(' AM–', '–').replace(' PM–', '–');
+          block.dataset.time = timeStr;
+          block.dataset.clinician = b.clinician || dayData.clinician;
+          block.dataset.location = b.name === 'Telehealth' ? 'Virtual' : 'Main Office';
+          block.dataset.types = b.name;
+          block.dataset.start = b.start;
+          block.dataset.duration = b.end - b.start;
+
+          // Full label: "Clinician · Type · Time"
+          block.dataset.fullLabel = `${b.clinician || dayData.clinician} · ${b.name} · ${timeStr}`;
+
+          const top = b.start * HOUR_HEIGHT;
+          const height = (b.end - b.start) * HOUR_HEIGHT;
+          block.style.top = `${top}px`;
+          block.style.height = `${height}px`;
+
+          // Handle overlaps based on current mode
+          const hasOverlap = overlaps[b.name].size > 0;
+          const overlappingBlocks = [...overlaps[b.name]].map(name => dayBlocks.find(db => db.name === name));
+
+          if (currentOverlapMode === 'sidebyside' && hasOverlap) {
+            const group = [b.name, ...overlaps[b.name]].sort();
+            const index = group.indexOf(b.name);
+            const total = group.length;
+            const widthPct = 100 / total;
+            const leftPct = index * widthPct;
+            block.style.left = `calc(${leftPct}% + 2px)`;
+            block.style.right = `calc(${100 - leftPct - widthPct}% + 2px)`;
+          } else if (currentOverlapMode === 'topmost') {
+            block.style.left = '2px';
+            block.style.right = '2px';
+
+            // Calculate z-index
+            let zIndex;
+            if (currentOverlapMode === 'topmost-start') {
+              zIndex = b.start;
+            } else {
+              zIndex = 100 - (b.end - b.start);
+            }
+            block.style.zIndex = zIndex;
+
+            // Add badge if this is the top block
+            if (hasOverlap) {
+              const higherBlocks = overlappingBlocks.filter(ob => {
+                const obZ = currentOverlapMode === 'topmost-start' ? ob.start : 100 - (ob.end - ob.start);
+                return obZ > zIndex;
+              });
+              if (higherBlocks.length === 0) {
+                const badge = document.createElement('span');
+                badge.className = 'avail-overlap-badge';
+                badge.textContent = `+${overlaps[b.name].size} more`;
+
+                // Store hidden block data for tooltip
+                const hiddenBlocksData = overlappingBlocks.map(ob => {
+                  const startH = 6 + ob.start;
+                  const endH = 6 + ob.end;
+                  const formatHour = h => {
+                    const h12 = h > 12 ? h - 12 : h;
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    return `${h12}:00 ${ampm}`;
+                  };
+                  const timeStr = `${formatHour(startH)}–${formatHour(endH)}`.replace(' AM–', '–').replace(' PM–', '–');
+                  return {
+                    name: ob.name,
+                    clinician: ob.clinician || dayData.clinician,
+                    time: timeStr
+                  };
+                });
+                badge.dataset.hiddenBlocks = JSON.stringify(hiddenBlocksData);
+
+                // Add tooltip events
+                badge.addEventListener('mouseenter', (e) => {
+                  const hidden = JSON.parse(badge.dataset.hiddenBlocks);
+                  const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
+                  tooltip.querySelector('.tooltip-title').textContent = 'Hidden blocks';
+                  tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
+                  tooltip.classList.add('visible');
+                });
+                badge.addEventListener('mousemove', (e) => {
+                  tooltip.style.left = e.clientX + 12 + 'px';
+                  tooltip.style.top = e.clientY + 12 + 'px';
+                });
+                badge.addEventListener('mouseleave', () => {
+                  tooltip.classList.remove('visible');
+                });
+
+                block.appendChild(badge);
+              }
+            }
+          } else if (currentOverlapMode === 'offset' && hasOverlap) {
+            const group = [b.name, ...overlaps[b.name]].sort();
+            const index = group.indexOf(b.name);
+            const offset = index * 4;
+            block.style.left = `${2 + offset}px`;
+            block.style.right = `${2 - offset}px`;
+            block.style.top = `${top + offset}px`;
+            block.style.zIndex = index;
+          } else {
+            block.style.left = '2px';
+            block.style.right = '2px';
+          }
+
+          // Apply unified mode if active
+          if (currentOverlapMode === 'unified') {
+            block.dataset.color = '0';
+          }
+
+          // Apply blend class for stacked mode
+          if (currentOverlapMode === 'stacked') {
+            block.classList.add('blend');
+          }
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'avail-block-name';
+          nameSpan.textContent = currentOverlapMode === 'unified' ? 'Available' : block.dataset.fullLabel;
+          block.appendChild(nameSpan);
+
+          availLayer.appendChild(block);
+        });
+
+        col.appendChild(availLayer);
+
+        // Appointment layer
+        const apptLayer = document.createElement('div');
+        apptLayer.style.position = 'absolute';
+        apptLayer.style.inset = '0';
+        apptLayer.style.pointerEvents = 'none';
+
+        (dayData.appts || []).forEach(appt => {
+          const apptEl = document.createElement('div');
+          apptEl.className = 'appt-block' + (appt.duration <= 0.5 ? ' short' : '');
+          if (appt.type) apptEl.dataset.type = appt.type;
+          if (appt.status) apptEl.dataset.status = appt.status;
+          apptEl.style.pointerEvents = 'auto';
+          apptEl.style.top = `${appt.start * HOUR_HEIGHT + 2}px`;
+          apptEl.style.height = `${appt.duration * HOUR_HEIGHT - 4}px`;
+
+          // Format time: "8:00–9:00 AM"
+          const startHour = 6 + appt.start;
+          const endHour = 6 + appt.start + appt.duration;
+          const formatHour = h => {
+            const hour = Math.floor(h);
+            const min = Math.round((h % 1) * 60);
+            const h12 = hour > 12 ? hour - 12 : hour;
+            return `${h12}:${min.toString().padStart(2, '0')}`;
+          };
+          const ampm = endHour >= 12 ? 'PM' : 'AM';
+          const timeStr = `${formatHour(startHour)}–${formatHour(endHour)} ${ampm}`;
+
+          // Row container: name left, time right
+          const rowEl = document.createElement('div');
+          rowEl.className = 'appt-row';
+
+          const titleEl = document.createElement('div');
+          titleEl.className = 'appt-title';
+          titleEl.textContent = appt.title;
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'appt-time';
+          timeEl.textContent = timeStr;
+
+          rowEl.appendChild(titleEl);
+          rowEl.appendChild(timeEl);
+          apptEl.appendChild(rowEl);
+          apptLayer.appendChild(apptEl);
+        });
+
+        col.appendChild(apptLayer);
+      });
+    }
+
+    // Tooltip element
+    const tooltip = document.getElementById('tooltip');
+
+    // Initialize with topmost mode (B2)
+    setOverlapMode('topmost');
+
+    // ==========================================================================
+    // Click to Add Appointment (simple JS dialogs)
+    // ==========================================================================
+    function formatTime(hour, minutes) {
+      const h12 = hour > 12 ? hour - 12 : hour;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      return minutes > 0 ? `${h12}:${minutes.toString().padStart(2, '0')} ${ampm}` : `${h12} ${ampm}`;
+    }
+
+    function handleColumnClick(e, column) {
+      // Don't trigger if clicking an appointment or badge
+      if (e.target.closest('.appt-block') || e.target.closest('.avail-overlap-badge')) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const rect = column.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const hourIndex = Math.floor(y / HOUR_HEIGHT);
+      const hour = 6 + hourIndex;
+      const minutes = Math.round(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60 / 15) * 15;
+      const timeStr = formatTime(hour, minutes);
+
+      alert(`Add appointment at ${timeStr}\n\nDate: Wednesday, Sep 16, 2026`);
+    }
+
+    function addAppointmentFromToolbar() {
+      alert('Add appointment\n\nDate: Wednesday, Sep 16, 2026\nTime: Select a time slot on the calendar');
+    }
+
+    // Attach click handlers to day columns (use { once: false } and track)
+    document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+      if (!col.hasAttribute('data-click-bound')) {
+        col.setAttribute('data-click-bound', 'true');
+        col.addEventListener('click', (e) => handleColumnClick(e, col));
+      }
+    });
+
+    // Attach click handlers to week columns (after render)
+    function attachWeekColumnClicks() {
+      document.querySelectorAll('.cal-week-body .cal-week-column').forEach(col => {
+        if (!col.hasAttribute('data-click-bound')) {
+          col.setAttribute('data-click-bound', 'true');
+          col.addEventListener('click', (e) => handleColumnClick(e, col));
+        }
+      });
+    }
+
+    // ==========================================================================
+    // Appointment Tooltip - shows which availability blocks it falls within
+    // ==========================================================================
+    function getBlocksAtTime(column, apptEl) {
+      // Find all avail blocks in the same column that overlap with this appointment
+      const blocks = column.querySelectorAll('.avail-block');
+      const overlapping = [];
+
+      // Get appointment position from computed style (handles calc() values)
+      const apptRect = apptEl.getBoundingClientRect();
+      const columnRect = column.getBoundingClientRect();
+      const relativeTop = apptRect.top - columnRect.top;
+      const relativeBottom = relativeTop + apptRect.height;
+
+      blocks.forEach(block => {
+        const blockTop = parseFloat(block.style.top) || 0;
+        const blockHeight = parseFloat(block.style.height) || 60;
+        const blockBottom = blockTop + blockHeight;
+
+        // Check if appointment overlaps with block (using pixel positions)
+        if (relativeTop < blockBottom && relativeBottom > blockTop) {
+          overlapping.push({
+            name: block.dataset.name,
+            clinician: block.dataset.clinician,
+            time: block.dataset.time
+          });
+        }
+      });
+
+      return overlapping;
+    }
+
+    function showApptTooltip(e, appt) {
+      const title = appt.querySelector('.appt-title')?.textContent || 'Unknown';
+      const time = appt.querySelector('.appt-time')?.textContent || '';
+      const typeRaw = appt.querySelector('.appt-type')?.textContent || appt.dataset.type || '';
+      const type = typeRaw.charAt(0).toUpperCase() + typeRaw.slice(1);
+      const status = appt.dataset.status || '';
+
+      // Find parent column
+      const column = appt.closest('.cal-day-column, .cal-week-column');
+      const withinBlocks = column ? getBlocksAtTime(column, appt) : [];
+
+      let withinHtml = '';
+      if (withinBlocks.length > 0) {
+        const blockList = withinBlocks.map(b => `${b.clinician} · ${b.name} · ${b.time}`).join('<br>');
+        withinHtml = `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.2);">Within:<br>${blockList}</div>`;
+      }
+
+      // Format status for display
+      const statusDisplay = status ? status.replace('checkedin', 'Checked In').replace('noshow', 'No Show').replace(/^\w/, c => c.toUpperCase()) : '';
+
+      tooltip.querySelector('.tooltip-title').textContent = title;
+      tooltip.querySelector('.tooltip-meta').innerHTML = `
+        <div>${time}</div>
+        ${(type || statusDisplay) ? `<div style="margin-top: 2px; display: flex; justify-content: space-between; gap: 12px;"><span style="opacity: 0.8;">${type}</span><span>${statusDisplay}</span></div>` : ''}
+        ${withinHtml}
+      `;
+      tooltip.classList.add('visible');
+      tooltip.style.left = e.clientX + 12 + 'px';
+      tooltip.style.top = e.clientY + 12 + 'px';
+    }
+
+    function hideApptTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    function attachApptTooltip(appt) {
+      if (appt.hasAttribute('data-tooltip-bound')) return;
+      appt.setAttribute('data-tooltip-bound', 'true');
+
+      appt.addEventListener('mouseenter', (e) => showApptTooltip(e, appt));
+      appt.addEventListener('mousemove', (e) => {
+        tooltip.style.left = e.clientX + 12 + 'px';
+        tooltip.style.top = e.clientY + 12 + 'px';
+      });
+      appt.addEventListener('mouseleave', hideApptTooltip);
+    }
+
+    // Attach to day view appointments
+    document.querySelectorAll('.cal-day-body .appt-block').forEach(attachApptTooltip);
+
+    // ==========================================================================
+    // Click to View Appointment
+    // ==========================================================================
+    function handleApptClick(e, appt) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const title = appt.querySelector('.appt-title')?.textContent || 'Unknown';
+      const time = appt.querySelector('.appt-time')?.textContent || '';
+      const type = appt.querySelector('.appt-type')?.textContent || 'Follow-up';
+
+      alert(`${title}\n\nTime: ${time}\nType: ${type}\nDate: Wednesday, Sep 16, 2026`);
+    }
+
+    document.querySelectorAll('.appt-block').forEach(appt => {
+      appt.addEventListener('click', (e) => handleApptClick(e, appt));
+    });
+
+    // Attach week column clicks after initial render
+    const origRenderWeekView = renderWeekView;
+    renderWeekView = function () {
+      origRenderWeekView();
+      attachWeekColumnClicks();
+      // Also attach click and tooltip handlers to dynamically created appointments
+      document.querySelectorAll('.cal-week-body .appt-block').forEach(appt => {
+        if (!appt.hasAttribute('data-click-bound')) {
+          appt.setAttribute('data-click-bound', 'true');
+          appt.addEventListener('click', (e) => handleApptClick(e, appt));
+        }
+        attachApptTooltip(appt);
+      });
+    };
+  </script>
+</body>
+
+</html>
