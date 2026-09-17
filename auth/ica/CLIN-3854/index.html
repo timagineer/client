@@ -1,9 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-Availability Blocks Prototype - Exploring overlapping availability visualization
-Core question: Do overlapping blocks need distinct visual treatment, or is name-in-corner + tooltip sufficient?
--->
 
 <head>
   <meta charset="UTF-8">
@@ -796,7 +792,16 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: space-between;
+    }
+
+    /* Clip from center: pin first child to top, last to bottom */
+    .appt-block .appt-row:first-child {
+      flex-shrink: 0;
+    }
+
+    .appt-block .appt-detail-row:last-child {
+      flex-shrink: 0;
     }
 
     /* Center content for short appointments (30min = 30px height, so ≤34px with padding) */
@@ -899,12 +904,18 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      font-size: var(--text-xs);
-      margin-top: 1px;
+      font-size: var(--text-sm);
+      gap: var(--sp-2);
     }
 
     .appt-detail-row .appt-type {
       margin-top: 0;
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .appt-detail-row .appt-status {
+      font-size: var(--text-sm);
     }
 
     .appt-status {
@@ -940,6 +951,24 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
     .tooltip-title {
       font-weight: 600;
       margin-bottom: 2px;
+    }
+
+    .tooltip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--sp-3);
+      margin-bottom: 2px;
+    }
+
+    .tooltip-header-name {
+      font-weight: 600;
+    }
+
+    .tooltip-header-time {
+      font-weight: 400;
+      opacity: 0.85;
+      white-space: nowrap;
     }
 
     .tooltip-meta {
@@ -1365,7 +1394,10 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
 
   <!-- Tooltip -->
   <div class="tooltip" id="tooltip">
-    <div class="tooltip-title"></div>
+    <div class="tooltip-header">
+      <span class="tooltip-header-name"></span>
+      <span class="tooltip-header-time"></span>
+    </div>
     <div class="tooltip-meta"></div>
   </div>
 
@@ -1560,7 +1592,8 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
               badge.addEventListener('mouseenter', (e) => {
                 const hidden = JSON.parse(badge.dataset.hiddenBlocks);
                 const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
-                tooltip.querySelector('.tooltip-title').textContent = 'Hidden blocks';
+                tooltip.querySelector('.tooltip-header-name').textContent = 'Hidden blocks';
+                tooltip.querySelector('.tooltip-header-time').textContent = '';
                 tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
                 tooltip.classList.add('visible');
               });
@@ -1887,53 +1920,60 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
             }
             block.style.zIndex = zIndex;
 
+            // Check if this is the top block
+            const higherBlocks = hasOverlap ? overlappingBlocks.filter(ob => {
+              const obZ = currentOverlapMode === 'topmost-start' ? ob.start : 100 - (ob.end - ob.start);
+              return obZ > zIndex;
+            }) : [];
+            const isTopBlock = higherBlocks.length === 0;
+
+            // Hide label for non-top blocks in overlap situations
+            if (hasOverlap && !isTopBlock) {
+              block.dataset.hideLabel = 'true';
+            }
+
             // Add badge if this is the top block
-            if (hasOverlap) {
-              const higherBlocks = overlappingBlocks.filter(ob => {
-                const obZ = currentOverlapMode === 'topmost-start' ? ob.start : 100 - (ob.end - ob.start);
-                return obZ > zIndex;
+            if (hasOverlap && isTopBlock) {
+              const badge = document.createElement('span');
+              badge.className = 'avail-overlap-badge';
+              badge.textContent = `+${overlaps[b.name].size} more`;
+
+              // Store hidden block data for tooltip
+              const hiddenBlocksData = overlappingBlocks.map(ob => {
+                const startH = 6 + ob.start;
+                const endH = 6 + ob.end;
+                const formatHour = h => {
+                  const h12 = h > 12 ? h - 12 : h;
+                  const ampm = h >= 12 ? 'PM' : 'AM';
+                  return `${h12}:00 ${ampm}`;
+                };
+                const timeStr = `${formatHour(startH)}–${formatHour(endH)}`.replace(' AM–', '–').replace(' PM–', '–');
+                return {
+                  name: ob.name,
+                  clinician: ob.clinician || dayData.clinician,
+                  time: timeStr
+                };
               });
-              if (higherBlocks.length === 0) {
-                const badge = document.createElement('span');
-                badge.className = 'avail-overlap-badge';
-                badge.textContent = `+${overlaps[b.name].size} more`;
+              badge.dataset.hiddenBlocks = JSON.stringify(hiddenBlocksData);
 
-                // Store hidden block data for tooltip
-                const hiddenBlocksData = overlappingBlocks.map(ob => {
-                  const startH = 6 + ob.start;
-                  const endH = 6 + ob.end;
-                  const formatHour = h => {
-                    const h12 = h > 12 ? h - 12 : h;
-                    const ampm = h >= 12 ? 'PM' : 'AM';
-                    return `${h12}:00 ${ampm}`;
-                  };
-                  const timeStr = `${formatHour(startH)}–${formatHour(endH)}`.replace(' AM–', '–').replace(' PM–', '–');
-                  return {
-                    name: ob.name,
-                    clinician: ob.clinician || dayData.clinician,
-                    time: timeStr
-                  };
-                });
-                badge.dataset.hiddenBlocks = JSON.stringify(hiddenBlocksData);
+              // Add tooltip events
+              badge.addEventListener('mouseenter', (e) => {
+                const hidden = JSON.parse(badge.dataset.hiddenBlocks);
+                const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
+                tooltip.querySelector('.tooltip-header-name').textContent = 'Hidden blocks';
+                tooltip.querySelector('.tooltip-header-time').textContent = '';
+                tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
+                tooltip.classList.add('visible');
+              });
+              badge.addEventListener('mousemove', (e) => {
+                tooltip.style.left = e.clientX + 12 + 'px';
+                tooltip.style.top = e.clientY + 12 + 'px';
+              });
+              badge.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+              });
 
-                // Add tooltip events
-                badge.addEventListener('mouseenter', (e) => {
-                  const hidden = JSON.parse(badge.dataset.hiddenBlocks);
-                  const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
-                  tooltip.querySelector('.tooltip-title').textContent = 'Hidden blocks';
-                  tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
-                  tooltip.classList.add('visible');
-                });
-                badge.addEventListener('mousemove', (e) => {
-                  tooltip.style.left = e.clientX + 12 + 'px';
-                  tooltip.style.top = e.clientY + 12 + 'px';
-                });
-                badge.addEventListener('mouseleave', () => {
-                  tooltip.classList.remove('visible');
-                });
-
-                block.appendChild(badge);
-              }
+              block.appendChild(badge);
             }
           } else if (currentOverlapMode === 'offset' && hasOverlap) {
             const group = [b.name, ...overlaps[b.name]].sort();
@@ -1961,6 +2001,9 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
           const nameSpan = document.createElement('span');
           nameSpan.className = 'avail-block-name';
           nameSpan.textContent = currentOverlapMode === 'unified' ? 'Available' : block.dataset.fullLabel;
+          if (block.dataset.hideLabel === 'true') {
+            nameSpan.style.display = 'none';
+          }
           block.appendChild(nameSpan);
 
           availLayer.appendChild(block);
@@ -2010,6 +2053,27 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
           rowEl.appendChild(titleEl);
           rowEl.appendChild(timeEl);
           apptEl.appendChild(rowEl);
+
+          // Type + status row at bottom (for cards tall enough)
+          if (appt.duration > 0.5) {
+            const detailRow = document.createElement('div');
+            detailRow.className = 'appt-detail-row';
+
+            const typeEl = document.createElement('div');
+            typeEl.className = 'appt-type';
+            const typeMap = { intake: 'Intake', established: 'Follow-up', telehealth: 'Telehealth', crisis: 'Crisis', group: 'Group' };
+            typeEl.textContent = typeMap[appt.type] || appt.type || '';
+
+            const statusEl = document.createElement('div');
+            statusEl.className = 'appt-status';
+            const statusMap = { scheduled: 'Scheduled', confirmed: 'Confirmed', arrived: 'Arrived', checkedin: 'Checked In', occurred: 'Occurred', cancelled: 'Cancelled', late: 'Late', noshow: 'No Show' };
+            statusEl.textContent = statusMap[appt.status] || appt.status || '';
+
+            detailRow.appendChild(typeEl);
+            detailRow.appendChild(statusEl);
+            apptEl.appendChild(detailRow);
+          }
+
           apptLayer.appendChild(apptEl);
         });
 
@@ -2123,10 +2187,10 @@ Core question: Do overlapping blocks need distinct visual treatment, or is name-
       // Format status for display
       const statusDisplay = status ? status.replace('checkedin', 'Checked In').replace('noshow', 'No Show').replace(/^\w/, c => c.toUpperCase()) : '';
 
-      tooltip.querySelector('.tooltip-title').textContent = title;
+      tooltip.querySelector('.tooltip-header-name').textContent = title;
+      tooltip.querySelector('.tooltip-header-time').textContent = time;
       tooltip.querySelector('.tooltip-meta').innerHTML = `
-        <div>${time}</div>
-        ${(type || statusDisplay) ? `<div style="margin-top: 2px; display: flex; justify-content: space-between; gap: 12px;"><span style="opacity: 0.8;">${type}</span><span>${statusDisplay}</span></div>` : ''}
+        ${(type || statusDisplay) ? `<div style="display: flex; justify-content: space-between; gap: 12px;"><span style="opacity: 0.8;">${type}</span><span>${statusDisplay}</span></div>` : ''}
         ${withinHtml}
       `;
       tooltip.classList.add('visible');
