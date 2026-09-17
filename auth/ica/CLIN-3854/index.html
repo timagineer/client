@@ -534,7 +534,7 @@
       flex-direction: column;
       overflow: hidden;
       background: #fff;
-      padding: 0 var(--sp-4);
+      padding: 0 var(--sp-4) 0 var(--sp-2);
     }
 
     .cal-day-view {
@@ -2396,8 +2396,8 @@
       // Build type/status row with mini cards (semi-transparent, colored borders)
       let typeStatusHtml = '';
       if (type || statusDisplay) {
-        const typeCard = type ? `<span style="display: inline-flex; align-items: center; padding: 2px 6px; background: rgba(255,255,255,0.10); border-radius: 4px; border-left: 3px solid ${typeColor};">${type}</span>` : '';
-        const statusCard = statusDisplay ? `<span style="display: inline-flex; align-items: center; padding: 2px 6px; background: rgba(255,255,255,0.10); border-radius: 4px; border-right: 3px solid ${statusColor};">${statusDisplay}</span>` : '';
+        const typeCard = type ? `<span style="display: inline-flex; align-items: center; padding: 2px 6px 2px 4px; background: rgba(255,255,255,0.10); border-radius: 4px; border-left: 3px solid ${typeColor};">${type}</span>` : '';
+        const statusCard = statusDisplay ? `<span style="display: inline-flex; align-items: center; padding: 2px 4px 2px 6px; background: rgba(255,255,255,0.10); border-radius: 4px; border-right: 3px solid ${statusColor};">${statusDisplay}</span>` : '';
         typeStatusHtml = `<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">${typeCard}${statusCard}</div>`;
       }
 
