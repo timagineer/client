@@ -513,7 +513,7 @@
     .view-switcher-btn.active {
       background: hsl(0, 0%, 92%);
       color: var(--text-1);
-      font-weight: 600;
+      font-weight: 500;
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
     }
 
@@ -1074,6 +1074,10 @@
       margin-bottom: 4px;
     }
 
+    .tooltip-header:has(.tooltip-header-name:empty):has(.tooltip-header-time:empty) {
+      display: none;
+    }
+
     .tooltip-header-name {
       font-weight: 600;
     }
@@ -1093,10 +1097,14 @@
     .tooltip-section-label {
       font-size: var(--text-xs);
       font-weight: 500;
-      opacity: 0.6;
+      color: var(--neutral-80);
       letter-spacing: 0.3px;
       margin-top: var(--sp-2);
       margin-bottom: 2px;
+    }
+
+    .tooltip-section-label:first-child {
+      margin-top: 0;
     }
 
     .tooltip-divider {
@@ -1373,20 +1381,11 @@
               </div>
               <div class="cal-day-column" id="dayColumn">
                 <div class="avail-layer" id="availLayer">
-                  <div class="avail-block" data-color="4" id="block-crisis" style="top: 0px; height: 120px; left: 4px; right: calc(50% + 2px);" data-name="Crisis" data-start="1" data-end="3" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
-                    <span class="avail-block-name">Dr. Morningstar · Crisis · 7:00–9:00 AM</span>
+                  <div class="avail-block" data-color="1" id="block-intakes" style="top: 60px; height: 180px; left: 4px; right: 4px;" data-name="Intakes" data-start="2" data-end="5" data-time="8:00–11:00 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
+                    <span class="avail-block-name">Intakes · 8:00–11:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="1" id="block-intakes" style="top: 60px; height: 180px; left: calc(50% + 2px); right: 4px;" data-name="Intakes" data-start="2" data-end="5" data-time="8:00–11:00 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
-                    <span class="avail-block-name">Dr. Boyles · Intakes · 8:00–11:00 AM</span>
-                  </div>
-                  <div class="avail-block" data-color="5" id="block-group" style="top: 0px; height: 180px; left: 4px; right: 4px;" data-name="Group" data-start="1" data-end="4" data-time="7:00–10:00 AM" data-clinician="Dr. Franklin" data-location="Main Office" data-types="Group Therapy">
-                    <span class="avail-block-name">Dr. Franklin · Group · 7:00–10:00 AM</span>
-                  </div>
-                  <div class="avail-block" data-color="2" id="block-established" style="top: 300px; height: 240px; left: 4px; right: calc(50% + 2px);" data-name="Established" data-start="6" data-end="10" data-time="12:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Follow-up, Med Management">
-                    <span class="avail-block-name">Dr. Boyles · Established · 12:00–4:00 PM</span>
-                  </div>
-                  <div class="avail-block" data-color="3" id="block-telehealth" style="top: 360px; height: 120px; left: calc(50% + 2px); right: 4px;" data-name="Telehealth" data-start="7" data-end="9" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth Session">
-                    <span class="avail-block-name">Dr. Morningstar · Telehealth · 1:00–3:00 PM</span>
+                  <div class="avail-block" data-color="2" id="block-established" style="top: 300px; height: 240px; left: 4px; right: 4px;" data-name="Established" data-start="6" data-end="10" data-time="12:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Follow-up, Med Management">
+                    <span class="avail-block-name">Established · 12:00–4:00 PM</span>
                   </div>
                 </div>
                 <div class="appt-layer">
@@ -1400,68 +1399,101 @@
                       <div class="appt-status" data-status="arrived">Arrived</div>
                     </div>
                   </div>
-                  <div class="appt-block short" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                  <div class="appt-block" data-type="intake" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 2.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
-                      <div class="appt-title">Chen, David</div>
-                      <div class="appt-time">1:30–2:00 PM</div>
+                      <div class="appt-title">Thompson, Rachel</div>
+                      <div class="appt-time">9:30–10:30 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">New Client Intake</div>
+                      <div class="appt-status" data-status="scheduled">Scheduled</div>
                     </div>
                   </div>
-                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
-                      <div class="appt-title">Johnson, Michael</div>
-                      <div class="appt-time">2:30–3:30 PM</div>
+                      <div class="appt-title">Williams, James</div>
+                      <div class="appt-time">12:00–1:00 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Med Management</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 5.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Rivera, Carlos</div>
+                      <div class="appt-time">12:30–1:30 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Follow-up</div>
+                      <div class="appt-status" data-status="scheduled">Scheduled</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Garcia, Maria</div>
+                      <div class="appt-time">1:30–2:30 PM</div>
                     </div>
                     <div class="appt-detail-row">
                       <div class="appt-type">Follow-up</div>
                       <div class="appt-status" data-status="confirmed">Confirmed</div>
                     </div>
                   </div>
-                  <div class="appt-block" data-type="established" data-status="cancelled" style="top: calc(var(--cal-hour-height) * 3 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 9.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
-                      <div class="appt-title">Adams, Robert</div>
-                      <div class="appt-time">10:00–11:00 AM</div>
+                      <div class="appt-title">Johnson, Michael</div>
+                      <div class="appt-time">4:30–5:30 PM</div>
                     </div>
                     <div class="appt-detail-row">
                       <div class="appt-type">Follow-up</div>
-                      <div class="appt-status" data-status="cancelled">Cancelled</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="cal-day-column" id="dayColumn2">
                 <div class="avail-layer" id="availLayer2">
-                  <div class="avail-block" data-color="1" data-orig-color="1" style="top: 0px; height: 240px; left: 4px; right: 4px;" data-name="Intakes" data-start="1" data-end="5" data-time="7:00–11:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Initial Evaluation, New Client Intake">
-                    <span class="avail-block-name">Dr. Morningstar · Intakes · 7:00–11:00 AM</span>
+                  <div class="avail-block" data-color="4" data-orig-color="4" style="top: 0px; height: 120px; left: 4px; right: 4px;" data-name="Crisis" data-start="1" data-end="3" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
+                    <span class="avail-block-name">Crisis · 7:00–9:00 AM</span>
                   </div>
-                  <div class="avail-block" data-color="2" data-orig-color="2" style="top: 300px; height: 180px; left: 4px; right: 4px;" data-name="Established" data-start="6" data-end="9" data-time="12:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Follow-up, Med Management">
-                    <span class="avail-block-name">Dr. Morningstar · Established · 12:00–3:00 PM</span>
+                  <div class="avail-block" data-color="3" data-orig-color="3" style="top: 360px; height: 120px; left: 4px; right: 4px;" data-name="Telehealth" data-start="7" data-end="9" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth Session">
+                    <span class="avail-block-name">Telehealth · 1:00–3:00 PM</span>
+                  </div>
+                  <div class="avail-block" data-color="2" data-orig-color="2" style="top: 540px; height: 120px; left: 4px; right: 4px;" data-name="Established" data-start="10" data-end="12" data-time="4:00–6:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Follow-up">
+                    <span class="avail-block-name">Established · 4:00–6:00 PM</span>
                   </div>
                 </div>
                 <div class="appt-layer">
-                  <div class="appt-block" data-type="intake" data-status="checkedin" style="top: calc(var(--cal-hour-height) * 0.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block" data-type="crisis" data-status="occurred" style="top: calc(var(--cal-hour-height) * 0.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
                     <div class="appt-row">
-                      <div class="appt-title">Williams, James</div>
+                      <div class="appt-title">Adams, Robert</div>
                       <div class="appt-time">7:30–8:30 AM</div>
                     </div>
                     <div class="appt-detail-row">
-                      <div class="appt-type">New Client Intake</div>
-                      <div class="appt-status" data-status="checkedin">Checked In</div>
+                      <div class="appt-type">Crisis Intervention</div>
+                      <div class="appt-status" data-status="occurred">Occurred</div>
                     </div>
                   </div>
-                  <div class="appt-block" data-type="intake" data-status="noshow" style="top: calc(var(--cal-hour-height) * 3 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                  <div class="appt-block short" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
                     <div class="appt-row">
-                      <div class="appt-title">Thompson, Sarah</div>
-                      <div class="appt-time">9:00–10:00 AM</div>
+                      <div class="appt-title">Chen, David</div>
+                      <div class="appt-time">1:30–2:00 PM</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="telehealth" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Patel, Anita</div>
+                      <div class="appt-time">2:30–3:00 PM</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 9 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Wilson, Karen</div>
+                      <div class="appt-time">4:00–5:00 PM</div>
                     </div>
                     <div class="appt-detail-row">
-                      <div class="appt-type">Initial Evaluation</div>
-                      <div class="appt-status" data-status="noshow">No Show</div>
-                    </div>
-                  </div>
-                  <div class="appt-block short" data-type="established" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 6.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
-                    <div class="appt-row">
-                      <div class="appt-title">Garcia, Maria</div>
-                      <div class="appt-time">12:30–1:00 PM</div>
+                      <div class="appt-type">Follow-up</div>
+                      <div class="appt-status" data-status="scheduled">Scheduled</div>
                     </div>
                   </div>
                 </div>
@@ -1729,9 +1761,9 @@
               badge.addEventListener('mouseenter', (e) => {
                 const hidden = JSON.parse(badge.dataset.hiddenBlocks);
                 const blockList = hidden.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
-                tooltip.querySelector('.tooltip-header-name').textContent = 'Availability';
+                tooltip.querySelector('.tooltip-header-name').textContent = '';
                 tooltip.querySelector('.tooltip-header-time').textContent = '';
-                tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
+                tooltip.querySelector('.tooltip-meta').innerHTML = `<span class="tooltip-section-label">Availability</span><br>${blockList}`;
                 tooltip.classList.add('visible');
               });
               badge.addEventListener('mousemove', (e) => {
@@ -1941,14 +1973,21 @@
           day: 'Wed', clinician: 'Dr. Boyles', blocks: [
             { name: 'Crisis', start: 1, end: 3, color: 4, clinician: 'Dr. Morningstar' },
             { name: 'Intakes', start: 2, end: 5, color: 1, clinician: 'Dr. Boyles' },
-            { name: 'Group', start: 1, end: 4, color: 5, clinician: 'Dr. Franklin' },
             { name: 'Established', start: 6, end: 10, color: 2, clinician: 'Dr. Boyles' },
-            { name: 'Telehealth', start: 7, end: 9, color: 3, clinician: 'Dr. Morningstar' }
+            { name: 'Telehealth', start: 7, end: 9, color: 3, clinician: 'Dr. Morningstar' },
+            { name: 'Established', start: 10, end: 12, color: 2, clinician: 'Dr. Morningstar' }
           ],
           appts: [
+            { title: 'Adams, Robert', start: 1.5, duration: 1, type: 'crisis', status: 'occurred' },
             { title: 'Martinez, Sofia', start: 2, duration: 1, type: 'intake', status: 'arrived' },
+            { title: 'Thompson, Rachel', start: 3.5, duration: 1, type: 'intake', status: 'scheduled' },
+            { title: 'Williams, James', start: 6, duration: 1, type: 'established', status: 'confirmed' },
+            { title: 'Rivera, Carlos', start: 6.5, duration: 1, type: 'established', status: 'scheduled' },
+            { title: 'Garcia, Maria', start: 7.5, duration: 1, type: 'established', status: 'confirmed' },
             { title: 'Chen, David', start: 7.5, duration: 0.5, type: 'telehealth', status: 'confirmed' },
-            { title: 'Johnson, Michael', start: 8.5, duration: 1, type: 'established', status: 'confirmed' }
+            { title: 'Patel, Anita', start: 8.5, duration: 0.5, type: 'telehealth', status: 'scheduled' },
+            { title: 'Johnson, Michael', start: 9.5, duration: 1, type: 'established', status: 'confirmed' },
+            { title: 'Wilson, Karen', start: 10, duration: 1, type: 'established', status: 'scheduled' }
           ]
         },
         {
@@ -2118,9 +2157,9 @@
               badge.addEventListener('mouseenter', (e) => {
                 const blocks = JSON.parse(badge.dataset.hiddenBlocks);
                 const blockList = blocks.map(h => `${h.clinician} · ${h.name} · ${h.time}`).join('<br>');
-                tooltip.querySelector('.tooltip-header-name').textContent = 'Availability';
+                tooltip.querySelector('.tooltip-header-name').textContent = '';
                 tooltip.querySelector('.tooltip-header-time').textContent = '';
-                tooltip.querySelector('.tooltip-meta').innerHTML = blockList;
+                tooltip.querySelector('.tooltip-meta').innerHTML = `<span class="tooltip-section-label">Availability</span><br>${blockList}`;
                 tooltip.classList.add('visible');
               });
               badge.addEventListener('mousemove', (e) => {
@@ -2172,9 +2211,9 @@
 
           // Block label hover tooltip — matches badge format
           nameSpan.addEventListener('mouseenter', (e) => {
-            tooltip.querySelector('.tooltip-header-name').textContent = 'Availability';
+            tooltip.querySelector('.tooltip-header-name').textContent = '';
             tooltip.querySelector('.tooltip-header-time').textContent = '';
-            tooltip.querySelector('.tooltip-meta').innerHTML = `${block.dataset.clinician} · ${block.dataset.name} · ${block.dataset.time}`;
+            tooltip.querySelector('.tooltip-meta').innerHTML = `<span class="tooltip-section-label">Availability</span><br>${block.dataset.clinician} · ${block.dataset.name} · ${block.dataset.time}`;
             tooltip.classList.add('visible');
           });
           nameSpan.addEventListener('mousemove', (e) => {
@@ -2192,20 +2231,111 @@
 
         col.appendChild(availLayer);
 
-        // Appointment layer
+        // Appointment layer with collision detection
         const apptLayer = document.createElement('div');
         apptLayer.style.position = 'absolute';
         apptLayer.style.inset = '0';
         apptLayer.style.pointerEvents = 'none';
 
-        (dayData.appts || []).forEach(appt => {
+        // Calculate appointment collisions
+        const appts = dayData.appts || [];
+        const apptPositions = appts.map((appt, idx) => ({
+          ...appt,
+          idx,
+          startPx: (appt.start - 1) * HOUR_HEIGHT,
+          endPx: (appt.start - 1 + appt.duration) * HOUR_HEIGHT
+        }));
+
+        // Find collision groups
+        function findCollisionGroups(items) {
+          const groups = [];
+          const used = new Set();
+
+          items.forEach((item, i) => {
+            if (used.has(i)) return;
+
+            const group = [item];
+            used.add(i);
+
+            // Find all items that overlap with any item in the group
+            let changed = true;
+            while (changed) {
+              changed = false;
+              items.forEach((other, j) => {
+                if (used.has(j)) return;
+                // Check if other overlaps with any item in group
+                const overlaps = group.some(g =>
+                  g.startPx < other.endPx && other.startPx < g.endPx
+                );
+                if (overlaps) {
+                  group.push(other);
+                  used.add(j);
+                  changed = true;
+                }
+              });
+            }
+
+            if (group.length > 0) groups.push(group);
+          });
+
+          return groups;
+        }
+
+        const collisionGroups = findCollisionGroups(apptPositions);
+
+        // Assign columns within each collision group
+        collisionGroups.forEach(group => {
+          if (group.length === 1) {
+            group[0].col = 0;
+            group[0].totalCols = 1;
+            return;
+          }
+
+          // Sort by start time
+          group.sort((a, b) => a.startPx - b.startPx);
+
+          // Greedy column assignment
+          const columns = [];
+          group.forEach(item => {
+            let placed = false;
+            for (let c = 0; c < columns.length; c++) {
+              // Check if this column is free (no overlap with last item in column)
+              const lastInCol = columns[c][columns[c].length - 1];
+              if (lastInCol.endPx <= item.startPx) {
+                columns[c].push(item);
+                item.col = c;
+                placed = true;
+                break;
+              }
+            }
+            if (!placed) {
+              item.col = columns.length;
+              columns.push([item]);
+            }
+          });
+
+          const totalCols = columns.length;
+          group.forEach(item => item.totalCols = totalCols);
+        });
+
+        apptPositions.forEach(appt => {
           const apptEl = document.createElement('div');
           apptEl.className = 'appt-block' + (appt.duration <= 0.5 ? ' short' : '');
           if (appt.type) apptEl.dataset.type = appt.type;
           if (appt.status) apptEl.dataset.status = appt.status;
           apptEl.style.pointerEvents = 'auto';
-          apptEl.style.top = `${(appt.start - 1) * HOUR_HEIGHT + 2}px`;
+          apptEl.style.top = `${appt.startPx + 2}px`;
           apptEl.style.height = `${appt.duration * HOUR_HEIGHT - 4}px`;
+
+          // Apply collision positioning
+          const isColliding = appt.totalCols > 1;
+          if (isColliding) {
+            const widthPct = 100 / appt.totalCols;
+            const leftPct = appt.col * widthPct;
+            apptEl.style.left = `calc(${leftPct}% + 4px)`;
+            apptEl.style.right = `calc(${100 - leftPct - widthPct}% + 4px)`;
+            apptEl.classList.add('collapsed');
+          }
 
           // Format time: "8:00–9:00 AM"
           const startHour = 6 + appt.start;
@@ -2219,24 +2349,54 @@
           const ampm = endHour >= 12 ? 'PM' : 'AM';
           const timeStr = `${formatHour(startHour)}–${formatHour(endHour)} ${ampm}`;
 
-          // Row container: name left, time right
-          const rowEl = document.createElement('div');
-          rowEl.className = 'appt-row';
+          // Abbreviate name for collision mode: "Martinez, Sofia" → "Martinez, S."
+          const abbreviateName = (name) => {
+            const parts = name.split(', ');
+            if (parts.length === 2) {
+              return `${parts[0]}, ${parts[1].charAt(0)}.`;
+            }
+            return name;
+          };
 
-          const titleEl = document.createElement('div');
-          titleEl.className = 'appt-title';
-          titleEl.textContent = appt.title;
+          // Store full name for tooltip
+          apptEl.dataset.fullName = appt.title;
+          apptEl.dataset.time = timeStr;
 
-          const timeEl = document.createElement('div');
-          timeEl.className = 'appt-time';
-          timeEl.textContent = timeStr;
+          if (isColliding) {
+            // Stacked layout: name on line 1, time on line 2 (if tall enough)
+            const titleEl = document.createElement('div');
+            titleEl.className = 'appt-title';
+            titleEl.textContent = abbreviateName(appt.title);
+            apptEl.appendChild(titleEl);
 
-          rowEl.appendChild(titleEl);
-          rowEl.appendChild(timeEl);
-          apptEl.appendChild(rowEl);
+            // Show time on second line if card is tall enough (≥1 hour)
+            if (appt.duration >= 1) {
+              const timeEl = document.createElement('div');
+              timeEl.className = 'appt-time';
+              timeEl.style.marginTop = '2px';
+              timeEl.textContent = timeStr;
+              apptEl.appendChild(timeEl);
+            }
+          } else {
+            // Normal layout: name left, time right on same row
+            const rowEl = document.createElement('div');
+            rowEl.className = 'appt-row';
 
-          // Type + status row at bottom (for cards tall enough)
-          if (appt.duration > 0.5) {
+            const titleEl = document.createElement('div');
+            titleEl.className = 'appt-title';
+            titleEl.textContent = appt.title;
+
+            const timeEl = document.createElement('div');
+            timeEl.className = 'appt-time';
+            timeEl.textContent = timeStr;
+
+            rowEl.appendChild(titleEl);
+            rowEl.appendChild(timeEl);
+            apptEl.appendChild(rowEl);
+          }
+
+          // Type + status row at bottom (for cards tall enough, and not colliding)
+          if (appt.duration > 0.5 && !isColliding) {
             const detailRow = document.createElement('div');
             detailRow.className = 'appt-detail-row';
 
@@ -2349,12 +2509,22 @@
     }
 
     function showApptTooltip(e, appt) {
-      const title = appt.querySelector('.appt-title')?.textContent || 'Unknown';
-      const time = appt.querySelector('.appt-time')?.textContent || '';
-      const typeRaw = appt.querySelector('.appt-type')?.textContent || appt.dataset.type || '';
-      const type = typeRaw.charAt(0).toUpperCase() + typeRaw.slice(1);
-      const status = appt.dataset.status || '';
+      // Use stored data for collapsed cards, otherwise read from DOM
+      const title = appt.dataset.fullName || appt.querySelector('.appt-title')?.textContent || 'Unknown';
+      const time = appt.dataset.time || appt.querySelector('.appt-time')?.textContent || '';
+      const typeRaw = appt.querySelector('.appt-type')?.textContent || '';
       const typeKey = appt.dataset.type || '';
+
+      // Map type key to display name
+      const typeDisplayMap = {
+        intake: 'Initial Evaluation',
+        established: 'Follow-up',
+        telehealth: 'Telehealth Session',
+        crisis: 'Crisis Intervention',
+        group: 'Group Session'
+      };
+      const type = typeRaw || typeDisplayMap[typeKey] || typeKey.charAt(0).toUpperCase() + typeKey.slice(1);
+      const status = appt.dataset.status || '';
 
       // Type colors - using -55 step for tooltip visibility
       const typeColors = {
@@ -2428,6 +2598,113 @@
       appt.addEventListener('mouseleave', hideApptTooltip);
     }
 
+    // ==========================================================================
+    // Day View Appointment Collision Detection
+    // ==========================================================================
+    function layoutDayViewAppointments() {
+      document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+        const apptLayer = col.querySelector('.appt-layer');
+        if (!apptLayer) return;
+
+        const appts = Array.from(apptLayer.querySelectorAll('.appt-block'));
+        if (appts.length === 0) return;
+
+        // Get positions from computed styles
+        const apptPositions = appts.map((el, idx) => {
+          const style = el.style;
+          // Parse top value (handles calc expressions by getting computed value)
+          const rect = el.getBoundingClientRect();
+          const colRect = col.getBoundingClientRect();
+          const top = rect.top - colRect.top;
+          const height = rect.height;
+
+          return {
+            el,
+            idx,
+            startPx: top,
+            endPx: top + height
+          };
+        });
+
+        // Find collision groups
+        function findCollisionGroups(items) {
+          const groups = [];
+          const used = new Set();
+
+          items.forEach((item, i) => {
+            if (used.has(i)) return;
+
+            const group = [item];
+            used.add(i);
+
+            let changed = true;
+            while (changed) {
+              changed = false;
+              items.forEach((other, j) => {
+                if (used.has(j)) return;
+                const overlaps = group.some(g =>
+                  g.startPx < other.endPx && other.startPx < g.endPx
+                );
+                if (overlaps) {
+                  group.push(other);
+                  used.add(j);
+                  changed = true;
+                }
+              });
+            }
+
+            if (group.length > 0) groups.push(group);
+          });
+
+          return groups;
+        }
+
+        const collisionGroups = findCollisionGroups(apptPositions);
+
+        collisionGroups.forEach(group => {
+          if (group.length === 1) {
+            // Reset to default positioning
+            group[0].el.style.left = '8px';
+            group[0].el.style.right = '8px';
+            return;
+          }
+
+          // Sort by start time
+          group.sort((a, b) => a.startPx - b.startPx);
+
+          // Greedy column assignment
+          const columns = [];
+          group.forEach(item => {
+            let placed = false;
+            for (let c = 0; c < columns.length; c++) {
+              const lastInCol = columns[c][columns[c].length - 1];
+              if (lastInCol.endPx <= item.startPx) {
+                columns[c].push(item);
+                item.col = c;
+                placed = true;
+                break;
+              }
+            }
+            if (!placed) {
+              item.col = columns.length;
+              columns.push([item]);
+            }
+          });
+
+          const totalCols = columns.length;
+          group.forEach(item => {
+            const widthPct = 100 / totalCols;
+            const leftPct = item.col * widthPct;
+            item.el.style.left = `calc(${leftPct}% + 4px)`;
+            item.el.style.right = `calc(${100 - leftPct - widthPct}% + 4px)`;
+          });
+        });
+      });
+    }
+
+    // Run after DOM is ready
+    layoutDayViewAppointments();
+
     // Attach to day view appointments
     document.querySelectorAll('.cal-day-body .appt-block').forEach(attachApptTooltip);
 
@@ -2437,12 +2714,9 @@
       if (!block) return;
 
       nameSpan.addEventListener('mouseenter', (e) => {
-        tooltip.querySelector('.tooltip-header-name').textContent = block.dataset.name;
-        tooltip.querySelector('.tooltip-header-time').textContent = block.dataset.time;
-        tooltip.querySelector('.tooltip-meta').innerHTML = `
-          <div>${block.dataset.clinician}</div>
-          <div style="opacity: 0.7;">${block.dataset.location || 'Main Office'}</div>
-        `;
+        tooltip.querySelector('.tooltip-header-name').textContent = '';
+        tooltip.querySelector('.tooltip-header-time').textContent = '';
+        tooltip.querySelector('.tooltip-meta').innerHTML = `<span class="tooltip-section-label">Availability</span><br>${block.dataset.clinician} · ${block.dataset.name} · ${block.dataset.time}`;
         tooltip.classList.add('visible');
       });
       nameSpan.addEventListener('mousemove', (e) => {
