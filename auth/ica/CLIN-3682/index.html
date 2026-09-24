@@ -1,1 +1,1758 @@
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar Activity Log - Mock</title>
+  <style>
+    :root {
+      /* Chip colors from demographics.html */
+
+      /* Info (teal) */
+      --chip-info-bg: hsl(189, 53%, 88%);
+      --chip-info-fg: hsl(189, 65%, 22%);
+      --chip-info-border: hsl(189, 45%, 58%);
+
+      /* Success/Positive (green) */
+      --chip-success-bg: hsl(134, 41%, 88%);
+      --chip-success-bg-subtle: hsl(134, 41%, 95%);
+      --chip-success-fg: hsl(134, 55%, 21%);
+      --chip-success-border: hsl(134, 40%, 60%);
+
+      /* Attention/Warning (yellow) */
+      --chip-attention-bg: hsl(46, 100%, 90%);
+      --chip-attention-fg: hsl(40, 90%, 22%);
+      --chip-attention-border: hsl(45, 80%, 55%);
+
+      /* Danger (red) */
+      --chip-danger-bg: hsl(0, 80%, 94%);
+      --chip-danger-fg: hsl(0, 70%, 28%);
+      --chip-danger-border: hsl(0, 60%, 70%);
+
+      /* Neutral */
+      --chip-neutral-bg: hsl(210, 16%, 93%);
+      --chip-neutral-fg: hsl(210, 10%, 25%);
+      --chip-neutral-border: hsl(210, 12%, 72%);
+
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-35: oklch(0.4200 0.0150 234.30);
+      --neutral-40: oklch(0.4600 0.0165 234.25);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --red-20: oklch(0.2980 0.1221 22.29);
+      --red-40: oklch(0.5141 0.2047 23.40);
+      --red-90: oklch(0.9533 0.0230 26.18);
+      --red-95: oklch(0.9772 0.0111 26.46);
+
+      --amber-20: oklch(0.2745 0.0624 70.96);
+      --amber-40: oklch(0.4699 0.1019 69.63);
+      --amber-90: oklch(0.9451 0.0374 66.29);
+      --amber-95: oklch(0.9772 0.0153 65.96);
+
+      /* Semantic */
+      --text-1: var(--neutral-20);
+      --text-2: var(--neutral-35);
+      --text-3: var(--neutral-40);
+      --border-light: var(--neutral-80);
+      --border-btn: var(--neutral-60);
+      --bg-surface: #fff;
+      --bg-muted: var(--neutral-95);
+      --bg-subtle: var(--neutral-90);
+
+      /* Spacing */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 20px;
+      --sp-6: 24px;
+
+      /* Type */
+      --text-xs: 11px;
+      --text-sm: 13px;
+      --text-base: 14px;
+      --text-lg: 16px;
+
+      /* Radius */
+      --rad: 4px;
+      --rad-lg: 8px;
+
+      /* Animation (from demographics.html) */
+      --ease-out-quad: cubic-bezier(.25, .46, .45, .94);
+
+      /* Timings - asymmetric (exit faster than enter) */
+      --modal-enter: 300ms;
+      --modal-exit: 240ms;
+      --panel-enter: 240ms;
+      --panel-exit: 180ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--text-1);
+      background: var(--bg-muted);
+      padding: var(--sp-6);
+      min-height: 100vh;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: var(--sp-6);
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       Trigger Buttons (centered)
+       ========================================================================== */
+
+    .trigger-buttons {
+      display: flex;
+      justify-content: center;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-6);
+    }
+
+    .trigger-btn {
+      padding: var(--sp-3) var(--sp-5);
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      background: var(--bg-surface);
+      font-size: var(--text-base);
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-1);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      transition: background-color var(--duration-3) ease, border-color var(--duration-3) ease;
+    }
+
+    .trigger-btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-50);
+    }
+
+    .trigger-btn:active {
+      background: var(--neutral-90);
+    }
+
+    .trigger-btn svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-3);
+    }
+
+    /* ==========================================================================
+       Modal (Calendar History)
+       ========================================================================== */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--modal-enter) ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-backdrop.closing {
+      transition: opacity var(--modal-exit) ease;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.99) translateY(5px);
+      background: var(--bg-surface);
+      border-radius: var(--rad-lg);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      z-index: 101;
+      width: calc(100% - 48px);
+      max-width: 1400px;
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--modal-enter) ease, transform var(--modal-enter) var(--ease-out-quad);
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1) translateY(0);
+    }
+
+    .modal.closing {
+      transition: opacity var(--modal-exit) ease, transform var(--modal-exit) var(--ease-out-quad);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-4) var(--sp-5);
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      padding: var(--sp-2);
+      cursor: pointer;
+      color: var(--text-3);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--duration-3) ease, color var(--duration-3) ease;
+    }
+
+    .modal-close:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+    }
+
+    .modal-close svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .modal-body {
+      padding: var(--sp-5);
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* ==========================================================================
+       Slide-in Panel (Appointment History)
+       ========================================================================== */
+
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--panel-enter) ease;
+    }
+
+    .panel-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .panel-backdrop.closing {
+      transition: opacity var(--panel-exit) ease;
+    }
+
+    .slide-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 460px;
+      max-width: calc(100% - 24px);
+      background: var(--bg-surface);
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform var(--panel-enter) var(--ease-out-quad);
+    }
+
+    .slide-panel.open {
+      transform: translateX(0);
+    }
+
+    .slide-panel.closing {
+      transition: transform var(--panel-exit) var(--ease-out-quad);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-4) var(--sp-5);
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+
+    .panel-close {
+      background: none;
+      border: none;
+      padding: var(--sp-2);
+      cursor: pointer;
+      color: var(--text-3);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--duration-3) ease, color var(--duration-3) ease;
+    }
+
+    .panel-close:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+    }
+
+    .panel-close svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .panel-body {
+      padding: var(--sp-5);
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .appt-header {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      margin-bottom: var(--sp-4);
+      padding-bottom: var(--sp-3);
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .appt-header strong {
+      color: var(--text-1);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       Filters
+       ========================================================================== */
+
+    .log-filters {
+      display: flex;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-4);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .log-filters .filter-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--neutral-80);
+      margin: 0 var(--sp-2);
+    }
+
+    .filter-btn {
+      padding: var(--sp-1) var(--sp-3);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      background: var(--bg-surface);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      background: var(--neutral-95);
+    }
+
+    .filter-btn.active {
+      background: var(--chip-info-bg);
+      border-color: var(--chip-info-border);
+      color: var(--chip-info-fg);
+    }
+
+    .filter-select {
+      padding: var(--sp-1) var(--sp-5) var(--sp-1) var(--sp-3);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      background: var(--bg-surface);
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .filter-date {
+      padding: var(--sp-1) var(--sp-2);
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .filter-label {
+      font-size: var(--text-sm);
+      color: var(--text-3);
+    }
+
+    /* ==========================================================================
+       Log Entry Styles (for Appointment History panel)
+       ========================================================================== */
+
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .log-entry {
+      display: flex;
+      gap: var(--sp-3);
+      padding: var(--sp-3) 0;
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-timestamp {
+      flex-shrink: 0;
+      width: 90px;
+      font-size: var(--text-sm);
+      color: var(--text-3);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .log-timestamp .log-date {
+      font-weight: 500;
+      color: var(--text-2);
+      line-height: 1.2;
+      font-size: var(--text-xs);
+    }
+
+    .log-timestamp .log-time {
+      font-size: var(--text-xs);
+      line-height: 1.2;
+    }
+
+    .log-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .log-action {
+      font-size: var(--text-sm);
+      margin-bottom: var(--sp-1);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      justify-content: space-between;
+    }
+
+    .log-user {
+      font-size: var(--text-xs);
+      color: var(--text-3);
+    }
+
+    .log-user-name {
+      font-weight: 500;
+      color: var(--text-2);
+    }
+
+    /* ==========================================================================
+       Chips (WCAG 1.4.3 compliant)
+       ========================================================================== */
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      border-radius: var(--rad);
+      border: 1px solid transparent;
+    }
+
+    .chip-created {
+      background: var(--chip-success-bg);
+      color: var(--chip-success-fg);
+      border-color: var(--chip-success-border);
+    }
+
+    .chip-updated {
+      background: var(--chip-info-bg);
+      color: var(--chip-info-fg);
+      border-color: var(--chip-info-border);
+    }
+
+    .chip-deleted {
+      background: var(--chip-danger-bg);
+      color: var(--chip-danger-fg);
+      border-color: var(--chip-danger-border);
+    }
+
+    .chip-cancelled {
+      background: var(--chip-danger-bg);
+      color: var(--chip-danger-fg);
+      border-color: var(--chip-danger-border);
+    }
+
+    .chip-rescheduled {
+      background: var(--chip-attention-bg);
+      color: var(--chip-attention-fg);
+      border-color: var(--chip-attention-border);
+    }
+
+    .chip-status {
+      background: var(--chip-info-bg);
+      color: var(--chip-info-fg);
+      border-color: var(--chip-info-border);
+    }
+
+    /* Change details */
+    .log-changes {
+      margin-top: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: var(--neutral-95);
+      border-radius: var(--rad);
+      font-size: var(--text-sm);
+    }
+
+    .log-change-row {
+      display: flex;
+      gap: var(--sp-2);
+      padding: var(--sp-1) 0;
+      flex-wrap: wrap;
+    }
+
+    .log-change-row:not(:last-child) {
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .log-field {
+      flex-shrink: 0;
+      width: 90px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+
+    .log-old-value {
+      color: var(--text-3);
+    }
+
+    .log-arrow {
+      color: var(--text-3);
+    }
+
+    .log-new-value {
+      color: var(--text-1);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       Table Version (inside modal)
+       ========================================================================== */
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+
+    .log-table th,
+    .log-table td {
+      padding: var(--sp-2) var(--sp-3);
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .log-table th {
+      font-weight: 600;
+      color: var(--text-2);
+      background: var(--neutral-95);
+      position: sticky;
+      top: 0;
+    }
+
+    .log-table tbody tr.log-row:hover {
+      background: var(--neutral-95);
+    }
+
+    /* Column widths */
+    .col-date {
+      width: 90px;
+      white-space: nowrap;
+    }
+
+    .col-time {
+      width: 70px;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .col-action {
+      width: 100px;
+    }
+
+    .col-client {
+      width: 140px;
+    }
+
+    .col-appt {}
+
+    .col-by {
+      width: 130px;
+    }
+
+    /* Changes column */
+    .col-changes {
+      min-width: 280px;
+      padding-left: calc(var(--sp-3) + 22px);
+    }
+
+    .change-inline {
+      display: flex;
+      gap: var(--sp-2);
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .change-field {
+      font-weight: 500;
+      color: var(--text-2);
+      min-width: 60px;
+    }
+
+    .change-old {
+      color: var(--text-3);
+    }
+
+    .change-arrow {
+      color: var(--text-3);
+    }
+
+    .change-new {
+      font-weight: 500;
+      color: var(--text-1);
+    }
+
+    /* Multi-change details/summary */
+    .change-details {
+      border: none;
+    }
+
+    .change-details summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .change-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .change-details summary .chevron {
+      width: 14px;
+      height: 14px;
+      color: var(--text-3);
+      transition: transform 0.15s ease;
+      position: absolute;
+      left: -22px;
+    }
+
+    .change-details[open] summary .chevron {
+      transform: rotate(90deg);
+    }
+
+    .change-details .change-list {
+      margin-top: var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    /* ==========================================================================
+       Rejected Concept Accordion
+       ========================================================================== */
+
+    .rejected-concept {
+      margin-top: var(--sp-6);
+    }
+
+    .rejected-summary {
+      cursor: pointer;
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      list-style: none;
+    }
+
+    .rejected-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .rejected-summary .chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--text-3);
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .rejected-concept[open] .rejected-summary .chevron {
+      transform: rotate(90deg);
+    }
+
+    .rejected-label {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rejected-title {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .rejected-concept[open] .rejected-summary {
+      border-radius: var(--rad) var(--rad) 0 0;
+    }
+
+    .rejected-concept>.mock-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--neutral-85);
+      border-top: none;
+      border-radius: 0 0 var(--rad-lg) var(--rad-lg);
+      padding: var(--sp-5);
+    }
+
+    /* Log timestamp in card/feed version */
+    .rejected-concept .log-timestamp {
+      width: 110px;
+    }
+
+    .rejected-concept .log-timestamp .log-user {
+      font-size: var(--text-xs);
+      color: var(--text-2);
+      line-height: 1.2;
+    }
+
+    .rejected-concept .log-subject {
+      font-weight: 500;
+      color: var(--text-1);
+    }
+
+    /* ==========================================================================
+       Design Notes
+       ========================================================================== */
+
+    .design-notes {
+      margin-top: var(--sp-6);
+      padding: var(--sp-4);
+      background: var(--chip-attention-bg);
+      border: 1px solid var(--chip-attention-border);
+      border-radius: var(--rad-lg);
+    }
+
+    .design-notes h3 {
+      font-size: var(--text-base);
+      font-weight: 600;
+      margin-bottom: var(--sp-3);
+      color: var(--chip-attention-fg);
+    }
+
+    .design-notes ul {
+      margin-left: var(--sp-4);
+      color: var(--chip-attention-fg);
+    }
+
+    .design-notes li {
+      margin-bottom: var(--sp-2);
+    }
+
+    .design-notes code {
+      background: rgba(0, 0, 0, 0.05);
+      padding: 1px 4px;
+      border-radius: 2px;
+      font-size: var(--text-sm);
+    }
+  </style>
+</head>
+
+<body>
+  <h1 class="page-title">Calendar Activity Log — Mock</h1>
+
+  <!-- Trigger Buttons -->
+  <div class="trigger-buttons">
+    <button class="trigger-btn" onclick="openModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 2v3" />
+        <path d="M16 2v3" />
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <path d="M3 9h18" />
+        <path d="M8 13h.01" />
+        <path d="M12 13h.01" />
+        <path d="M16 13h.01" />
+        <path d="M8 17h.01" />
+        <path d="M12 17h.01" />
+        <path d="M16 17h.01" />
+      </svg>
+      Calendar History
+    </button>
+    <button class="trigger-btn" onclick="openPanel()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 13h1v4" />
+        <path d="M16 2v3" />
+        <path d="M3 9h18" />
+        <path d="M8 2v3" />
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+      </svg>
+      Appointment History
+    </button>
+  </div>
+
+  <!-- ========================================
+       Modal: Calendar History (Table)
+       ======================================== -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+  <div class="modal" id="calendarModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Calendar History</h2>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="log-filters">
+        <input type="date" value="2026-09-14" class="filter-date">
+        <span class="filter-label">to</span>
+        <input type="date" value="2026-09-21" class="filter-date">
+        <span class="filter-sep"></span>
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Created</button>
+        <button class="filter-btn">Updated</button>
+        <button class="filter-btn">Cancelled</button>
+        <button class="filter-btn">Rescheduled</button>
+        <span class="filter-sep"></span>
+        <select class="filter-select">
+          <option>All Clinicians</option>
+          <option>Dr. Boyles</option>
+          <option>Dr. Crowley</option>
+          <option>Dr. Lindell</option>
+          <option>Dr. Morningstar</option>
+        </select>
+        <select class="filter-select">
+          <option>All Clients</option>
+          <option>Thompson, Sarah</option>
+          <option>Martinez, Carlos</option>
+          <option>Patel, Anita</option>
+        </select>
+      </div>
+
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th class="col-date">Date</th>
+            <th class="col-time">Time</th>
+            <th class="col-action">Action</th>
+            <th class="col-client">Client</th>
+            <th class="col-appt">Appointment</th>
+            <th class="col-changes">Changes</th>
+            <th class="col-by">By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: Status change (single) -->
+          <tr class="log-row">
+            <td class="col-date">09/21/2026</td>
+            <td class="col-time">2:34 PM</td>
+            <td class="col-action"><span class="chip chip-status">Status</span></td>
+            <td class="col-client">Thompson, Sarah</td>
+            <td class="col-appt">Intake · 9:00 AM · Dr. Boyles</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-old">Scheduled</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">Occurred</span>
+              </span>
+            </td>
+            <td class="col-by">Sarah Boyles</td>
+          </tr>
+
+          <!-- Row 2: Rescheduled (multi-change) -->
+          <tr class="log-row">
+            <td class="col-date">09/21/2026</td>
+            <td class="col-time">11:15 AM</td>
+            <td class="col-action"><span class="chip chip-rescheduled">Rescheduled</span></td>
+            <td class="col-client">Martinez, Carlos</td>
+            <td class="col-appt">Follow Up · 09/28 10:30 AM · Dr. Crowley</td>
+            <td class="col-changes">
+              <details class="change-details">
+                <summary>
+                  <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span class="change-inline">
+                    <span class="change-field">Date</span>
+                    <span class="change-old">09/21</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">09/28</span>
+                  </span>
+                </summary>
+                <div class="change-list">
+                  <span class="change-inline">
+                    <span class="change-field">Time</span>
+                    <span class="change-old">2:00 PM</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">10:30 AM</span>
+                  </span>
+                </div>
+              </details>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 3: Created (no changes to show) -->
+          <tr class="log-row">
+            <td class="col-date">09/21/2026</td>
+            <td class="col-time">9:02 AM</td>
+            <td class="col-action"><span class="chip chip-created">Created</span></td>
+            <td class="col-client">Patel, Anita</td>
+            <td class="col-appt">Telehealth · 09/24 3:00 PM · Dr. Morningstar</td>
+            <td class="col-changes">
+              <span class="change-new">New appointment</span>
+            </td>
+            <td class="col-by">Patient Portal</td>
+          </tr>
+
+          <!-- Row 4: Cancelled (single) -->
+          <tr class="log-row">
+            <td class="col-date">09/20/2026</td>
+            <td class="col-time">4:45 PM</td>
+            <td class="col-action"><span class="chip chip-cancelled">Cancelled</span></td>
+            <td class="col-client">Wilson, Karen</td>
+            <td class="col-appt">Med Mgmt · 09/22 11:00 AM · Dr. Boyles</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Reason</span>
+                <span class="change-new">Patient requested</span>
+              </span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 5: Updated (multi-change) -->
+          <tr class="log-row">
+            <td class="col-date">09/20/2026</td>
+            <td class="col-time">2:12 PM</td>
+            <td class="col-action"><span class="chip chip-updated">Updated</span></td>
+            <td class="col-client">Chen, David</td>
+            <td class="col-appt">Established · 09/21 1:00 PM · Dr. Boyles</td>
+            <td class="col-changes">
+              <details class="change-details">
+                <summary>
+                  <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span class="change-inline">
+                    <span class="change-field">Contact</span>
+                    <span class="change-old">In-Person</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">Telehealth</span>
+                  </span>
+                </summary>
+                <div class="change-list">
+                  <span class="change-inline">
+                    <span class="change-field">Location</span>
+                    <span class="change-old">Main Office</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">Virtual</span>
+                  </span>
+                </div>
+              </details>
+            </td>
+            <td class="col-by">David Crowley</td>
+          </tr>
+
+          <!-- Row 6: Updated (single) -->
+          <tr class="log-row">
+            <td class="col-date">09/19/2026</td>
+            <td class="col-time">10:30 AM</td>
+            <td class="col-action"><span class="chip chip-updated">Updated</span></td>
+            <td class="col-client">Adams, Robert</td>
+            <td class="col-appt">Crisis · 09/21 7:30 AM · Dr. Morningstar</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Clinician</span>
+                <span class="change-old">Dr. Boyles</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">Dr. Morningstar</span>
+              </span>
+            </td>
+            <td class="col-by">Sarah Boyles</td>
+          </tr>
+
+          <!-- Row 7: Status change -->
+          <tr class="log-row">
+            <td class="col-date">09/19/2026</td>
+            <td class="col-time">9:15 AM</td>
+            <td class="col-action"><span class="chip chip-status">Status</span></td>
+            <td class="col-client">Garcia, Maria</td>
+            <td class="col-appt">Established · 09/19 9:00 AM · Dr. Lindell</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-old">Arrived</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">Occurred</span>
+              </span>
+            </td>
+            <td class="col-by">Lisa Lindell</td>
+          </tr>
+
+          <!-- Row 8: Created -->
+          <tr class="log-row">
+            <td class="col-date">09/18/2026</td>
+            <td class="col-time">3:45 PM</td>
+            <td class="col-action"><span class="chip chip-created">Created</span></td>
+            <td class="col-client">Johnson, Michael</td>
+            <td class="col-appt">Group Therapy · 09/25 2:00 PM · Dr. Crowley</td>
+            <td class="col-changes">
+              <span class="change-new">New appointment</span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 9: Rescheduled -->
+          <tr class="log-row">
+            <td class="col-date">09/18/2026</td>
+            <td class="col-time">2:20 PM</td>
+            <td class="col-action"><span class="chip chip-rescheduled">Rescheduled</span></td>
+            <td class="col-client">Lee, Jennifer</td>
+            <td class="col-appt">Follow Up · 09/26 11:00 AM · Dr. Boyles</td>
+            <td class="col-changes">
+              <details class="change-details">
+                <summary>
+                  <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span class="change-inline">
+                    <span class="change-field">Date</span>
+                    <span class="change-old">09/19</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">09/26</span>
+                  </span>
+                </summary>
+                <div class="change-list">
+                  <span class="change-inline">
+                    <span class="change-field">Time</span>
+                    <span class="change-old">3:30 PM</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">11:00 AM</span>
+                  </span>
+                </div>
+              </details>
+            </td>
+            <td class="col-by">Patient Portal</td>
+          </tr>
+
+          <!-- Row 10: Cancelled -->
+          <tr class="log-row">
+            <td class="col-date">09/18/2026</td>
+            <td class="col-time">11:05 AM</td>
+            <td class="col-action"><span class="chip chip-cancelled">Cancelled</span></td>
+            <td class="col-client">Brown, William</td>
+            <td class="col-appt">Intake · 09/20 10:00 AM · Dr. Morningstar</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Reason</span>
+                <span class="change-new">No show — patient unreachable</span>
+              </span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 11: Updated (multi) -->
+          <tr class="log-row">
+            <td class="col-date">09/17/2026</td>
+            <td class="col-time">4:30 PM</td>
+            <td class="col-action"><span class="chip chip-updated">Updated</span></td>
+            <td class="col-client">Davis, Emily</td>
+            <td class="col-appt">Telehealth · 09/22 4:00 PM · Dr. Lindell</td>
+            <td class="col-changes">
+              <details class="change-details">
+                <summary>
+                  <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span class="change-inline">
+                    <span class="change-field">Duration</span>
+                    <span class="change-old">30 min</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-new">45 min</span>
+                  </span>
+                </summary>
+                <div class="change-list">
+                  <span class="change-inline">
+                    <span class="change-field">Notes</span>
+                    <span class="change-new">Added: "Needs extra time for anxiety"</span>
+                  </span>
+                </div>
+              </details>
+            </td>
+            <td class="col-by">Lisa Lindell</td>
+          </tr>
+
+          <!-- Row 12: Created -->
+          <tr class="log-row">
+            <td class="col-date">09/17/2026</td>
+            <td class="col-time">2:15 PM</td>
+            <td class="col-action"><span class="chip chip-created">Created</span></td>
+            <td class="col-client">Miller, James</td>
+            <td class="col-appt">Med Mgmt · 09/23 9:30 AM · Dr. Boyles</td>
+            <td class="col-changes">
+              <span class="change-new">New appointment</span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 13: Status -->
+          <tr class="log-row">
+            <td class="col-date">09/17/2026</td>
+            <td class="col-time">10:02 AM</td>
+            <td class="col-action"><span class="chip chip-status">Status</span></td>
+            <td class="col-client">Taylor, Susan</td>
+            <td class="col-appt">Established · 09/17 10:00 AM · Dr. Crowley</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-old">Confirmed</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">Arrived</span>
+              </span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 14: Deleted -->
+          <tr class="log-row">
+            <td class="col-date">09/16/2026</td>
+            <td class="col-time">5:45 PM</td>
+            <td class="col-action"><span class="chip chip-deleted">Deleted</span></td>
+            <td class="col-client">Anderson, Lisa</td>
+            <td class="col-appt">Follow Up · 09/18 1:00 PM · Dr. Lindell</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Reason</span>
+                <span class="change-new">Duplicate — merged with existing</span>
+              </span>
+            </td>
+            <td class="col-by">Lisa Lindell</td>
+          </tr>
+
+          <!-- Row 15: Created -->
+          <tr class="log-row">
+            <td class="col-date">09/16/2026</td>
+            <td class="col-time">11:30 AM</td>
+            <td class="col-action"><span class="chip chip-created">Created</span></td>
+            <td class="col-client">White, Thomas</td>
+            <td class="col-appt">Crisis · 09/16 12:00 PM · Dr. Morningstar</td>
+            <td class="col-changes">
+              <span class="change-new">Urgent same-day appointment</span>
+            </td>
+            <td class="col-by">Sarah Boyles</td>
+          </tr>
+
+          <!-- Row 16: Cancelled -->
+          <tr class="log-row">
+            <td class="col-date">09/15/2026</td>
+            <td class="col-time">4:20 PM</td>
+            <td class="col-action"><span class="chip chip-cancelled">Cancelled</span></td>
+            <td class="col-client">Harris, Nancy</td>
+            <td class="col-appt">Group Therapy · 09/18 3:00 PM · Dr. Crowley</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Reason</span>
+                <span class="change-new">Clinician unavailable</span>
+              </span>
+            </td>
+            <td class="col-by">David Crowley</td>
+          </tr>
+
+          <!-- Row 17: Updated -->
+          <tr class="log-row">
+            <td class="col-date">09/15/2026</td>
+            <td class="col-time">1:45 PM</td>
+            <td class="col-action"><span class="chip chip-updated">Updated</span></td>
+            <td class="col-client">Clark, Richard</td>
+            <td class="col-appt">Established · 09/19 2:30 PM · Dr. Boyles</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-field">Location</span>
+                <span class="change-old">Main Office</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">East Campus</span>
+              </span>
+            </td>
+            <td class="col-by">Janet Miller</td>
+          </tr>
+
+          <!-- Row 18: Status -->
+          <tr class="log-row">
+            <td class="col-date">09/14/2026</td>
+            <td class="col-time">3:35 PM</td>
+            <td class="col-action"><span class="chip chip-status">Status</span></td>
+            <td class="col-client">Lewis, Patricia</td>
+            <td class="col-appt">Telehealth · 09/14 3:00 PM · Dr. Lindell</td>
+            <td class="col-changes">
+              <span class="change-inline">
+                <span class="change-old">Scheduled</span>
+                <span class="change-arrow">→</span>
+                <span class="change-new">Occurred</span>
+              </span>
+            </td>
+            <td class="col-by">Lisa Lindell</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================
+       Slide-in Panel: Appointment History
+       ======================================== -->
+  <div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+  <div class="slide-panel" id="apptPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">Appointment History</h2>
+      <button class="panel-close" onclick="closePanel()" aria-label="Close panel">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="panel-body">
+      <div class="appt-header">
+        <strong>Thompson, Sarah</strong> · Intake Assessment<br>
+        Sep 21, 2026 · 9:00–10:00 AM · Dr. Boyles
+      </div>
+
+      <div class="log-list">
+        <!-- Latest entry -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/21/2026</div>
+            <div class="log-time">2:34 PM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-status">Status</span>
+              <span class="log-user">by <span class="log-user-name">Sarah Boyles</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Status</span>
+                <span class="log-old-value">Scheduled</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Occurred</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/21/2026</div>
+            <div class="log-time">8:55 AM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-status">Status</span>
+              <span class="log-user">by <span class="log-user-name">Janet Miller</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Status</span>
+                <span class="log-old-value">Confirmed</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Checked In</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/20/2026</div>
+            <div class="log-time">3:15 PM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-status">Status</span>
+              <span class="log-user">by <span class="log-user-name">System</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Status</span>
+                <span class="log-old-value">Scheduled</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Confirmed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rescheduled example (amber) -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/19/2026</div>
+            <div class="log-time">4:22 PM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-rescheduled">Rescheduled</span>
+              <span class="log-user">by <span class="log-user-name">Janet Miller</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Date</span>
+                <span class="log-old-value">Sep 20</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Sep 21</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Time</span>
+                <span class="log-old-value">10:00 AM</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">9:00 AM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/18/2026</div>
+            <div class="log-time">11:42 AM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-updated">Updated</span>
+              <span class="log-user">by <span class="log-user-name">Sarah Boyles</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Duration</span>
+                <span class="log-old-value">45 min</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">60 min</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Appt Notes</span>
+                <span class="log-new-value">"First visit, allow extra time"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancelled then re-created scenario -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/17/2026</div>
+            <div class="log-time">9:30 AM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-created">Created</span>
+              <span class="log-user">by <span class="log-user-name">Janet Miller</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Note</span>
+                <span class="log-new-value">Re-scheduled from cancelled appointment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancelled example (red) -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/16/2026</div>
+            <div class="log-time">2:15 PM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-cancelled">Cancelled</span>
+              <span class="log-user">by <span class="log-user-name">Patient Portal</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Reason</span>
+                <span class="log-new-value">Patient requested — schedule conflict</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/15/2026</div>
+            <div class="log-time">2:30 PM</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-created">Created</span>
+              <span class="log-user">by <span class="log-user-name">Janet Miller</span></span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Type</span>
+                <span class="log-new-value">Intake Assessment</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Clinician</span>
+                <span class="log-new-value">Dr. Boyles</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Date/Time</span>
+                <span class="log-new-value">Sep 21 at 9:00 AM</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Duration</span>
+                <span class="log-new-value">45 min</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Contact</span>
+                <span class="log-new-value">In-Person</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Location</span>
+                <span class="log-new-value">Main Office</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       Rejected Concept: Card/Feed Layout
+       ======================================== -->
+  <details class="rejected-concept">
+    <summary class="rejected-summary">
+      <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+      <span class="rejected-label">Rejected Concept</span>
+      <span class="rejected-title">Global Calendar Log — Card/Feed</span>
+    </summary>
+    <div class="mock-container">
+      <div class="log-filters">
+        <input type="date" value="2026-09-14" class="filter-date">
+        <span class="filter-label">to</span>
+        <input type="date" value="2026-09-21" class="filter-date">
+        <span class="filter-sep"></span>
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Created</button>
+        <button class="filter-btn">Updated</button>
+        <button class="filter-btn">Cancelled</button>
+        <button class="filter-btn">Rescheduled</button>
+        <span class="filter-sep"></span>
+        <select class="filter-select">
+          <option>All Clinicians</option>
+          <option>Dr. Boyles</option>
+          <option>Dr. Crowley</option>
+          <option>Dr. Lindell</option>
+          <option>Dr. Morningstar</option>
+        </select>
+        <select class="filter-select">
+          <option>All Clients</option>
+          <option>Adams, Robert</option>
+          <option>Chen, David</option>
+          <option>Garcia, Maria</option>
+          <option>Martinez, Carlos</option>
+          <option>Patel, Anita</option>
+          <option>Thompson, Sarah</option>
+          <option>Wilson, Karen</option>
+        </select>
+      </div>
+
+      <div class="log-list">
+        <!-- Entry: Status change -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/21/2026</div>
+            <div class="log-time">2:34 PM</div>
+            <div class="log-user">Sarah Boyles</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-status">Status</span>
+              <span class="log-subject">Thompson, Sarah · Intake · Sep 21 at 9:00 AM · Dr. Boyles</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Status</span>
+                <span class="log-old-value">Scheduled</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Occurred</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Rescheduled -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/21/2026</div>
+            <div class="log-time">11:15 AM</div>
+            <div class="log-user">Janet Miller</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-rescheduled">Rescheduled</span>
+              <span class="log-subject">Martinez, Carlos · Follow Up · Dr. Crowley</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Date</span>
+                <span class="log-old-value">09/21/2026</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">09/28/2026</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Time</span>
+                <span class="log-old-value">2:00 PM</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">10:30 AM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Created -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/21/2026</div>
+            <div class="log-time">9:02 AM</div>
+            <div class="log-user">Patient Portal</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-created">Created</span>
+              <span class="log-subject">Patel, Anita · Telehealth · Sep 24 at 3:00 PM · Dr. Morningstar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Deleted -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/20/2026</div>
+            <div class="log-time">5:02 PM</div>
+            <div class="log-user">Janet Miller</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-deleted">Deleted</span>
+              <span class="log-subject">Garcia, Maria · Follow Up · Sep 23 at 2:30 PM · Dr. Crowley</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Reason</span>
+                <span class="log-new-value">Duplicate entry — rescheduled appt exists</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Cancelled -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/20/2026</div>
+            <div class="log-time">4:45 PM</div>
+            <div class="log-user">Janet Miller</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-cancelled">Cancelled</span>
+              <span class="log-subject">Wilson, Karen · Med Management · Sep 22 at 11:00 AM · Dr. Boyles</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Reason</span>
+                <span class="log-new-value">Patient requested cancellation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Multiple field update -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/20/2026</div>
+            <div class="log-time">2:12 PM</div>
+            <div class="log-user">David Crowley</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-updated">Updated</span>
+              <span class="log-subject">Chen, David · Established Client · Sep 21 at 1:00 PM · Dr. Boyles</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Contact Type</span>
+                <span class="log-old-value">In-Person</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Telehealth</span>
+              </div>
+              <div class="log-change-row">
+                <span class="log-field">Location</span>
+                <span class="log-old-value">Main Office</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Virtual</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Entry: Clinician change -->
+        <div class="log-entry">
+          <div class="log-timestamp">
+            <div class="log-date">09/19/2026</div>
+            <div class="log-time">10:30 AM</div>
+            <div class="log-user">Sarah Boyles</div>
+          </div>
+          <div class="log-content">
+            <div class="log-action">
+              <span class="chip chip-updated">Updated</span>
+              <span class="log-subject">Adams, Robert · Crisis Intervention · Sep 21 at 7:30 AM</span>
+            </div>
+            <div class="log-changes">
+              <div class="log-change-row">
+                <span class="log-field">Clinician</span>
+                <span class="log-old-value">Dr. Boyles</span>
+                <span class="log-arrow">→</span>
+                <span class="log-new-value">Dr. Morningstar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Design Notes -->
+  <div class="design-notes">
+    <h3>Design Notes</h3>
+    <ul>
+      <li><strong>Global log (modal)</strong> shows all calendar activity — filterable by date range, action type, clinician</li>
+      <li><strong>Appointment log (slide panel)</strong> shows history for a single appointment — lives in appt detail panel</li>
+      <li><strong>Change tracking</strong> captures: <code>field</code>, <code>old value</code>, <code>new value</code>, <code>who</code>, <code>when</code></li>
+      <li><strong>Action types</strong>: Created, Updated, Cancelled, Rescheduled, Status, Deleted</li>
+      <li><strong>Who</strong>: Username, Patient Portal, System (automated)</li>
+    </ul>
+  </div>
+
+  <script>
+    // Modal controls
+    function openModal() {
+      const backdrop = document.getElementById('modalBackdrop');
+      const modal = document.getElementById('calendarModal');
+      backdrop.classList.remove('closing');
+      modal.classList.remove('closing');
+      backdrop.classList.add('open');
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      const backdrop = document.getElementById('modalBackdrop');
+      const modal = document.getElementById('calendarModal');
+      backdrop.classList.add('closing');
+      modal.classList.add('closing');
+      backdrop.classList.remove('open');
+      modal.classList.remove('open');
+      setTimeout(() => {
+        backdrop.classList.remove('closing');
+        modal.classList.remove('closing');
+        document.body.style.overflow = '';
+      }, 240); // --modal-exit
+    }
+
+    // Panel controls
+    function openPanel() {
+      const backdrop = document.getElementById('panelBackdrop');
+      const panel = document.getElementById('apptPanel');
+      backdrop.classList.remove('closing');
+      panel.classList.remove('closing');
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePanel() {
+      const backdrop = document.getElementById('panelBackdrop');
+      const panel = document.getElementById('apptPanel');
+      backdrop.classList.add('closing');
+      panel.classList.add('closing');
+      backdrop.classList.remove('open');
+      panel.classList.remove('open');
+      setTimeout(() => {
+        backdrop.classList.remove('closing');
+        panel.classList.remove('closing');
+        document.body.style.overflow = '';
+      }, 180); // --panel-exit
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeModal();
+        closePanel();
+      }
+    });
+  </script>
+</body>
+
+</html>
