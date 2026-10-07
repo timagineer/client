@@ -2,7 +2,7 @@
 
 ## Runbook
 
-[Read Me](https://client.timagineer.com/auth/ica/DO-14563/readme.md)
+[Read Me](https://client.timagineer.com/auth//ica/DO-14563/README.md)
 [Prototype](https://client.timagineer.com/auth/ica/DO-14563/)
 
 ## Testing the Prototype
