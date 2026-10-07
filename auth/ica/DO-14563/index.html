@@ -1,1 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Send Message from Chart [DO-14563]</title>
+
+  <style>
+    :root {
+      /* Color palette (subset) */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Header */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* Body */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* Main */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--neutral-95);
+      overflow: hidden;
+    }
+
+    /* Context Bar (patient header) */
+    .context-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .wire-patient-avatar {
+      width: 38px;
+      height: 38px;
+      background: var(--neutral-85);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: var(--sp-2);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .action-block {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .context-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .wire-chip {
+      height: 22px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-chip-sm {
+      height: 18px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .context-spacer {
+      flex: 1;
+    }
+
+    /* Tab Bar */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-3) 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-90);
+      border-radius: var(--rad) var(--rad) 0 0;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      box-shadow: 0 1px 0 #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Left Panel */
+    .left-panel {
+      width: 220px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      overflow-y: auto;
+    }
+
+    .wire-section {
+      flex: 1;
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wire-section-header {
+      height: 32px;
+      background: var(--neutral-90);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--sp-2);
+      flex-shrink: 0;
+    }
+
+    .wire-section-body {
+      flex: 1;
+      padding: var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .wire-chevron {
+      width: 16px;
+      height: 16px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+      margin-right: var(--sp-2);
+      flex-shrink: 0;
+    }
+
+    .wire-line {
+      height: 10px;
+      background: var(--neutral-85);
+      border-radius: 2px;
+    }
+
+    .wire-line.short {
+      width: 60%;
+    }
+
+    .wire-line.medium {
+      width: 80%;
+    }
+
+    /* Main Panel */
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* Note List */
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .note-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .note-row-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .wire-label {
+      height: 12px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-date {
+      height: 10px;
+      width: 110px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .wire-badge {
+      height: 18px;
+      width: 65px;
+      background: var(--neutral-85);
+      border-radius: 9px;
+      flex-shrink: 0;
+    }
+
+    .wire-initials {
+      width: 22px;
+      height: 22px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .note-row-actions {
+      display: flex;
+      gap: var(--sp-2);
+    }
+
+    .wire-btn {
+      height: 26px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-btn-wide {
+      width: 95px;
+    }
+
+    .wire-btn-narrow {
+      width: 70px;
+    }
+
+    /* Bottom Button Grid */
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: var(--sp-4);
+      padding: var(--sp-3);
+      background: #fff;
+      border-top: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .button-grid-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+
+    .grid-section-label {
+      height: 12px;
+      width: 130px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+      margin-bottom: 4px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: var(--sp-2);
+    }
+
+    .button-row .wire-btn-block {
+      flex: 1;
+    }
+
+    .wire-btn-block {
+      height: 28px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--neutral-40);
+    }
+  </style>
+  <style>
+    /* ========== Message Popover ========== */
+    .popover-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+    }
+
+    .popover-backdrop.open {
+      display: block;
+    }
+
+    .message-popover {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      width: 420px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    .message-popover.open {
+      display: flex;
+    }
+
+    .popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .popover-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .popover-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .popover-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-row-inline {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      min-width: 52px;
+      padding-top: 6px;
+    }
+
+    .form-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Patient chip (locked) */
+    .patient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--neutral-30);
+      cursor: not-allowed;
+      width: fit-content;
+    }
+
+    .patient-chip-icon {
+      width: 16px;
+      height: 16px;
+      background: var(--neutral-70);
+      border-radius: 50%;
+    }
+
+    /* Recipient input area */
+    .recipient-input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 8px;
+      min-height: 34px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      background: #fff;
+      cursor: text;
+    }
+
+    .recipient-input-wrap:focus-within {
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .recipient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px 2px 8px;
+      background: hsl(218, 30%, 94%);
+      border-radius: 3px;
+      font-size: 13px;
+      color: var(--neutral-25);
+    }
+
+    .recipient-chip-remove {
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .recipient-chip-remove:hover {
+      background: hsl(218, 30%, 88%);
+      color: var(--neutral-30);
+    }
+
+    .recipient-input {
+      flex: 1;
+      min-width: 100px;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      padding: 2px 0;
+      background: transparent;
+    }
+
+    .recipient-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    /* Typeahead dropdown */
+    .typeahead-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+
+    .typeahead-dropdown.open {
+      display: block;
+    }
+
+    .typeahead-option {
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--neutral-25);
+      cursor: pointer;
+    }
+
+    .typeahead-option:hover,
+    .typeahead-option.highlighted {
+      background: var(--neutral-95);
+    }
+
+    .typeahead-option-subtitle {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin-top: 2px;
+    }
+
+    .recipient-field-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    /* Subject input */
+    .subject-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .subject-input:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    /* Body textarea */
+    .body-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      background: #fff;
+    }
+
+    .body-textarea:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    /* Popover footer */
+    .popover-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .btn-ghost {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      color: hsl(0, 0%, 40%);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-ghost:hover {
+      background: hsl(0, 0%, 92%);
+    }
+
+    .btn-primary {
+      padding: 8px 20px;
+      border: none;
+      background: hsl(218, 54%, 42%);
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-primary:hover {
+      background: hsl(218, 54%, 36%);
+    }
+
+    .btn-primary:active {
+      background: hsl(218, 54%, 32%);
+    }
+
+    .btn-primary:disabled {
+      background: hsl(218, 20%, 72%);
+      cursor: not-allowed;
+    }
+
+    .btn-primary:disabled:hover {
+      background: hsl(218, 20%, 72%);
+    }
+
+    /* Position wrapper for the trigger button */
+    .send-message-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .send-message-wrap .send-message-trigger {
+      width: 100%;
+    }
+
+    /* ========== Popover Motion ========== */
+    .message-popover {
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition: opacity 160ms cubic-bezier(0.33, 1, 0.68, 1),
+        transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .message-popover.open {
+      display: flex;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* ========== Toast System ========== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: var(--positive-100, hsl(140, 65%, 15%));
+      color: var(--positive-600, hsl(140, 60%, 94%));
+    }
+
+    .toast.success svg {
+      color: var(--positive-400, hsl(140, 65%, 55%));
+    }
+
+    .toast.error {
+      background: var(--warning-100, hsl(352, 92%, 18%));
+      color: var(--warning-700, hsl(11, 100%, 97%));
+    }
+
+    .toast.error svg {
+      color: var(--warning-400, hsl(352, 92%, 62%));
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Backdrop for closing popover on outside click -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="app-shell">
+
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <main class="shell-main">
+
+        <!-- Context Bar (Patient Header) -->
+        <div class="context-bar">
+          <!-- Patient avatar -->
+          <div class="wire-patient-avatar"></div>
+
+          <!-- Patient info block -->
+          <div class="patient-info">
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+              <div class="wire-text" style="width: 100px;"></div>
+              <div class="wire-text" style="width: 28px;"></div>
+              <div class="wire-text" style="width: 14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+            </div>
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 50px;"></div>
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-chip-sm" style="width: 36px;"></div>
+              <div class="wire-text" style="width: 22px;"></div>
+              <div class="wire-text" style="width: 70px;"></div>
+            </div>
+          </div>
+
+          <!-- Action block (grid) -->
+          <div class="action-block">
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+          </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <div class="wire-tab active" style="width: 80px;"></div>
+          <div class="wire-tab" style="width: 100px;"></div>
+          <div class="wire-tab" style="width: 140px;"></div>
+          <div class="wire-tab" style="width: 110px;"></div>
+          <div class="wire-tab" style="width: 90px;"></div>
+          <div class="wire-tab" style="width: 120px;"></div>
+          <div class="wire-tab" style="width: 110px;"></div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+          <!-- Left Panel -->
+          <div class="left-panel">
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 100px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line"></div>
+                <div class="wire-line medium"></div>
+                <div class="wire-line short"></div>
+              </div>
+            </div>
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 90px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line"></div>
+                <div class="wire-line medium"></div>
+              </div>
+            </div>
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 110px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line short"></div>
+                <div class="wire-line medium"></div>
+              </div>
+            </div>
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 130px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line"></div>
+                <div class="wire-line short"></div>
+                <div class="wire-line medium"></div>
+              </div>
+            </div>
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 100px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line medium"></div>
+                <div class="wire-line short"></div>
+              </div>
+            </div>
+            <div class="wire-section">
+              <div class="wire-section-header">
+                <div class="wire-chevron"></div>
+                <div class="wire-line" style="width: 85px;"></div>
+              </div>
+              <div class="wire-section-body">
+                <div class="wire-line"></div>
+                <div class="wire-line medium"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Panel -->
+          <div class="main-panel">
+
+            <div class="list-header">
+              <div class="wire-chip" style="width: 80px;"></div>
+              <div class="wire-line" style="width: 120px; height: 12px;"></div>
+            </div>
+
+            <!-- Note List -->
+            <div class="note-list">
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 110px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 95px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 100px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 130px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 85px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 105px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 120px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 90px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 115px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 98px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 108px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 125px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 92px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 118px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 103px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <div class="wire-chevron"></div>
+                <div class="note-row-content">
+                  <div class="wire-label" style="width: 112px;"></div>
+                  <div class="wire-date"></div>
+                  <div class="wire-badge"></div>
+                  <div class="wire-initials"></div>
+                </div>
+                <div class="note-row-actions">
+                  <div class="wire-btn wire-btn-wide"></div>
+                  <div class="wire-btn wire-btn-narrow"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Button Grid -->
+            <div class="button-grid">
+              <!-- Assessments/Evaluation column -->
+              <div class="button-grid-section">
+                <div class="grid-section-label"></div>
+                <div class="wire-btn-block"></div>
+                <div class="wire-btn-block"></div>
+                <div class="wire-btn-block"></div>
+              </div>
+              <!-- Notes column (wider) -->
+              <div class="button-grid-section">
+                <div class="grid-section-label"></div>
+                <div class="button-row">
+                  <div class="wire-btn-block"></div>
+                  <div class="wire-btn-block"></div>
+                </div>
+                <div class="wire-btn-block"></div>
+                <div class="button-row">
+                  <div class="wire-btn-block"></div>
+                  <div class="wire-btn-block"></div>
+                </div>
+              </div>
+              <!-- Other column (2-up rows) -->
+              <div class="button-grid-section">
+                <div class="grid-section-label"></div>
+                <div class="button-row">
+                  <div class="wire-btn-block"></div>
+                  <div class="send-message-wrap">
+                    <button class="wire-btn-block send-message-trigger" id="sendMessageBtn" style="background: hsl(0, 0%, 97%);">Send Message</button>
+
+                    <!-- Message Popover -->
+                    <div class="message-popover" id="messagePopover">
+                      <div class="popover-header">
+                        <h3 class="popover-title">Send Message</h3>
+                        <button class="popover-close" id="popoverClose">×</button>
+                      </div>
+
+                      <div class="popover-body">
+                        <!-- Patient (locked) -->
+                        <div class="form-row-inline">
+                          <label class="form-label">Client</label>
+                          <div class="form-field">
+                            <div class="patient-chip">
+                              Addams, Wednesday
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- To field -->
+                        <div class="form-row-inline">
+                          <label class="form-label" for="toInput">To</label>
+                          <div class="form-field">
+                            <div class="recipient-field-wrap">
+                              <div class="recipient-input-wrap" id="toFieldWrap">
+                                <input type="text" class="recipient-input" id="toInput" placeholder="Type to search..." autocomplete="off">
+                              </div>
+                              <div class="typeahead-dropdown" id="toDropdown"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Cc field -->
+                        <div class="form-row-inline">
+                          <label class="form-label" for="ccInput">Cc</label>
+                          <div class="form-field">
+                            <div class="recipient-field-wrap">
+                              <div class="recipient-input-wrap" id="ccFieldWrap">
+                                <input type="text" class="recipient-input" id="ccInput" placeholder="Type to search..." autocomplete="off">
+                              </div>
+                              <div class="typeahead-dropdown" id="ccDropdown"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="form-row-inline">
+                          <label class="form-label" for="subjectInput">Subject</label>
+                          <div class="form-field">
+                            <input type="text" class="subject-input" id="subjectInput" placeholder="Enter subject...">
+                          </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="form-row">
+                          <textarea class="body-textarea" id="bodyTextarea" placeholder="Write your message..."></textarea>
+                        </div>
+                      </div>
+
+                      <div class="popover-footer">
+                        <button class="btn-ghost" id="discardBtn">Discard</button>
+                        <button class="btn-primary" id="sendBtn" disabled>Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="button-row">
+                  <div class="wire-btn-block"></div>
+                  <div class="wire-btn-block"></div>
+                </div>
+                <div class="button-row">
+                  <div class="wire-btn-block"></div>
+                  <div class="wire-btn-block"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script>
+    // Mock provider data
+    const providers = [
+      { id: 1, name: 'Dr. Sarah Chen', title: 'Psychiatrist' },
+      { id: 2, name: 'Marcus Williams', title: 'LCSW' },
+      { id: 3, name: 'Jennifer Park', title: 'NP' },
+      { id: 4, name: 'David Thompson', title: 'MD' },
+      { id: 5, name: 'Amy Rodriguez', title: 'RN' }
+    ];
+
+    // State
+    let toRecipients = [];
+    let ccRecipients = [];
+
+    // Elements
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+    const messagePopover = document.getElementById('messagePopover');
+    const popoverBackdrop = document.getElementById('popoverBackdrop');
+    const popoverClose = document.getElementById('popoverClose');
+    const discardBtn = document.getElementById('discardBtn');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const toInput = document.getElementById('toInput');
+    const toFieldWrap = document.getElementById('toFieldWrap');
+    const toDropdown = document.getElementById('toDropdown');
+
+    const ccInput = document.getElementById('ccInput');
+    const ccFieldWrap = document.getElementById('ccFieldWrap');
+    const ccDropdown = document.getElementById('ccDropdown');
+
+    const subjectInput = document.getElementById('subjectInput');
+    const bodyTextarea = document.getElementById('bodyTextarea');
+
+    // Validate form and toggle Send button
+    function validateForm() {
+      const hasRecipient = toRecipients.length > 0;
+      const hasContent = subjectInput.value.trim() || bodyTextarea.value.trim();
+      sendBtn.disabled = !(hasRecipient && hasContent);
+    }
+
+    // Show toast notification
+    function showToast(type, message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      // Icon SVGs (Lucide)
+      const icons = {
+        success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+        error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      };
+
+      toast.innerHTML = `${icons[type] || ''}<span>${message}</span>`;
+      container.appendChild(toast);
+
+      // Auto-dismiss after 3s
+      setTimeout(() => {
+        toast.classList.add('leaving');
+        toast.addEventListener('animationend', () => toast.remove());
+      }, 3000);
+    }
+
+    // Open popover
+    function openPopover() {
+      messagePopover.classList.add('open');
+      popoverBackdrop.classList.add('open');
+      toInput.focus();
+      validateForm();
+    }
+
+    // Close popover
+    function closePopover() {
+      messagePopover.classList.remove('open');
+      popoverBackdrop.classList.remove('open');
+      resetForm();
+    }
+
+    // Reset form
+    function resetForm() {
+      toRecipients = [];
+      ccRecipients = [];
+      renderRecipients('to');
+      renderRecipients('cc');
+      subjectInput.value = '';
+      bodyTextarea.value = '';
+      toDropdown.classList.remove('open');
+      ccDropdown.classList.remove('open');
+    }
+
+    // Filter providers
+    function filterProviders(query, excludeIds) {
+      if (query.length < 3) return [];
+      const lowerQuery = query.toLowerCase();
+      return providers.filter(p =>
+        !excludeIds.includes(p.id) &&
+        p.name.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Render dropdown
+    function renderDropdown(dropdown, results, onSelect) {
+      if (results.length === 0) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      dropdown.innerHTML = results.map(p => `
+        <div class="typeahead-option" data-id="${p.id}">
+          <div>${p.name}</div>
+          <div class="typeahead-option-subtitle">${p.title}</div>
+        </div>
+      `).join('');
+
+      dropdown.querySelectorAll('.typeahead-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const id = parseInt(opt.dataset.id);
+          const provider = providers.find(p => p.id === id);
+          if (provider) onSelect(provider);
+        });
+      });
+
+      dropdown.classList.add('open');
+    }
+
+    // Add recipient chip
+    function addRecipient(field, provider) {
+      if (field === 'to') {
+        toRecipients.push(provider);
+        toInput.value = '';
+        toDropdown.classList.remove('open');
+        renderRecipients('to');
+        toInput.focus();
+      } else {
+        ccRecipients.push(provider);
+        ccInput.value = '';
+        ccDropdown.classList.remove('open');
+        renderRecipients('cc');
+        ccInput.focus();
+      }
+      validateForm();
+    }
+
+    // Remove recipient
+    function removeRecipient(field, id) {
+      if (field === 'to') {
+        toRecipients = toRecipients.filter(r => r.id !== id);
+        renderRecipients('to');
+      } else {
+        ccRecipients = ccRecipients.filter(r => r.id !== id);
+        renderRecipients('cc');
+      }
+      validateForm();
+    }
+
+    // Render recipient chips
+    function renderRecipients(field) {
+      const wrap = field === 'to' ? toFieldWrap : ccFieldWrap;
+      const input = field === 'to' ? toInput : ccInput;
+      const recipients = field === 'to' ? toRecipients : ccRecipients;
+
+      // Remove existing chips
+      wrap.querySelectorAll('.recipient-chip').forEach(c => c.remove());
+
+      // Add chips before input
+      recipients.forEach(r => {
+        const chip = document.createElement('span');
+        chip.className = 'recipient-chip';
+        chip.innerHTML = `
+          ${r.name}
+          <button class="recipient-chip-remove" data-id="${r.id}">×</button>
+        `;
+        chip.querySelector('.recipient-chip-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeRecipient(field, r.id);
+        });
+        wrap.insertBefore(chip, input);
+      });
+    }
+
+    // Event listeners
+    sendMessageBtn.addEventListener('click', openPopover);
+    popoverBackdrop.addEventListener('click', closePopover);
+    popoverClose.addEventListener('click', closePopover);
+    discardBtn.addEventListener('click', closePopover);
+
+    sendBtn.addEventListener('click', () => {
+      // Mock send
+      console.log('Message sent:', {
+        to: toRecipients,
+        cc: ccRecipients,
+        subject: subjectInput.value,
+        body: bodyTextarea.value
+      });
+      closePopover();
+      showToast('success', 'Message sent');
+    });
+
+    // Typeahead for To
+    toInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(toInput.value, excludeIds);
+      renderDropdown(toDropdown, results, (p) => addRecipient('to', p));
+    });
+
+    // Typeahead for Cc
+    ccInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(ccInput.value, excludeIds);
+      renderDropdown(ccDropdown, results, (p) => addRecipient('cc', p));
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+      if (!toFieldWrap.contains(e.target)) {
+        toDropdown.classList.remove('open');
+      }
+      if (!ccFieldWrap.contains(e.target)) {
+        ccDropdown.classList.remove('open');
+      }
+    });
+
+    // Focus input when clicking the wrap
+    toFieldWrap.addEventListener('click', () => toInput.focus());
+    ccFieldWrap.addEventListener('click', () => ccInput.focus());
+
+    // Validate on subject/body input
+    subjectInput.addEventListener('input', validateForm);
+    bodyTextarea.addEventListener('input', validateForm);
+  </script>
+</body>
+
+</html>
