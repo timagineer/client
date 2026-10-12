@@ -144,7 +144,7 @@
       overflow: hidden;
     }
 
-    /* Context Bar (patient header) */
+    /* Context Bar (client header) */
     .context-bar {
       display: flex;
       align-items: center;
@@ -449,7 +449,6 @@
     }
 
     .message-popover {
-      display: none;
       position: absolute;
       bottom: calc(100% + 8px);
       right: 0;
@@ -460,10 +459,33 @@
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
       z-index: 1000;
       flex-direction: column;
+      display: flex;
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition:
+        opacity 120ms ease,
+        transform 120ms cubic-bezier(.39, .575, .565, 1),
+        visibility 120ms;
+      /* exit */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .message-popover {
+        transition: none;
+        transform: none;
+      }
     }
 
     .message-popover.open {
-      display: flex;
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(.39, .575, .565, 1),
+        visibility 180ms;
+      /* enter */
     }
 
     .popover-header {
@@ -508,24 +530,47 @@
       gap: 12px;
     }
 
+    .popover-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     .form-row {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .form-row-inline {
+    .form-row-header {
       display: flex;
-      align-items: flex-start;
-      gap: 8px;
+      justify-content: space-between;
+      align-items: baseline;
     }
 
     .form-label {
       font-size: 13px;
       font-weight: 500;
       color: var(--neutral-40);
+    }
+
+    .form-row-inline {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .form-row-inline.align-top {
+      align-items: flex-start;
+    }
+
+    .form-row-inline.align-top .form-label {
+      padding-top: 6.5px;
+    }
+
+    .form-row-inline .form-label {
       min-width: 52px;
-      padding-top: 6px;
     }
 
     .form-field {
@@ -535,7 +580,7 @@
       gap: 4px;
     }
 
-    /* Patient chip (locked) */
+    /* Client chip (locked) */
     .patient-chip {
       display: inline-flex;
       align-items: center;
@@ -684,13 +729,17 @@
     .body-textarea {
       width: 100%;
       min-height: 120px;
-      padding: 10px;
+      padding: 6px 10px;
       border: 1px solid var(--neutral-75);
       border-radius: 4px;
       font-size: 13px;
       font-family: inherit;
       resize: vertical;
       background: #fff;
+    }
+
+    .body-textarea::placeholder {
+      color: var(--neutral-60);
     }
 
     .body-textarea:focus {
@@ -759,20 +808,6 @@
 
     .send-message-wrap .send-message-trigger {
       width: 100%;
-    }
-
-    /* ========== Popover Motion ========== */
-    .message-popover {
-      opacity: 0;
-      transform: scale(0.97) translateY(4px);
-      transition: opacity 160ms cubic-bezier(0.33, 1, 0.68, 1),
-        transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
-    }
-
-    .message-popover.open {
-      display: flex;
-      opacity: 1;
-      transform: scale(1) translateY(0);
     }
 
     /* ========== Toast System ========== */
@@ -851,9 +886,6 @@
 </head>
 
 <body>
-  <!-- Backdrop for closing popover on outside click -->
-  <div class="popover-backdrop" id="popoverBackdrop"></div>
-
   <!-- Toast container -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -886,12 +918,12 @@
 
       <main class="shell-main">
 
-        <!-- Context Bar (Patient Header) -->
+        <!-- Context Bar (Client Header) -->
         <div class="context-bar">
-          <!-- Patient avatar -->
+          <!-- Client avatar -->
           <div class="wire-patient-avatar"></div>
 
-          <!-- Patient info block -->
+          <!-- Client info block -->
           <div class="patient-info">
             <div class="context-row">
               <div class="wire-chip-sm" style="width: 14px;"></div>
@@ -1256,7 +1288,7 @@
                 <div class="button-row">
                   <div class="wire-btn-block"></div>
                   <div class="send-message-wrap">
-                    <button class="wire-btn-block send-message-trigger" id="sendMessageBtn" style="background: hsl(0, 0%, 97%);">Send Message</button>
+                    <button class="wire-btn-block send-message-trigger" id="sendMessageBtn" style="background: hsl(0, 0%, 97%);" aria-expanded="false" aria-haspopup="dialog">Send Message</button>
 
                     <!-- Message Popover -->
                     <div class="message-popover" id="messagePopover">
@@ -1266,52 +1298,39 @@
                       </div>
 
                       <div class="popover-body">
-                        <!-- Patient (locked) -->
-                        <div class="form-row-inline">
+                        <!-- Client (locked) -->
+                        <div class="form-row">
                           <label class="form-label">Client</label>
-                          <div class="form-field">
-                            <div class="patient-chip">
-                              Addams, Wednesday
-                            </div>
-                          </div>
+                          <span class="patient-chip">Addams, Wednesday</span>
                         </div>
 
                         <!-- To field -->
-                        <div class="form-row-inline">
-                          <label class="form-label" for="toInput">To</label>
-                          <div class="form-field">
-                            <div class="recipient-field-wrap">
-                              <div class="recipient-input-wrap" id="toFieldWrap">
-                                <input type="text" class="recipient-input" id="toInput" placeholder="Type to search..." autocomplete="off">
-                              </div>
-                              <div class="typeahead-dropdown" id="toDropdown"></div>
-                            </div>
+                        <div class="form-row" style="position: relative;">
+                          <label class="form-label">To</label>
+                          <div class="recipient-input-wrap" id="toFieldWrap">
+                            <input type="text" class="recipient-input" id="toInput" placeholder="Type to search..." autocomplete="off">
                           </div>
+                          <div class="typeahead-dropdown" id="toDropdown"></div>
                         </div>
 
                         <!-- Cc field -->
-                        <div class="form-row-inline">
-                          <label class="form-label" for="ccInput">Cc</label>
-                          <div class="form-field">
-                            <div class="recipient-field-wrap">
-                              <div class="recipient-input-wrap" id="ccFieldWrap">
-                                <input type="text" class="recipient-input" id="ccInput" placeholder="Type to search..." autocomplete="off">
-                              </div>
-                              <div class="typeahead-dropdown" id="ccDropdown"></div>
-                            </div>
+                        <div class="form-row" style="position: relative;">
+                          <label class="form-label">Cc</label>
+                          <div class="recipient-input-wrap" id="ccFieldWrap">
+                            <input type="text" class="recipient-input" id="ccInput" placeholder="Type to search..." autocomplete="off">
                           </div>
+                          <div class="typeahead-dropdown" id="ccDropdown"></div>
                         </div>
 
                         <!-- Subject -->
-                        <div class="form-row-inline">
-                          <label class="form-label" for="subjectInput">Subject</label>
-                          <div class="form-field">
-                            <input type="text" class="subject-input" id="subjectInput" placeholder="Enter subject...">
-                          </div>
+                        <div class="form-row">
+                          <label class="form-label">Subject</label>
+                          <input type="text" class="subject-input" id="subjectInput" placeholder="Enter subject...">
                         </div>
 
                         <!-- Body -->
                         <div class="form-row">
+                          <label class="form-label">Message</label>
                           <textarea class="body-textarea" id="bodyTextarea" placeholder="Write your message..."></textarea>
                         </div>
                       </div>
@@ -1359,7 +1378,6 @@
     // Elements
     const sendMessageBtn = document.getElementById('sendMessageBtn');
     const messagePopover = document.getElementById('messagePopover');
-    const popoverBackdrop = document.getElementById('popoverBackdrop');
     const popoverClose = document.getElementById('popoverClose');
     const discardBtn = document.getElementById('discardBtn');
     const sendBtn = document.getElementById('sendBtn');
@@ -1407,17 +1425,52 @@
     // Open popover
     function openPopover() {
       messagePopover.classList.add('open');
-      popoverBackdrop.classList.add('open');
+      sendMessageBtn.setAttribute('aria-expanded', 'true');
       toInput.focus();
       validateForm();
+      // Close on outside click
+      setTimeout(() => document.addEventListener('click', handleOutsideClick), 0);
     }
 
     // Close popover
     function closePopover() {
       messagePopover.classList.remove('open');
-      popoverBackdrop.classList.remove('open');
+      sendMessageBtn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', handleOutsideClick);
       resetForm();
+      // Return focus to trigger
+      sendMessageBtn.focus();
     }
+
+    function handleOutsideClick(e) {
+      if (!messagePopover.contains(e.target) && e.target !== sendMessageBtn) {
+        closePopover();
+      }
+    }
+
+    // Focus trap for popover
+    messagePopover.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = messagePopover.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // Global Esc handler
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (messagePopover.classList.contains('open')) {
+          closePopover();
+        }
+      }
+    });
 
     // Reset form
     function resetForm() {
@@ -1523,8 +1576,14 @@
     }
 
     // Event listeners
-    sendMessageBtn.addEventListener('click', openPopover);
-    popoverBackdrop.addEventListener('click', closePopover);
+    sendMessageBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (messagePopover.classList.contains('open')) {
+        closePopover();
+      } else {
+        openPopover();
+      }
+    });
     popoverClose.addEventListener('click', closePopover);
     discardBtn.addEventListener('click', closePopover);
 
