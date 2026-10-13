@@ -2,8 +2,8 @@
 
 ## Runbook
 
-- [Read Me](https://client.timagineer.com/auth//ica/DO-14563/README.md)
 - [Prototype](https://client.timagineer.com/auth/ica/DO-14563/)
+- [Prototype w/template insertion](https://client.timagineer.com/auth/ica/DO-14563/index-002.html)
 
 ## Testing the Prototype
 
