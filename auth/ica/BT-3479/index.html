@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fee Schedule — Billing Worklist</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Color palette */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --secondary-50: oklch(0.5915 0.1547 128.61);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+
+      /* Status colors (toned down) */
+      --status-green: oklch(0.55 0.12 130);
+      --status-red: oklch(0.50 0.15 15);
+      --status-blue: oklch(0.50 0.12 250);
+      --status-gold: oklch(0.60 0.12 85);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ========== Header ========== */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ========== Body ========== */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ========== Sidebar ========== */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ========== Main ========== */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ========== Top Tabs ========== */
+    .top-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      padding: 0 var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .top-tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .top-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .top-tab.active {
+      color: var(--neutral-20);
+    }
+
+    .top-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-30);
+    }
+
+    /* Wire tab placeholders */
+    .wire-top-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+    }
+
+    .wire-top-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-top-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Sub Tabs ========== */
+    .sub-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-4);
+      padding: var(--sp-2) var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sub-tab {
+      font-size: 13px;
+      color: var(--neutral-50);
+      text-decoration: none;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .sub-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .sub-tab.active {
+      color: var(--primary-30);
+      border-bottom-color: var(--primary-30);
+    }
+
+    /* Wire sub tabs */
+    .wire-sub-tab {
+      padding: 4px 0;
+    }
+
+    .wire-sub-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-sub-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Filter Bar ========== */
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .filter-toggle-icon {
+      color: var(--primary-30);
+    }
+
+    .filter-toggle-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      background: var(--primary-30);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .filter-chevron {
+      margin-left: auto;
+      color: var(--neutral-60);
+    }
+
+    .status-pills-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--neutral-90);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+
+    .status-pill.selected {
+      background: #fff;
+    }
+
+    .status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .status-pill-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+    }
+
+    .status-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .status-pill-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .status-pill-badge.red {
+      background: var(--status-red);
+    }
+
+    .status-pill-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .status-pill-badge.green {
+      background: var(--status-green);
+    }
+
+    /* Wire versions */
+    .wire-filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .wire-filter-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: 3px;
+    }
+
+    .wire-filter-icon-gray {
+      width: 18px;
+      height: 18px;
+      background: var(--neutral-70);
+      border-radius: 3px;
+    }
+
+    .wire-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+    }
+
+    .wire-status-pill.selected {
+      background: #fff;
+    }
+
+    .wire-status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .wire-status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .wire-status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .wire-status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .wire-status-pill .wire-text {
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .wire-badge-pill {
+      width: 22px;
+      height: 20px;
+      background: var(--primary-30);
+      border-radius: 10px;
+    }
+
+    .wire-status-badge {
+      width: 26px;
+      height: 22px;
+      border-radius: 11px;
+      flex-shrink: 0;
+    }
+
+    .wire-status-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .wire-status-badge.red {
+      background: var(--status-red);
+    }
+
+    .wire-status-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .wire-status-badge.green {
+      background: var(--status-green);
+    }
+
+    /* ========== Data Table ========== */
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--border-light);
+      font-weight: 500;
+      color: var(--neutral-40);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #fff;
+    }
+
+    .data-table td {
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    /* Ellipsis clip for client names */
+    .data-table td .table-link {
+      display: block;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-table>tbody>tr:hover>td {
+      background: var(--neutral-95);
+    }
+
+    .data-table tr.selected td {
+      background: hsl(218, 50%, 96%);
+    }
+
+    /* Table cell alignment */
+    .col-checkbox {
+      width: 40px;
+      max-width: 40px;
+      overflow: visible;
+      text-overflow: clip !important;
+    }
+
+    th.col-checkbox {
+      overflow: visible;
+    }
+
+    .col-num {
+      text-align: right;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    /* Table links */
+    .table-link {
+      color: hsl(218, 45%, 45%);
+      text-decoration: none;
+    }
+
+    .table-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Status badges (Note Status column) */
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.finished {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+      border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    .status-badge.signed {
+      background: hsl(209, 100%, 92%);
+      color: hsl(209, 85%, 29%);
+      border: 1px solid hsl(209, 70%, 65%);
+    }
+
+    /* Form Status badges (simplified: Complete, Incomplete, Restricted) */
+    .form-status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Complete = green (Signed, Shared and Signed, Completed) */
+    .form-status-badge.complete {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+      border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    /* Incomplete = amber (Shared to Sign, Shared, Not Shared) */
+    .form-status-badge.incomplete {
+      background: hsl(46, 100%, 90%);
+      color: hsl(40, 90%, 22%);
+      border: 1px solid hsl(45, 80%, 55%);
+    }
+
+    /* Restricted = gray */
+    .form-status-badge.restricted {
+      background: hsl(210, 16%, 93%);
+      color: hsl(210, 10%, 31%);
+      border: 1px solid hsl(210, 12%, 72%);
+    }
+
+    /* Form Status button (chip style like Claim History) */
+    .form-status-cell {
+      position: relative;
+    }
+
+    .form-status-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .form-status-btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .form-status-btn .btn-icon {
+      flex-shrink: 0;
+      color: var(--neutral-50);
+    }
+
+    /* Form Status Popover */
+    .form-status-popover {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 420px;
+      background: #fff !important;
+      border: 1px solid var(--neutral-75);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(-4px);
+      transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+    }
+
+    /* Flip popover upward for bottom rows — opacity only, no transform */
+    .form-status-popover.flip-up {
+      top: auto;
+      bottom: calc(100% + 6px);
+      transform: none;
+      transition: opacity 150ms ease, visibility 150ms;
+    }
+
+    .form-status-popover.flip-up.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .form-status-popover.open {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .form-status-popover {
+        transition: none;
+        transform: none;
+      }
+    }
+
+    .form-status-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--neutral-85);
+      background: #fff !important;
+    }
+
+    .form-status-popover-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .form-status-popover-close {
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .form-status-popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .form-status-popover-body {
+      overflow: hidden;
+      background: #fff !important;
+    }
+
+    .form-status-popover-body--scroll {
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .form-status-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      table-layout: fixed;
+    }
+
+    .form-status-table th:nth-child(1),
+    .form-status-table td:nth-child(1) {
+      width: 48%;
+    }
+
+    .form-status-table th:nth-child(2),
+    .form-status-table td:nth-child(2) {
+      width: 26%;
+      white-space: nowrap;
+    }
+
+    .form-status-table th:nth-child(3),
+    .form-status-table td:nth-child(3) {
+      width: 26%;
+      overflow: visible;
+    }
+
+    .form-status-table th,
+    .form-status-table td {
+      text-align: left;
+      padding: 8px 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .form-status-table th {
+      background: var(--neutral-95);
+      border-bottom: 1px solid var(--neutral-85);
+      font-weight: 500;
+      color: var(--neutral-40);
+    }
+
+    .form-status-table td {
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      background: #fff !important;
+    }
+
+    .form-status-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .form-status-table tbody tr:hover td {
+      background: var(--neutral-95) !important;
+    }
+
+    .form-status-popover-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid var(--neutral-85);
+      font-size: 11px;
+      color: var(--neutral-50);
+      background: #fff !important;
+    }
+
+    .popover-footer-link {
+      color: hsl(218, 45%, 45%);
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: auto;
+    }
+
+    .popover-footer-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Wire checkbox (gray box placeholder) */
+    .wire-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--neutral-60);
+      border-radius: 2px;
+      background: var(--neutral-90);
+    }
+
+    /* Wire table elements */
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      width: 100%;
+    }
+
+    .data-table>tbody>tr:hover .wire-text {
+      background: var(--neutral-80);
+    }
+
+    .wire-text.dark {
+      background: var(--neutral-60);
+    }
+
+    .wire-link {
+      height: 10px;
+      background: hsl(218, 40%, 75%);
+      border-radius: 2px;
+    }
+
+    .wire-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .wire-badge.finished {
+      background: oklch(0.92 0.04 145);
+      color: oklch(0.35 0.08 145);
+      min-width: 40px;
+      min-height: 10px;
+    }
+
+    .wire-icon-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-eye-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .wire-eye-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 10px;
+      border: 2px solid var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      background: var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn.active {
+      background: var(--neutral-80);
+    }
+
+    .wire-eye-btn.active::before {
+      border-color: var(--neutral-40);
+    }
+
+    .wire-eye-btn.active::after {
+      background: var(--neutral-40);
+    }
+
+    /* Split button: link text left + icon button right */
+    .wire-split-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .wire-split-btn .wire-link {
+      height: 10px;
+      background: hsl(218, 45%, 65%);
+      border-radius: 2px;
+    }
+
+    .wire-split-btn .wire-split-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--neutral-90);
+      border-radius: 3px;
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    /* ========== Pagination ========== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-top: 1px solid var(--border-light);
+      background: #fff;
+    }
+
+    .wire-pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .wire-page-btn {
+      width: 28px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-page-btn.active {
+      background: var(--neutral-70);
+    }
+
+    .wire-page-select {
+      height: 28px;
+      width: 70px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    /* ========== Send Message Popover (from 002-cf) ========== */
+    .popover-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+    }
+
+    .popover-backdrop.open {
+      display: block;
+    }
+
+    .send-message-wrap {
+      position: relative;
+    }
+
+    .message-popover {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      width: 420px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      z-index: 201;
+      flex-direction: column;
+      display: flex;
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition:
+        opacity 120ms ease,
+        transform 120ms cubic-bezier(.39, .575, .565, 1),
+        visibility 120ms;
+      /* exit */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .message-popover {
+        transition: none;
+        transform: none;
+      }
+    }
+
+    .message-popover.open {
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(.39, .575, .565, 1),
+        visibility 180ms;
+      /* enter */
+    }
+
+    .popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .popover-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .popover-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 18px;
+    }
+
+    .popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .popover-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Stacked form rows */
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+    }
+
+    /* Legacy inline rows - keep for other uses */
+    .form-row-inline {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .form-row-inline.align-top {
+      align-items: flex-start;
+    }
+
+    .form-row-inline.align-top .form-label {
+      padding-top: 8px;
+    }
+
+    .form-row-inline .form-label {
+      min-width: 52px;
+    }
+
+    .form-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .patient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--neutral-30);
+      width: fit-content;
+    }
+
+    .patient-chip-icon {
+      width: 16px;
+      height: 16px;
+      background: var(--neutral-70);
+      border-radius: 50%;
+    }
+
+    .recipient-field-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .recipient-input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 8px;
+      min-height: 34px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      background: #fff;
+      cursor: text;
+    }
+
+    .recipient-input-wrap:focus-within {
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .recipient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px 2px 8px;
+      background: hsl(218, 30%, 94%);
+      border-radius: 3px;
+      font-size: 13px;
+      color: var(--neutral-25);
+    }
+
+    .recipient-chip-remove {
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 14px;
+      padding: 0;
+    }
+
+    .recipient-chip-remove:hover {
+      background: hsl(218, 30%, 88%);
+      color: var(--neutral-30);
+    }
+
+    .recipient-input {
+      flex: 1;
+      min-width: 100px;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      padding: 2px 0;
+      background: transparent;
+    }
+
+    .recipient-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .typeahead-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 4px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .typeahead-dropdown.open {
+      display: block;
+    }
+
+    .typeahead-option {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .typeahead-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .typeahead-option-subtitle {
+      font-size: 11px;
+      color: var(--neutral-50);
+      margin-top: 2px;
+    }
+
+    .subject-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .subject-input:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .body-textarea-wrap {
+      position: relative;
+    }
+
+    .body-textarea {
+      width: 100%;
+      min-height: 120px;
+      max-height: 200px;
+      padding: 8px 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      background: #fff;
+      resize: vertical;
+    }
+
+    .body-textarea::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .body-textarea:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .insert-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 500;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+    }
+
+    .insert-btn:hover {
+      color: hsl(218, 54%, 38%);
+    }
+
+    /* Legacy insert button style - keep for reference */
+    .insert-template-btn {
+      float: right;
+      margin: 0 0 4px 8px;
+      padding: 4px 8px;
+      border: none;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .insert-template-btn:hover {
+      background: hsl(218, 50%, 95%);
+      color: hsl(218, 54%, 42%);
+    }
+
+    .popover-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    /* ========== Toast ========== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast.error svg {
+      color: hsl(352, 92%, 62%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: none;
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main -->
+      <main class="shell-main">
+
+        <!-- Top Tabs -->
+        <div class="top-tabs">
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width: 50px;"></div>
+          </div>
+          <div class="wire-top-tab active">
+            <div class="wire-text"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text"></div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs -->
+        <div class="sub-tabs">
+          <div class="wire-sub-tab">
+            <div class="wire-text" style="width: 130px;"></div>
+          </div>
+          <div class="wire-sub-tab active">
+            <div class="wire-text" style="width: 45px;"></div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <!-- Filters row -->
+          <div class="filter-row">
+            <div class="wire-filter-toggle">
+              <div class="wire-filter-icon-gray"></div>
+              <div class="wire-text" style="width: 45px;"></div>
+              <div class="wire-badge-pill"></div>
+            </div>
+            <div class="filter-chevron">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+          <!-- Status pills row -->
+          <div class="status-pills-row">
+            <div class="wire-status-pill selected blue">
+              <div class="wire-text" style="width: 70px;"></div>
+              <div class="wire-status-badge blue"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge red"></div>
+            </div>
+            <div class="wire-status-pill gold">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge gold"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 35px;"></div>
+              <div class="wire-status-badge green"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-checkbox">
+                  <div class="wire-checkbox"></div>
+                </th>
+                <th class="col-text">Encounter</th>
+                <th class="col-text">Claim Status</th>
+                <th class="col-text">Claim History</th>
+                <th class="col-text">Submission Status</th>
+                <th class="col-text">Rendering Provider</th>
+                <th class="col-text">Client</th>
+                <th class="col-text">DOB</th>
+                <th class="col-text">Note Type</th>
+                <th class="col-text">Note Status</th>
+                <th class="col-text">Form Status</th>
+                <th class="col-text">Telehealth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Anna Paciente</a></td>
+                <td>02/06/1991</td>
+                <td><a href="#" class="table-link">Quick Note</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status</button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Consent to Treatment</td>
+                            <td>09/15/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>PHQ-9</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Release of Information</td>
+                            <td>09/20/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                          <tr>
+                            <td>GAD-7</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Insurance Verification</td>
+                            <td>08/10/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span></span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Anna Paciente</a></td>
+                <td>02/06/1991</td>
+                <td><a href="#" class="table-link">Progress Note</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body form-status-popover-body--scroll">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>PHQ-9</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>GAD-7</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>PHQ-9</td>
+                            <td>07/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>GAD-7</td>
+                            <td>07/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Release of Information</td>
+                            <td>06/15/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                          <tr>
+                            <td>PHQ-9</td>
+                            <td>04/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>GAD-7</td>
+                            <td>04/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Consent to Treatment</td>
+                            <td>01/10/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>HIPAA Notice</td>
+                            <td>01/10/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Maria Santos</a></td>
+                <td>11/22/1978</td>
+                <td><a href="#" class="table-link">Complete Evaluation</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Intake Assessment</td>
+                            <td>09/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Release of Information</td>
+                            <td>09/05/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Robert Chen</a></td>
+                <td>03/15/1982</td>
+                <td><a href="#" class="table-link">Case Management</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>PHQ-9</td>
+                            <td>09/15/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Safety Plan</td>
+                            <td>08/20/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Consent to Treatment</td>
+                            <td>06/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Emily Johnson</a></td>
+                <td>07/28/1995</td>
+                <td><a href="#" class="table-link">Group Therapy Progress Note</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Group Consent</td>
+                            <td>07/01/2026</td>
+                            <td><span class="form-status-badge restricted">Restricted</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Michael Brown</a></td>
+                <td>12/04/1970</td>
+                <td><a href="#" class="table-link">Discharge Summary</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Discharge Consent</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Aftercare Plan</td>
+                            <td>10/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Sarah Davis</a></td>
+                <td>09/19/1988</td>
+                <td><a href="#" class="table-link">Primary Care Note</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Medical History</td>
+                            <td>08/15/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Medication List</td>
+                            <td>08/15/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Lab Authorization</td>
+                            <td>09/01/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">David Lee</a></td>
+                <td>05/30/1992</td>
+                <td><a href="#" class="table-link">Couples/Family Therapy</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Couples Therapy Consent</td>
+                            <td>05/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Partner Consent</td>
+                            <td>05/01/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Lisa Martinez</a></td>
+                <td>01/12/1975</td>
+                <td><a href="#" class="table-link">ASAM</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="toggleFormPopover(this)"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 22h2a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v2.85" />
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                      <path d="M8 14v2.2l1.6 1" />
+                      <circle cx="8" cy="16" r="6" />
+                    </svg>Form Status
+                  </button>
+                  <div class="form-status-popover">
+                    <div class="form-status-popover-header">
+                      <h4 class="form-status-popover-title">Custom Forms Status</h4>
+                      <button class="form-status-popover-close" onclick="event.stopPropagation(); this.closest('.form-status-popover').classList.remove('open');">×</button>
+                    </div>
+                    <div class="form-status-popover-body">
+                      <table class="form-status-table">
+                        <thead>
+                          <tr>
+                            <th>Form</th>
+                            <th>Sent</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>ASAM Criteria Form</td>
+                            <td>01/05/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Substance Use History</td>
+                            <td>01/05/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Treatment Agreement</td>
+                            <td>01/10/2026</td>
+                            <td><span class="form-status-badge complete">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td>Drug Screen Consent</td>
+                            <td>01/10/2026</td>
+                            <td><span class="form-status-badge incomplete">Incomplete</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-status-popover-footer">
+                      <span>Since 10/07/2025</span>
+                      <a href="#" class="popover-footer-link">Documents</a>
+                    </div>
+                  </div>
+                </td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="wire-pagination">
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn active"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+          </div>
+          <div class="wire-page-select"></div>
+          <div class="wire-text" style="width: 80px; margin-left: 8px;"></div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Mock provider data
+    const providers = [
+      { id: 1, name: 'Dr. Sarah Chen', title: 'Psychiatrist' },
+      { id: 2, name: 'Marcus Williams', title: 'LCSW' },
+      { id: 3, name: 'Jennifer Park', title: 'NP' },
+      { id: 4, name: 'David Thompson', title: 'MD' },
+      { id: 5, name: 'Amy Rodriguez', title: 'RN' },
+      { id: 6, name: 'Dr. James Morningstar', title: 'DPsych' }
+    ];
+
+    // State
+    let toRecipients = [];
+    let ccRecipients = [];
+
+    // Popover controls (generic - will rewire to new trigger)
+    // const trigger = document.getElementById('triggerButton');
+    // const popover = document.getElementById('popover');
+
+    function openPopover(triggerEl, popoverEl) {
+      popoverEl.classList.add('open');
+      if (triggerEl) triggerEl.setAttribute('aria-expanded', 'true');
+      // Close on outside click
+      const handleOutside = (e) => {
+        if (!popoverEl.contains(e.target) && e.target !== triggerEl) {
+          closePopover(triggerEl, popoverEl, handleOutside);
+        }
+      };
+      setTimeout(() => document.addEventListener('click', handleOutside), 0);
+      popoverEl._handleOutside = handleOutside;
+    }
+
+    function closePopover(triggerEl, popoverEl, handleOutside) {
+      popoverEl.classList.remove('open');
+      if (triggerEl) triggerEl.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', handleOutside || popoverEl._handleOutside);
+      if (triggerEl) triggerEl.focus();
+    }
+
+    // Global Esc handler
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        // Close any open popover
+        document.querySelectorAll('.message-popover.open').forEach(p => {
+          p.classList.remove('open');
+        });
+        // Close form status popover
+        closeFormStatusPopover();
+      }
+    });
+
+    // Form Status Popover
+    function toggleFormPopover(btn) {
+      const popover = btn.nextElementSibling;
+      const isOpen = popover.classList.contains('open');
+
+      // Close all other popovers first (keep flip-up until after fade)
+      document.querySelectorAll('.form-status-popover.open').forEach(p => {
+        p.classList.remove('open');
+        setTimeout(() => p.classList.remove('flip-up'), 150);
+      });
+
+      if (!isOpen) {
+        // Check if popover would clip at bottom
+        const btnRect = btn.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const spaceBelow = viewportHeight - btnRect.bottom;
+
+        // If less than 300px below, flip up
+        if (spaceBelow < 300) {
+          popover.classList.add('flip-up');
+        } else {
+          popover.classList.remove('flip-up');
+        }
+
+        // Double rAF ensures browser paints the position before animation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            popover.classList.add('open');
+          });
+        });
+      }
+    }
+
+    function closeFormStatusPopover() {
+      document.querySelectorAll('.form-status-popover.open').forEach(p => {
+        p.classList.remove('open');
+        setTimeout(() => p.classList.remove('flip-up'), 150);
+      });
+    }
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.form-status-cell')) {
+        closeFormStatusPopover();
+      }
+    });
+
+    // Recipient field elements
+    const toInput = document.getElementById('toInput');
+    const toFieldWrap = document.getElementById('toFieldWrap');
+    const toDropdown = document.getElementById('toDropdown');
+    const ccInput = document.getElementById('ccInput');
+    const ccFieldWrap = document.getElementById('ccFieldWrap');
+    const ccDropdown = document.getElementById('ccDropdown');
+
+    // Filter providers
+    function filterProviders(query, excludeIds) {
+      if (query.length < 3) return [];
+      const lowerQuery = query.toLowerCase();
+      return providers.filter(p =>
+        !excludeIds.includes(p.id) &&
+        p.name.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Render dropdown
+    function renderDropdown(dropdown, results, onSelect) {
+      if (results.length === 0) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      dropdown.innerHTML = results.map(p => `
+        <div class="typeahead-option" data-id="${p.id}">
+          <div>${p.name}</div>
+          <div class="typeahead-option-subtitle">${p.title}</div>
+        </div>
+      `).join('');
+
+      dropdown.querySelectorAll('.typeahead-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(opt.dataset.id);
+          const provider = providers.find(p => p.id === id);
+          if (provider) onSelect(provider);
+        });
+      });
+
+      dropdown.classList.add('open');
+    }
+
+    // Add recipient chip
+    function addRecipient(field, provider) {
+      if (field === 'to') {
+        toRecipients.push(provider);
+        toInput.value = '';
+        toDropdown.classList.remove('open');
+        renderRecipients('to');
+        toInput.focus();
+      } else {
+        ccRecipients.push(provider);
+        ccInput.value = '';
+        ccDropdown.classList.remove('open');
+        renderRecipients('cc');
+        ccInput.focus();
+      }
+    }
+
+    // Remove recipient
+    function removeRecipient(field, id) {
+      if (field === 'to') {
+        toRecipients = toRecipients.filter(r => r.id !== id);
+        renderRecipients('to');
+      } else {
+        ccRecipients = ccRecipients.filter(r => r.id !== id);
+        renderRecipients('cc');
+      }
+    }
+
+    // Render recipient chips
+    function renderRecipients(field) {
+      const wrap = field === 'to' ? toFieldWrap : ccFieldWrap;
+      const input = field === 'to' ? toInput : ccInput;
+      const recipients = field === 'to' ? toRecipients : ccRecipients;
+
+      // Remove existing chips
+      wrap.querySelectorAll('.recipient-chip').forEach(c => c.remove());
+
+      // Add chips before input
+      recipients.forEach(r => {
+        const chip = document.createElement('span');
+        chip.className = 'recipient-chip';
+        chip.innerHTML = `
+          ${r.name}
+          <button class="recipient-chip-remove" data-id="${r.id}">×</button>
+        `;
+        chip.querySelector('.recipient-chip-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeRecipient(field, r.id);
+        });
+        wrap.insertBefore(chip, input);
+      });
+    }
+
+    // Typeahead for To
+    toInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(toInput.value, excludeIds);
+      renderDropdown(toDropdown, results, (p) => addRecipient('to', p));
+    });
+
+    // Typeahead for Cc
+    ccInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(ccInput.value, excludeIds);
+      renderDropdown(ccDropdown, results, (p) => addRecipient('cc', p));
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+      if (!toFieldWrap.contains(e.target)) {
+        toDropdown.classList.remove('open');
+      }
+      if (!ccFieldWrap.contains(e.target)) {
+        ccDropdown.classList.remove('open');
+      }
+    });
+
+    // Focus input when clicking the wrap
+    toFieldWrap.addEventListener('click', () => toInput.focus());
+    ccFieldWrap.addEventListener('click', () => ccInput.focus());
+
+    // Show toast notification
+    function showToast(type, message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      // Icon SVGs (Lucide)
+      const icons = {
+        success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+        error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      };
+
+      toast.innerHTML = `${icons[type] || ''}<span>${message}</span>`;
+      container.appendChild(toast);
+
+      // Auto-dismiss after 3s
+      setTimeout(() => {
+        toast.classList.add('leaving');
+        toast.addEventListener('animationend', () => toast.remove());
+      }, 3000);
+    }
+  </script>
+
+</body>
+
+</html>
