@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ICA Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -15,201 +18,521 @@
     :root {
       --font-size: 100%;
       --text-body: 1rem;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'Azeret Mono', ui-monospace, monospace;
+      --color-text: hsl(220, 20%, 20%);
+      --color-text-muted: hsl(220, 10%, 50%);
+      --color-link: hsl(212, 92%, 45%);
+      --color-link-hover: hsl(212, 92%, 35%);
+      --color-bg: hsl(220, 20%, 98%);
+      --color-surface: hsl(0, 0%, 100%);
+      --color-border: hsl(220, 15%, 90%);
+      --color-hover: hsl(220, 30%, 96%);
+      --radius: 5px;
       font-size: var(--font-size);
     }
 
     body {
-      font-family: system-ui, sans-serif;
+      font-family: var(--font-sans);
       font-size: var(--text-body);
       min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: hsl(0, 0%, 10%);
+      background: var(--color-bg);
+      color: var(--color-text);
+      padding: 1.5rem 1rem;
     }
 
-    table {
-      width: fit-content;
-      border-collapse: collapse;
+    .container {
+      max-width: 600px;
       margin: 0 auto;
     }
 
-    th,
-    td {
-      text-align: left;
+    header {
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    /* Search */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2rem;
+      font-size: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-link);
+      box-shadow: 0 0 0 3px hsla(212, 92%, 45%, 0.15);
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.625rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0.875rem;
+      height: 0.875rem;
+      color: var(--color-text-muted);
+      pointer-events: none;
+    }
+
+    /* Team sections */
+    details {
+      margin-bottom: 0.375rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+    }
+
+    summary {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
       padding: 0.5rem 0.75rem;
-      border-bottom: 1px solid hsl(0, 0%, 90%);
-      align-content: baseline;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: '';
+      width: 0.75rem;
+      height: 0.75rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      transition: transform 150ms ease;
+    }
+
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .team-name {
+      flex: 1;
+    }
+
+    .team-count {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--color-surface);
+      background: var(--color-text-muted);
+      padding: 0.0625rem 0.5rem;
+      border-radius: 1rem;
+    }
+
+    .team-prefix {
+      font-weight: 400;
+      color: var(--color-text-muted);
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    tr {
+      border-top: 1px solid var(--color-border);
+      cursor: pointer;
+    }
+
+    tr:hover {
+      background: var(--color-hover);
+    }
+
+    tr:active {
+      background: var(--color-border);
+    }
+
+    tr.hidden {
+      display: none;
+    }
+
+    td {
+      padding: 0.375rem 0.75rem;
+      vertical-align: baseline;
+    }
+
+    .col-ticket {
+      width: 6rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      white-space: nowrap;
+      color: var(--color-link);
+    }
+
+    .col-title {
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 0;
+    }
+
+    .col-date {
+      width: 4.5rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--color-text-muted);
+      text-align: right;
+      white-space: nowrap;
     }
 
     td a {
-      color: hsl(212, 92%, 45%);
+      color: var(--color-link);
       text-decoration: none;
     }
 
     td a:hover {
+      color: var(--color-link-hover);
       text-decoration: underline;
     }
 
-    tr:hover {
-      background-color: hsl(0, 0%, 96%);
+    /* Empty state */
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--color-text-muted);
+      font-size: 1rem;
+      font-style: italic;
     }
 
-    .code {
-      font-family: ui-monospace, monospace;
-      font-size: .99rem;
-      white-space: nowrap;
+    .no-results.visible {
+      display: block;
     }
 
+    /* Responsive */
     @media (min-width: 576px) {
       :root {
-        --font-size: 106.25%;
+        --font-size: 93.75%;
       }
     }
 
     @media (min-width: 768px) {
       :root {
-        --font-size: 112.5%;
+        --font-size: 100%;
       }
-    }
 
-    @media (min-width: 1024px) {
-      :root {
-        --font-size: 118.75%;
-      }
-    }
-
-    @media (min-width: 1280px) {
-      :root {
-        --font-size: 125%;
-      }
-    }
-
-    @media (min-width: 1536px) {
-      :root {
-        --font-size: 131.25%;
+      body {
+        padding: 2rem 1.5rem;
       }
     }
   </style>
 </head>
 
 <body>
-  <table>
-    <tbody>
-      <tr>
-        <td class="code"><a href="DO-11000/">DO-11000</a></td>
-        <td>AI-suggested Diagnosis Codes (AIDx)</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="CLIN-3687/">CLIN-3687</a></td>
-        <td>Calendar Appointments Color System</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="BT-2704/">BT-2704</a></td>
-        <td>Account Ledger</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="frmsys/">DO-#####</a></td>
-        <td>Mobile-first Forms Sytem</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-8383/">DO-8383</a></td>
-        <td>Portal v3: Demographics</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-10884/">DO-10884</a></td>
-        <td>Notifications Center</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-10995/">DO-10995</a></td>
-        <td>Documents & Fax Tables</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-9187/">DO-9187</a></td>
-        <td>Create Chart</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="kno2/">DO-#####</a></td>
-        <td>Universal Clinical Inbox</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-9203/">DO-9203</a></td>
-        <td>Data Requirements Settings</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="CLN-3554/">CLN-3554</a></td>
-        <td>Billing Filters</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-10675/">DO-10675</a></td>
-        <td>Service Codes</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-11858/">DO-11858</a></td>
-        <td>Support Portal Kno2 Org Provisioning</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-12145/">DO-12145</a></td>
-        <td>Portal Documents Upload</td>
-      </tr>
-      <tr>
-        <td class="code"><a href="DO-12563/">DO-12563</a></td>
-        <td>Batch Signing of Notes</td>
-      </tr>
-            <tr>
-        <td class="code"><a href="DO-12982/">DO-12982</a></td>
-        <td>Supervisor Co-signature Configuration</td>
-      </tr>
-      </tr>
-      <tr>
-        <td class="code"><a href="CLN-4002/">CLN-4002</a></td>
-        <td>Notes Governor Usage Thresholds</td>
-      </tr>
-          <tr>
-        <td class="code"><a href="DO-13613/">DO-13613</a></td>
-        <td>Demographics Reloaded</td>
-      </tr>
-          </tr>
-          <tr>
-        <td class="code"><a href="DO-13742/">DO-13742</a></td>
-        <td>Portal Documents Upload (Mobile)</td>
-      </tr>
-          </tr>
-          </tr>
-          <tr>
-        <td class="code"><a href="BT-3224/">BT-3224</a></td>
-        <td>Billing Worklist Claims Filters</td>
-      </tr>
-          <tr>
-        <td class="code"><a href="CLIN-3854/">CLIN-3854</a></td>
-        <td>Calendar Availability Blocks</td>
-        </tr>   
-              <tr>
-        <td class="code"><a href="CLIN-3682/">CLIN-3682</a></td>
-        <td>Calendar Change Log</td>
-        </tr> 
-                  <tr>
-        <td class="code"><a href="DO-14563/">DO-14563</a></td>
-        <td>Send Message from Chart</td>
-        </tr> 
-                      <tr>
-        <td class="code"><a href="DO-14563/index-002.html">DO-14563</a></td>
-        <td>Send Message from Chart w/template insertion</td>
-        </tr> 
-                          <tr>
-        <td class="code"><a href="DO-14674/">DO-14674</a></td>
-        <td>Send Message from Billing Worklist</td>
-        </tr> 
-                              <tr>
-        <td class="code"><a href="BT-3479/">BT-3479</a></td>
-        <td>Custom Forms' Status from Billing Worklist</td>
-        </tr> 
-                                  <tr>
-        <td class="code"><a href="BT-3475/">BT-3475</a></td>
-        <td>Credit Card Terminal Payment</td>
-        </tr> 
-    </tbody>
-  </table>
+  <div class="container">
+    <header>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input type="search" class="search-input" id="searchInput" placeholder="Filter…" autocomplete="off">
+      </div>
+    </header>
+
+    <main id="teamList">
+      <!-- Quantum (DO-) -->
+      <details data-team="quantum">
+        <summary>
+          <span class="team-name">Quantum <span class="team-prefix">(DO)</span></span>
+          <span class="team-count">14</span>
+        </summary>
+        <div class="content">
+          <table>
+            <tbody>
+              <tr data-search="do-14674 send message from billing worklist" data-href="Quantum/DO-14674/">
+                <td class="col-ticket">DO-14674</td>
+                <td class="col-title">Send Message from Billing Worklist</td>
+                <td class="col-date">10/26</td>
+              </tr>
+              <tr data-search="do-14563 send message from chart" data-href="Quantum/DO-14563/">
+                <td class="col-ticket">DO-14563</td>
+                <td class="col-title">Send Message from Chart</td>
+                <td class="col-date">10/26</td>
+              </tr>
+              <tr data-search="do-13742 portal documents upload mobile" data-href="Quantum/DO-13742/">
+                <td class="col-ticket">DO-13742</td>
+                <td class="col-title">Portal Documents Upload (Mobile)</td>
+                <td class="col-date">09/26</td>
+              </tr>
+              <tr data-search="do-13613 demographics reloaded" data-href="Quantum/DO-13613/">
+                <td class="col-ticket">DO-13613</td>
+                <td class="col-title">Demographics Reloaded</td>
+                <td class="col-date">08/26</td>
+              </tr>
+              <tr data-search="do-12982 supervisor co-signature configuration" data-href="Quantum/DO-12982/">
+                <td class="col-ticket">DO-12982</td>
+                <td class="col-title">Supervisor Co-signature Configuration</td>
+                <td class="col-date">07/26</td>
+              </tr>
+              <tr data-search="do-12563 batch signing of notes" data-href="Quantum/DO-12563/">
+                <td class="col-ticket">DO-12563</td>
+                <td class="col-title">Batch Signing of Notes</td>
+                <td class="col-date">06/26</td>
+              </tr>
+              <tr data-search="do-12145 portal documents upload" data-href="Quantum/DO-12145/">
+                <td class="col-ticket">DO-12145</td>
+                <td class="col-title">Portal Documents Upload</td>
+                <td class="col-date">05/26</td>
+              </tr>
+              <tr data-search="do-11000 ai-suggested diagnosis codes aidx" data-href="Quantum/DO-11000/">
+                <td class="col-ticket">DO-11000</td>
+                <td class="col-title">AI-suggested Diagnosis Codes (AIDx)</td>
+                <td class="col-date">03/26</td>
+              </tr>
+              <tr data-search="do-10995 documents fax tables" data-href="Quantum/DO-10995/">
+                <td class="col-ticket">DO-10995</td>
+                <td class="col-title">Documents &amp; Fax Tables</td>
+                <td class="col-date">03/26</td>
+              </tr>
+              <tr data-search="do-10884 notifications center" data-href="Quantum/DO-10884/">
+                <td class="col-ticket">DO-10884</td>
+                <td class="col-title">Notifications Center</td>
+                <td class="col-date">02/26</td>
+              </tr>
+              <tr data-search="do-10765 service codes" data-href="Quantum/DO-10765/">
+                <td class="col-ticket">DO-10765</td>
+                <td class="col-title">Service Codes</td>
+                <td class="col-date">02/26</td>
+              </tr>
+              <tr data-search="do-9203 data requirements settings" data-href="Quantum/DO-9203/">
+                <td class="col-ticket">DO-9203</td>
+                <td class="col-title">Data Requirements Settings</td>
+                <td class="col-date">11/25</td>
+              </tr>
+              <tr data-search="do-9187 create chart" data-href="Quantum/DO-9187/">
+                <td class="col-ticket">DO-9187</td>
+                <td class="col-title">Create Chart</td>
+                <td class="col-date">11/25</td>
+              </tr>
+              <tr data-search="do-8383 portal v3 demographics" data-href="Quantum/DO-8383/">
+                <td class="col-ticket">DO-8383</td>
+                <td class="col-title">Portal v3: Demographics</td>
+                <td class="col-date">10/25</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- Wardens (BT-) -->
+      <details data-team="wardens">
+        <summary>
+          <span class="team-name">Wardens <span class="team-prefix">(BT)</span></span>
+          <span class="team-count">4</span>
+        </summary>
+        <div class="content">
+          <table>
+            <tbody>
+              <tr data-search="bt-3479 custom forms status from billing worklist" data-href="Wardens/BT-3479/">
+                <td class="col-ticket">BT-3479</td>
+                <td class="col-title">Custom Forms' Status from Billing Worklist</td>
+                <td class="col-date">10/26</td>
+              </tr>
+              <tr data-search="bt-3475 credit card terminal payment" data-href="Wardens/BT-3475/">
+                <td class="col-ticket">BT-3475</td>
+                <td class="col-title">Credit Card Terminal Payment</td>
+                <td class="col-date">09/26</td>
+              </tr>
+              <tr data-search="bt-3224 billing worklist claims filters" data-href="Wardens/BT-3224/">
+                <td class="col-ticket">BT-3224</td>
+                <td class="col-title">Billing Worklist Claims Filters</td>
+                <td class="col-date">07/26</td>
+              </tr>
+              <tr data-search="bt-2704 account ledger" data-href="Wardens/BT-2704/">
+                <td class="col-ticket">BT-2704</td>
+                <td class="col-title">Account Ledger</td>
+                <td class="col-date">02/26</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- Strikers (CLIN-) -->
+      <details data-team="strikers">
+        <summary>
+          <span class="team-name">Strikers <span class="team-prefix">(CLIN)</span></span>
+          <span class="team-count">3</span>
+        </summary>
+        <div class="content">
+          <table>
+            <tbody>
+              <tr data-search="clin-3854 calendar availability blocks" data-href="Strikers/CLIN-3854/">
+                <td class="col-ticket">CLIN-3854</td>
+                <td class="col-title">Calendar Availability Blocks</td>
+                <td class="col-date">06/26</td>
+              </tr>
+              <tr data-search="clin-3687 calendar appointments color system" data-href="Strikers/CLIN-3687/">
+                <td class="col-ticket">CLIN-3687</td>
+                <td class="col-title">Calendar Appointments Color System</td>
+                <td class="col-date">05/26</td>
+              </tr>
+              <tr data-search="clin-3682 calendar change log" data-href="Strikers/CLIN-3682/">
+                <td class="col-ticket">CLIN-3682</td>
+                <td class="col-title">Calendar Change Log</td>
+                <td class="col-date">05/26</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- Zen (CLN-) -->
+      <details data-team="zen">
+        <summary>
+          <span class="team-name">Zen <span class="team-prefix">(CLN)</span></span>
+          <span class="team-count">3</span>
+        </summary>
+        <div class="content">
+          <table>
+            <tbody>
+              <tr data-search="cln-4002 notes governor usage thresholds" data-href="Zen/CLN-4002/">
+                <td class="col-ticket">CLN-4002</td>
+                <td class="col-title">Notes Governor Usage Thresholds</td>
+                <td class="col-date">08/26</td>
+              </tr>
+              <tr data-search="cln-3953 support portal kno2 org provisioning" data-href="Zen/CLN-3953/">
+                <td class="col-ticket">CLN-3953</td>
+                <td class="col-title">Support Portal Kno2 Org Provisioning</td>
+                <td class="col-date">05/26</td>
+              </tr>
+              <tr data-search="cln-3554 billing filters" data-href="Zen/CLN-3554/">
+                <td class="col-ticket">CLN-3554</td>
+                <td class="col-title">Billing Filters</td>
+                <td class="col-date">02/26</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- Uncategorized -->
+      <details data-team="other">
+        <summary>
+          <span class="team-name">Other</span>
+          <span class="team-count">2</span>
+        </summary>
+        <div class="content">
+          <table>
+            <tbody>
+              <tr data-search="kno2 universal clinical inbox" data-href="Other/kno2/">
+                <td class="col-ticket">kno2</td>
+                <td class="col-title">Universal Clinical Inbox</td>
+                <td class="col-date">04/26</td>
+              </tr>
+              <tr data-search="frmsys mobile-first forms system" data-href="Other/frmsys/">
+                <td class="col-ticket">frmsys</td>
+                <td class="col-title">Mobile-first Forms System</td>
+                <td class="col-date">03/26</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </main>
+
+    <p class="no-results" id="noResults">No prototypes match your search.</p>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const teamList = document.getElementById('teamList');
+    const noResults = document.getElementById('noResults');
+    const allRows = document.querySelectorAll('tr[data-search]');
+    const allDetails = document.querySelectorAll('details[data-team]');
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      let totalVisible = 0;
+
+      allDetails.forEach(details => {
+        const rows = details.querySelectorAll('tr[data-search]');
+        let teamVisible = 0;
+
+        rows.forEach(row => {
+          const match = !query || row.dataset.search.includes(query);
+          row.classList.toggle('hidden', !match);
+          if (match) teamVisible++;
+        });
+
+        // Update count badge
+        const countEl = details.querySelector('.team-count');
+        countEl.textContent = teamVisible;
+
+        // Hide entire section if no matches
+        details.style.display = teamVisible === 0 ? 'none' : '';
+
+        // Keep sections open when searching
+        if (query && teamVisible > 0) {
+          details.open = true;
+        }
+
+        totalVisible += teamVisible;
+      });
+
+      noResults.classList.toggle('visible', totalVisible === 0);
+    });
+
+    // Accordion: one open at a time
+    document.querySelectorAll('details[data-team]').forEach(details => {
+      details.addEventListener('toggle', () => {
+        if (details.open) {
+          document.querySelectorAll('details[data-team]').forEach(other => {
+            if (other !== details) other.open = false;
+          });
+        }
+      });
+    });
+
+    // Keyboard shortcut: focus search with /
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      if (e.key === 'Escape' && document.activeElement === searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.blur();
+      }
+    });
+
+    // Make rows clickable
+    document.querySelectorAll('tr[data-href]').forEach(row => {
+      row.addEventListener('click', () => {
+        window.location.href = row.dataset.href;
+      });
+    });
+  </script>
 </body>
 
 </html>
