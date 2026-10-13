@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Time Spent [CLN-3983]</title>
+
+  <style>
+    :root {
+      /* App shell colors from 002 */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --secondary-50: oklch(0.5915 0.1547 128.61);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --border-light: var(--neutral-75);
+      --rad-shell: 6px;
+
+      /* Wire colors */
+      --gray-1: #eef0f1;
+      --gray-2: #e3e6e8;
+      --gray-3: #d9dde0;
+      --gray-4: #d3d7da;
+      --gray-5: #d0d3d6;
+      --gray-6: #c9cdd1;
+      --gray-7: #c3c8cc;
+      --gray-8: #b5bbc1;
+      --gray-9: #aab1b7;
+      --gray-10: #9aa0a6;
+      --border: #c9cdd1;
+      --border-dark: #6e7378;
+      --rad: 8px;
+      --rad-sm: 6px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+    }
+
+    /* ========== App Shell (from 002) ========== */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad-shell);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad-shell);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad-shell);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad-shell);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad-shell);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    /* ========== Wire primitives ========== */
+    .wire-text {
+      height: 7px;
+      background: var(--gray-4);
+      border-radius: 4px;
+    }
+
+    .wire-text.dark {
+      background: var(--gray-8);
+    }
+
+    .wire-text.darker {
+      background: var(--gray-9);
+    }
+
+    .wire-sq {
+      width: 10px;
+      height: 10px;
+      background: var(--gray-8);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .wire-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--gray-4);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .wire-dot.on {
+      background: var(--gray-8);
+    }
+
+    .wire-pill {
+      background: var(--gray-2);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+    }
+
+    .wire-check {
+      width: 17px;
+      height: 17px;
+      background: var(--gray-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .wire-check.alt {
+      background: var(--gray-3);
+    }
+
+    .wire-check.light {
+      background: var(--gray-1);
+    }
+
+    .wire-scrollbar {
+      width: 6px;
+      background: var(--gray-4);
+      border-radius: 3px;
+    }
+
+    /* ========== Top Bar ========== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 19px 15px;
+      border-bottom: 1px solid var(--gray-5);
+    }
+
+    .top-bar .wire-pill {
+      height: 36px;
+    }
+
+    .top-bar .wire-pill.wide {
+      width: 208px;
+    }
+
+    .top-bar-spacer {
+      flex: 1;
+    }
+
+    .top-bar-center {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* ========== Tab Bar ========== */
+    .tab-bar {
+      display: flex;
+      align-items: flex-end;
+      padding: 0 14px;
+      gap: 4px;
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 21px;
+      background: var(--gray-1);
+      border: 1px solid var(--gray-5);
+      border-bottom: none;
+      border-radius: var(--rad-sm) var(--rad-sm) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tab-bar-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: var(--gray-5);
+    }
+
+    /* ========== Sub header ========== */
+    .sub-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 26px;
+      gap: 16px;
+    }
+
+    .sub-header-spacer {
+      flex: 1;
+    }
+
+    /* ========== Content Area ========== */
+    .content-area {
+      flex: 1;
+      display: flex;
+      padding: 0 14px 14px;
+      gap: 14px;
+    }
+
+    /* ========== Left Column ========== */
+    .col-left {
+      width: 497px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .col-left>*:last-child {
+      margin-top: auto;
+    }
+
+    .info-row {
+      flex: 1;
+      min-height: 86px;
+    }
+
+    .info-row .info-box {
+      height: auto;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--rad);
+      overflow: hidden;
+    }
+
+    .card-strip {
+      height: 28px;
+      background: var(--gray-1);
+      border-bottom: 1px solid var(--gray-5);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+    }
+
+    .card-strip-spacer {
+      flex: 1;
+    }
+
+    .card-strip .wire-pill {
+      height: 20px;
+      padding: 0 19px;
+    }
+
+    .card-body {
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-input {
+      height: 42px;
+      background: var(--gray-1);
+      border: 1px solid var(--gray-5);
+      border-radius: var(--rad-sm);
+      position: relative;
+    }
+
+    .card-input.filled {
+      background: var(--gray-2);
+      border-color: transparent;
+    }
+
+    .card-input .wire-scrollbar {
+      position: absolute;
+      right: 4px;
+      top: 6px;
+      height: 22px;
+      background: var(--gray-7);
+    }
+
+    .radio-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .radio-row .wire-text {
+      height: 6px;
+    }
+
+    /* Action buttons row */
+    .action-row {
+      display: flex;
+      gap: 13px;
+    }
+
+    .action-col {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .wire-btn {
+      height: 22px;
+      background: var(--gray-2);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+    }
+
+    .wire-btn.cta {
+      height: 45px;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    .wire-btn.cta .wire-text {
+      background: var(--gray-10);
+      height: 8px;
+    }
+
+    /* ========== Time Spent Trigger & Popover ========== */
+    .time-spent-wrap {
+      position: relative;
+    }
+
+    .time-spent-wrap .time-spent-trigger {
+      width: 100%;
+    }
+
+    .wire-btn-block {
+      height: 22px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--neutral-40);
+    }
+
+    .wire-btn-block:hover {
+      filter: brightness(0.97);
+    }
+
+    /* Popover */
+    .popover-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+    }
+
+    .popover-backdrop.open {
+      display: block;
+    }
+
+    .time-spent-popover {
+      position: absolute;
+      top: -60px;
+      left: calc(100% + 8px);
+      width: 320px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateX(-4px);
+      transition:
+        opacity 120ms ease,
+        transform 120ms cubic-bezier(.39, .575, .565, 1),
+        visibility 120ms;
+      /* exit */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .time-spent-popover {
+        transition: none;
+        transform: none;
+      }
+    }
+
+    .time-spent-popover.open {
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1) translateX(0);
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(.39, .575, .565, 1),
+        visibility 180ms;
+      /* enter */
+    }
+
+    .popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .popover-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .popover-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 18px;
+    }
+
+    .popover-close:hover {
+      background: var(--neutral-90);
+      color: #555;
+    }
+
+    .popover-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-group {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group.narrow {
+      flex: 0 0 70px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-label .required {
+      color: hsl(0, 65%, 50%);
+      font-weight: 600;
+    }
+
+    .form-label .optional {
+      color: #999;
+      font-weight: 500;
+    }
+
+    .form-input {
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .form-input:focus {
+      outline: none !important;
+      border-color: var(--gray-8) !important;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Reset any browser focus styles on inner elements */
+    .form-input::-webkit-datetime-edit:focus,
+    .form-input::-webkit-calendar-picker-indicator:focus {
+      outline: none;
+    }
+
+    /* Show spinners on number inputs */
+    .form-input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .form-input[type="number"]::-webkit-inner-spin-button,
+    .form-input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: inner-spin-button;
+      opacity: 1;
+    }
+
+    .form-divider {
+      height: 1px;
+      background: var(--neutral-85);
+    }
+
+    .form-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+    }
+
+    .form-checkbox {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: hsl(218, 54%, 42%);
+    }
+
+    .checkbox-label {
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      width: 40px;
+      height: 22px;
+      background: var(--neutral-80);
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms;
+    }
+
+    .toggle-switch.on {
+      background: var(--secondary-60);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 150ms;
+    }
+
+    .toggle-switch.on::after {
+      transform: translateX(18px);
+    }
+
+    .popover-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .btn-ghost {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+    }
+
+    .btn-primary {
+      padding: 8px 20px;
+      border: none;
+      background: hsl(218, 54%, 42%);
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-primary:hover {
+      background: hsl(218, 54%, 36%);
+    }
+
+    .wire-select {
+      height: 22px;
+      background: var(--gray-2);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+
+    .wire-select .caret {
+      width: 8px;
+      height: 4px;
+      background: var(--gray-9);
+      margin-left: auto;
+    }
+
+    /* Health/Medical boxes */
+    .info-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .info-box {
+      flex: 1;
+      height: 86px;
+      background: var(--gray-3);
+      border-radius: var(--rad);
+      padding: 12px;
+    }
+
+    .info-box .wire-text {
+      height: 6px;
+      background: var(--gray-8);
+    }
+
+    /* ========== Center Column ========== */
+    .col-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .note-block {
+      background: var(--gray-2);
+      border-radius: var(--rad);
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .note-block-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .note-block .wire-text.dark {
+      height: 9px;
+      background: var(--gray-9);
+    }
+
+    .note-block .wire-scrollbar {
+      height: 96px;
+      background: var(--gray-7);
+      flex-shrink: 0;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-row .wire-btn {
+      width: 126px;
+    }
+
+    /* ========== Right Column ========== */
+    .col-right {
+      width: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .col-right .checklist:first-child {
+      flex: 2;
+      height: auto;
+    }
+
+    .col-right .checklist:nth-of-type(2) {
+      flex: 1;
+      height: auto;
+    }
+
+    .checklist {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--rad);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .checklist-inner {
+      flex: 1;
+    }
+
+    .checklist-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--gray-5);
+    }
+
+    .checklist-row:last-child {
+      border-bottom: none;
+    }
+
+    .checklist-row .wire-text {
+      height: 6px;
+      flex: 1;
+    }
+
+    .checklist .wire-scrollbar {
+      margin: 8px 4px 8px 0;
+      flex-shrink: 0;
+    }
+
+    .checklist-btn {
+      height: 22px;
+      background: var(--gray-2);
+      border-radius: var(--rad);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    /* ========== Footer ========== */
+    .footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-top: 1px solid var(--gray-5);
+    }
+
+    .footer-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .footer-field .wire-text {
+      height: 5px;
+    }
+
+    .footer-field .wire-pill {
+      height: 36px;
+      padding: 0 14px;
+    }
+
+    .footer-field .wire-pill .wire-text {
+      height: 7px;
+      background: var(--gray-9);
+    }
+
+    .footer-spacer {
+      flex: 1;
+    }
+
+    .footer-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main -->
+      <main class="shell-main">
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+          <div class="wire-pill" style="width: 116px;">
+            <div class="wire-sq" style="width: 12px; height: 12px;"></div>
+            <div class="wire-text" style="width: 62px;"></div>
+          </div>
+          <div class="wire-pill" style="width: 116px;">
+            <div class="wire-sq" style="width: 12px; height: 12px;"></div>
+            <div class="wire-text" style="width: 62px;"></div>
+          </div>
+          <div class="wire-pill wide">
+            <div class="wire-text" style="width: 130px;"></div>
+          </div>
+          <div class="top-bar-spacer"></div>
+          <div class="top-bar-center">
+            <div class="wire-text dark" style="width: 80px;"></div>
+            <div class="wire-text" style="width: 150px;"></div>
+          </div>
+          <div class="top-bar-spacer"></div>
+          <div class="wire-text" style="width: 110px;"></div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 50px;"></div>
+          </div>
+          <div class="wire-tab active">
+            <div class="wire-text" style="width: 50px;"></div>
+          </div>
+          <div class="tab-bar-line"></div>
+        </div>
+
+        <!-- Sub header -->
+        <div class="sub-header">
+          <div class="wire-text dark" style="width: 150px; height: 9px;"></div>
+          <div class="sub-header-spacer"></div>
+          <div class="wire-text" style="width: 80px; height: 6px;"></div>
+          <div class="wire-dot on" style="width: 12px; height: 12px;"></div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+          <!-- Left Column -->
+          <div class="col-left">
+
+            <!-- Diagnosis card -->
+            <div class="card">
+              <div class="card-strip">
+                <div class="wire-sq"></div>
+                <div class="wire-text dark" style="width: 72px; height: 6px;"></div>
+                <div class="card-strip-spacer"></div>
+                <div class="wire-pill">
+                  <div class="wire-text" style="width: 36px; height: 6px;"></div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="card-input">
+                  <div class="wire-scrollbar"></div>
+                </div>
+                <div class="radio-row">
+                  <div class="wire-text" style="width: 120px;"></div>
+                  <div class="wire-dot" style="margin-left: 8px;"></div>
+                  <div class="wire-text" style="width: 18px;"></div>
+                  <div class="wire-dot on"></div>
+                  <div class="wire-text" style="width: 14px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Service Codes card -->
+            <div class="card">
+              <div class="card-strip">
+                <div class="wire-sq"></div>
+                <div class="wire-text dark" style="width: 80px; height: 6px;"></div>
+                <div class="card-strip-spacer"></div>
+                <div class="wire-pill">
+                  <div class="wire-text" style="width: 36px; height: 6px;"></div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="card-input filled">
+                  <div class="wire-scrollbar"></div>
+                </div>
+                <div class="radio-row">
+                  <div class="wire-text" style="width: 130px;"></div>
+                  <div class="wire-dot" style="margin-left: 8px;"></div>
+                  <div class="wire-text" style="width: 18px;"></div>
+                  <div class="wire-dot on"></div>
+                  <div class="wire-text" style="width: 14px;"></div>
+                  <div style="flex: 1;"></div>
+                  <div class="wire-sq" style="width: 11px; height: 11px;"></div>
+                  <div class="wire-text" style="width: 70px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-row">
+              <div class="action-col">
+                <div class="wire-btn" style="width: 151px;">
+                  <div class="wire-text" style="width: 90px; height: 6px;"></div>
+                </div>
+                <div class="wire-btn" style="width: 151px;">
+                  <div class="wire-text" style="width: 100px; height: 6px;"></div>
+                </div>
+                <div class="wire-btn" style="width: 151px;">
+                  <div class="wire-text" style="width: 90px; height: 6px;"></div>
+                </div>
+              </div>
+              <div class="action-col">
+                <div class="time-spent-wrap">
+                  <button class="wire-btn-block time-spent-trigger" id="timeSpentTrigger" style="background: hsl(0, 0%, 97%);">Time Spent</button>
+
+                  <!-- Time Spent Popover -->
+                  <div class="time-spent-popover" id="timeSpentPopover">
+                    <div class="popover-header">
+                      <h3 class="popover-title">Time Spent</h3>
+                      <button class="popover-close" id="popoverClose">×</button>
+                    </div>
+                    <div class="popover-body">
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label class="form-label" for="startTime">Start Time <span class="required">*</span></label>
+                          <input type="time" class="form-input" id="startTime">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label" for="endTime">End Time <span class="optional">*</span></label>
+                          <input type="time" class="form-input" id="endTime">
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label class="form-label" for="duration">Duration (min) <span class="optional">*</span></label>
+                          <input type="number" class="form-input" id="duration">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label" for="units">Units</label>
+                          <input type="number" class="form-input" id="units" value="0" disabled>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="toggle-row">
+                          <span class="toggle-label">Show start/end times on note</span>
+                          <div class="toggle-switch" data-toggle="times"></div>
+                        </div>
+                        <div class="toggle-row">
+                          <span class="toggle-label">Show duration on note</span>
+                          <div class="toggle-switch on" data-toggle="duration"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="popover-footer">
+                      <button class="btn-ghost" id="popoverCancel">Cancel</button>
+                      <button class="btn-primary" id="popoverSave">Save</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="wire-select" style="width: 120px;">
+                  <div class="wire-text" style="width: 50px; height: 6px;"></div>
+                  <div class="caret"></div>
+                </div>
+              </div>
+              <div style="flex: 1;"></div>
+              <div class="wire-btn cta" style="width: 202px;">
+                <div class="wire-text" style="width: 108px;"></div>
+              </div>
+            </div>
+
+            <!-- Health / Medical -->
+            <div class="info-row">
+              <div class="info-box">
+                <div class="wire-text" style="width: 150px;"></div>
+              </div>
+              <div class="info-box">
+                <div class="wire-text" style="width: 100px;"></div>
+              </div>
+            </div>
+
+            <!-- Radio rows below boxes -->
+            <div style="display: flex; gap: 32px; padding: 0 6px;">
+              <div class="radio-row">
+                <div class="wire-text" style="width: 110px; height: 6px;"></div>
+                <div class="wire-dot"></div>
+                <div class="wire-text" style="width: 18px; height: 6px;"></div>
+                <div class="wire-dot on"></div>
+                <div class="wire-text" style="width: 14px; height: 6px;"></div>
+              </div>
+              <div class="radio-row">
+                <div class="wire-text" style="width: 90px; height: 6px;"></div>
+                <div class="wire-dot"></div>
+                <div class="wire-text" style="width: 18px; height: 6px;"></div>
+                <div class="wire-dot on"></div>
+                <div class="wire-text" style="width: 14px; height: 6px;"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Center Column -->
+          <div class="col-center">
+
+            <!-- Note block upper (2/3) -->
+            <div class="note-block" style="flex: 2;">
+              <div class="note-block-content">
+                <div class="wire-text" style="width: 420px;"></div>
+                <div class="wire-text" style="width: 50px;"></div>
+                <div class="wire-text dark" style="width: 260px;"></div>
+                <div class="wire-text" style="width: 340px;"></div>
+                <div class="wire-text" style="width: 230px;"></div>
+                <div class="wire-text dark" style="width: 130px;"></div>
+                <div class="wire-text" style="width: 250px;"></div>
+                <div class="wire-text dark" style="width: 110px;"></div>
+                <div class="wire-text dark" style="width: 130px;"></div>
+                <div class="wire-text" style="width: 190px;"></div>
+              </div>
+              <div class="wire-scrollbar"></div>
+            </div>
+
+            <!-- Button row -->
+            <div class="btn-row">
+              <div class="wire-btn">
+                <div class="wire-text" style="width: 70px; height: 6px;"></div>
+              </div>
+              <div class="wire-btn">
+                <div class="wire-text" style="width: 60px; height: 6px;"></div>
+              </div>
+            </div>
+
+            <!-- Section label -->
+            <div class="wire-text dark" style="width: 170px; height: 6px; margin-top: 8px;"></div>
+
+            <!-- Note block lower (1/3) -->
+            <div class="note-block" style="flex: 1;">
+              <div class="note-block-content"></div>
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-right">
+
+            <!-- Checklist upper -->
+            <div class="checklist">
+              <div class="checklist-inner">
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 100px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 80px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 115px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 90px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 70px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 105px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 85px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 95px;"></div>
+                </div>
+              </div>
+              <div class="wire-scrollbar" style="height: 90px;"></div>
+            </div>
+
+            <!-- Button -->
+            <div class="checklist-btn">
+              <div class="wire-sq"></div>
+              <div class="wire-text" style="width: 120px; height: 6px;"></div>
+            </div>
+
+            <!-- Checklist lower -->
+            <div class="checklist">
+              <div class="checklist-inner">
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 100px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 80px;"></div>
+                </div>
+                <div class="checklist-row">
+                  <div class="wire-sq"></div>
+                  <div class="wire-text" style="width: 115px;"></div>
+                </div>
+              </div>
+              <div class="wire-scrollbar" style="height: 34px;"></div>
+            </div>
+
+            <!-- Button -->
+            <div class="checklist-btn">
+              <div class="wire-sq"></div>
+              <div class="wire-text" style="width: 120px; height: 6px;"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <div class="footer-field">
+            <div class="wire-text" style="width: 60px;"></div>
+            <div class="wire-pill" style="width: 216px;">
+              <div class="wire-text" style="width: 80px;"></div>
+            </div>
+          </div>
+          <div class="footer-field">
+            <div class="wire-text" style="width: 60px;"></div>
+            <div class="wire-pill" style="width: 203px;">
+              <div class="wire-text" style="width: 100px;"></div>
+            </div>
+          </div>
+          <div class="footer-spacer"></div>
+          <div class="footer-center">
+            <div class="wire-text" style="width: 140px;"></div>
+            <div class="wire-text" style="width: 26px;"></div>
+            <div class="wire-check"></div>
+            <div class="wire-text" style="width: 110px;"></div>
+            <div class="wire-check alt"></div>
+            <div class="wire-text" style="width: 80px;"></div>
+            <div class="wire-check light"></div>
+            <div class="wire-text" style="width: 140px;"></div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <script>
+    const trigger = document.getElementById('timeSpentTrigger');
+    const popover = document.getElementById('timeSpentPopover');
+    const backdrop = document.getElementById('popoverBackdrop');
+    const closeBtn = document.getElementById('popoverClose');
+    const cancelBtn = document.getElementById('popoverCancel');
+    const saveBtn = document.getElementById('popoverSave');
+
+    function openPopover() {
+      popover.classList.add('open');
+      backdrop.classList.add('open');
+    }
+
+    function closePopover() {
+      popover.classList.remove('open');
+      backdrop.classList.remove('open');
+    }
+
+    trigger.addEventListener('click', openPopover);
+    closeBtn.addEventListener('click', closePopover);
+    cancelBtn.addEventListener('click', closePopover);
+    backdrop.addEventListener('click', closePopover);
+
+    saveBtn.addEventListener('click', () => {
+      closePopover();
+      // TODO: save logic
+    });
+
+    // Toggle switches
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('on');
+      });
+    });
+
+    // Toggle labels also activate the switch
+    document.querySelectorAll('.toggle-label').forEach(label => {
+      label.addEventListener('click', () => {
+        const toggle = label.closest('.toggle-row').querySelector('.toggle-switch');
+        toggle.classList.toggle('on');
+      });
+    });
+
+    // Auto-calc: Start + End → Duration, or Start + Duration → End
+    const startInput = document.getElementById('startTime');
+    const endInput = document.getElementById('endTime');
+    const durationInput = document.getElementById('duration');
+
+    function timeToMinutes(timeStr) {
+      if (!timeStr) return null;
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function minutesToTime(mins) {
+      const h = Math.floor(mins / 60) % 24;
+      const m = mins % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+
+    function calcFromStartEnd() {
+      const start = timeToMinutes(startInput.value);
+      const end = timeToMinutes(endInput.value);
+      if (start !== null && end !== null) {
+        let diff = end - start;
+        if (diff < 0) diff += 24 * 60; // handle crossing midnight
+        durationInput.value = diff;
+      }
+    }
+
+    function calcEndFromDuration() {
+      const start = timeToMinutes(startInput.value);
+      const dur = parseInt(durationInput.value, 10);
+      if (start !== null && !isNaN(dur) && dur > 0) {
+        endInput.value = minutesToTime(start + dur);
+      }
+    }
+
+    startInput.addEventListener('change', () => {
+      if (endInput.value) calcFromStartEnd();
+      else if (durationInput.value) calcEndFromDuration();
+    });
+
+    endInput.addEventListener('change', calcFromStartEnd);
+    durationInput.addEventListener('change', calcEndFromDuration);
+  </script>
+
+</body>
+
+</html>
