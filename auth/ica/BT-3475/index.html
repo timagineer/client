@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Payment — Credit Card Terminal [BT-3475]</title>
+
+  <style>
+    :root {
+      /* Color palette */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --primary-35: oklch(0.38 0.08 234.85);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+
+      /* Status colors */
+      /* --status-green: oklch(0.55 0.12 145); */
+      --status-green: oklch(0.5005 0.1631 143.29);
+      /* --status-red: oklch(0.50 0.15 25); */
+      --status-red: oklch(0.5141 0.2047 23.40);
+      /* --status-amber: oklch(0.55 0.14 55); */
+      --status-amber: oklch(0.5566 0.1386 53.96);
+      --accent: oklch(48.268% 0.12706 260.309);
+      --accent-hover: oklch(43.365% 0.11121 260.123);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+      font-size: 14px;
+      color: var(--neutral-20);
+    }
+
+    /* ========== App Shell ========== */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Header */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* Body */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* Main Content */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--neutral-95);
+      overflow: hidden;
+    }
+
+    /* ========== Context Bar (Client Header) ========== */
+    .context-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .wire-patient-avatar {
+      width: 38px;
+      height: 38px;
+      background: var(--neutral-85);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: var(--sp-2);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .context-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .action-block {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .wire-chip {
+      height: 22px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-chip-sm {
+      height: 18px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    /* ========== Tab Bar ========== */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-3) 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-90);
+      border-radius: var(--rad) var(--rad) 0 0;
+    }
+
+    /* ========== Content Area ========== */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--sp-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      background: var(--neutral-90);
+    }
+
+    /* ========== Accordion Sections ========== */
+    .accordion {
+      background: #fff;
+      border: 1px solid var(--neutral-80);
+      border-radius: var(--rad);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .accordion-header:hover {
+      background: var(--neutral-95);
+    }
+
+    .accordion-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .accordion-chevron {
+      width: 18px;
+      height: 18px;
+      color: var(--neutral-50);
+      transition: transform 150ms ease;
+    }
+
+    .accordion.open .accordion-chevron {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+
+    .accordion-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--neutral-20);
+    }
+
+    .accordion-title.wire {
+      width: 100px;
+      height: 12px;
+      background: var(--neutral-75);
+      border-radius: 2px;
+    }
+
+    .accordion-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      background: hsl(46, 100%, 90%);
+      border: 1px solid hsl(45, 80%, 55%);
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: hsl(40, 90%, 22%);
+      margin-left: 4px;
+    }
+
+    .accordion-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+    }
+
+    .accordion-stats {
+      display: flex;
+      gap: var(--sp-4);
+      font-size: 12px;
+    }
+
+    .accordion-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+    }
+
+    .accordion-stat-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .accordion-stat-value {
+      font-size: 13px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .accordion-stat-value.balance {
+      color: var(--status-red);
+    }
+
+    .accordion-stat-value.green {
+      color: var(--status-green);
+    }
+
+    .wire-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .wire-stat-label {
+      width: 50px;
+      height: 8px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-stat-value {
+      width: 60px;
+      height: 12px;
+      background: var(--neutral-75);
+      border-radius: 2px;
+    }
+
+    .accordion-content {
+      display: none;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .accordion.open .accordion-content {
+      display: block;
+    }
+
+    /* Unapplied content */
+    .unapplied-content {
+      padding: var(--sp-3);
+    }
+
+    .unapplied-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-2) 12px;
+      font-size: 13px;
+      color: var(--neutral-40);
+    }
+
+    .unapplied-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-label {
+      font-size: 12px;
+      color: var(--neutral-40);
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--neutral-75);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms;
+    }
+
+    .toggle-switch.on {
+      background: var(--secondary-60);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      transition: transform 150ms;
+    }
+
+    .toggle-switch.on::after {
+      transform: translateX(16px);
+    }
+
+    /* ========== Table ========== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--neutral-80);
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--neutral-40);
+      white-space: nowrap;
+    }
+
+    .data-table th.numeric {
+      text-align: right;
+    }
+
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      vertical-align: middle;
+    }
+
+    .data-table td.numeric {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--neutral-95);
+    }
+
+    .unapplied-value {
+      color: var(--status-amber);
+      font-weight: 500;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    /* ========== Buttons ========== */
+    .btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--neutral-70);
+      background: #fff;
+      color: var(--neutral-30);
+      transition: background 100ms, border-color 100ms;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background: #fff;
+      border-color: var(--status-red);
+      color: var(--status-red);
+    }
+
+    .btn-danger:hover {
+      background: var(--status-red);
+      border-color: var(--status-red);
+      color: #fff;
+    }
+
+    .btn-danger:active {
+      background: oklch(0.42 0.15 25);
+      border-color: oklch(0.42 0.15 25);
+      color: #fff;
+    }
+
+    /* ========== Modal ========== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 500;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease, visibility 200ms;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.97);
+      width: 560px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      z-index: 501;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+    }
+
+    .modal.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .modal-backdrop,
+      .modal {
+        transition: none;
+      }
+    }
+
+    /* Light modal header */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      padding: 0;
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Modal notice banner */
+    .modal-notice {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      background: hsl(48, 100%, 96%);
+      border: 1px solid hsl(45, 70%, 75%);
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+
+    .modal-notice-icon {
+      flex-shrink: 0;
+      color: hsl(35, 50%, 35%);
+    }
+
+    .modal-notice-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .modal-notice-content {
+      flex: 1;
+    }
+
+    .modal-notice-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: hsl(35, 50%, 35%);
+      margin-bottom: 4px;
+    }
+
+    .modal-notice-text {
+      font-size: 13px;
+      color: hsl(35, 50%, 35%);
+      line-height: 1.45;
+    }
+
+    /* Modal context row */
+    .modal-context-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .modal-context-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .modal-context-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-50);
+    }
+
+    .modal-context-value {
+      font-size: 14px;
+      color: var(--neutral-20);
+    }
+
+    /* Modal form — hybrid layout */
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Terminal field show/hide */
+    .modal-field.terminal-field {
+      display: flex;
+      max-height: 100px;
+      opacity: 1;
+      overflow: hidden;
+      transition: max-height 150ms ease, opacity 150ms ease, margin 150ms ease;
+    }
+
+    .modal-field.terminal-field.hidden {
+      max-height: 0;
+      opacity: 0;
+      margin-top: -16px;
+      pointer-events: none;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .modal-field-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-40);
+    }
+
+    .modal-field-label .required {
+      color: var(--status-red);
+    }
+
+    .modal-field-input,
+    .modal-field-select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--neutral-20);
+    }
+
+    .modal-field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .modal-field-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .modal-field-select {
+      width: 100%;
+      padding: 9px 36px 9px 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+      color: var(--neutral-20);
+      appearance: none;
+      cursor: pointer;
+      transition: background-image 100ms, border-color 100ms;
+    }
+
+    .modal-field-select:hover {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    .modal-field-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .modal-field-select:disabled {
+      background-color: var(--neutral-90);
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      color: var(--neutral-50);
+      cursor: not-allowed;
+    }
+
+    /* Amount field with prefix */
+    .modal-field-amount {
+      position: relative;
+    }
+
+    .modal-field-amount .modal-field-input {
+      padding-left: 20px;
+    }
+
+    .modal-field-amount::before {
+      content: '$';
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      font-size: 13px;
+      color: var(--neutral-50);
+      pointer-events: none;
+    }
+
+    /* Textarea */
+    .modal-field-textarea {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--neutral-20);
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .modal-field-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .modal-field-textarea::placeholder {
+      color: var(--neutral-60);
+    }
+
+    /* Modal footer */
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .modal-footer .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    /* Status modal (smaller) */
+    .modal.modal-status {
+      width: 400px;
+    }
+
+    /* View transitions between modal states */
+    .modal .modal-body,
+    .modal .modal-header,
+    .modal .modal-footer {
+      transition: opacity 150ms ease;
+    }
+
+    .modal.transitioning .modal-body,
+    .modal.transitioning .modal-header,
+    .modal.transitioning .modal-footer {
+      opacity: 0;
+    }
+
+    .modal-status .modal-body {
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    /* Status icon */
+    .status-icon {
+      margin-bottom: 20px;
+    }
+
+    .status-icon svg {
+      width: 56px;
+      height: 56px;
+    }
+
+    .status-icon.success svg {
+      color: var(--status-green);
+    }
+
+    .status-icon.error svg {
+      color: var(--status-red);
+    }
+
+    /* Spinner — Lucide loader-circle */
+    .spinner {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    .spinner svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Status text */
+    .status-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin-bottom: 8px;
+    }
+
+    .status-message {
+      font-size: 13px;
+      color: var(--neutral-40);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      text-wrap: balance;
+    }
+
+    .status-details {
+      font-size: 13px;
+      color: var(--neutral-30);
+      background: var(--neutral-95);
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .status-details dt {
+      font-weight: 500;
+      color: var(--neutral-50);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 2px;
+    }
+
+    .status-details dd {
+      margin: 0 0 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status-details dd:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Status footer — right aligned like form */
+    .modal-status .modal-footer {
+      justify-content: flex-end;
+    }
+
+    /* Wire placeholders */
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="shell-main">
+
+        <!-- Context Bar (Client Header) -->
+        <div class="context-bar">
+          <!-- Client avatar -->
+          <div class="wire-patient-avatar"></div>
+
+          <!-- Client info block -->
+          <div class="patient-info">
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+              <div class="wire-text" style="width: 100px;"></div>
+              <div class="wire-text" style="width: 28px;"></div>
+              <div class="wire-text" style="width: 14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+            </div>
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 50px;"></div>
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-chip-sm" style="width: 36px;"></div>
+              <div class="wire-text" style="width: 22px;"></div>
+              <div class="wire-text" style="width: 70px;"></div>
+            </div>
+          </div>
+
+          <!-- Action block (grid) -->
+          <div class="action-block">
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+          </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <div class="wire-tab" style="width: 80px;"></div>
+          <div class="wire-tab" style="width: 100px;"></div>
+          <div class="wire-tab" style="width: 140px;"></div>
+          <div class="wire-tab" style="width: 110px;"></div>
+          <div class="wire-tab" style="width: 90px;"></div>
+          <div class="wire-tab" style="width: 120px;"></div>
+          <div class="wire-tab" style="width: 110px;"></div>
+        </div>
+
+        <!-- Content Area (Accordions) -->
+        <div class="content-area">
+
+          <!-- Insurance -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eligibility -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invoicing -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Statements -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Ledger -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire" style="width: 120px;"></span>
+              </div>
+              <div class="accordion-right">
+                <div class="accordion-stats">
+                  <div class="wire-stat">
+                    <span class="wire-stat-label"></span>
+                    <span class="wire-stat-value"></span>
+                  </div>
+                  <div class="wire-stat">
+                    <span class="wire-stat-label"></span>
+                    <span class="wire-stat-value"></span>
+                  </div>
+                  <div class="wire-stat">
+                    <span class="wire-stat-label"></span>
+                    <span class="wire-stat-value"></span>
+                  </div>
+                  <div class="wire-stat">
+                    <span class="wire-stat-label"></span>
+                    <span class="wire-stat-value"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unapplied Payments (hi-fi title + button) -->
+          <div class="accordion open">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title">Unapplied Payments</span>
+                <span class="accordion-badge">3</span>
+              </div>
+              <div class="accordion-right">
+                <div class="accordion-stats">
+                  <div class="accordion-stat">
+                    <span class="accordion-stat-label">Total</span>
+                    <span class="accordion-stat-value balance">$329.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-content">
+              <div class="unapplied-content">
+                <div class="unapplied-toolbar">
+                  <span>Showing 3 of 5 payments</span>
+                  <div class="toggle-row">
+                    <span class="toggle-label" onclick="this.nextElementSibling.classList.toggle('on')">Unapplied Balances</span>
+                    <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                  </div>
+                </div>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Reference №</th>
+                      <th>Source</th>
+                      <th>Transaction Code</th>
+                      <th class="numeric">Amount</th>
+                      <th class="numeric">Unapplied</th>
+                      <th style="text-align: right;"><button class="btn btn-primary" onclick="openModal()">New Payment</button></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>02/10/2025</td>
+                      <td>PAY-5590</td>
+                      <td>Cash</td>
+                      <td>Account Payment</td>
+                      <td class="numeric">$570.00</td>
+                      <td class="numeric unapplied-value">$289.00</td>
+                      <td>
+                        <div class="table-actions">
+                          <button class="btn">Details</button>
+                          <button class="btn">Refund</button>
+                          <button class="btn">Distribute</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>12/27/2023</td>
+                      <td>–</td>
+                      <td>Credit Card</td>
+                      <td>Copay</td>
+                      <td class="numeric">$10.00</td>
+                      <td class="numeric unapplied-value">$10.00</td>
+                      <td>
+                        <div class="table-actions">
+                          <button class="btn">Details</button>
+                          <button class="btn">Refund</button>
+                          <button class="btn">Distribute</button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>01/10/2025</td>
+                      <td>PAY-4821</td>
+                      <td>Check</td>
+                      <td>–</td>
+                      <td class="numeric">$30.00</td>
+                      <td class="numeric unapplied-value">$30.00</td>
+                      <td>
+                        <div class="table-actions">
+                          <button class="btn">Details</button>
+                          <button class="btn">Refund</button>
+                          <button class="btn">Distribute</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Managed Care Authorizations -->
+          <div class="accordion">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                </svg>
+                <span class="accordion-title wire" style="width: 180px;"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+
+  <!-- New Payment Modal — Form State -->
+  <div class="modal" id="newPaymentModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Client Payment for Johnny Doe</h2>
+      <button class="modal-close" onclick="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Notice Banner -->
+      <div class="modal-notice">
+        <div class="modal-notice-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+            <path d="M12 18V6" />
+          </svg>
+        </div>
+        <div class="modal-notice-content">
+          <div class="modal-notice-title">Unapplied Client Payment</div>
+          <div class="modal-notice-text">
+            This payment will be held as unapplied. Use Distribute to apply to service lines. Insurance payments post from the service line.
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Fields — hybrid layout -->
+      <div class="modal-form">
+
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label" for="amountInput">Amount <span class="required">*</span></label>
+            <div class="modal-field-amount">
+              <input type="text" class="modal-field-input" id="amountInput" placeholder="0.00" value="125.00">
+            </div>
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label" for="refNumberInput">Reference Number</label>
+            <input type="text" class="modal-field-input" id="refNumberInput" placeholder="Check #, EFT #, etc.">
+          </div>
+        </div>
+
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label" for="dateInput">Date <span class="required">*</span></label>
+            <input type="date" class="modal-field-input" id="dateInput">
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label" for="postedInput">Posted <span class="required">*</span></label>
+            <input type="date" class="modal-field-input" id="postedInput">
+          </div>
+        </div>
+
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label" for="transactionCodeSelect">Transaction Code <span class="required">*</span></label>
+            <select class="modal-field-select" id="transactionCodeSelect">
+              <option value="">Select code...</option>
+              <option value="account" selected>Account Payment</option>
+              <option value="coinsurance">Coinsurance</option>
+              <option value="copay">Copay</option>
+              <option value="deductible">Deductible</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label" for="sourceSelect">Source <span class="required">*</span></label>
+            <select class="modal-field-select" id="sourceSelect" onchange="handleSourceChange()">
+              <option value="" selected>Select source...</option>
+              <option value="cash">Cash</option>
+              <option value="check">Check</option>
+              <option value="credit-card">Credit Card</option>
+              <option value="credit-card-online">Credit Card – Online Form</option>
+              <option value="credit-card-terminal">Credit Card – Terminal</option>
+              <option value="denial">Denial</option>
+              <option value="eft">EFT</option>
+              <option value="money-order">Money Order</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-field terminal-field hidden" id="terminalField">
+          <label class="modal-field-label" for="terminalSelect">Terminal <span class="required">*</span></label>
+          <select class="modal-field-select" id="terminalSelect">
+            <option value="">Select terminal...</option>
+            <option value="front-desk">Front Desk — SN70783856</option>
+            <option value="reception-2">Reception 2 — SN79682249</option>
+            <option value="dr-chen">Dr. Chen's Office — SN80766711</option>
+            <option value="dr-martinez">Dr. Martinez's Office — SN89387248</option>
+            <option value="billing">Billing Office — SN91245673</option>
+            <option value="telehealth" disabled>Telehealth Room — SN84826340 — Offline</option>
+            <option value="conf-room" disabled>Conference Room — SN59542913 — Offline</option>
+          </select>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-field-label" for="notesTextarea">Notes</label>
+          <textarea class="modal-field-textarea" id="notesTextarea" placeholder="Notes"></textarea>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="showWaiting()">Add Payment</button>
+    </div>
+  </div>
+
+  <!-- Waiting State Modal -->
+  <div class="modal modal-status" id="waitingModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Processing Payment</h2>
+    </div>
+    <div class="modal-body">
+      <div class="spinner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
+      <div class="status-title">Waiting for card…</div>
+      <div class="status-message">Follow the prompts on <strong id="waitingTerminalName">Front Desk — SN70783856</strong></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="showError(true)">Cancel Transaction</button>
+    </div>
+  </div>
+
+  <!-- Success State Modal -->
+  <div class="modal modal-status" id="successModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Payment Complete</h2>
+    </div>
+    <div class="modal-body">
+      <div class="status-icon success">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      </div>
+      <div class="status-title">Payment processed</div>
+      <div class="status-message">$125.00 received. You'll be notified when it posts to the Account Ledger.</div>
+      <dl class="status-details">
+        <dt>Payment Method</dt>
+        <dd>Visa ····1234</dd>
+        <dt>Reference</dt>
+        <dd>H6M0NUD9</dd>
+      </dl>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAllModals()">Close</button>
+      <button class="btn btn-primary">Print Receipt</button>
+    </div>
+  </div>
+
+  <!-- Error State Modal -->
+  <div class="modal modal-status" id="errorModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Payment Failed</h2>
+    </div>
+    <div class="modal-body">
+      <div class="status-icon error">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m15 9-6 6" />
+          <path d="m9 9 6 6" />
+        </svg>
+      </div>
+      <div class="status-title" id="errorTitle">Transaction declined</div>
+      <div class="status-message" id="errorMessage">Card declined — invalid card.<br>No charges were applied.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAllModals()">Close</button>
+      <button class="btn btn-primary" onclick="showForm()">Try Again</button>
+    </div>
+  </div>
+
+  <script>
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modal = document.getElementById('newPaymentModal');
+    const waitingModal = document.getElementById('waitingModal');
+    const successModal = document.getElementById('successModal');
+    const errorModal = document.getElementById('errorModal');
+    const sourceSelect = document.getElementById('sourceSelect');
+    const terminalField = document.getElementById('terminalField');
+    const terminalSelect = document.getElementById('terminalSelect');
+    const submitBtn = document.getElementById('submitBtn');
+    const waitingTerminalName = document.getElementById('waitingTerminalName');
+
+    const errorTitle = document.getElementById('errorTitle');
+    const errorMessage = document.getElementById('errorMessage');
+
+    const allModals = [modal, waitingModal, successModal, errorModal];
+    let processingTimeout = null;
+
+    function openModal() {
+      modalBackdrop.classList.add('open');
+      modal.classList.add('open');
+      setTimeout(() => document.getElementById('amountInput').focus(), 50);
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove('open');
+      modal.classList.remove('open');
+    }
+
+    function closeAllModals() {
+      if (processingTimeout) {
+        clearTimeout(processingTimeout);
+        processingTimeout = null;
+      }
+      modalBackdrop.classList.remove('open');
+      allModals.forEach(m => m.classList.remove('open', 'transitioning'));
+    }
+
+    function transitionTo(fromModal, toModal, delay = 150) {
+      fromModal.classList.add('transitioning');
+      setTimeout(() => {
+        fromModal.classList.remove('open', 'transitioning');
+        toModal.classList.add('open');
+      }, delay);
+    }
+
+    function showWaiting() {
+      // Get selected terminal name
+      const selectedOption = terminalSelect.options[terminalSelect.selectedIndex];
+      const terminalName = selectedOption ? selectedOption.text : 'terminal';
+      waitingTerminalName.textContent = terminalName;
+
+      transitionTo(modal, waitingModal);
+
+      // Check if billing office (triggers error) or others (success)
+      const willError = terminalSelect.value === 'billing';
+
+      processingTimeout = setTimeout(() => {
+        processingTimeout = null;
+        if (willError) {
+          transitionTo(waitingModal, errorModal);
+        } else {
+          transitionTo(waitingModal, successModal);
+        }
+      }, 4500);
+    }
+
+    function showSuccess() {
+      if (processingTimeout) {
+        clearTimeout(processingTimeout);
+        processingTimeout = null;
+      }
+      transitionTo(waitingModal, successModal);
+    }
+
+    function showError(cancelled = false) {
+      if (processingTimeout) {
+        clearTimeout(processingTimeout);
+        processingTimeout = null;
+      }
+
+      if (cancelled) {
+        errorTitle.textContent = 'Transaction cancelled';
+        errorMessage.innerHTML = 'The payment was cancelled before completion.<br>No charges were applied.';
+      } else {
+        errorTitle.textContent = 'Transaction declined';
+        errorMessage.innerHTML = 'Card declined — invalid card.<br>No charges were applied.';
+      }
+
+      transitionTo(waitingModal, errorModal);
+    }
+
+    function showForm() {
+      transitionTo(errorModal, modal);
+      setTimeout(() => document.getElementById('amountInput').focus(), 200);
+    }
+
+    function handleSourceChange() {
+      const isTerminal = sourceSelect.value === 'credit-card-terminal';
+
+      if (isTerminal) {
+        terminalField.classList.remove('hidden');
+        submitBtn.textContent = 'Process Payment';
+      } else {
+        terminalField.classList.add('hidden');
+        terminalSelect.value = '';
+        submitBtn.textContent = 'Add Payment';
+      }
+    }
+
+    // Set today's date for Date and Posted fields
+    function setTodayDates() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateInput').value = today;
+      document.getElementById('postedInput').value = today;
+    }
+
+    // Initialize on load
+    setTodayDates();
+    handleSourceChange();
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllModals();
+      }
+    });
+  </script>
+
+</body>
+
+</html>
