@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Document Status from Billing Worklist [BT-3479]</title>
+
+  <style>
+    :root {
+      /* Color palette */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --secondary-50: oklch(0.5915 0.1547 128.61);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+
+      /* Status colors (toned down) */
+      --status-green: oklch(0.55 0.12 130);
+      --status-red: oklch(0.50 0.15 15);
+      --status-blue: oklch(0.50 0.12 250);
+      --status-gold: oklch(0.60 0.12 85);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ========== Header ========== */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ========== Body ========== */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ========== Sidebar ========== */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ========== Main ========== */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ========== Top Tabs ========== */
+    .top-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      padding: 0 var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .top-tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .top-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .top-tab.active {
+      color: var(--neutral-20);
+    }
+
+    .top-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-30);
+    }
+
+    /* Wire tab placeholders */
+    .wire-top-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+    }
+
+    .wire-top-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-top-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Sub Tabs ========== */
+    .sub-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-4);
+      padding: var(--sp-2) var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sub-tab {
+      font-size: 13px;
+      color: var(--neutral-50);
+      text-decoration: none;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .sub-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .sub-tab.active {
+      color: var(--primary-30);
+      border-bottom-color: var(--primary-30);
+    }
+
+    /* Wire sub tabs */
+    .wire-sub-tab {
+      padding: 4px 0;
+    }
+
+    .wire-sub-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-sub-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Filter Bar ========== */
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .filter-toggle-icon {
+      color: var(--primary-30);
+    }
+
+    .filter-toggle-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      background: var(--primary-30);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .filter-chevron {
+      margin-left: auto;
+      color: var(--neutral-60);
+    }
+
+    .status-pills-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--neutral-90);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+
+    .status-pill.selected {
+      background: #fff;
+    }
+
+    .status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .status-pill-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+    }
+
+    .status-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .status-pill-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .status-pill-badge.red {
+      background: var(--status-red);
+    }
+
+    .status-pill-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .status-pill-badge.green {
+      background: var(--status-green);
+    }
+
+    /* Wire versions */
+    .wire-filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .wire-filter-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: 3px;
+    }
+
+    .wire-filter-icon-gray {
+      width: 18px;
+      height: 18px;
+      background: var(--neutral-70);
+      border-radius: 3px;
+    }
+
+    .wire-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+    }
+
+    .wire-status-pill.selected {
+      background: #fff;
+    }
+
+    .wire-status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .wire-status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .wire-status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .wire-status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .wire-status-pill .wire-text {
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .wire-badge-pill {
+      width: 22px;
+      height: 20px;
+      background: var(--primary-30);
+      border-radius: 10px;
+    }
+
+    .wire-status-badge {
+      width: 26px;
+      height: 22px;
+      border-radius: 11px;
+      flex-shrink: 0;
+    }
+
+    .wire-status-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .wire-status-badge.red {
+      background: var(--status-red);
+    }
+
+    .wire-status-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .wire-status-badge.green {
+      background: var(--status-green);
+    }
+
+    /* ========== Data Table ========== */
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--border-light);
+      font-weight: 500;
+      color: var(--neutral-40);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #fff;
+    }
+
+    .data-table td {
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    /* Ellipsis clip for client names */
+    .data-table td .table-link {
+      display: block;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .data-table>tbody>tr:hover>td {
+      background: var(--neutral-95);
+    }
+
+    .data-table tr.selected td {
+      background: hsl(218, 50%, 96%);
+    }
+
+    /* Table cell alignment */
+    .col-checkbox {
+      width: 40px;
+      max-width: 40px;
+      overflow: visible;
+      text-overflow: clip !important;
+    }
+
+    th.col-checkbox {
+      overflow: visible;
+    }
+
+    .col-num {
+      text-align: right;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    /* Table links */
+    .table-link {
+      color: hsl(218, 45%, 45%);
+      text-decoration: none;
+    }
+
+    .table-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Status badges (Note Status column) */
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.finished {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+      border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    .status-badge.signed {
+      background: hsl(209, 100%, 92%);
+      color: hsl(209, 85%, 29%);
+      border: 1px solid hsl(209, 70%, 65%);
+    }
+
+    /* Form Status badges (simplified: Complete, Incomplete, Restricted) */
+    .form-status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Complete = green (Signed, Shared and Signed, Completed) */
+    .form-status-badge.complete {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+      border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    /* Incomplete = amber (Shared to Sign, Shared, Not Shared) */
+    .form-status-badge.incomplete {
+      background: hsl(46, 100%, 90%);
+      color: hsl(40, 90%, 22%);
+      border: 1px solid hsl(45, 80%, 55%);
+    }
+
+    /* Restricted = gray */
+    .form-status-badge.restricted {
+      background: hsl(210, 16%, 93%);
+      color: hsl(210, 10%, 31%);
+      border: 1px solid hsl(210, 12%, 72%);
+    }
+
+    /* Form Status button (chip style like Claim History) */
+    .form-status-cell {
+      position: relative;
+    }
+
+    .form-status-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .form-status-btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .form-status-btn .btn-icon {
+      flex-shrink: 0;
+      color: var(--neutral-50);
+    }
+
+    /* Form Status Popover */
+    .form-status-popover {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 420px;
+      background: #fff !important;
+      border: 1px solid var(--neutral-75);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(-4px);
+      transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+    }
+
+    /* Flip popover upward for bottom rows — opacity only, no transform */
+    .form-status-popover.flip-up {
+      top: auto;
+      bottom: calc(100% + 6px);
+      transform: none;
+      transition: opacity 150ms ease, visibility 150ms;
+    }
+
+    .form-status-popover.flip-up.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .form-status-popover.open {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .form-status-popover {
+        transition: none;
+        transform: none;
+      }
+    }
+
+    .form-status-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--neutral-85);
+      background: #fff !important;
+    }
+
+    .form-status-popover-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .form-status-popover-close {
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 16px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .form-status-popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .form-status-popover-body {
+      overflow: hidden;
+      background: #fff !important;
+    }
+
+    .form-status-popover-body--scroll {
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .form-status-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      table-layout: fixed;
+    }
+
+    .form-status-table th:nth-child(1),
+    .form-status-table td:nth-child(1) {
+      width: 48%;
+    }
+
+    .form-status-table th:nth-child(2),
+    .form-status-table td:nth-child(2) {
+      width: 26%;
+      white-space: nowrap;
+    }
+
+    .form-status-table th:nth-child(3),
+    .form-status-table td:nth-child(3) {
+      width: 26%;
+      overflow: visible;
+    }
+
+    .form-status-table th,
+    .form-status-table td {
+      text-align: left;
+      padding: 8px 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .form-status-table th {
+      background: var(--neutral-95);
+      border-bottom: 1px solid var(--neutral-85);
+      font-weight: 500;
+      color: var(--neutral-40);
+    }
+
+    .form-status-table td {
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      background: #fff !important;
+    }
+
+    .form-status-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .form-status-table tbody tr:hover td {
+      background: var(--neutral-95) !important;
+    }
+
+    .form-status-popover-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid var(--neutral-85);
+      font-size: 11px;
+      color: var(--neutral-50);
+      background: #fff !important;
+    }
+
+    .popover-footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: hsl(218, 45%, 45%);
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: auto;
+    }
+
+    .popover-footer-link:hover {
+      text-decoration: underline;
+    }
+
+    .popover-footer-link svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Wire checkbox (gray box placeholder) */
+    .wire-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--neutral-60);
+      border-radius: 2px;
+      background: var(--neutral-90);
+    }
+
+    /* Wire table elements */
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      width: 100%;
+    }
+
+    .data-table>tbody>tr:hover .wire-text {
+      background: var(--neutral-80);
+    }
+
+    .wire-text.dark {
+      background: var(--neutral-60);
+    }
+
+    .wire-link {
+      height: 10px;
+      background: hsl(218, 40%, 75%);
+      border-radius: 2px;
+    }
+
+    .wire-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .wire-badge.finished {
+      background: oklch(0.92 0.04 145);
+      color: oklch(0.35 0.08 145);
+      min-width: 40px;
+      min-height: 10px;
+    }
+
+    .wire-icon-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-eye-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .wire-eye-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 10px;
+      border: 2px solid var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      background: var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn.active {
+      background: var(--neutral-80);
+    }
+
+    .wire-eye-btn.active::before {
+      border-color: var(--neutral-40);
+    }
+
+    .wire-eye-btn.active::after {
+      background: var(--neutral-40);
+    }
+
+    /* Split button: link text left + icon button right */
+    .wire-split-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .wire-split-btn .wire-link {
+      height: 10px;
+      background: hsl(218, 45%, 65%);
+      border-radius: 2px;
+    }
+
+    .wire-split-btn .wire-split-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--neutral-90);
+      border-radius: 3px;
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    /* ========== Pagination ========== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-top: 1px solid var(--border-light);
+      background: #fff;
+    }
+
+    .wire-pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .wire-page-btn {
+      width: 28px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-page-btn.active {
+      background: var(--neutral-70);
+    }
+
+    .wire-page-select {
+      height: 28px;
+      width: 70px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    /* ========== Toast ========== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast.error svg {
+      color: hsl(352, 92%, 62%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: none;
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    /* ========== All Documents Modal ========== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 500;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease, visibility 200ms;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.97);
+      width: 780px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      z-index: 501;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+    }
+
+    .modal.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .modal-backdrop,
+      .modal {
+        transition: none;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0;
+    }
+
+    .modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      padding: 0;
+    }
+
+    .modal-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-body {
+      padding: 0;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Modal toolbar */
+    .modal-toolbar {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-search {
+      position: relative;
+      width: 220px;
+      flex-shrink: 0;
+    }
+
+    .modal-search-input {
+      width: 100%;
+      padding: 7px 10px 7px 32px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .modal-search-input:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .modal-search-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .modal-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      color: var(--neutral-50);
+      pointer-events: none;
+    }
+
+    .modal-search-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Type filter pills in toolbar */
+    .type-filters {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .type-filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 16px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      cursor: pointer;
+      transition: all 120ms ease;
+      white-space: nowrap;
+    }
+
+    .type-filter-pill:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .type-filter-pill.active {
+      background: hsl(218, 50%, 95%);
+      border-color: hsl(218, 50%, 65%);
+      color: hsl(218, 50%, 35%);
+    }
+
+    .type-filter-pill .pill-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: var(--neutral-85);
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neutral-50);
+    }
+
+    .type-filter-pill.active .pill-count {
+      background: hsl(218, 50%, 85%);
+      color: hsl(218, 50%, 35%);
+    }
+
+    /* Modal table */
+    .modal-table-wrap {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 200px;
+      max-height: 400px;
+    }
+
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .modal-table th {
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--neutral-80);
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--neutral-40);
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .modal-table th:hover {
+      background: var(--neutral-95);
+    }
+
+    .modal-table th.sorted {
+      color: var(--neutral-20);
+    }
+
+    .modal-table th.col-preview {
+      width: 50px;
+      text-align: center;
+      cursor: default;
+    }
+
+    .modal-table th.col-preview:hover {
+      background: #fff;
+    }
+
+    .modal-table th .sort-btn {
+      margin-inline-start: 4px;
+      padding: 2px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      color: var(--neutral-50);
+      vertical-align: middle;
+      border-radius: 3px;
+    }
+
+    .modal-table th .sort-btn:hover {
+      color: var(--neutral-30);
+      background: var(--neutral-90);
+    }
+
+    .modal-table th .sort-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .modal-table th.sorted .sort-btn {
+      color: var(--neutral-30);
+    }
+
+    .modal-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .modal-table tbody tr:hover td {
+      background: var(--neutral-95);
+    }
+
+    .modal-table .col-date {
+      width: 110px;
+      white-space: nowrap;
+    }
+
+    .modal-table .col-type {
+      width: 100px;
+    }
+
+    .modal-table .col-status {
+      width: 100px;
+    }
+
+    .modal-table .col-preview {
+      width: 50px;
+      text-align: center;
+    }
+
+    /* Preview icon button */
+    .preview-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      padding: 0;
+      transition: all 120ms ease;
+    }
+
+    .preview-btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+      color: var(--neutral-30);
+    }
+
+    .preview-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Type badge */
+    .type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .type-badge.form {
+      background: hsl(260, 50%, 93%);
+      color: hsl(260, 50%, 35%);
+      border: 1px solid hsl(260, 40%, 75%);
+    }
+
+    .type-badge.note {
+      background: hsl(200, 50%, 93%);
+      color: hsl(200, 50%, 30%);
+      border: 1px solid hsl(200, 40%, 70%);
+    }
+
+    .type-badge.letter {
+      background: hsl(30, 60%, 92%);
+      color: hsl(30, 70%, 28%);
+      border: 1px solid hsl(30, 50%, 70%);
+    }
+
+    .type-badge.report {
+      background: hsl(340, 50%, 93%);
+      color: hsl(340, 50%, 30%);
+      border: 1px solid hsl(340, 40%, 75%);
+    }
+
+    /* Modal footer / pagination */
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid var(--neutral-85);
+      background: var(--neutral-95);
+      border-radius: 0 0 8px 8px;
+    }
+
+    .pagination-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .pagination-select {
+      padding: 5px 22px 5px 8px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 12px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center;
+      background-size: 10px 10px;
+      cursor: pointer;
+      margin-left: 6px;
+      appearance: none;
+    }
+
+    .pagination-select:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+    }
+
+    .pagination-label {
+      font-size: 12px;
+      color: var(--neutral-40);
+    }
+
+    .pagination-info {
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
+    .pagination-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-40);
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .pagination-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ========== Document Preview Modal (KS-style) ========== */
+    .preview-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 600;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease, visibility 200ms;
+    }
+
+    .preview-modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .preview-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.97);
+      width: 700px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 80px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+      z-index: 601;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+    }
+
+    .preview-modal.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .preview-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+      background: var(--neutral-95);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .preview-modal-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-modal-title .type-badge {
+      font-size: 10px;
+    }
+
+    .preview-modal-meta {
+      font-size: 12px;
+      color: var(--neutral-50);
+      font-weight: 400;
+    }
+
+    .preview-modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      padding: 0;
+    }
+
+    .preview-modal-close:hover {
+      background: var(--neutral-85);
+      color: var(--neutral-30);
+    }
+
+    .preview-modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .preview-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      background: #fff;
+    }
+
+    /* Document preview content (wireframe style) */
+    .doc-preview-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .doc-preview-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .doc-preview-logo {
+      width: 120px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: 4px;
+      margin: 0 auto 12px;
+    }
+
+    .doc-preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0 0 4px;
+    }
+
+    .doc-preview-subtitle {
+      font-size: 13px;
+      color: var(--neutral-50);
+    }
+
+    .doc-preview-section {
+      margin-bottom: 20px;
+    }
+
+    .doc-preview-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--neutral-40);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .doc-preview-field {
+      display: flex;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .doc-preview-label {
+      width: 120px;
+      flex-shrink: 0;
+      color: var(--neutral-50);
+    }
+
+    .doc-preview-value {
+      color: var(--neutral-25);
+    }
+
+    .doc-preview-paragraph {
+      margin-bottom: 16px;
+    }
+
+    .doc-preview-paragraph .wire-text {
+      height: 12px;
+      margin-bottom: 8px;
+    }
+
+    .doc-preview-paragraph .wire-text:last-child {
+      width: 70%;
+    }
+
+    .preview-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--neutral-85);
+      background: var(--neutral-95);
+      border-radius: 0 0 8px 8px;
+    }
+
+    .preview-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+
+    .preview-action-btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .preview-action-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .preview-action-btn.primary {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+      color: #fff;
+    }
+
+    .preview-action-btn.primary:hover {
+      background: hsl(218, 50%, 35%);
+      border-color: hsl(218, 50%, 35%);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main -->
+      <main class="shell-main">
+
+        <!-- Top Tabs -->
+        <div class="top-tabs">
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width: 50px;"></div>
+          </div>
+          <div class="wire-top-tab active">
+            <div class="wire-text"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text"></div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs -->
+        <div class="sub-tabs">
+          <div class="wire-sub-tab">
+            <div class="wire-text" style="width: 130px;"></div>
+          </div>
+          <div class="wire-sub-tab active">
+            <div class="wire-text" style="width: 45px;"></div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <!-- Filters row -->
+          <div class="filter-row">
+            <div class="wire-filter-toggle">
+              <div class="wire-filter-icon-gray"></div>
+              <div class="wire-text" style="width: 45px;"></div>
+              <div class="wire-badge-pill"></div>
+            </div>
+            <div class="filter-chevron">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+          <!-- Status pills row -->
+          <div class="status-pills-row">
+            <div class="wire-status-pill selected blue">
+              <div class="wire-text" style="width: 70px;"></div>
+              <div class="wire-status-badge blue"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge red"></div>
+            </div>
+            <div class="wire-status-pill gold">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge gold"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 35px;"></div>
+              <div class="wire-status-badge green"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-checkbox">
+                  <div class="wire-checkbox"></div>
+                </th>
+                <th class="col-text">Encounter</th>
+                <th class="col-text">Claim Status</th>
+                <th class="col-text">Claim History</th>
+                <th class="col-text">Submission Status</th>
+                <th class="col-text">Rendering Provider</th>
+                <th class="col-text">Client</th>
+                <th class="col-text">DOB</th>
+                <th class="col-text">Note Type</th>
+                <th class="col-text">Note Status</th>
+                <th class="col-text">Doc Status</th>
+                <th class="col-text">Telehealth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Anna Paciente</a></td>
+                <td>02/06/1991</td>
+                <td><a href="#" class="table-link">Quick Note</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Anna Paciente</a></td>
+                <td>02/06/1991</td>
+                <td><a href="#" class="table-link">Progress Note</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Maria Santos</a></td>
+                <td>11/22/1978</td>
+                <td><a href="#" class="table-link">Complete Evaluation</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Maria Santos')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Robert Chen</a></td>
+                <td>03/15/1982</td>
+                <td><a href="#" class="table-link">Case Management</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Robert Chen')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Emily Johnson</a></td>
+                <td>07/28/1995</td>
+                <td><a href="#" class="table-link">Group Therapy Progress Note</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Emily Johnson')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Michael Brown</a></td>
+                <td>12/04/1970</td>
+                <td><a href="#" class="table-link">Discharge Summary</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Michael Brown')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Sarah Davis</a></td>
+                <td>09/19/1988</td>
+                <td><a href="#" class="table-link">Primary Care Note</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Sarah Davis')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">David Lee</a></td>
+                <td>05/30/1992</td>
+                <td><a href="#" class="table-link">Couples/Family Therapy</a></td>
+                <td><span class="status-badge finished">Finished</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('David Lee')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-checkbox"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td>
+                  <div class="wire-text"></div>
+                </td>
+                <td><a href="#" class="table-link">Lisa Martinez</a></td>
+                <td>01/12/1975</td>
+                <td><a href="#" class="table-link">ASAM</a></td>
+                <td><span class="status-badge signed">Signed</span></td>
+                <td class="form-status-cell">
+                  <button class="form-status-btn" onclick="openDocsModal('Lisa Martinez')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                    </svg>Documents</button>
+                </td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="wire-pagination">
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn active"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+          </div>
+          <div class="wire-page-select"></div>
+          <div class="wire-text" style="width: 80px; margin-left: 8px;"></div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- All Documents Modal -->
+  <div class="modal-backdrop" id="docsModalBackdrop" onclick="closeDocsModal()"></div>
+  <div class="modal" id="docsModal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="docsModalTitle">Anna Paciente Documents</h2>
+      <button class="modal-close" onclick="closeDocsModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-toolbar">
+        <div class="modal-search">
+          <span class="modal-search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+          </span>
+          <input type="text" class="modal-search-input" id="docsSearchInput" placeholder="Search documents...">
+        </div>
+        <div class="type-filters" id="typeFilters">
+          <button class="type-filter-pill active" data-type="all" onclick="filterByType('all')">
+            All <span class="pill-count" id="countAll">32</span>
+          </button>
+          <button class="type-filter-pill" data-type="form" onclick="filterByType('form')">
+            Forms <span class="pill-count" id="countForm">18</span>
+          </button>
+          <button class="type-filter-pill" data-type="note" onclick="filterByType('note')">
+            Notes <span class="pill-count" id="countNote">8</span>
+          </button>
+          <button class="type-filter-pill" data-type="letter" onclick="filterByType('letter')">
+            Letters <span class="pill-count" id="countLetter">4</span>
+          </button>
+          <button class="type-filter-pill" data-type="report" onclick="filterByType('report')">
+            Reports <span class="pill-count" id="countReport">2</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-table-wrap">
+        <table class="modal-table" id="docsTable">
+          <thead>
+            <tr>
+              <th data-sort="name" onclick="sortDocsTable('name')">
+                Document Name
+                <button class="sort-btn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21 16-4 4-4-4" />
+                    <path d="M17 20V4" />
+                    <path d="m3 8 4-4 4 4" />
+                    <path d="M7 4v16" />
+                  </svg>
+                </button>
+              </th>
+              <th class="col-type" data-sort="type" onclick="sortDocsTable('type')">
+                Type
+                <button class="sort-btn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21 16-4 4-4-4" />
+                    <path d="M17 20V4" />
+                    <path d="m3 8 4-4 4 4" />
+                    <path d="M7 4v16" />
+                  </svg>
+                </button>
+              </th>
+              <th class="col-date sorted desc" data-sort="date" onclick="sortDocsTable('date')">
+                Date
+                <button class="sort-btn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21 16-4 4-4-4" />
+                    <path d="M17 20V4" />
+                    <path d="m3 8 4-4 4 4" />
+                    <path d="M7 4v16" />
+                  </svg>
+                </button>
+              </th>
+              <th class="col-status" data-sort="status" onclick="sortDocsTable('status')">
+                Status
+                <button class="sort-btn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21 16-4 4-4-4" />
+                    <path d="M17 20V4" />
+                    <path d="m3 8 4-4 4 4" />
+                    <path d="M7 4v16" />
+                  </svg>
+                </button>
+              </th>
+              <th class="col-preview"></th>
+            </tr>
+          </thead>
+          <tbody id="docsTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="pagination-left">
+        <div class="pagination-controls">
+          <button class="pagination-btn" id="firstPageBtn" onclick="goToPage(1)" title="First page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m11 17-5-5 5-5" />
+              <path d="m18 17-5-5 5-5" />
+            </svg>
+          </button>
+          <button class="pagination-btn" id="prevPageBtn" onclick="prevPage()" title="Previous page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+          <button class="pagination-btn" id="nextPageBtn" onclick="nextPage()" title="Next page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+          <button class="pagination-btn" id="lastPageBtn" onclick="goToLastPage()" title="Last page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 17 5-5-5-5" />
+              <path d="m13 17 5-5-5-5" />
+            </svg>
+          </button>
+        </div>
+        <select class="pagination-select" id="pageSizeSelect" onchange="changePageSize()">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+        <span class="pagination-label">items per page</span>
+      </div>
+      <div class="pagination-info" id="paginationInfo">1–10 of 32 items</div>
+    </div>
+  </div>
+
+  <!-- Document Preview Modal (KS-style) -->
+  <div class="preview-modal-backdrop" id="previewModalBackdrop" onclick="closePreviewModal()"></div>
+  <div class="preview-modal" id="previewModal">
+    <div class="preview-modal-header">
+      <h3 class="preview-modal-title" id="previewModalTitle">
+        <span id="previewDocName">PHQ-9</span>
+        <span class="type-badge form" id="previewTypeBadge">Form</span>
+      </h3>
+      <button class="preview-modal-close" onclick="closePreviewModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="preview-modal-body">
+      <div class="doc-preview-content" id="previewContent">
+        <!-- Dynamic content -->
+      </div>
+    </div>
+    <div class="preview-modal-footer">
+      <button class="preview-action-btn" onclick="closePreviewModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+        Close
+      </button>
+      <button class="preview-action-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" x2="12" y1="15" y2="3" />
+        </svg>
+        Download
+      </button>
+      <button class="preview-action-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect width="12" height="8" x="6" y="14" />
+        </svg>
+        Print
+      </button>
+      <button class="preview-action-btn primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+          <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+        </svg>
+        Open Full Document
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ========== All Documents Modal ==========
+    const docsModalBackdrop = document.getElementById('docsModalBackdrop');
+    const docsModal = document.getElementById('docsModal');
+    const docsModalTitle = document.getElementById('docsModalTitle');
+    const docsSearchInput = document.getElementById('docsSearchInput');
+    const docsTableBody = document.getElementById('docsTableBody');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const pageSizeSelect = document.getElementById('pageSizeSelect');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const firstPageBtn = document.getElementById('firstPageBtn');
+    const lastPageBtn = document.getElementById('lastPageBtn');
+
+    // Sample documents data (expanded to include all document types)
+    const allDocsData = [
+      // Forms
+      { name: 'PHQ-9', type: 'form', date: '2026-10-05', status: 'Complete' },
+      { name: 'GAD-7: Generalized Anxiety Disorder', type: 'form', date: '2026-10-05', status: 'Complete' },
+      { name: 'Recovery Support Plan', type: 'form', date: '2026-10-01', status: 'Complete' },
+      { name: 'DLA-20: Daily Living Activities Youth', type: 'form', date: '2026-09-28', status: 'Complete' },
+      { name: 'CRAFFT+N 2.1 Interview', type: 'form', date: '2026-09-20', status: 'Incomplete' },
+      { name: 'NICHQ Vanderbilt Assessment Scale', type: 'form', date: '2026-09-15', status: 'Complete' },
+      { name: 'NICHQ Vanderbilt Parent Assessment', type: 'form', date: '2026-09-15', status: 'Incomplete' },
+      { name: 'Individual Crisis Support Plan', type: 'form', date: '2026-09-10', status: 'Complete' },
+      { name: 'PSC: Pediatric Symptom Checklist', type: 'form', date: '2026-08-28', status: 'Complete' },
+      { name: 'Wraparound Facilitation Support Plan', type: 'form', date: '2026-08-15', status: 'Incomplete' },
+      { name: 'Recovery Safety Plan', type: 'form', date: '2026-08-01', status: 'Complete' },
+      { name: 'CRAFFT Screening Test', type: 'form', date: '2026-07-20', status: 'Complete' },
+      { name: 'Columbia Depression Scale (4 weeks)', type: 'form', date: '2026-07-10', status: 'Complete' },
+      { name: 'PHQ 9 Modified for Teens', type: 'form', date: '2026-06-28', status: 'Complete' },
+      { name: 'Wraparound Plan of Care', type: 'form', date: '2026-06-15', status: 'Complete' },
+      { name: 'FARS: Functional Assessment Rating', type: 'form', date: '2026-05-20', status: 'Complete' },
+      { name: 'Consent to Treatment', type: 'form', date: '2026-05-01', status: 'Complete' },
+      { name: 'HIPAA Notice of Privacy', type: 'form', date: '2026-05-01', status: 'Complete' },
+      // Notes
+      { name: 'Progress Note - 10/03/2026', type: 'note', date: '2026-10-03', status: 'Complete' },
+      { name: 'Progress Note - 09/26/2026', type: 'note', date: '2026-09-26', status: 'Complete' },
+      { name: 'Progress Note - 09/19/2026', type: 'note', date: '2026-09-19', status: 'Complete' },
+      { name: 'Initial Evaluation', type: 'note', date: '2026-05-01', status: 'Complete' },
+      { name: 'Progress Note - 09/12/2026', type: 'note', date: '2026-09-12', status: 'Complete' },
+      { name: 'Progress Note - 09/05/2026', type: 'note', date: '2026-09-05', status: 'Complete' },
+      { name: 'Case Management Note', type: 'note', date: '2026-08-22', status: 'Complete' },
+      { name: 'Crisis Intervention Note', type: 'note', date: '2026-07-15', status: 'Complete' },
+      // Letters
+      { name: 'Referral Letter - Dr. Smith', type: 'letter', date: '2026-09-30', status: 'Complete' },
+      { name: 'School Accommodation Letter', type: 'letter', date: '2026-09-01', status: 'Complete' },
+      { name: 'Treatment Summary Letter', type: 'letter', date: '2026-08-15', status: 'Complete' },
+      { name: 'Insurance Authorization Letter', type: 'letter', date: '2026-06-01', status: 'Complete' },
+      // Reports
+      { name: 'Quarterly Treatment Summary', type: 'report', date: '2026-10-01', status: 'Complete' },
+      { name: 'Annual Assessment Report', type: 'report', date: '2026-05-15', status: 'Complete' },
+    ];
+
+    let docsData = [...allDocsData];
+    let currentPage = 1;
+    let pageSize = 10;
+    let sortColumn = 'date';
+    let sortDirection = 'desc';
+    let activeTypeFilter = 'all';
+    let currentClientName = 'Anna Paciente';
+
+    // Load sticky page size from localStorage
+    const storedPageSize = localStorage.getItem('docsModalPageSize');
+    if (storedPageSize) {
+      pageSize = parseInt(storedPageSize);
+      pageSizeSelect.value = pageSize;
+    }
+
+    function openDocsModal(clientName) {
+      currentClientName = clientName || 'Anna Paciente';
+      docsModalTitle.textContent = currentClientName + ' Documents';
+      docsSearchInput.value = '';
+      activeTypeFilter = 'all';
+      docsData = [...allDocsData];
+      currentPage = 1;
+      sortColumn = 'date';
+      sortDirection = 'desc';
+      updateTypeFilterPills();
+      updateTypeCounts();
+      updateSortHeaders();
+      sortAndRender();
+      docsModalBackdrop.classList.add('open');
+      docsModal.classList.add('open');
+      setTimeout(() => docsSearchInput.focus(), 50);
+    }
+
+    function closeDocsModal() {
+      docsModalBackdrop.classList.remove('open');
+      docsModal.classList.remove('open');
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    }
+
+    function updateTypeCounts() {
+      const baseData = getSearchFilteredData();
+      document.getElementById('countAll').textContent = baseData.length;
+      document.getElementById('countForm').textContent = baseData.filter(d => d.type === 'form').length;
+      document.getElementById('countNote').textContent = baseData.filter(d => d.type === 'note').length;
+      document.getElementById('countLetter').textContent = baseData.filter(d => d.type === 'letter').length;
+      document.getElementById('countReport').textContent = baseData.filter(d => d.type === 'report').length;
+    }
+
+    function getSearchFilteredData() {
+      const query = docsSearchInput.value.toLowerCase().trim();
+      if (query === '') {
+        return [...allDocsData];
+      }
+      return allDocsData.filter(row =>
+        row.name.toLowerCase().includes(query) ||
+        formatDate(row.date).includes(query) ||
+        row.type.toLowerCase().includes(query)
+      );
+    }
+
+    function filterByType(type) {
+      activeTypeFilter = type;
+      updateTypeFilterPills();
+      applyFilters();
+    }
+
+    function updateTypeFilterPills() {
+      document.querySelectorAll('.type-filter-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.dataset.type === activeTypeFilter);
+      });
+    }
+
+    function applyFilters() {
+      let filtered = getSearchFilteredData();
+
+      if (activeTypeFilter !== 'all') {
+        filtered = filtered.filter(d => d.type === activeTypeFilter);
+      }
+
+      docsData = filtered;
+      currentPage = 1;
+      sortAndRender();
+    }
+
+    function renderDocsTable() {
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageData = docsData.slice(start, end);
+
+      docsTableBody.innerHTML = pageData.map(row => `
+        <tr>
+          <td>${row.name}</td>
+          <td class="col-type"><span class="type-badge ${row.type}">${row.type.charAt(0).toUpperCase() + row.type.slice(1)}</span></td>
+          <td class="col-date">${formatDate(row.date)}</td>
+          <td class="col-status"><span class="form-status-badge ${row.status.toLowerCase()}">${row.status}</span></td>
+          <td class="col-preview">
+            <button class="preview-btn" onclick="openPreviewModal('${row.name.replace(/'/g, "\\'")}', '${row.type}', '${row.date}', '${row.status}')" title="Preview document">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Update counts
+      const total = docsData.length;
+      const showing = Math.min(end, total);
+      paginationInfo.textContent = total > 0 ? `${start + 1}–${showing} of ${total} items` : '0 items';
+
+      updatePaginationButtons();
+    }
+
+    function updatePaginationButtons() {
+      const totalPages = Math.ceil(docsData.length / pageSize);
+
+      firstPageBtn.disabled = currentPage === 1;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+      lastPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    function goToLastPage() {
+      const totalPages = Math.ceil(docsData.length / pageSize);
+      if (totalPages > 0) {
+        currentPage = totalPages;
+        renderDocsTable();
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderDocsTable();
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderDocsTable();
+      }
+    }
+
+    function nextPage() {
+      const totalPages = Math.ceil(docsData.length / pageSize);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderDocsTable();
+      }
+    }
+
+    function changePageSize() {
+      pageSize = parseInt(pageSizeSelect.value);
+      localStorage.setItem('docsModalPageSize', pageSize);
+      currentPage = 1;
+      renderDocsTable();
+    }
+
+    function sortDocsTable(column) {
+      if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDirection = column === 'date' ? 'desc' : 'asc';
+      }
+      updateSortHeaders();
+      sortAndRender();
+    }
+
+    function updateSortHeaders() {
+      document.querySelectorAll('#docsModal .modal-table th').forEach(th => {
+        th.classList.remove('sorted', 'asc', 'desc');
+        if (th.dataset.sort === sortColumn) {
+          th.classList.add('sorted', sortDirection);
+        }
+      });
+    }
+
+    function sortAndRender() {
+      docsData.sort((a, b) => {
+        let aVal, bVal;
+        if (sortColumn === 'date') {
+          aVal = new Date(a.date);
+          bVal = new Date(b.date);
+        } else if (sortColumn === 'name') {
+          aVal = a.name.toLowerCase();
+          bVal = b.name.toLowerCase();
+        } else if (sortColumn === 'type') {
+          aVal = a.type.toLowerCase();
+          bVal = b.type.toLowerCase();
+        } else {
+          aVal = a.status.toLowerCase();
+          bVal = b.status.toLowerCase();
+        }
+
+        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+      renderDocsTable();
+    }
+
+    // Search filter
+    docsSearchInput.addEventListener('input', () => {
+      updateTypeCounts();
+      applyFilters();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (previewModal.classList.contains('open')) {
+          closePreviewModal();
+        } else if (docsModal.classList.contains('open')) {
+          closeDocsModal();
+        }
+      }
+    });
+
+    // ========== Document Preview Modal ==========
+    const previewModalBackdrop = document.getElementById('previewModalBackdrop');
+    const previewModal = document.getElementById('previewModal');
+    const previewDocName = document.getElementById('previewDocName');
+    const previewTypeBadge = document.getElementById('previewTypeBadge');
+    const previewContent = document.getElementById('previewContent');
+
+    function openPreviewModal(name, type, date, status) {
+      previewDocName.textContent = name;
+      previewTypeBadge.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+      previewTypeBadge.className = 'type-badge ' + type;
+
+      // Generate preview content based on document type
+      previewContent.innerHTML = generatePreviewContent(name, type, date, status);
+
+      previewModalBackdrop.classList.add('open');
+      previewModal.classList.add('open');
+    }
+
+    function closePreviewModal() {
+      previewModalBackdrop.classList.remove('open');
+      previewModal.classList.remove('open');
+    }
+
+    function generatePreviewContent(name, type, date, status) {
+      const formattedDate = formatDate(date);
+
+      if (type === 'form') {
+        return `
+          <div class="doc-preview-header">
+            <div class="doc-preview-logo"></div>
+            <h4 class="doc-preview-title">${name}</h4>
+            <p class="doc-preview-subtitle">Completed ${formattedDate}</p>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Patient Information</h5>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Patient:</span>
+              <span class="doc-preview-value">${currentClientName}</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Date of Birth:</span>
+              <span class="doc-preview-value">02/06/1991</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Provider:</span>
+              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Assessment Results</h5>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Total Score:</span>
+              <span class="doc-preview-value">12 (Moderate)</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Status:</span>
+              <span class="doc-preview-value">${status}</span>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Responses</h5>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 95%;"></div>
+              <div class="wire-text" style="width: 88%;"></div>
+              <div class="wire-text" style="width: 92%;"></div>
+              <div class="wire-text" style="width: 70%;"></div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'note') {
+        return `
+          <div class="doc-preview-header">
+            <div class="doc-preview-logo"></div>
+            <h4 class="doc-preview-title">${name}</h4>
+            <p class="doc-preview-subtitle">${formattedDate}</p>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Session Information</h5>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Patient:</span>
+              <span class="doc-preview-value">${currentClientName}</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Provider:</span>
+              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Session Type:</span>
+              <span class="doc-preview-value">Individual Therapy (60 min)</span>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Clinical Note</h5>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 98%;"></div>
+              <div class="wire-text" style="width: 95%;"></div>
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 92%;"></div>
+              <div class="wire-text" style="width: 85%;"></div>
+            </div>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 96%;"></div>
+              <div class="wire-text" style="width: 70%;"></div>
+            </div>
+          </div>
+        `;
+      } else if (type === 'letter') {
+        return `
+          <div class="doc-preview-header">
+            <div class="doc-preview-logo"></div>
+            <h4 class="doc-preview-title">${name}</h4>
+            <p class="doc-preview-subtitle">${formattedDate}</p>
+          </div>
+          <div class="doc-preview-section">
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">To:</span>
+              <span class="doc-preview-value">Whom It May Concern</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Re:</span>
+              <span class="doc-preview-value">${currentClientName}</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Date:</span>
+              <span class="doc-preview-value">${formattedDate}</span>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Letter Content</h5>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 98%;"></div>
+              <div class="wire-text" style="width: 95%;"></div>
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 88%;"></div>
+            </div>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 92%;"></div>
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 75%;"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        // Report
+        return `
+          <div class="doc-preview-header">
+            <div class="doc-preview-logo"></div>
+            <h4 class="doc-preview-title">${name}</h4>
+            <p class="doc-preview-subtitle">${formattedDate}</p>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Report Summary</h5>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Patient:</span>
+              <span class="doc-preview-value">${currentClientName}</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Reporting Period:</span>
+              <span class="doc-preview-value">Q3 2026</span>
+            </div>
+            <div class="doc-preview-field">
+              <span class="doc-preview-label">Prepared By:</span>
+              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Executive Summary</h5>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 97%;"></div>
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 94%;"></div>
+              <div class="wire-text" style="width: 80%;"></div>
+            </div>
+          </div>
+          <div class="doc-preview-section">
+            <h5 class="doc-preview-section-title">Recommendations</h5>
+            <div class="doc-preview-paragraph">
+              <div class="wire-text" style="width: 100%;"></div>
+              <div class="wire-text" style="width: 95%;"></div>
+              <div class="wire-text" style="width: 65%;"></div>
+            </div>
+          </div>
+        `;
+      }
+    }
+  </script>
+
+</body>
+
+</html>
