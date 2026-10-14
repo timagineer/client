@@ -530,6 +530,17 @@
       font-variant-numeric: tabular-nums lining-nums;
     }
 
+    .col-docs {
+      width: 100px;
+      text-align: center !important;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    td.form-status-cell {
+      text-align: center !important;
+    }
+
     /* Table links */
     .table-link {
       color: hsl(218, 45%, 45%);
@@ -591,34 +602,35 @@
       border: 1px solid hsl(210, 12%, 72%);
     }
 
-    /* Form Status button (chip style like Claim History) */
+    /* Form Status button (icon only) */
     .form-status-cell {
       position: relative;
+      text-align: center;
     }
 
     .form-status-btn {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
       border: 1px solid var(--neutral-70);
       border-radius: 4px;
       background: #fff;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--neutral-30);
+      color: var(--neutral-50);
       cursor: pointer;
-      white-space: nowrap;
     }
 
     .form-status-btn:hover {
       background: var(--neutral-95);
       border-color: var(--neutral-60);
+      color: var(--neutral-40);
     }
 
-    .form-status-btn .btn-icon {
-      flex-shrink: 0;
-      color: var(--neutral-50);
+    .form-status-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
     /* Form Status Popover */
@@ -1052,6 +1064,7 @@
       transform: translate(-50%, -50%) scale(0.97);
       width: 780px;
       max-width: calc(100vw - 48px);
+      height: 580px;
       max-height: calc(100vh - 48px);
       background: #fff;
       border-radius: 8px;
@@ -1137,8 +1150,8 @@
 
     .modal-search {
       position: relative;
-      width: 220px;
-      flex-shrink: 0;
+      flex: 1;
+      min-width: 150px;
     }
 
     .modal-search-input {
@@ -1181,7 +1194,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      flex: 1;
+      flex-shrink: 0;
     }
 
     .type-filter-pill {
@@ -1194,7 +1207,7 @@
       background: #fff;
       font-size: 12px;
       font-weight: 500;
-      color: var(--neutral-40);
+      color: var(--neutral-30);
       cursor: pointer;
       transition: all 120ms ease;
       white-space: nowrap;
@@ -1207,8 +1220,8 @@
 
     .type-filter-pill.active {
       background: hsl(218, 50%, 95%);
-      border-color: hsl(218, 50%, 65%);
-      color: hsl(218, 50%, 35%);
+      border-color: hsl(218, 50%, 55%);
+      color: hsl(218, 55%, 30%);
     }
 
     .type-filter-pill .pill-count {
@@ -1222,20 +1235,20 @@
       border-radius: 9px;
       font-size: 11px;
       font-weight: 600;
-      color: var(--neutral-50);
+      color: var(--neutral-40);
     }
 
     .type-filter-pill.active .pill-count {
-      background: hsl(218, 50%, 85%);
-      color: hsl(218, 50%, 35%);
+      background: hsl(218, 50%, 82%);
+      color: hsl(218, 55%, 25%);
     }
 
     /* Modal table */
     .modal-table-wrap {
       flex: 1;
       overflow-y: auto;
-      min-height: 200px;
-      max-height: 400px;
+      height: 400px;
+      min-height: 400px;
     }
 
     .modal-table {
@@ -1266,16 +1279,6 @@
 
     .modal-table th.sorted {
       color: var(--neutral-20);
-    }
-
-    .modal-table th.col-preview {
-      width: 50px;
-      text-align: center;
-      cursor: default;
-    }
-
-    .modal-table th.col-preview:hover {
-      background: #fff;
     }
 
     .modal-table th .sort-btn {
@@ -1321,78 +1324,13 @@
     }
 
     .modal-table .col-type {
-      width: 100px;
+      width: 120px;
+      white-space: nowrap;
     }
 
     .modal-table .col-status {
-      width: 100px;
-    }
-
-    .modal-table .col-preview {
-      width: 50px;
-      text-align: center;
-    }
-
-    /* Preview icon button */
-    .preview-btn {
-      width: 28px;
-      height: 28px;
-      border: 1px solid var(--neutral-70);
-      border-radius: 4px;
-      background: #fff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--neutral-50);
-      padding: 0;
-      transition: all 120ms ease;
-    }
-
-    .preview-btn:hover {
-      background: var(--neutral-95);
-      border-color: var(--neutral-60);
-      color: var(--neutral-30);
-    }
-
-    .preview-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* Type badge */
-    .type-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .type-badge.form {
-      background: hsl(260, 50%, 93%);
-      color: hsl(260, 50%, 35%);
-      border: 1px solid hsl(260, 40%, 75%);
-    }
-
-    .type-badge.note {
-      background: hsl(200, 50%, 93%);
-      color: hsl(200, 50%, 30%);
-      border: 1px solid hsl(200, 40%, 70%);
-    }
-
-    .type-badge.letter {
-      background: hsl(30, 60%, 92%);
-      color: hsl(30, 70%, 28%);
-      border: 1px solid hsl(30, 50%, 70%);
-    }
-
-    .type-badge.report {
-      background: hsl(340, 50%, 93%);
-      color: hsl(340, 50%, 30%);
-      border: 1px solid hsl(340, 40%, 75%);
+      width: 120px;
+      white-space: nowrap;
     }
 
     /* Modal footer / pagination */
@@ -1471,232 +1409,6 @@
     .pagination-btn svg {
       width: 12px;
       height: 12px;
-    }
-
-    /* ========== Document Preview Modal (KS-style) ========== */
-    .preview-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 600;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 200ms ease, visibility 200ms;
-    }
-
-    .preview-modal-backdrop.open {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .preview-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.97);
-      width: 700px;
-      max-width: calc(100vw - 48px);
-      max-height: calc(100vh - 80px);
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
-      z-index: 601;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
-    }
-
-    .preview-modal.open {
-      opacity: 1;
-      visibility: visible;
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    .preview-modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--neutral-85);
-      background: var(--neutral-95);
-      border-radius: 8px 8px 0 0;
-    }
-
-    .preview-modal-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--neutral-20);
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .preview-modal-title .type-badge {
-      font-size: 10px;
-    }
-
-    .preview-modal-meta {
-      font-size: 12px;
-      color: var(--neutral-50);
-      font-weight: 400;
-    }
-
-    .preview-modal-close {
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--neutral-50);
-      padding: 0;
-    }
-
-    .preview-modal-close:hover {
-      background: var(--neutral-85);
-      color: var(--neutral-30);
-    }
-
-    .preview-modal-close svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .preview-modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-      background: #fff;
-    }
-
-    /* Document preview content (wireframe style) */
-    .doc-preview-content {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .doc-preview-header {
-      text-align: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--neutral-85);
-    }
-
-    .doc-preview-logo {
-      width: 120px;
-      height: 24px;
-      background: var(--neutral-80);
-      border-radius: 4px;
-      margin: 0 auto 12px;
-    }
-
-    .doc-preview-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--neutral-20);
-      margin: 0 0 4px;
-    }
-
-    .doc-preview-subtitle {
-      font-size: 13px;
-      color: var(--neutral-50);
-    }
-
-    .doc-preview-section {
-      margin-bottom: 20px;
-    }
-
-    .doc-preview-section-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--neutral-40);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 0 0 8px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid var(--neutral-90);
-    }
-
-    .doc-preview-field {
-      display: flex;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-
-    .doc-preview-label {
-      width: 120px;
-      flex-shrink: 0;
-      color: var(--neutral-50);
-    }
-
-    .doc-preview-value {
-      color: var(--neutral-25);
-    }
-
-    .doc-preview-paragraph {
-      margin-bottom: 16px;
-    }
-
-    .doc-preview-paragraph .wire-text {
-      height: 12px;
-      margin-bottom: 8px;
-    }
-
-    .doc-preview-paragraph .wire-text:last-child {
-      width: 70%;
-    }
-
-    .preview-modal-footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-      padding: 12px 16px;
-      border-top: 1px solid var(--neutral-85);
-      background: var(--neutral-95);
-      border-radius: 0 0 8px 8px;
-    }
-
-    .preview-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border: 1px solid var(--neutral-70);
-      border-radius: 4px;
-      background: #fff;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--neutral-30);
-      cursor: pointer;
-      transition: all 120ms ease;
-    }
-
-    .preview-action-btn:hover {
-      background: var(--neutral-95);
-      border-color: var(--neutral-60);
-    }
-
-    .preview-action-btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .preview-action-btn.primary {
-      background: var(--primary-30);
-      border-color: var(--primary-30);
-      color: #fff;
-    }
-
-    .preview-action-btn.primary:hover {
-      background: hsl(218, 50%, 35%);
-      border-color: hsl(218, 50%, 35%);
     }
   </style>
 </head>
@@ -1813,7 +1525,7 @@
                 <th class="col-text">DOB</th>
                 <th class="col-text">Note Type</th>
                 <th class="col-text">Note Status</th>
-                <th class="col-text">Doc Status</th>
+                <th class="col-docs">Documents</th>
                 <th class="col-text">Telehealth</th>
               </tr>
             </thead>
@@ -1842,10 +1554,10 @@
                 <td><a href="#" class="table-link">Quick Note</a></td>
                 <td><span class="status-badge signed">Signed</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -1873,10 +1585,10 @@
                 <td><a href="#" class="table-link">Progress Note</a></td>
                 <td><span class="status-badge finished">Finished</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Anna Paciente')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -1904,10 +1616,10 @@
                 <td><a href="#" class="table-link">Complete Evaluation</a></td>
                 <td><span class="status-badge signed">Signed</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Maria Santos')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Maria Santos')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -1935,10 +1647,10 @@
                 <td><a href="#" class="table-link">Case Management</a></td>
                 <td><span class="status-badge finished">Finished</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Robert Chen')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Robert Chen')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -1966,10 +1678,10 @@
                 <td><a href="#" class="table-link">Group Therapy Progress Note</a></td>
                 <td><span class="status-badge finished">Finished</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Emily Johnson')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Emily Johnson')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>Yes</td>
               </tr>
@@ -1997,10 +1709,10 @@
                 <td><a href="#" class="table-link">Discharge Summary</a></td>
                 <td><span class="status-badge signed">Signed</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Michael Brown')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Michael Brown')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -2028,10 +1740,10 @@
                 <td><a href="#" class="table-link">Primary Care Note</a></td>
                 <td><span class="status-badge signed">Signed</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Sarah Davis')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Sarah Davis')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -2059,10 +1771,10 @@
                 <td><a href="#" class="table-link">Couples/Family Therapy</a></td>
                 <td><span class="status-badge finished">Finished</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('David Lee')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('David Lee')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>Yes</td>
               </tr>
@@ -2090,10 +1802,10 @@
                 <td><a href="#" class="table-link">ASAM</a></td>
                 <td><span class="status-badge signed">Signed</span></td>
                 <td class="form-status-cell">
-                  <button class="form-status-btn" onclick="openDocsModal('Lisa Martinez')"><svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    </svg>Documents</button>
+                  <button class="form-status-btn" onclick="openDocsModal('Lisa Martinez')" title="View Documents"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg></button>
                 </td>
                 <td>No</td>
               </tr>
@@ -2150,17 +1862,17 @@
           <button class="type-filter-pill active" data-type="all" onclick="filterByType('all')">
             All <span class="pill-count" id="countAll">32</span>
           </button>
+          <button class="type-filter-pill" data-type="document" onclick="filterByType('document')">
+            Documents <span class="pill-count" id="countDocument">6</span>
+          </button>
           <button class="type-filter-pill" data-type="form" onclick="filterByType('form')">
-            Forms <span class="pill-count" id="countForm">18</span>
+            Forms <span class="pill-count" id="countForm">6</span>
+          </button>
+          <button class="type-filter-pill" data-type="customform" onclick="filterByType('customform')">
+            Custom Forms <span class="pill-count" id="countCustomform">6</span>
           </button>
           <button class="type-filter-pill" data-type="note" onclick="filterByType('note')">
-            Notes <span class="pill-count" id="countNote">8</span>
-          </button>
-          <button class="type-filter-pill" data-type="letter" onclick="filterByType('letter')">
-            Letters <span class="pill-count" id="countLetter">4</span>
-          </button>
-          <button class="type-filter-pill" data-type="report" onclick="filterByType('report')">
-            Reports <span class="pill-count" id="countReport">2</span>
+            Notes <span class="pill-count" id="countNote">14</span>
           </button>
         </div>
       </div>
@@ -2170,17 +1882,6 @@
             <tr>
               <th data-sort="name" onclick="sortDocsTable('name')">
                 Document Name
-                <button class="sort-btn" type="button">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m21 16-4 4-4-4" />
-                    <path d="M17 20V4" />
-                    <path d="m3 8 4-4 4 4" />
-                    <path d="M7 4v16" />
-                  </svg>
-                </button>
-              </th>
-              <th class="col-type" data-sort="type" onclick="sortDocsTable('type')">
-                Type
                 <button class="sort-btn" type="button">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m21 16-4 4-4-4" />
@@ -2201,6 +1902,17 @@
                   </svg>
                 </button>
               </th>
+              <th class="col-type" data-sort="type" onclick="sortDocsTable('type')">
+                Type
+                <button class="sort-btn" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21 16-4 4-4-4" />
+                    <path d="M17 20V4" />
+                    <path d="m3 8 4-4 4 4" />
+                    <path d="M7 4v16" />
+                  </svg>
+                </button>
+              </th>
               <th class="col-status" data-sort="status" onclick="sortDocsTable('status')">
                 Status
                 <button class="sort-btn" type="button">
@@ -2212,7 +1924,6 @@
                   </svg>
                 </button>
               </th>
-              <th class="col-preview"></th>
             </tr>
           </thead>
           <tbody id="docsTableBody">
@@ -2259,60 +1970,6 @@
     </div>
   </div>
 
-  <!-- Document Preview Modal (KS-style) -->
-  <div class="preview-modal-backdrop" id="previewModalBackdrop" onclick="closePreviewModal()"></div>
-  <div class="preview-modal" id="previewModal">
-    <div class="preview-modal-header">
-      <h3 class="preview-modal-title" id="previewModalTitle">
-        <span id="previewDocName">PHQ-9</span>
-        <span class="type-badge form" id="previewTypeBadge">Form</span>
-      </h3>
-      <button class="preview-modal-close" onclick="closePreviewModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
-      </button>
-    </div>
-    <div class="preview-modal-body">
-      <div class="doc-preview-content" id="previewContent">
-        <!-- Dynamic content -->
-      </div>
-    </div>
-    <div class="preview-modal-footer">
-      <button class="preview-action-btn" onclick="closePreviewModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
-        Close
-      </button>
-      <button class="preview-action-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" x2="12" y1="15" y2="3" />
-        </svg>
-        Download
-      </button>
-      <button class="preview-action-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 6 2 18 2 18 9" />
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-          <rect width="12" height="8" x="6" y="14" />
-        </svg>
-        Print
-      </button>
-      <button class="preview-action-btn primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-          <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-        </svg>
-        Open Full Document
-      </button>
-    </div>
-  </div>
-
   <script>
     // ========== All Documents Modal ==========
     const docsModalBackdrop = document.getElementById('docsModalBackdrop');
@@ -2327,44 +1984,44 @@
     const firstPageBtn = document.getElementById('firstPageBtn');
     const lastPageBtn = document.getElementById('lastPageBtn');
 
-    // Sample documents data (expanded to include all document types)
+    // Sample documents data with real type values
+    // Types: document, form, customform, note
+    // Statuses: Not Shared, Shared, Shared and Signed, Shared to Sign, Restricted, Signed, Completed
     const allDocsData = [
-      // Forms
-      { name: 'PHQ-9', type: 'form', date: '2026-10-05', status: 'Complete' },
-      { name: 'GAD-7: Generalized Anxiety Disorder', type: 'form', date: '2026-10-05', status: 'Complete' },
-      { name: 'Recovery Support Plan', type: 'form', date: '2026-10-01', status: 'Complete' },
-      { name: 'DLA-20: Daily Living Activities Youth', type: 'form', date: '2026-09-28', status: 'Complete' },
-      { name: 'CRAFFT+N 2.1 Interview', type: 'form', date: '2026-09-20', status: 'Incomplete' },
-      { name: 'NICHQ Vanderbilt Assessment Scale', type: 'form', date: '2026-09-15', status: 'Complete' },
-      { name: 'NICHQ Vanderbilt Parent Assessment', type: 'form', date: '2026-09-15', status: 'Incomplete' },
-      { name: 'Individual Crisis Support Plan', type: 'form', date: '2026-09-10', status: 'Complete' },
-      { name: 'PSC: Pediatric Symptom Checklist', type: 'form', date: '2026-08-28', status: 'Complete' },
-      { name: 'Wraparound Facilitation Support Plan', type: 'form', date: '2026-08-15', status: 'Incomplete' },
-      { name: 'Recovery Safety Plan', type: 'form', date: '2026-08-01', status: 'Complete' },
-      { name: 'CRAFFT Screening Test', type: 'form', date: '2026-07-20', status: 'Complete' },
-      { name: 'Columbia Depression Scale (4 weeks)', type: 'form', date: '2026-07-10', status: 'Complete' },
-      { name: 'PHQ 9 Modified for Teens', type: 'form', date: '2026-06-28', status: 'Complete' },
-      { name: 'Wraparound Plan of Care', type: 'form', date: '2026-06-15', status: 'Complete' },
-      { name: 'FARS: Functional Assessment Rating', type: 'form', date: '2026-05-20', status: 'Complete' },
-      { name: 'Consent to Treatment', type: 'form', date: '2026-05-01', status: 'Complete' },
-      { name: 'HIPAA Notice of Privacy', type: 'form', date: '2026-05-01', status: 'Complete' },
-      // Notes
-      { name: 'Progress Note - 10/03/2026', type: 'note', date: '2026-10-03', status: 'Complete' },
-      { name: 'Progress Note - 09/26/2026', type: 'note', date: '2026-09-26', status: 'Complete' },
-      { name: 'Progress Note - 09/19/2026', type: 'note', date: '2026-09-19', status: 'Complete' },
-      { name: 'Initial Evaluation', type: 'note', date: '2026-05-01', status: 'Complete' },
-      { name: 'Progress Note - 09/12/2026', type: 'note', date: '2026-09-12', status: 'Complete' },
-      { name: 'Progress Note - 09/05/2026', type: 'note', date: '2026-09-05', status: 'Complete' },
-      { name: 'Case Management Note', type: 'note', date: '2026-08-22', status: 'Complete' },
-      { name: 'Crisis Intervention Note', type: 'note', date: '2026-07-15', status: 'Complete' },
-      // Letters
-      { name: 'Referral Letter - Dr. Smith', type: 'letter', date: '2026-09-30', status: 'Complete' },
-      { name: 'School Accommodation Letter', type: 'letter', date: '2026-09-01', status: 'Complete' },
-      { name: 'Treatment Summary Letter', type: 'letter', date: '2026-08-15', status: 'Complete' },
-      { name: 'Insurance Authorization Letter', type: 'letter', date: '2026-06-01', status: 'Complete' },
-      // Reports
-      { name: 'Quarterly Treatment Summary', type: 'report', date: '2026-10-01', status: 'Complete' },
-      { name: 'Annual Assessment Report', type: 'report', date: '2026-05-15', status: 'Complete' },
+      // Documents (standalone uploads/attachments)
+      { name: 'Insurance Card Front', type: 'document', typeLabel: 'Document', date: '2026-10-02', status: 'Not Shared' },
+      { name: 'Insurance Card Back', type: 'document', typeLabel: 'Document', date: '2026-10-02', status: 'Not Shared' },
+      { name: 'Lab Results - Quest', type: 'document', typeLabel: 'Document', date: '2026-09-15', status: 'Shared' },
+      { name: 'Referral Letter - Dr. Smith', type: 'document', typeLabel: 'Document', date: '2026-08-20', status: 'Not Shared' },
+      { name: 'Prior Auth Approval', type: 'document', typeLabel: 'Document', date: '2026-07-10', status: 'Restricted' },
+      { name: 'School Records', type: 'document', typeLabel: 'Document', date: '2026-05-15', status: 'Not Shared' },
+      // Forms (standard/system forms)
+      { name: 'Consent to Treatment', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Shared and Signed' },
+      { name: 'HIPAA Notice of Privacy', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Shared and Signed' },
+      { name: 'Release of Information', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Shared to Sign' },
+      { name: 'Financial Agreement', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Signed' },
+      { name: 'Telehealth Consent', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Signed' },
+      { name: 'Emergency Contact Form', type: 'form', typeLabel: 'Form', date: '2026-05-01', status: 'Completed' },
+      // Custom Forms (patient assessment forms)
+      { name: 'PHQ-9', type: 'customform', typeLabel: 'Custom Form', date: '2026-10-05', status: 'Shared and Signed' },
+      { name: 'GAD-7', type: 'customform', typeLabel: 'Custom Form', date: '2026-10-05', status: 'Shared and Signed' },
+      { name: 'Recovery Support Plan', type: 'customform', typeLabel: 'Custom Form', date: '2026-10-01', status: 'Signed' },
+      { name: 'DLA-20: Daily Living Activities', type: 'customform', typeLabel: 'Custom Form', date: '2026-09-28', status: 'Completed' },
+      { name: 'CRAFFT+N 2.1 Interview', type: 'customform', typeLabel: 'Custom Form', date: '2026-09-20', status: 'Shared to Sign' },
+      { name: 'NICHQ Vanderbilt Assessment', type: 'customform', typeLabel: 'Custom Form', date: '2026-09-15', status: 'Signed' },
+      // Notes (various note_types)
+      { name: 'Progress Note 10/03/2026', type: 'note', typeLabel: 'Progress Note', date: '2026-10-03', status: 'Shared' },
+      { name: 'Clinical Message 10/01/2026', type: 'note', typeLabel: 'Clinical Message', date: '2026-10-01', status: 'Not Shared' },
+      { name: 'Progress Note 09/26/2026', type: 'note', typeLabel: 'Progress Note', date: '2026-09-26', status: 'Shared' },
+      { name: 'SOAP Note 09/19/2026', type: 'note', typeLabel: 'SOAP Note', date: '2026-09-19', status: 'Not Shared' },
+      { name: 'Quick Note 09/15/2026', type: 'note', typeLabel: 'Quick Note', date: '2026-09-15', status: 'Not Shared' },
+      { name: 'Progress Note 09/12/2026', type: 'note', typeLabel: 'Progress Note', date: '2026-09-12', status: 'Shared' },
+      { name: 'Clinical Summary 09/05/2026', type: 'note', typeLabel: 'Clinical Summary', date: '2026-09-05', status: 'Not Shared' },
+      { name: 'Case Management 08/22/2026', type: 'note', typeLabel: 'Case Management', date: '2026-08-22', status: 'Not Shared' },
+      { name: 'Group Therapy Progress Note 08/15/2026', type: 'note', typeLabel: 'Group Therapy Progress Note', date: '2026-08-15', status: 'Restricted' },
+      { name: 'Progress Note 08/08/2026', type: 'note', typeLabel: 'Progress Note', date: '2026-08-08', status: 'Shared' },
+      { name: 'Clinical Message 07/20/2026', type: 'note', typeLabel: 'Clinical Message', date: '2026-07-20', status: 'Not Shared' },
+      { name: 'Complete Evaluation', type: 'note', typeLabel: 'Complete Evaluation', date: '2026-05-01', status: 'Shared' },
     ];
 
     let docsData = [...allDocsData];
@@ -2413,10 +2070,10 @@
     function updateTypeCounts() {
       const baseData = getSearchFilteredData();
       document.getElementById('countAll').textContent = baseData.length;
+      document.getElementById('countDocument').textContent = baseData.filter(d => d.type === 'document').length;
       document.getElementById('countForm').textContent = baseData.filter(d => d.type === 'form').length;
+      document.getElementById('countCustomform').textContent = baseData.filter(d => d.type === 'customform').length;
       document.getElementById('countNote').textContent = baseData.filter(d => d.type === 'note').length;
-      document.getElementById('countLetter').textContent = baseData.filter(d => d.type === 'letter').length;
-      document.getElementById('countReport').textContent = baseData.filter(d => d.type === 'report').length;
     }
 
     function getSearchFilteredData() {
@@ -2461,19 +2118,11 @@
       const pageData = docsData.slice(start, end);
 
       docsTableBody.innerHTML = pageData.map(row => `
-        <tr>
+        <tr onclick="openPreviewModal('${row.name.replace(/'/g, "\\'")}', '${row.type}')" style="cursor: pointer;">
           <td>${row.name}</td>
-          <td class="col-type"><span class="type-badge ${row.type}">${row.type.charAt(0).toUpperCase() + row.type.slice(1)}</span></td>
           <td class="col-date">${formatDate(row.date)}</td>
-          <td class="col-status"><span class="form-status-badge ${row.status.toLowerCase()}">${row.status}</span></td>
-          <td class="col-preview">
-            <button class="preview-btn" onclick="openPreviewModal('${row.name.replace(/'/g, "\\'")}', '${row.type}', '${row.date}', '${row.status}')" title="Preview document">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
-          </td>
+          <td class="col-type">${row.typeLabel}</td>
+          <td class="col-status">${row.status}</td>
         </tr>
       `).join('');
 
@@ -2581,207 +2230,15 @@
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (previewModal.classList.contains('open')) {
-          closePreviewModal();
-        } else if (docsModal.classList.contains('open')) {
-          closeDocsModal();
-        }
+      if (e.key === 'Escape' && docsModal.classList.contains('open')) {
+        closeDocsModal();
       }
     });
 
-    // ========== Document Preview Modal ==========
-    const previewModalBackdrop = document.getElementById('previewModalBackdrop');
-    const previewModal = document.getElementById('previewModal');
-    const previewDocName = document.getElementById('previewDocName');
-    const previewTypeBadge = document.getElementById('previewTypeBadge');
-    const previewContent = document.getElementById('previewContent');
-
-    function openPreviewModal(name, type, date, status) {
-      previewDocName.textContent = name;
-      previewTypeBadge.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-      previewTypeBadge.className = 'type-badge ' + type;
-
-      // Generate preview content based on document type
-      previewContent.innerHTML = generatePreviewContent(name, type, date, status);
-
-      previewModalBackdrop.classList.add('open');
-      previewModal.classList.add('open');
+    function openPreviewModal(name, type) {
+      alert(name + ' Preview');
     }
 
-    function closePreviewModal() {
-      previewModalBackdrop.classList.remove('open');
-      previewModal.classList.remove('open');
-    }
-
-    function generatePreviewContent(name, type, date, status) {
-      const formattedDate = formatDate(date);
-
-      if (type === 'form') {
-        return `
-          <div class="doc-preview-header">
-            <div class="doc-preview-logo"></div>
-            <h4 class="doc-preview-title">${name}</h4>
-            <p class="doc-preview-subtitle">Completed ${formattedDate}</p>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Patient Information</h5>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Patient:</span>
-              <span class="doc-preview-value">${currentClientName}</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Date of Birth:</span>
-              <span class="doc-preview-value">02/06/1991</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Provider:</span>
-              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Assessment Results</h5>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Total Score:</span>
-              <span class="doc-preview-value">12 (Moderate)</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Status:</span>
-              <span class="doc-preview-value">${status}</span>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Responses</h5>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 95%;"></div>
-              <div class="wire-text" style="width: 88%;"></div>
-              <div class="wire-text" style="width: 92%;"></div>
-              <div class="wire-text" style="width: 70%;"></div>
-            </div>
-          </div>
-        `;
-      } else if (type === 'note') {
-        return `
-          <div class="doc-preview-header">
-            <div class="doc-preview-logo"></div>
-            <h4 class="doc-preview-title">${name}</h4>
-            <p class="doc-preview-subtitle">${formattedDate}</p>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Session Information</h5>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Patient:</span>
-              <span class="doc-preview-value">${currentClientName}</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Provider:</span>
-              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Session Type:</span>
-              <span class="doc-preview-value">Individual Therapy (60 min)</span>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Clinical Note</h5>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 98%;"></div>
-              <div class="wire-text" style="width: 95%;"></div>
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 92%;"></div>
-              <div class="wire-text" style="width: 85%;"></div>
-            </div>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 96%;"></div>
-              <div class="wire-text" style="width: 70%;"></div>
-            </div>
-          </div>
-        `;
-      } else if (type === 'letter') {
-        return `
-          <div class="doc-preview-header">
-            <div class="doc-preview-logo"></div>
-            <h4 class="doc-preview-title">${name}</h4>
-            <p class="doc-preview-subtitle">${formattedDate}</p>
-          </div>
-          <div class="doc-preview-section">
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">To:</span>
-              <span class="doc-preview-value">Whom It May Concern</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Re:</span>
-              <span class="doc-preview-value">${currentClientName}</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Date:</span>
-              <span class="doc-preview-value">${formattedDate}</span>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Letter Content</h5>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 98%;"></div>
-              <div class="wire-text" style="width: 95%;"></div>
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 88%;"></div>
-            </div>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 92%;"></div>
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 75%;"></div>
-            </div>
-          </div>
-        `;
-      } else {
-        // Report
-        return `
-          <div class="doc-preview-header">
-            <div class="doc-preview-logo"></div>
-            <h4 class="doc-preview-title">${name}</h4>
-            <p class="doc-preview-subtitle">${formattedDate}</p>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Report Summary</h5>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Patient:</span>
-              <span class="doc-preview-value">${currentClientName}</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Reporting Period:</span>
-              <span class="doc-preview-value">Q3 2026</span>
-            </div>
-            <div class="doc-preview-field">
-              <span class="doc-preview-label">Prepared By:</span>
-              <span class="doc-preview-value">Dr. Sarah Chen, MD</span>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Executive Summary</h5>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 97%;"></div>
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 94%;"></div>
-              <div class="wire-text" style="width: 80%;"></div>
-            </div>
-          </div>
-          <div class="doc-preview-section">
-            <h5 class="doc-preview-section-title">Recommendations</h5>
-            <div class="doc-preview-paragraph">
-              <div class="wire-text" style="width: 100%;"></div>
-              <div class="wire-text" style="width: 95%;"></div>
-              <div class="wire-text" style="width: 65%;"></div>
-            </div>
-          </div>
-        `;
-      }
-    }
   </script>
 
 </body>
