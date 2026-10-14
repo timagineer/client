@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototype: Send Message from Chart [DO-14563]</title>
+  <title>Prototype: Send Message from Chart w/Templates [DO-14563]</title>
 
   <style>
     :root {
@@ -547,6 +547,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      position: relative;
     }
 
     .form-label {
@@ -566,7 +567,7 @@
     }
 
     .form-row-inline.align-top .form-label {
-      padding-top: 6.5px;
+      padding-top: 8px;
     }
 
     .form-row-inline .form-label {
@@ -726,16 +727,22 @@
     }
 
     /* Body textarea */
+    .body-textarea-wrap {
+      position: relative;
+    }
+
     .body-textarea {
       width: 100%;
       min-height: 120px;
-      padding: 6px 10px;
+      max-height: 200px;
+      padding: 8px 10px;
       border: 1px solid var(--neutral-75);
       border-radius: 4px;
       font-size: 13px;
+      line-height: 1.5;
       font-family: inherit;
-      resize: vertical;
       background: #fff;
+      resize: vertical;
     }
 
     .body-textarea::placeholder {
@@ -748,20 +755,116 @@
       box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
     }
 
+    /* Insert/Templates button in label row */
+    .insert-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 500;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+    }
+
+    .insert-btn:hover {
+      color: hsl(218, 54%, 38%);
+    }
+
+    /* Legacy insert template button - keep for reference */
+    .insert-template-btn {
+      float: right;
+      margin: -1px -2px 4px 8px;
+      padding: 4px 8px;
+      border: none;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .insert-template-btn:hover {
+      background: hsl(218, 50%, 95%);
+      color: hsl(218, 54%, 42%);
+    }
+
+    .insert-template-btn svg {
+      display: none;
+    }
+
+    /* Template picker dropdown */
+    .template-picker {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      width: 220px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      z-index: 20;
+      overflow: hidden;
+    }
+
+    .template-picker.open {
+      display: block;
+    }
+
+    .template-picker-header {
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--neutral-50);
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .template-picker-list {
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .template-option {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--neutral-25);
+      cursor: pointer;
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .template-option:last-child {
+      border-bottom: none;
+    }
+
+    .template-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .template-option-name {
+      font-weight: 500;
+    }
+
+    .template-option-preview {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     /* Popover footer */
     .popover-footer {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
       padding: 12px 16px;
       border-top: 1px solid var(--neutral-85);
-    }
-
-    .draft-timestamp {
-      margin-right: auto;
-      font-size: 12px;
-      color: var(--neutral-50);
     }
 
     .btn-ghost {
@@ -914,6 +1017,7 @@
 
     <div class="shell-body">
       <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
         <div class="wire-nav-item"></div>
         <div class="wire-nav-item"></div>
         <div class="wire-nav-item"></div>
@@ -1336,14 +1440,22 @@
                         </div>
 
                         <!-- Body -->
-                        <div class="form-row">
-                          <label class="form-label">Message</label>
-                          <textarea class="body-textarea" id="bodyTextarea" placeholder="Write your message..."></textarea>
+                        <div class="form-row" style="position: relative;">
+                          <div class="form-row-header">
+                            <label class="form-label">Message</label>
+                            <button type="button" class="insert-btn" id="insertTemplateBtn">Templates</button>
+                            <div class="template-picker" id="templatePicker">
+                              <div class="template-picker-header">My Templates</div>
+                              <div class="template-picker-list" id="templateList"></div>
+                            </div>
+                          </div>
+                          <div class="body-textarea-wrap">
+                            <textarea class="body-textarea" id="bodyTextarea" placeholder="Write your message..."></textarea>
+                          </div>
                         </div>
                       </div>
 
                       <div class="popover-footer">
-                        <span class="draft-timestamp" id="draftTimestamp"></span>
                         <button class="btn-ghost" id="discardBtn">Discard</button>
                         <button class="btn-primary" id="sendBtn" disabled>Send</button>
                       </div>
@@ -1400,21 +1512,7 @@
 
     const subjectInput = document.getElementById('subjectInput');
     const bodyTextarea = document.getElementById('bodyTextarea');
-    const draftTimestamp = document.getElementById('draftTimestamp');
-
-    // Draft state
-    let hasDraft = false;
-
-    // Update draft timestamp (shown after first keystroke)
-    function updateDraftTimestamp() {
-      if (!hasDraft) {
-        hasDraft = true;
-        const now = new Date();
-        const date = now.toLocaleDateString('en-US');
-        const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        draftTimestamp.textContent = `Draft saved ${date}, ${time}`;
-      }
-    }
+    const insertTemplateBtn = document.getElementById('insertTemplateBtn');
 
     // Validate form and toggle Send button
     function validateForm() {
@@ -1451,15 +1549,24 @@
       sendMessageBtn.setAttribute('aria-expanded', 'true');
       toInput.focus();
       validateForm();
+      // Close on outside click
+      setTimeout(() => document.addEventListener('click', handleOutsideClick), 0);
     }
 
     // Close popover
     function closePopover() {
       messagePopover.classList.remove('open');
       sendMessageBtn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', handleOutsideClick);
       resetForm();
       // Return focus to trigger
       sendMessageBtn.focus();
+    }
+
+    function handleOutsideClick(e) {
+      if (!messagePopover.contains(e.target) && e.target !== sendMessageBtn) {
+        closePopover();
+      }
     }
 
     // Focus trap for popover
@@ -1496,9 +1603,6 @@
       bodyTextarea.value = '';
       toDropdown.classList.remove('open');
       ccDropdown.classList.remove('open');
-      // Clear draft state
-      hasDraft = false;
-      draftTimestamp.textContent = '';
     }
 
     // Filter providers
@@ -1610,7 +1714,7 @@
         to: toRecipients,
         cc: ccRecipients,
         subject: subjectInput.value,
-        body: bodyTextarea.value
+        body: bodyTextarea.textContent.trim()
       });
       closePopover();
       showToast('success', 'Message sent');
@@ -1645,14 +1749,68 @@
     ccFieldWrap.addEventListener('click', () => ccInput.focus());
 
     // Validate on subject/body input
-    subjectInput.addEventListener('input', () => {
-      updateDraftTimestamp();
+    subjectInput.addEventListener('input', validateForm);
+    bodyTextarea.addEventListener('input', validateForm);
+
+    // ========== Template Insert Feature ==========
+    const templates = [
+      { id: 1, name: 'Follow-up request', text: 'Please follow up with {clientName} regarding their upcoming appointment.' },
+      { id: 2, name: 'Lab results ready', text: 'Lab results for {clientName} are now available for review. Please discuss with client at next visit.' },
+      { id: 3, name: 'Referral note', text: '{clientName} has been referred to your care. Please review chart history and schedule intake.' },
+      { id: 4, name: 'Medication question', text: 'I have a question about {clientName}\'s current medication regimen. Please advise when available.' },
+      { id: 5, name: 'Signature', text: 'Thank you,\n{userName}\n{userTitle}' },
+      { id: 6, name: 'Prior authorization needed', text: 'Prior authorization is required for {clientName}\'s medication/procedure. Please submit PA request.' },
+      { id: 7, name: 'Missed appointment', text: '{clientName} missed their scheduled appointment on {appointmentDate}. Please attempt to reschedule.' },
+      { id: 8, name: 'Insurance update needed', text: '{clientName}\'s insurance information needs to be updated before next visit.' },
+      { id: 9, name: 'Urgent callback', text: 'Please call {clientName} back as soon as possible regarding their care.' },
+      { id: 10, name: 'Records request', text: 'Please send records for {clientName} to the requesting provider at your earliest convenience.' }
+    ];
+
+    const templatePicker = document.getElementById('templatePicker');
+    const templateList = document.getElementById('templateList');
+
+    // Render template list
+    function renderTemplates() {
+      templateList.innerHTML = templates.map(t => `
+        <div class="template-option" data-id="${t.id}">
+          <div class="template-option-name">${t.name}</div>
+        </div>
+      `).join('');
+
+      templateList.querySelectorAll('.template-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const id = parseInt(opt.dataset.id);
+          const template = templates.find(t => t.id === id);
+          if (template) insertTemplate(template.text);
+        });
+      });
+    }
+
+    // Insert template text
+    function insertTemplate(text) {
+      const existingText = bodyTextarea.value.trim();
+      const needsNewline = existingText.length > 0;
+      bodyTextarea.value = existingText + (needsNewline ? '\n' : '') + text;
+      bodyTextarea.focus();
+      templatePicker.classList.remove('open');
       validateForm();
+    }
+
+    // Toggle template picker
+    insertTemplateBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      templatePicker.classList.toggle('open');
     });
-    bodyTextarea.addEventListener('input', () => {
-      updateDraftTimestamp();
-      validateForm();
+
+    // Close template picker on outside click
+    document.addEventListener('click', (e) => {
+      if (!templatePicker.contains(e.target) && e.target !== insertTemplateBtn) {
+        templatePicker.classList.remove('open');
+      }
     });
+
+    // Initialize templates
+    renderTemplates();
   </script>
 </body>
 
