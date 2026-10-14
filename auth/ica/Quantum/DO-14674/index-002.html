@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Send Message from Billing Worklist MVP [DO-14674]</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Color palette */
+      --primary-30: oklch(0.4474 0.0819 234.85);
+      --secondary-50: oklch(0.5915 0.1547 128.61);
+      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+
+      /* Status colors (toned down) */
+      --status-green: oklch(0.55 0.12 130);
+      --status-red: oklch(0.50 0.15 15);
+      --status-blue: oklch(0.50 0.12 250);
+      --status-gold: oklch(0.60 0.12 85);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--neutral-95);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ========== Header ========== */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ========== Body ========== */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ========== Sidebar ========== */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ========== Main ========== */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ========== Top Tabs ========== */
+    .top-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      padding: 0 var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .top-tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .top-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .top-tab.active {
+      color: var(--neutral-20);
+    }
+
+    .top-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-30);
+    }
+
+    /* Wire tab placeholders */
+    .wire-top-tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+    }
+
+    .wire-top-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-top-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Sub Tabs ========== */
+    .sub-tabs {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-4);
+      padding: var(--sp-2) var(--sp-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sub-tab {
+      font-size: 13px;
+      color: var(--neutral-50);
+      text-decoration: none;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .sub-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .sub-tab.active {
+      color: var(--primary-30);
+      border-bottom-color: var(--primary-30);
+    }
+
+    /* Wire sub tabs */
+    .wire-sub-tab {
+      padding: 4px 0;
+    }
+
+    .wire-sub-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-sub-tab.active .wire-text {
+      background: var(--neutral-60);
+    }
+
+    /* ========== Filter Bar ========== */
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .filter-toggle-icon {
+      color: var(--primary-30);
+    }
+
+    .filter-toggle-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      background: var(--primary-30);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .filter-chevron {
+      margin-left: auto;
+      color: var(--neutral-60);
+    }
+
+    .status-pills-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--neutral-90);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+
+    .status-pill.selected {
+      background: #fff;
+    }
+
+    .status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .status-pill-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+    }
+
+    .status-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .status-pill-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .status-pill-badge.red {
+      background: var(--status-red);
+    }
+
+    .status-pill-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .status-pill-badge.green {
+      background: var(--status-green);
+    }
+
+    /* Wire versions */
+    .wire-filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .wire-filter-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: 3px;
+    }
+
+    .wire-filter-icon-gray {
+      width: 18px;
+      height: 18px;
+      background: var(--neutral-70);
+      border-radius: 3px;
+    }
+
+    .wire-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 20px;
+    }
+
+    .wire-status-pill.selected {
+      background: #fff;
+    }
+
+    .wire-status-pill.selected.blue {
+      border-color: var(--status-blue);
+    }
+
+    .wire-status-pill.selected.red {
+      border-color: var(--status-red);
+    }
+
+    .wire-status-pill.selected.gold {
+      border-color: var(--status-gold);
+    }
+
+    .wire-status-pill.selected.green {
+      border-color: var(--status-green);
+    }
+
+    .wire-badge-pill {
+      width: 22px;
+      height: 20px;
+      background: var(--primary-30);
+      border-radius: 10px;
+    }
+
+    .wire-status-badge {
+      width: 26px;
+      height: 22px;
+      border-radius: 11px;
+    }
+
+    .wire-status-badge.blue {
+      background: var(--status-blue);
+    }
+
+    .wire-status-badge.red {
+      background: var(--status-red);
+    }
+
+    .wire-status-badge.gold {
+      background: var(--status-gold);
+    }
+
+    .wire-status-badge.green {
+      background: var(--status-green);
+    }
+
+    /* ========== Data Table ========== */
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px var(--sp-3);
+      background: var(--neutral-95);
+      border-bottom: 1px solid var(--border-light);
+      font-weight: 500;
+      color: var(--neutral-40);
+      position: sticky;
+      top: 0;
+    }
+
+    .data-table td {
+      padding: 10px var(--sp-3);
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .data-table tr:hover td {
+      background: var(--neutral-95);
+    }
+
+    .data-table tr.selected td {
+      background: hsl(218, 50%, 96%);
+    }
+
+    /* Wire table elements */
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    .wire-text.dark {
+      background: var(--neutral-60);
+    }
+
+    .wire-link {
+      height: 10px;
+      background: hsl(218, 40%, 75%);
+      border-radius: 2px;
+    }
+
+    .wire-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .wire-badge.finished {
+      background: oklch(0.92 0.04 145);
+      color: oklch(0.35 0.08 145);
+      min-width: 40px;
+      min-height: 10px;
+    }
+
+    .wire-icon-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-eye-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .wire-eye-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 10px;
+      border: 2px solid var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      background: var(--neutral-60);
+      border-radius: 50%;
+    }
+
+    .wire-eye-btn.active {
+      background: var(--neutral-80);
+    }
+
+    .wire-eye-btn.active::before {
+      border-color: var(--neutral-40);
+    }
+
+    .wire-eye-btn.active::after {
+      background: var(--neutral-40);
+    }
+
+    /* Split button: link text left + icon button right */
+    .wire-split-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .wire-split-btn .wire-link {
+      height: 10px;
+      background: hsl(218, 45%, 65%);
+      border-radius: 2px;
+    }
+
+    .wire-split-btn .wire-split-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--neutral-90);
+      border-radius: 3px;
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    /* ========== Pagination ========== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-top: 1px solid var(--border-light);
+      background: #fff;
+    }
+
+    .wire-pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .wire-page-btn {
+      width: 28px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-page-btn.active {
+      background: var(--neutral-70);
+    }
+
+    .wire-page-select {
+      height: 28px;
+      width: 70px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    /* ========== Slide-in Panel ========== */
+    .panel-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 240ms ease, visibility 240ms;
+      /* exit */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .panel-backdrop {
+        transition: none;
+      }
+    }
+
+    .panel-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 300ms ease, visibility 300ms;
+      /* enter */
+    }
+
+    .slide-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 43rem;
+      background: #fff;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 240ms cubic-bezier(.39, .575, .565, 1);
+      /* exit, sine-out */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide-panel {
+        transition: none;
+      }
+    }
+
+    .slide-panel.open {
+      transform: translateX(0);
+      transition: transform 300ms cubic-bezier(.39, .575, .565, 1);
+      /* enter, sine-out */
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 16px 36px;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0;
+    }
+
+    .panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-icon-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-40);
+    }
+
+    .panel-icon-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-20);
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px 24px 36px;
+    }
+
+    .panel-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 20px 12px 36px;
+      border-top: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    /* ========== Note Preview Styles ========== */
+    .note-preview {
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      background: #fff;
+    }
+
+    .note-letterhead {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 24px;
+      padding: 20px 24px;
+      font-size: 13px;
+      color: var(--neutral-40);
+      line-height: 1.4;
+    }
+
+    .letterhead-left {
+      text-align: left;
+    }
+
+    .letterhead-right {
+      text-align: right;
+    }
+
+    .letterhead-practice {
+      font-weight: 600;
+      color: var(--neutral-30);
+    }
+
+    .note-patient {
+      display: flex;
+      gap: 24px;
+      padding: 16px 24px;
+      margin: 0 24px;
+      background: var(--neutral-95);
+      border-radius: 4px;
+      border-left: 3px solid var(--primary-30);
+      font-size: 13px;
+      line-height: 1.3;
+      color: var(--neutral-30);
+    }
+
+    .patient-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .patient-label {
+      color: var(--neutral-40);
+      font-size: 12px;
+    }
+
+    .patient-value {
+      font-weight: 500;
+    }
+
+    .patient-value.name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+    }
+
+    .note-content {
+      padding: 24px;
+      font-family: 'Literata', Georgia, serif;
+      font-size: 1rem;
+      line-height: 1.62;
+      color: var(--neutral-25);
+      letter-spacing: -0.01em;
+      text-wrap: pretty;
+      font-variant-numeric: oldstyle-nums;
+      /* Hyphenation */
+      -webkit-hyphens: auto;
+      -webkit-hyphenate-limit-before: 4;
+      -webkit-hyphenate-limit-after: 3;
+      -webkit-hyphenate-limit-lines: 2;
+      hyphens: auto;
+      hyphenate-limit-chars: 7 4 3;
+      hyphenate-limit-lines: 2;
+      hyphenate-limit-zone: 8%;
+      hyphenate-limit-last: always;
+    }
+
+    .note-section {
+      margin-bottom: 20px;
+    }
+
+    .note-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .note-section-title {
+      font-size: 19px;
+      font-weight: 540;
+      font-variant-caps: all-small-caps;
+      letter-spacing: 0.09em;
+      color: var(--primary-30);
+      margin: 0 0 8px 0;
+    }
+
+    .note-section-body {
+      margin: 0;
+    }
+
+    .note-footer {
+      border-top: 1px solid var(--neutral-80);
+      padding-top: 16px;
+      margin-top: 4px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .note-footer .note-section-body+.note-section-body {
+      margin-top: 4px;
+    }
+
+    .sc {
+      font-variant-caps: all-small-caps;
+      font-variant-numeric: lining-nums;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* ========== Buttons ========== */
+    .btn-ghost {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+    }
+
+    .btn-secondary {
+      padding: 8px 16px;
+      border: 1px solid var(--border-light);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-30);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-secondary:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .btn-primary {
+      padding: 8px 20px;
+      border: none;
+      background: hsl(218, 54%, 42%);
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .btn-primary:hover {
+      background: hsl(218, 54%, 36%);
+    }
+
+    /* ========== Send Message Popover (from 002-cf) ========== */
+    .popover-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+    }
+
+    .popover-backdrop.open {
+      display: block;
+    }
+
+    .send-message-wrap {
+      position: relative;
+    }
+
+    .message-popover {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      width: 420px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      z-index: 201;
+      flex-direction: column;
+      display: flex;
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition:
+        opacity 120ms ease,
+        transform 120ms cubic-bezier(.39, .575, .565, 1),
+        visibility 120ms;
+      /* exit */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .message-popover {
+        transition: none;
+        transform: none;
+      }
+    }
+
+    .message-popover.open {
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(.39, .575, .565, 1),
+        visibility 180ms;
+      /* enter */
+    }
+
+    .popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .popover-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .popover-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 18px;
+    }
+
+    .popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .popover-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Stacked form rows */
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+    }
+
+    /* Legacy inline rows - keep for other uses */
+    .form-row-inline {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .form-row-inline.align-top {
+      align-items: flex-start;
+    }
+
+    .form-row-inline.align-top .form-label {
+      padding-top: 8px;
+    }
+
+    .form-row-inline .form-label {
+      min-width: 52px;
+    }
+
+    .form-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .patient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--neutral-30);
+      width: fit-content;
+    }
+
+    .patient-chip-icon {
+      width: 16px;
+      height: 16px;
+      background: var(--neutral-70);
+      border-radius: 50%;
+    }
+
+    .recipient-field-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .recipient-input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px 8px;
+      min-height: 34px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      background: #fff;
+      cursor: text;
+    }
+
+    .recipient-input-wrap:focus-within {
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .recipient-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px 2px 8px;
+      background: hsl(218, 30%, 94%);
+      border-radius: 3px;
+      font-size: 13px;
+      color: var(--neutral-25);
+    }
+
+    .recipient-chip-remove {
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-50);
+      font-size: 14px;
+      padding: 0;
+    }
+
+    .recipient-chip-remove:hover {
+      background: hsl(218, 30%, 88%);
+      color: var(--neutral-30);
+    }
+
+    .recipient-input {
+      flex: 1;
+      min-width: 100px;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      padding: 2px 0;
+      background: transparent;
+    }
+
+    .recipient-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .typeahead-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 4px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .typeahead-dropdown.open {
+      display: block;
+    }
+
+    .typeahead-option {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .typeahead-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .typeahead-option-subtitle {
+      font-size: 11px;
+      color: var(--neutral-50);
+      margin-top: 2px;
+    }
+
+    .subject-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .subject-input:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .body-textarea-wrap {
+      position: relative;
+    }
+
+    .body-textarea {
+      width: 100%;
+      min-height: 120px;
+      max-height: 200px;
+      padding: 8px 10px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      background: #fff;
+      resize: vertical;
+    }
+
+    .body-textarea::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .body-textarea:focus {
+      outline: none;
+      border-color: hsl(218, 54%, 52%);
+      box-shadow: 0 0 0 2px hsla(218, 54%, 42%, 0.15);
+    }
+
+    .insert-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 500;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+    }
+
+    .insert-btn:hover {
+      color: hsl(218, 54%, 38%);
+    }
+
+    /* Legacy insert button style - keep for reference */
+    .insert-template-btn {
+      float: right;
+      margin: 0 0 4px 8px;
+      padding: 4px 8px;
+      border: none;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: hsl(218, 54%, 48%);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .insert-template-btn:hover {
+      background: hsl(218, 50%, 95%);
+      color: hsl(218, 54%, 42%);
+    }
+
+    .popover-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .draft-timestamp {
+      margin-right: auto;
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
+    /* ========== Toast ========== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast.error svg {
+      color: hsl(352, 92%, 62%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: none;
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main -->
+      <main class="shell-main">
+
+        <!-- Top Tabs -->
+        <div class="top-tabs">
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width: 50px;"></div>
+          </div>
+          <div class="wire-top-tab active">
+            <div class="wire-text" style="width: 90px;"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width: 100px;"></div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs -->
+        <div class="sub-tabs">
+          <div class="wire-sub-tab">
+            <div class="wire-text" style="width: 130px;"></div>
+          </div>
+          <div class="wire-sub-tab active">
+            <div class="wire-text" style="width: 45px;"></div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <!-- Filters row -->
+          <div class="filter-row">
+            <div class="wire-filter-toggle">
+              <div class="wire-filter-icon-gray"></div>
+              <div class="wire-text" style="width: 45px;"></div>
+              <div class="wire-badge-pill"></div>
+            </div>
+            <div class="filter-chevron">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+          <!-- Status pills row -->
+          <div class="status-pills-row">
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 70px;"></div>
+              <div class="wire-status-badge blue"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge red"></div>
+            </div>
+            <div class="wire-status-pill selected gold">
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-status-badge gold"></div>
+            </div>
+            <div class="wire-status-pill">
+              <div class="wire-text" style="width: 35px;"></div>
+              <div class="wire-status-badge green"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="wire-text" style="width: 60px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 60px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 60px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 70px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 60px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 45px;"></div>
+                </th>
+                <th>
+                  <div class="wire-text" style="width: 35px;"></div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-split-btn">
+                    <div class="wire-link" style="width: 70px;"></div>
+                    <div class="wire-eye-btn"></div>
+                  </div>
+                </td>
+                <td><span class="wire-badge finished"></span></td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+              </tr>
+              <tr class="selected" style="cursor: pointer;" onclick="openPanel()">
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-split-btn">
+                    <div class="wire-link" style="width: 85px;"></div>
+                    <div class="wire-eye-btn active"></div>
+                  </div>
+                </td>
+                <td><span class="wire-badge finished"></span></td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-split-btn">
+                    <div class="wire-link" style="width: 65px;"></div>
+                    <div class="wire-eye-btn"></div>
+                  </div>
+                </td>
+                <td><span class="wire-badge finished"></span></td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-split-btn">
+                    <div class="wire-link" style="width: 75px;"></div>
+                    <div class="wire-eye-btn"></div>
+                  </div>
+                </td>
+                <td><span class="wire-badge finished"></span></td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-split-btn">
+                    <div class="wire-link" style="width: 70px;"></div>
+                    <div class="wire-eye-btn"></div>
+                  </div>
+                </td>
+                <td><span class="wire-badge finished"></span></td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 55px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 40px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+                <td>
+                  <div class="wire-text" style="width: 20px;"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="wire-pagination">
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn active"></div>
+            <div class="wire-page-btn"></div>
+            <div class="wire-page-btn"></div>
+          </div>
+          <div class="wire-page-select"></div>
+          <div class="wire-text" style="width: 80px; margin-left: 8px;"></div>
+        </div>
+
+        <!-- Panel Backdrop -->
+        <div class="panel-backdrop open" id="panelBackdrop" onclick="closePanel()"></div>
+
+        <!-- Slide-in Panel -->
+        <div class="slide-panel open" id="slidePanel">
+          <div class="panel-header">
+            <h2 class="panel-title">Preview Note</h2>
+            <div class="panel-header-actions">
+              <!-- Activity Log (rotate-ccw-clock) -->
+              <button class="panel-icon-btn" title="Activity Log">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                  <path d="M12 7v5l4 2" />
+                </svg>
+              </button>
+              <!-- Close (x) -->
+              <button class="panel-icon-btn panel-close" onclick="closePanel()" title="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="note-preview">
+              <!-- Letterhead -->
+              <div class="note-letterhead">
+                <div class="letterhead-left letterhead-practice">Therhappy Associates</div>
+                <div class="letterhead-right letterhead-practice">James Morningstar, PsyD</div>
+                <div class="letterhead-left">392 Central Ave, Suite 300</div>
+                <div class="letterhead-right">Progress Note</div>
+                <div class="letterhead-left">Jersey City, NJ 07307</div>
+                <div class="letterhead-right">10/08/2026</div>
+                <div class="letterhead-left">(435) 435-4356</div>
+                <div class="letterhead-right">4:42 PM EDT</div>
+              </div>
+
+              <!-- Client info -->
+              <div class="note-patient">
+                <div class="patient-item">
+                  <span class="patient-label">Client</span>
+                  <span class="patient-value name">Ana Paciente</span>
+                </div>
+                <div class="patient-item">
+                  <span class="patient-label">DOB</span>
+                  <span class="patient-value">03/15/1987 (39)</span>
+                </div>
+                <div class="patient-item">
+                  <span class="patient-label">Chart ID</span>
+                  <span class="patient-value">28740</span>
+                </div>
+                <div class="patient-item">
+                  <span class="patient-label">MRN</span>
+                  <span class="patient-value">4821</span>
+                </div>
+              </div>
+
+              <!-- Note content -->
+              <div class="note-content" id="noteContent">
+                <div class="note-section">
+                  <h3 class="note-section-title">Subjective</h3>
+                  <p class="note-section-body">Ms. Paciente reported a &ldquo;mixed week.&rdquo; She described increased worry about an upcoming performance review at work, rating her anxiety at 7/10 on Monday and Tuesday and 4/10 by Thursday after using breathing exercises. She reported difficulty falling asleep on three of seven nights, averaging 5.5 hours. She stated, &ldquo;I keep running through every way it could go wrong.&rdquo; She denied panic attacks this week. She reported one argument with her partner related to irritability, which she said was resolved after she apologized. She denied alcohol use beyond one drink socially.</p>
+                </div>
+
+                <div class="note-section">
+                  <h3 class="note-section-title">Objective</h3>
+                  <p class="note-section-body">Client arrived on time, well-groomed, and dressed appropriately. Mood was described as &ldquo;anxious but hopeful.&rdquo; Affect was congruent, mildly constricted at the start of the session and broader by the end. Speech was normal in rate and volume. Thought process was linear and goal-directed. No evidence of psychosis. Insight and judgment were good. Client completed the thought record homework on four of seven days. <span class="sc">GAD-7</span> score today was 12 (moderate), down from 15 at intake and 14 at session 4. Client denied suicidal and homicidal ideation, intent, or plan.</p>
+                </div>
+
+                <div class="note-section">
+                  <h3 class="note-section-title">Assessment</h3>
+                  <p class="note-section-body">Ms. Paciente is making gradual progress toward treatment goals, as reflected in the lower <span class="sc">GAD-7</span> score and increased use of coping skills. Anticipatory anxiety about workplace evaluation remains the primary stressor. Catastrophizing and &ldquo;what if&rdquo; thinking were identified as the main cognitive patterns maintaining her worry. She responded well to cognitive restructuring in session and independently generated a more balanced alternative thought. Sleep disruption appears secondary to nighttime rumination. Risk is low.</p>
+                </div>
+
+                <div class="note-section">
+                  <h3 class="note-section-title">Plan</h3>
+                  <p class="note-section-body">Continue weekly <span class="sc">CBT</span> sessions. Practice cognitive restructuring in session using the performance review as the target scenario. Homework: complete the thought record daily and begin a &ldquo;worry window&rdquo; practice (15 minutes each evening, scheduled at least two hours before bed). Introduce basic sleep hygiene and a wind-down routine next session. Re-administer the <span class="sc">GAD-7</span> at session 12. Client agreed to the plan.</p>
+                </div>
+
+                <div class="note-section note-footer">
+                  <p class="note-section-body"><strong>Follow-up:</strong> 10/16/2026 at 4:00 PM</p>
+                  <p class="note-section-body"><strong>Electronically signed:</strong> James Morningstar, PsyD · PSY&thinsp;31842 · 10/08/2026 5:25 PM EDT</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-footer">
+            <button class="btn-secondary">Print</button>
+            <div class="send-message-wrap">
+              <button class="btn-primary" id="sendMessageTrigger" aria-expanded="false" aria-haspopup="dialog">Send Message</button>
+              <!-- Message Popover -->
+              <div class="message-popover" id="messagePopover">
+                <div class="popover-header">
+                  <h3 class="popover-title">Send Message</h3>
+                  <button class="popover-close" id="popoverClose">×</button>
+                </div>
+                <div class="popover-body">
+                  <div class="form-row">
+                    <label class="form-label">Client</label>
+                    <span class="patient-chip">Paciente, Ana</span>
+                  </div>
+                  <div class="form-row" style="position: relative;">
+                    <label class="form-label">To</label>
+                    <div class="recipient-input-wrap" id="toFieldWrap">
+                      <input type="text" class="recipient-input" id="toInput" placeholder="Add recipient...">
+                    </div>
+                    <div class="typeahead-dropdown" id="toDropdown"></div>
+                  </div>
+                  <div class="form-row" style="position: relative;">
+                    <label class="form-label">Cc</label>
+                    <div class="recipient-input-wrap" id="ccFieldWrap">
+                      <input type="text" class="recipient-input" id="ccInput" placeholder="Add recipient...">
+                    </div>
+                    <div class="typeahead-dropdown" id="ccDropdown"></div>
+                  </div>
+                  <div class="form-row">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="subject-input" value="10/08/2026 Progress Note">
+                  </div>
+                  <div class="form-row">
+                    <div class="form-row-header">
+                      <label class="form-label">Message</label>
+                    </div>
+                    <textarea class="body-textarea" id="messageBody" placeholder="Write your message..."></textarea>
+                  </div>
+                </div>
+                <div class="popover-footer">
+                  <span class="draft-timestamp" id="draftTimestamp"></span>
+                  <button class="btn-ghost" id="popoverCancel">Discard</button>
+                  <button class="btn-primary" id="popoverSend">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Mock provider data
+    const providers = [
+      { id: 1, name: 'Dr. Sarah Chen', title: 'Psychiatrist' },
+      { id: 2, name: 'Marcus Williams', title: 'LCSW' },
+      { id: 3, name: 'Jennifer Park', title: 'NP' },
+      { id: 4, name: 'David Thompson', title: 'MD' },
+      { id: 5, name: 'Amy Rodriguez', title: 'RN' },
+      { id: 6, name: 'Dr. James Morningstar', title: 'DPsych' }
+    ];
+
+    // State
+    let toRecipients = [];
+    let ccRecipients = [];
+
+    // Panel controls
+    function openPanel() {
+      document.getElementById('panelBackdrop').classList.add('open');
+      document.getElementById('slidePanel').classList.add('open');
+    }
+
+    function closePanel() {
+      document.getElementById('panelBackdrop').classList.remove('open');
+      document.getElementById('slidePanel').classList.remove('open');
+      closePopover();
+    }
+
+    // Message popover controls
+    const trigger = document.getElementById('sendMessageTrigger');
+    const popover = document.getElementById('messagePopover');
+    const closeBtn = document.getElementById('popoverClose');
+    const cancelBtn = document.getElementById('popoverCancel');
+    const sendBtn = document.getElementById('popoverSend');
+
+    function openPopover() {
+      popover.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      // Add Watson as default To recipient if empty
+      if (toRecipients.length === 0) {
+        const watson = providers.find(p => p.name === 'Dr. James Morningstar');
+        if (watson) {
+          toRecipients.push(watson);
+          renderRecipients('to');
+        }
+      }
+      // Focus first input
+      setTimeout(() => document.getElementById('toInput').focus(), 0);
+    }
+
+    function closePopover() {
+      popover.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+      resetForm();
+      // Return focus to trigger
+      trigger.focus();
+    }
+
+    // Draft state
+    let hasDraft = false;
+    const draftTimestamp = document.getElementById('draftTimestamp');
+
+    function updateDraftTimestamp() {
+      if (!hasDraft) {
+        hasDraft = true;
+        const now = new Date();
+        const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        draftTimestamp.textContent = `Draft saved ${time}`;
+      }
+    }
+
+    function resetForm() {
+      toRecipients = [];
+      ccRecipients = [];
+      renderRecipients('to');
+      renderRecipients('cc');
+      document.getElementById('messageBody').value = '';
+      toDropdown.classList.remove('open');
+      ccDropdown.classList.remove('open');
+      hasDraft = false;
+      draftTimestamp.textContent = '';
+    }
+
+    // Focus trap for popover
+    popover.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = popover.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // Global Esc handler - closes topmost layer
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (popover.classList.contains('open')) {
+          closePopover();
+        } else if (document.getElementById('slidePanel').classList.contains('open')) {
+          closePanel();
+        }
+      }
+    });
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (popover.classList.contains('open')) {
+        closePopover();
+      } else {
+        openPopover();
+      }
+    });
+    closeBtn.addEventListener('click', closePopover);
+    cancelBtn.addEventListener('click', closePopover);
+
+    sendBtn.addEventListener('click', () => {
+      closePopover();
+      showToast('success', 'Message sent');
+    });
+
+    // Message body input triggers draft timestamp
+    const messageBody = document.getElementById('messageBody');
+    messageBody.addEventListener('input', updateDraftTimestamp);
+
+    // Recipient field elements
+    const toInput = document.getElementById('toInput');
+    const toFieldWrap = document.getElementById('toFieldWrap');
+    const toDropdown = document.getElementById('toDropdown');
+    const ccInput = document.getElementById('ccInput');
+    const ccFieldWrap = document.getElementById('ccFieldWrap');
+    const ccDropdown = document.getElementById('ccDropdown');
+
+    // Filter providers
+    function filterProviders(query, excludeIds) {
+      if (query.length < 3) return [];
+      const lowerQuery = query.toLowerCase();
+      return providers.filter(p =>
+        !excludeIds.includes(p.id) &&
+        p.name.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Render dropdown
+    function renderDropdown(dropdown, results, onSelect) {
+      if (results.length === 0) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      dropdown.innerHTML = results.map(p => `
+        <div class="typeahead-option" data-id="${p.id}">
+          <div>${p.name}</div>
+          <div class="typeahead-option-subtitle">${p.title}</div>
+        </div>
+      `).join('');
+
+      dropdown.querySelectorAll('.typeahead-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(opt.dataset.id);
+          const provider = providers.find(p => p.id === id);
+          if (provider) onSelect(provider);
+        });
+      });
+
+      dropdown.classList.add('open');
+    }
+
+    // Add recipient chip
+    function addRecipient(field, provider) {
+      if (field === 'to') {
+        toRecipients.push(provider);
+        toInput.value = '';
+        toDropdown.classList.remove('open');
+        renderRecipients('to');
+        toInput.focus();
+      } else {
+        ccRecipients.push(provider);
+        ccInput.value = '';
+        ccDropdown.classList.remove('open');
+        renderRecipients('cc');
+        ccInput.focus();
+      }
+    }
+
+    // Remove recipient
+    function removeRecipient(field, id) {
+      if (field === 'to') {
+        toRecipients = toRecipients.filter(r => r.id !== id);
+        renderRecipients('to');
+      } else {
+        ccRecipients = ccRecipients.filter(r => r.id !== id);
+        renderRecipients('cc');
+      }
+    }
+
+    // Render recipient chips
+    function renderRecipients(field) {
+      const wrap = field === 'to' ? toFieldWrap : ccFieldWrap;
+      const input = field === 'to' ? toInput : ccInput;
+      const recipients = field === 'to' ? toRecipients : ccRecipients;
+
+      // Remove existing chips
+      wrap.querySelectorAll('.recipient-chip').forEach(c => c.remove());
+
+      // Add chips before input
+      recipients.forEach(r => {
+        const chip = document.createElement('span');
+        chip.className = 'recipient-chip';
+        chip.innerHTML = `
+          ${r.name}
+          <button class="recipient-chip-remove" data-id="${r.id}">×</button>
+        `;
+        chip.querySelector('.recipient-chip-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeRecipient(field, r.id);
+        });
+        wrap.insertBefore(chip, input);
+      });
+    }
+
+    // Typeahead for To
+    toInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(toInput.value, excludeIds);
+      renderDropdown(toDropdown, results, (p) => addRecipient('to', p));
+    });
+
+    // Typeahead for Cc
+    ccInput.addEventListener('input', () => {
+      const excludeIds = [...toRecipients, ...ccRecipients].map(r => r.id);
+      const results = filterProviders(ccInput.value, excludeIds);
+      renderDropdown(ccDropdown, results, (p) => addRecipient('cc', p));
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+      if (!toFieldWrap.contains(e.target)) {
+        toDropdown.classList.remove('open');
+      }
+      if (!ccFieldWrap.contains(e.target)) {
+        ccDropdown.classList.remove('open');
+      }
+    });
+
+    // Focus input when clicking the wrap
+    toFieldWrap.addEventListener('click', () => toInput.focus());
+    ccFieldWrap.addEventListener('click', () => ccInput.focus());
+
+    // Show toast notification
+    function showToast(type, message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      // Icon SVGs (Lucide)
+      const icons = {
+        success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+        error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      };
+
+      toast.innerHTML = `${icons[type] || ''}<span>${message}</span>`;
+      container.appendChild(toast);
+
+      // Auto-dismiss after 3s
+      setTimeout(() => {
+        toast.classList.add('leaving');
+        toast.addEventListener('animationend', () => toast.remove());
+      }, 3000);
+    }
+  </script>
+
+</body>
+
+</html>

@@ -751,10 +751,17 @@
     /* Popover footer */
     .popover-footer {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
+      gap: 8px;
       padding: 12px 16px;
       border-top: 1px solid var(--neutral-85);
+    }
+
+    .draft-timestamp {
+      margin-right: auto;
+      font-size: 12px;
+      color: var(--neutral-50);
     }
 
     .btn-ghost {
@@ -1336,6 +1343,7 @@
                       </div>
 
                       <div class="popover-footer">
+                        <span class="draft-timestamp" id="draftTimestamp"></span>
                         <button class="btn-ghost" id="discardBtn">Discard</button>
                         <button class="btn-primary" id="sendBtn" disabled>Send</button>
                       </div>
@@ -1392,6 +1400,20 @@
 
     const subjectInput = document.getElementById('subjectInput');
     const bodyTextarea = document.getElementById('bodyTextarea');
+    const draftTimestamp = document.getElementById('draftTimestamp');
+
+    // Draft state
+    let hasDraft = false;
+
+    // Update draft timestamp (shown after first keystroke)
+    function updateDraftTimestamp() {
+      if (!hasDraft) {
+        hasDraft = true;
+        const now = new Date();
+        const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        draftTimestamp.textContent = `Draft saved ${time}`;
+      }
+    }
 
     // Validate form and toggle Send button
     function validateForm() {
@@ -1428,24 +1450,15 @@
       sendMessageBtn.setAttribute('aria-expanded', 'true');
       toInput.focus();
       validateForm();
-      // Close on outside click
-      setTimeout(() => document.addEventListener('click', handleOutsideClick), 0);
     }
 
     // Close popover
     function closePopover() {
       messagePopover.classList.remove('open');
       sendMessageBtn.setAttribute('aria-expanded', 'false');
-      document.removeEventListener('click', handleOutsideClick);
       resetForm();
       // Return focus to trigger
       sendMessageBtn.focus();
-    }
-
-    function handleOutsideClick(e) {
-      if (!messagePopover.contains(e.target) && e.target !== sendMessageBtn) {
-        closePopover();
-      }
     }
 
     // Focus trap for popover
@@ -1482,6 +1495,9 @@
       bodyTextarea.value = '';
       toDropdown.classList.remove('open');
       ccDropdown.classList.remove('open');
+      // Clear draft state
+      hasDraft = false;
+      draftTimestamp.textContent = '';
     }
 
     // Filter providers
@@ -1628,8 +1644,14 @@
     ccFieldWrap.addEventListener('click', () => ccInput.focus());
 
     // Validate on subject/body input
-    subjectInput.addEventListener('input', validateForm);
-    bodyTextarea.addEventListener('input', validateForm);
+    subjectInput.addEventListener('input', () => {
+      updateDraftTimestamp();
+      validateForm();
+    });
+    bodyTextarea.addEventListener('input', () => {
+      updateDraftTimestamp();
+      validateForm();
+    });
   </script>
 </body>
 
