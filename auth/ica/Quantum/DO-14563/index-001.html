@@ -1410,8 +1410,9 @@
       if (!hasDraft) {
         hasDraft = true;
         const now = new Date();
+        const date = now.toLocaleDateString('en-US');
         const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        draftTimestamp.textContent = `Draft saved ${time}`;
+        draftTimestamp.textContent = `Draft saved ${date}, ${time}`;
       }
     }
 
