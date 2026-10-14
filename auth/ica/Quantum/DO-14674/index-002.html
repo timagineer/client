@@ -1904,12 +1904,18 @@
       setTimeout(() => document.getElementById('toInput').focus(), 0);
     }
 
+    // Close popover (retains data - draft persists)
     function closePopover() {
       popover.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
-      resetForm();
       // Return focus to trigger
       trigger.focus();
+    }
+
+    // Discard draft (clears data)
+    function discardDraft() {
+      resetForm();
+      closePopover();
     }
 
     // Draft state
@@ -1973,7 +1979,7 @@
       }
     });
     closeBtn.addEventListener('click', closePopover);
-    cancelBtn.addEventListener('click', closePopover);
+    cancelBtn.addEventListener('click', discardDraft);
 
     sendBtn.addEventListener('click', () => {
       closePopover();

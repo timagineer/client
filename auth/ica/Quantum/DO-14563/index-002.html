@@ -1453,13 +1453,18 @@
       validateForm();
     }
 
-    // Close popover
+    // Close popover (retains data - draft persists)
     function closePopover() {
       messagePopover.classList.remove('open');
       sendMessageBtn.setAttribute('aria-expanded', 'false');
-      resetForm();
       // Return focus to trigger
       sendMessageBtn.focus();
+    }
+
+    // Discard draft (clears data)
+    function discardDraft() {
+      resetForm();
+      closePopover();
     }
 
     // Focus trap for popover
@@ -1602,7 +1607,7 @@
       }
     });
     popoverClose.addEventListener('click', closePopover);
-    discardBtn.addEventListener('click', closePopover);
+    discardBtn.addEventListener('click', discardDraft);
 
     sendBtn.addEventListener('click', () => {
       // Mock send
