@@ -150,6 +150,15 @@
          }
       }
 
+      .version-name a {
+         color: var(--color-link);
+         text-decoration: none;
+      }
+
+      .version-name a:hover {
+         text-decoration: underline;
+      }
+
       @media (prefers-color-scheme: dark) {
          :root {
             --color-text: hsl(220, 15%, 85%);
@@ -173,12 +182,12 @@
       </header>
       <main class="versions">
          <div class="version current" data-href="finished-notes-prototype.html">
-            <span class="version-name">v1</span>
+            <span class="version-name"><a href="finished-notes-prototype.html">v1</a></span>
             <span class="version-desc">Finished notes worklist</span>
             <span class="version-date">06/26</span>
          </div>
          <div class="version" data-href="cosig-table-prototype.html">
-            <span class="version-name">v1</span>
+            <span class="version-name"><a href="cosig-table-prototype.html">v1</a></span>
             <span class="version-desc">Co-signature worklist</span>
             <span class="version-date">06/26</span>
          </div>
@@ -186,7 +195,10 @@
    </div>
    <script>
       document.querySelectorAll('.version[data-href]').forEach(row => {
-         row.addEventListener('click', () => { window.location.href = row.dataset.href; });
+         row.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') return;
+            window.location.href = row.dataset.href;
+         });
       });
    </script>
 </body>

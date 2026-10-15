@@ -140,6 +140,15 @@
       white-space: nowrap;
     }
 
+    .version-name a {
+      color: var(--color-link);
+      text-decoration: none;
+    }
+
+    .version-name a:hover {
+      text-decoration: underline;
+    }
+
     .version.current {
       background: var(--color-hover);
     }
@@ -173,17 +182,17 @@
     </header>
     <main class="versions">
       <div class="version current" data-href="index-003.html">
-        <span class="version-name">v3</span>
+        <span class="version-name"><a href="index-003.html">v3</a></span>
         <span class="version-desc">All Documents modal, type filters, row-click preview <span style="color: hsl(45, 90%, 50%);">✶</span></span>
         <span class="version-date">10/26</span>
       </div>
       <div class="version" data-href="index-002.html">
-        <span class="version-name">v2</span>
+        <span class="version-name"><a href="index-002.html">v2</a></span>
         <span class="version-desc">Custom Forms modal w/pagination and search</span>
         <span class="version-date">10/26</span>
       </div>
       <div class="version" data-href="index-001.html">
-        <span class="version-name">v1</span>
+        <span class="version-name"><a href="index-001.html">v1</a></span>
         <span class="version-desc">Initial concept (popover)</span>
         <span class="version-date">10/26</span>
       </div>
@@ -191,7 +200,10 @@
   </div>
   <script>
     document.querySelectorAll('.version[data-href]').forEach(row => {
-      row.addEventListener('click', () => { window.location.href = row.dataset.href; });
+      row.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') return;
+        window.location.href = row.dataset.href;
+      });
     });
   </script>
 </body>
