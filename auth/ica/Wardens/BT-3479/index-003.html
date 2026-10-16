@@ -2041,13 +2041,13 @@
 
     function openDocsModal(clientName) {
       currentClientName = clientName || 'Anna Paciente';
-      docsModalTitle.textContent = currentClientName + ' Documents';
       docsSearchInput.value = '';
       activeTypeFilter = 'all';
       docsData = [...allDocsData];
       currentPage = 1;
       sortColumn = 'date';
       sortDirection = 'desc';
+      updateModalTitle();
       updateTypeFilterPills();
       updateTypeCounts();
       updateSortHeaders();
@@ -2088,9 +2088,23 @@
       );
     }
 
+    const typeLabels = {
+      all: 'All Documents',
+      document: 'Documents',
+      form: 'Forms',
+      customform: 'Custom Forms',
+      note: 'Notes'
+    };
+
+    function updateModalTitle() {
+      const label = typeLabels[activeTypeFilter] || 'All Documents';
+      docsModalTitle.textContent = currentClientName + ' ' + label;
+    }
+
     function filterByType(type) {
       activeTypeFilter = type;
       updateTypeFilterPills();
+      updateModalTitle();
       applyFilters();
     }
 
