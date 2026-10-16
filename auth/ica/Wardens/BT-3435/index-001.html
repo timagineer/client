@@ -2515,6 +2515,34 @@
       margin-top: var(--sp-3);
       line-height: 1.5;
     }
+
+    /* Empty state */
+    .empty-state {
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      margin-bottom: 16px;
+      color: var(--neutral-60);
+    }
+
+    .empty-state-icon svg {
+      width: 56px;
+      height: 56px;
+    }
+
+    .empty-state-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neutral-30);
+      margin-bottom: 6px;
+    }
+
+    .empty-state-message {
+      font-size: 13px;
+      color: var(--neutral-50);
+    }
   </style>
 </head>
 
@@ -3001,7 +3029,28 @@
     if (currentPage < 1) currentPage = 1;
 
     const paged = getPagedData(sorted);
-    tbody.innerHTML = paged.map(renderRow).join('');
+
+    // Empty states
+    if (data.length === 0) {
+      // No data at all
+      tbody.innerHTML = `<tr><td colspan="13" class="empty-state">
+        <div class="empty-state-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v5.6"/><path d="m14.305 19.53.923-.382"/><path d="M15 3v7.6"/><path d="m15.229 16.852-.924-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="m20.773 16.852.922-.383"/><path d="m20.773 19.148.922.383"/><path d="M9 3v18"/><circle cx="18" cy="18" r="3"/></svg>
+        </div>
+        <div class="empty-state-title">No billing combinations configured</div>
+        <div class="empty-state-message">Click + Add to get started.</div>
+      </td></tr>`;
+    } else if (sorted.length === 0) {
+      // No search results
+      tbody.innerHTML = `<tr><td colspan="13" class="empty-state">
+        <div class="empty-state-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div class="empty-state-title">No combinations match your search</div>
+      </td></tr>`;
+    } else {
+      tbody.innerHTML = paged.map(renderRow).join('');
+    }
 
     // Update count
     const start = (currentPage - 1) * pageSize + 1;
