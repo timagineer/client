@@ -3084,7 +3084,6 @@
       btn.onclick = () => {
         data = data.filter(r => r.id !== +btn.dataset.delete);
         if (editingId === +btn.dataset.delete) editingId = null;
-        showStatus('Combination deleted.', 'success');
         render();
       };
     });
