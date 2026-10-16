@@ -1,0 +1,29 @@
+/**
+ * Color Palette
+ * Shared color variables for prototype indexes
+ */
+
+:root {
+  --color-text: hsl(220, 20%, 20%);
+  --color-text-muted: hsl(220, 12%, 43%);
+  --color-link: hsl(212, 92%, 38%);
+  --color-link-hover: hsl(212, 92%, 30%);
+  --color-bg: hsl(220, 20%, 98%);
+  --color-surface: hsl(0, 0%, 100%);
+  --color-border: hsl(220, 15%, 90%);
+  --color-hover: hsl(220, 30%, 96%);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: hsl(220, 15%, 85%);
+    --color-text-muted: hsl(220, 10%, 63%);
+    --color-link: hsl(212, 90%, 70%);
+    --color-link-hover: hsl(212, 90%, 78%);
+    --color-bg: hsl(220, 20%, 10%);
+    --color-surface: hsl(220, 15%, 15%);
+    --color-border: hsl(220, 15%, 25%);
+    --color-hover: hsl(220, 20%, 20%);
+  }
+}
