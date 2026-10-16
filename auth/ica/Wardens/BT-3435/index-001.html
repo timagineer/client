@@ -3216,6 +3216,52 @@
     document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
   }
 
+  // Check if two duration ranges overlap (exclusive of endpoints)
+  function rangesOverlap(from1, to1, from2, to2) {
+    // Ranges overlap if one starts before the other ends
+    return from1 < to2 && to1 > from2;
+  }
+
+  // Check if modifiers arrays match (same values in same positions)
+  function modsMatch(mods1, mods2) {
+    return mods1.every((m, i) => m === mods2[i]);
+  }
+
+  // Check for duration overlap with existing combinations
+  function checkDurationOverlap(row) {
+    // Skip if no duration defined
+    if (row.from === '' || row.to === '') return null;
+
+    const rowFrom = +row.from;
+    const rowTo = +row.to;
+
+    // Find other rows with same clinician + service + modifiers
+    for (const other of data) {
+      if (other.id === row.id) continue; // Skip self
+      if (other.from === '' || other.to === '') continue; // Skip rows without duration
+
+      // Check if clinician arrays have any overlap
+      const clinicianOverlap = row.clinician.some(c => other.clinician.includes(c));
+      if (!clinicianOverlap) continue;
+
+      // Check service code match
+      if (row.service !== other.service) continue;
+
+      // Check modifiers match
+      if (!modsMatch(row.mods, other.mods)) continue;
+
+      // Same combination — check for duration overlap
+      const otherFrom = +other.from;
+      const otherTo = +other.to;
+
+      if (rangesOverlap(rowFrom, rowTo, otherFrom, otherTo)) {
+        const overlappingClinician = row.clinician.find(c => other.clinician.includes(c));
+        return { clinician: overlappingClinician, service: row.service, from: other.from, to: other.to };
+      }
+    }
+    return null;
+  }
+
   function saveRow(id) {
     const row = data.find(r => r.id === id);
     if (!row) return;
@@ -3254,6 +3300,17 @@
     // At least Units or POS required
     if (!row.units && !row.pos) {
       showStatus('Please enter Units, POS Code, or both.', 'error');
+      return;
+    }
+
+    // Check for duration overlap with same combination
+    const overlap = checkDurationOverlap(row);
+    if (overlap) {
+      showStatus(`Duration overlaps with existing ${overlap.service} (${overlap.from}–${overlap.to} min) for this combination.`, 'error');
+      const fromInput = editingRow?.querySelector('[data-field="from"]');
+      const toInput = editingRow?.querySelector('[data-field="to"]');
+      if (fromInput) fromInput.classList.add('error');
+      if (toInput) toInput.classList.add('error');
       return;
     }
 
