@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Code</title>
+    <title>Prototype: Separate invoice/superbill [DO-10765]</title>
     <meta name="view-transition" content="same-origin">
     <link rel="preconnect" href="https://ajax.googleapis.com">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
@@ -170,6 +170,7 @@
             }
 
             @starting-style {
+
                 dialog[open],
                 dialog[open]::backdrop {
                     opacity: 0;
@@ -787,11 +788,11 @@
                         <td>
                             <button class="delete-button" aria-label="Delete row">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M10 11v6"/>
-                                    <path d="M14 11v6"/>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-                                    <path d="M3 6h18"/>
-                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    <path d="M10 11v6" />
+                                    <path d="M14 11v6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                 </svg>
                             </button>
                         </td>
@@ -836,11 +837,11 @@
                         <td>
                             <button class="delete-button" aria-label="Delete row">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M10 11v6"/>
-                                    <path d="M14 11v6"/>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-                                    <path d="M3 6h18"/>
-                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    <path d="M10 11v6" />
+                                    <path d="M14 11v6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                 </svg>
                             </button>
                         </td>
@@ -1028,12 +1029,12 @@
                     if (modal) {
                         modal.classList.add('closing');
 
-                        modal.addEventListener('animationend', function() {
+                        modal.addEventListener('animationend', function () {
                             modal.classList.remove('closing');
                             modal.close();
                         }, { once: true });
 
-                        setTimeout(function() {
+                        setTimeout(function () {
                             if (modal.classList.contains('closing')) {
                                 modal.classList.remove('closing');
                                 modal.close();
@@ -1110,13 +1111,13 @@
                 }, 0);
 
                 // Close modal when clicking backdrop
-                $timeout(function() {
+                $timeout(function () {
                     var modals = document.querySelectorAll('dialog');
-                    modals.forEach(function(modal) {
-                        modal.addEventListener('click', function(e) {
+                    modals.forEach(function (modal) {
+                        modal.addEventListener('click', function (e) {
                             if (e.target === modal) {
                                 var modalId = modal.id;
-                                $scope.$apply(function() {
+                                $scope.$apply(function () {
                                     vm.closeModal(modalId);
                                 });
                             }
