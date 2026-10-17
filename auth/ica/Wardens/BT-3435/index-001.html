@@ -9,11 +9,10 @@
   <style>
     :root {
       /* Color palette */
-      --primary-30: oklch(0.4474 0.0819 234.85);
-      --primary-btn: hsl(216, 53%, 42%);
-      --primary-btn-hover: hsl(216, 53%, 35%);
-      --primary-btn-active: hsl(216, 53%, 29%);
-      --secondary-60: oklch(0.6852 0.1805 129.27);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
       --neutral-20: oklch(0.3008 0.0116 234.63);
       --neutral-25: oklch(0.3608 0.0139 234.51);
       --neutral-30: oklch(0.4089 0.0157 234.40);
@@ -26,6 +25,9 @@
       --neutral-85: oklch(0.9234 0.0059 233.18);
       --neutral-90: oklch(0.9542 0.0034 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
+      --primary-btn: var(--primary-50);
+      --primary-btn-hover: var(--primary-30);
+      --primary-btn-active: var(--primary-25);
 
       --border-light: var(--neutral-75);
       --rad: 6px;
@@ -71,7 +73,7 @@
     .wire-logo-mark {
       width: 32px;
       height: 18px;
-      background: var(--primary-30);
+      background: var(--primary-50);
       border-radius: var(--rad);
     }
 
