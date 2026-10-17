@@ -20,7 +20,7 @@
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.3-4.3" />
         </svg>
-        <input type="search" class="search-input" id="searchInput" placeholder="Filter…" autocomplete="off">
+        <input type="search" class="search-input" id="searchInput" placeholder="Search…" autocomplete="off">
       </div>
     </header>
 
@@ -245,73 +245,84 @@
   </div>
 
   <script>
-    const searchInput = document.getElementById('searchInput');
-    const teamList = document.getElementById('teamList');
-    const noResults = document.getElementById('noResults');
-    const allRows = document.querySelectorAll('tr[data-search]');
-    const allDetails = document.querySelectorAll('details[data-team]');
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      const teamList = document.getElementById('teamList');
+      const noResults = document.getElementById('noResults');
+      let isFiltering = false; // Flag to disable accordion behavior during filter
 
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase().trim();
-      let totalVisible = 0;
+      function doFilter() {
+        const allDetails = document.querySelectorAll('details[data-team]');
+        const query = searchInput.value.toLowerCase().trim();
+        let totalVisible = 0;
 
-      allDetails.forEach(details => {
-        const rows = details.querySelectorAll('tr[data-search]');
-        let teamVisible = 0;
+        isFiltering = true; // Disable accordion during filter updates
 
-        rows.forEach(row => {
-          const match = !query || row.dataset.search.includes(query);
-          row.classList.toggle('hidden', !match);
-          if (match) teamVisible++;
+        allDetails.forEach(details => {
+          const rows = details.querySelectorAll('tr[data-search]');
+          let teamVisible = 0;
+
+          rows.forEach(row => {
+            const searchText = row.dataset.search;
+            const match = !query || searchText.includes(query);
+            row.classList.toggle('hidden', !match);
+            if (match) teamVisible++;
+          });
+
+          // Update count badge
+          const countEl = details.querySelector('.team-count');
+          if (countEl) countEl.textContent = String(teamVisible).padStart(2, '0');
+
+          // Hide entire section if no matches
+          details.style.display = teamVisible === 0 ? 'none' : '';
+
+          // Open sections with matches when searching, close when clearing
+          if (query && teamVisible > 0) {
+            details.open = true;
+          } else if (!query) {
+            details.open = false;
+          }
+
+          totalVisible += teamVisible;
         });
 
-        // Update count badge
-        const countEl = details.querySelector('.team-count');
-        countEl.textContent = teamVisible;
+        isFiltering = false; // Re-enable accordion behavior
 
-        // Hide entire section if no matches
-        details.style.display = teamVisible === 0 ? 'none' : '';
+        noResults.classList.toggle('visible', totalVisible === 0 && query);
+      }
 
-        // Keep sections open when searching
-        if (query && teamVisible > 0) {
-          details.open = true;
-        }
+      searchInput.addEventListener('input', doFilter);
 
-        totalVisible += teamVisible;
+      // Accordion: one open at a time (only when not filtering)
+      document.querySelectorAll('details[data-team]').forEach(details => {
+        details.addEventListener('toggle', () => {
+          if (details.open && !isFiltering && !searchInput.value.trim()) {
+            document.querySelectorAll('details[data-team]').forEach(other => {
+              if (other !== details) other.open = false;
+            });
+          }
+        });
       });
 
-      noResults.classList.toggle('visible', totalVisible === 0);
-    });
-
-    // Accordion: one open at a time
-    document.querySelectorAll('details[data-team]').forEach(details => {
-      details.addEventListener('toggle', () => {
-        if (details.open) {
-          document.querySelectorAll('details[data-team]').forEach(other => {
-            if (other !== details) other.open = false;
-          });
+      // Keyboard shortcut: focus search with /
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+          searchInput.value = '';
+          searchInput.dispatchEvent(new Event('input'));
+          searchInput.blur();
         }
       });
-    });
 
-    // Keyboard shortcut: focus search with /
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        searchInput.focus();
-      }
-      if (e.key === 'Escape' && document.activeElement === searchInput) {
-        searchInput.value = '';
-        searchInput.dispatchEvent(new Event('input'));
-        searchInput.blur();
-      }
-    });
-
-    // Make rows clickable
-    document.querySelectorAll('tr[data-href]').forEach(row => {
-      row.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') return; // let link handle it
-        window.location.href = row.dataset.href;
+      // Make rows clickable
+      document.querySelectorAll('tr[data-href]').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A') return; // let link handle it
+          window.location.href = row.dataset.href;
+        });
       });
     });
   </script>
