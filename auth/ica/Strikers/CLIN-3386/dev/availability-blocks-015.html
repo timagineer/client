@@ -1,0 +1,5442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Calendar Availability Blocks [CLIN-3854] - 012 View Popover</title>
+  <link rel="stylesheet" href="color-palette.css">
+
+  <style>
+    /* ==========================================================================
+   Variables & Reset
+   ========================================================================== */
+
+    :root {
+      /* Legacy aliases */
+      --primary: var(--primary-30);
+      --primary-hover: var(--primary-25);
+      --primary-active: var(--primary-20);
+      --primary-on: hsl(0, 0%, 100%);
+
+      --text-1: var(--neutral-15);
+      --text-2: var(--neutral-35);
+      --text-3: var(--neutral-45);
+
+      --bg-app: var(--neutral-95);
+      --bg-surface: white;
+      --bg-subtle: var(--neutral-90);
+
+      --border: var(--neutral-50);
+      --border-light: var(--neutral-75);
+      --border-btn: var(--neutral-70);
+
+      /* Availability block colors - using new palette
+         1: Intakes = cerulean
+         2: Established = violet
+         3: Telehealth = jade
+         4: Crisis = orange
+         5: Group = fuchsia
+      */
+
+      /* Map avail block colors to appointment types
+         Availability blocks represent time slots for specific appointment types,
+         so their colors should match the appointment type they allow */
+      --avail-intake: var(--appt-type-intake-bg);
+      --avail-intake-border: var(--cerulean-70);
+      --avail-intake-text: var(--appt-type-intake-border);
+
+      --avail-established: var(--appt-type-established-bg);
+      --avail-established-border: var(--primary-70);
+      --avail-established-text: var(--appt-type-established-border);
+
+      --avail-new: var(--appt-type-new-bg);
+      --avail-new-border: var(--secondary-70);
+      --avail-new-text: var(--appt-type-new-border);
+
+      --avail-telehealth: var(--appt-type-telehealth-bg);
+      --avail-telehealth-border: var(--aqua-70);
+      --avail-telehealth-text: var(--appt-type-telehealth-border);
+
+      --avail-crisis: var(--appt-type-crisis-bg);
+      --avail-crisis-border: var(--red-70);
+      --avail-crisis-text: var(--appt-type-crisis-border);
+
+      --avail-group: var(--appt-type-group-bg);
+      --avail-group-border: var(--fuchsia-70);
+      --avail-group-text: var(--appt-type-group-border);
+
+      --avail-evaluation: var(--appt-type-evaluation-bg);
+      --avail-evaluation-border: var(--violet-70);
+      --avail-evaluation-text: var(--appt-type-evaluation-border);
+
+      --avail-medmgmt: var(--appt-type-medmgmt-bg);
+      --avail-medmgmt-border: var(--amber-70);
+      --avail-medmgmt-text: var(--appt-type-medmgmt-border);
+
+      --avail-followup: var(--appt-type-followup-bg);
+      --avail-followup-border: var(--jade-70);
+      --avail-followup-text: var(--appt-type-followup-border);
+
+      --avail-family: var(--appt-type-family-bg);
+      --avail-family-border: var(--coral-70);
+      --avail-family-text: var(--appt-type-family-border);
+
+      /* Legacy numbered mapping for backward compatibility */
+      --avail-1: var(--avail-intake);
+      --avail-1-border: var(--avail-intake-border);
+      --avail-1-text: var(--avail-intake-text);
+
+      --avail-2: var(--avail-established);
+      --avail-2-border: var(--avail-established-border);
+      --avail-2-text: var(--avail-established-text);
+
+      --avail-3: var(--avail-telehealth);
+      --avail-3-border: var(--avail-telehealth-border);
+      --avail-3-text: var(--avail-telehealth-text);
+
+      --avail-4: var(--avail-crisis);
+      --avail-4-border: var(--avail-crisis-border);
+      --avail-4-text: var(--avail-crisis-text);
+
+      --avail-5: var(--avail-group);
+      --avail-5-border: var(--avail-group-border);
+      --avail-5-text: var(--avail-group-text);
+
+      /* Transparent versions for stacked/blending mode (B) */
+      --avail-1-alpha: oklch(from var(--appt-type-intake-border) l c h / 0.12);
+      --avail-2-alpha: oklch(from var(--appt-type-established-border) l c h / 0.12);
+      --avail-3-alpha: oklch(from var(--appt-type-telehealth-border) l c h / 0.12);
+      --avail-4-alpha: oklch(from var(--appt-type-crisis-border) l c h / 0.12);
+      --avail-5-alpha: oklch(from var(--appt-type-group-border) l c h / 0.12);
+
+      /* Appointment type border colors (using -40 step) */
+      --appt-type-intake: var(--cerulean-40);
+      /* Appointment type colors - 10 types distributed around color wheel
+         Constraints:
+         - Established Client → Primary (blue, locked)
+         - New Client → Secondary (green, locked)
+         - Crisis Intervention → Red (like No Show status, locked)
+         Remaining types distributed equidistant to avoid collision */
+      --appt-type-established-fg: var(--primary-20);
+      --appt-type-established-border: var(--primary-40);
+      --appt-type-established-bg: var(--primary-95);
+
+      --appt-type-new-fg: var(--secondary-20);
+      --appt-type-new-border: var(--secondary-40);
+      --appt-type-new-bg: var(--secondary-95);
+
+      --appt-type-crisis-fg: var(--red-20);
+      --appt-type-crisis-border: var(--red-40);
+      --appt-type-crisis-bg: var(--red-95);
+
+      --appt-type-intake-fg: var(--cerulean-20);
+      --appt-type-intake-border: var(--cerulean-40);
+      --appt-type-intake-bg: var(--cerulean-95);
+
+      --appt-type-group-fg: var(--fuchsia-20);
+      --appt-type-group-border: var(--fuchsia-40);
+      --appt-type-group-bg: var(--fuchsia-95);
+
+      --appt-type-evaluation-fg: var(--violet-20);
+      --appt-type-evaluation-border: var(--violet-40);
+      --appt-type-evaluation-bg: var(--violet-95);
+
+      --appt-type-medmgmt-fg: var(--amber-20);
+      --appt-type-medmgmt-border: var(--amber-40);
+      --appt-type-medmgmt-bg: var(--amber-95);
+
+      --appt-type-followup-fg: var(--jade-20);
+      --appt-type-followup-border: var(--jade-40);
+      --appt-type-followup-bg: var(--jade-95);
+
+      --appt-type-family-fg: var(--coral-20);
+      --appt-type-family-border: var(--coral-40);
+      --appt-type-family-bg: var(--coral-95);
+
+      --appt-type-telehealth-fg: var(--aqua-20);
+      --appt-type-telehealth-border: var(--aqua-40);
+      --appt-type-telehealth-bg: var(--aqua-95);
+
+      /* Appointment status colors (right border) - using palette
+         Organized by phase:
+         - Scheduling: requested (honey/yellow), scheduled/rescheduled (violet)
+         - Pre-visit: confirmed (blue)
+         - Engagement: arrived, checkedin (aqua)
+         - Completed: occurred (green) — reserved for success
+         - Did not occur: cancelled → late → noshow (amber → tomato → coral)
+           Severity gradient uses hue + chroma + lightness escalation
+      */
+      --status-requested: var(--lemon-40);
+      /* hue ~100° — action needed (distinct from amber) */
+      --status-scheduled: var(--violet-40);
+      --status-rescheduled: var(--violet-40);
+      --status-confirmed: var(--blue-40);
+      --status-arrived: var(--aqua-40);
+      --status-checkedin: var(--aqua-40);
+      --status-occurred: var(--green-40);
+      /* Did not occur — severity gradient (hue shift only, consistent -40 weight) */
+      --status-cancelled: var(--amber-40);
+      /* hue ~68° — managed */
+      --status-late: var(--tomato-40);
+      /* hue ~38° — disruptive */
+      --status-noshow: var(--red-40);
+      /* hue ~23° — severe */
+
+      /* Typography */
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --text-base: 1rem;
+      --text-sm: 0.875rem;
+      --text-xs: 0.75rem;
+
+      /* Spacing */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+      --sp-6: 32px;
+
+      /* Radius */
+      --rad-xs: 2px;
+      --rad-sm: 4px;
+      --rad-md: 6px;
+      --rad-lg: 12px;
+      --rad-pill: 9999px;
+      --rad: var(--rad-md);
+      /* default for legacy usage */
+
+      /* Calendar */
+      --cal-hour-height: 96px;
+      --cal-time-gutter: 56px;
+
+      /* Z-index primitives (10-step scale) */
+      --z-10: 10;
+      --z-20: 20;
+      --z-30: 30;
+      --z-40: 40;
+      --z-50: 50;
+      --z-60: 60;
+      --z-70: 70;
+      --z-80: 80;
+      --z-90: 90;
+      --z-100: 100;
+
+      /* Z-index semantic layers
+         ─────────────────────────────────────
+         avail-layer       10
+         avail-blocks      15
+         dnb-blocks        18  (below appointments)
+         appointments      20
+         avail-labels      25
+         avail-occupied    30  (hatching over appts in V mode)
+         dnb-labels        35
+         hour-lines (V)    40
+         headers           60
+         current-time      70
+         toolbar           70
+         hover-preview     80
+         popover           90
+         popover-edit     100
+         context-menu     110
+         tooltip          200
+         modal            999
+      */
+      --layer-avail: var(--z-10);
+      --layer-avail-blocks: 15;
+      --layer-dnb-hatching: 17;
+      --layer-appointments: var(--z-20);
+      --layer-avail-labels: 45;
+      --layer-avail-occupied: var(--z-30);
+      --layer-dnb-labels: 19;
+      --layer-hour-lines: var(--z-40);
+      --layer-headers: var(--z-60);
+      --layer-current-time: var(--z-70);
+      --layer-toolbar: var(--z-70);
+      --layer-hover: var(--z-80);
+      --layer-popover: var(--z-90);
+      --layer-popover-edit: var(--z-100);
+      --layer-context-menu: 110;
+      --layer-tooltip: 200;
+      --layer-modal: 999;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--text-1);
+      background: var(--bg-app);
+    }
+
+    /* Scrollbar styling - hidden until hover */
+    .cal-day-scroll,
+    .cal-week-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    .cal-day-scroll:hover,
+    .cal-week-scroll:hover {
+      scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+
+    .cal-day-scroll::-webkit-scrollbar,
+    .cal-week-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .cal-day-scroll::-webkit-scrollbar-track,
+    .cal-week-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .cal-day-scroll::-webkit-scrollbar-thumb,
+    .cal-week-scroll::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 4px;
+    }
+
+    .cal-day-scroll:hover::-webkit-scrollbar-thumb,
+    .cal-week-scroll:hover::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .cal-day-scroll::-webkit-scrollbar-thumb:hover,
+    .cal-week-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    /* ==========================================================================
+   App Shell
+   ========================================================================== */
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .wire-logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: -4px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-30);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+      flex: 1;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-user-name {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-85);
+    }
+
+    .sidebar-settings {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: var(--sp-2);
+      color: var(--text-3);
+      font-size: 10px;
+      cursor: pointer;
+      border-radius: var(--rad);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .sidebar-settings:hover {
+      background: var(--bg-subtle);
+      color: var(--text-2);
+    }
+
+    .sidebar-settings svg {
+      flex-shrink: 0;
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+   Calendar Toolbar
+   ========================================================================== */
+
+    .cal-toolbar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+      position: relative;
+      z-index: var(--layer-toolbar);
+    }
+
+    .cal-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .cal-toolbar-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-3);
+    }
+
+    .cal-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .cal-date-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--neutral-25);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      height: 32px;
+      padding: 0 var(--sp-3);
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      background: var(--bg-surface);
+      color: var(--text-3);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--bg-subtle);
+      border-color: var(--neutral-50);
+      color: var(--text-1);
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+    }
+
+    /* Icon sizes: 20px for icon-only buttons, 16px for icon+text */
+    .btn-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn:not(.btn-icon) svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+      color: #fff;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-active);
+      border-color: var(--primary-active);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border-btn);
+      color: var(--text-1);
+      box-shadow: rgba(12, 12, 12, 0.09) 0px 1px 3px 0px;
+    }
+
+    .btn-outline:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+    }
+
+    .btn-outline:active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-50);
+      box-shadow: inset 0 1px 2px oklch(from var(--neutral-30) l c h / 0.15);
+    }
+
+    /* Pending confirmations icon-only button uses muted icon color */
+    .pending-confirmations-btn svg {
+      color: var(--text-3);
+    }
+
+    .pending-confirmations-btn:hover svg {
+      color: var(--text-1);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      border-color: transparent;
+    }
+
+    .btn-ghost:active {
+      background: var(--neutral-85);
+      border-color: transparent;
+    }
+
+    /* Pending confirmations button with notification dot */
+    .pending-confirmations-btn {
+      position: relative;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      background: var(--tomato-60);
+      border: 2px solid white;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Hide dot when no pending items */
+    .pending-confirmations-btn.no-pending .notification-dot {
+      display: none;
+    }
+
+    /* Filter button with badge */
+    .filter-btn {
+      position: relative;
+    }
+
+    .filter-btn svg {
+      color: var(--text-3);
+    }
+
+    .filter-btn:hover svg {
+      color: var(--text-1);
+    }
+
+    .filter-badge {
+      display: none;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    .filter-btn.has-filters .filter-badge {
+      display: block;
+    }
+
+    /* Toggle switch */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      cursor: pointer;
+    }
+
+    .toggle-label {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      user-select: none;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.active {
+      background: var(--secondary-55);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle.active::after {
+      transform: translateX(16px);
+    }
+
+    /* View switcher tabs */
+    .view-switcher {
+      display: flex;
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      overflow: hidden;
+      height: 32px;
+    }
+
+    .view-switcher-btn {
+      padding: 0 var(--sp-2);
+      min-width: 32px;
+      font-family: inherit;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      background: #fff;
+      border: none;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .view-switcher-btn:not(:last-child) {
+      border-right: 1px solid var(--border-btn);
+    }
+
+    .view-switcher-btn:hover {
+      background: var(--neutral-95);
+    }
+
+    .view-switcher-btn:active {
+      background: var(--neutral-85);
+      box-shadow: inset 0 1px 2px oklch(from var(--neutral-30) l c h / 0.15);
+    }
+
+    .view-switcher-btn.active,
+    .view-switcher-btn.active:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+      font-weight: 500;
+      box-shadow: inset 0 1px 2px oklch(from var(--neutral-30) l c h / 0.15);
+    }
+
+    /* Nav group - arrows together */
+    .nav-group {
+      display: flex;
+    }
+
+    .nav-group .btn-icon {
+      color: var(--text-3);
+    }
+
+    .nav-group .btn-icon:hover {
+      color: var(--text-1);
+    }
+
+    .nav-group .btn-icon:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+
+    .nav-group .btn-icon:not(:first-child):not(:last-child) {
+      border-radius: 0;
+      border-right: none;
+    }
+
+    .nav-group .btn-icon:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    /* Date button */
+    .date-btn {
+      gap: 6px;
+      color: var(--text-1);
+      margin-left: -2px;
+    }
+
+    .date-btn .cal-date-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .date-btn svg {
+      color: var(--text-3);
+    }
+
+    /* Muted leading icons when paired with text labels (not icon-only buttons with badge spans) */
+    .btn:has(span:not(.filter-badge):not(.notification-dot)) svg:first-child {
+      color: var(--text-3);
+    }
+
+    /* Toolbar divider */
+    .toolbar-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-light);
+    }
+
+    /* ==========================================================================
+   Day View Calendar
+   ========================================================================== */
+
+    .cal-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+      padding: 0;
+    }
+
+    .cal-day-view {
+      flex: 1;
+      display: flex;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Day view scroll container (matches week view) */
+    .cal-day-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-day-header-row {
+      display: flex;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      z-index: var(--layer-headers);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .cal-day-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .cal-day-body .cal-day-column {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    .cal-day-body .cal-day-column+.cal-day-column {
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    .cal-day-body .cal-day-column:last-child {
+      border-right: 1px solid var(--neutral-80);
+    }
+
+    /* Time gutter */
+    .cal-time-gutter {
+      width: var(--cal-time-gutter);
+      flex-shrink: 0;
+      background: #fff;
+      position: relative;
+    }
+
+    /* Quarter-hour tick marks - hidden in this version */
+    .cal-gutter-ticks {
+      display: none;
+    }
+
+    .cal-gutter-tick {
+      display: none;
+    }
+
+    .cal-time-slot {
+      height: var(--cal-hour-height);
+      padding-right: var(--sp-3);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--neutral-70);
+      position: relative;
+      transition: color 120ms;
+    }
+
+    .cal-time-slot span {
+      line-height: 1;
+    }
+
+    /* Hover gutter - all numbers darken */
+    .cal-time-gutter:hover .cal-time-slot {
+      color: var(--neutral-50);
+    }
+
+    /* Grid row hover - just that hour's number darkens */
+    .cal-time-slot.row-hover {
+      color: var(--neutral-50);
+    }
+
+    /* Day header for week view */
+    .cal-day-header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--sp-2) var(--sp-1);
+      text-align: center;
+      z-index: 5;
+    }
+
+    .cal-day-header-name {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    .cal-day-header-date {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .cal-day-header.today .cal-day-header-date {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    /* Week view header row */
+    .cal-week-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-week-header {
+      display: flex;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg-surface);
+      z-index: var(--layer-headers);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .cal-week-header-gutter {
+      width: var(--cal-time-gutter);
+      flex-shrink: 0;
+      background: #fff;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: var(--sp-2);
+      font-size: var(--text-xs);
+      color: var(--text-3);
+    }
+
+    .cal-week-header-gutter::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 44px;
+      height: 1px;
+      background: var(--neutral-80);
+    }
+
+    .cal-week-header-day {
+      flex: 1;
+      padding: 6px var(--sp-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      border-bottom: 1px solid var(--neutral-80);
+    }
+
+    .cal-day-header-name {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .cal-day-header-date {
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .cal-week-header-day.today .cal-day-header-name,
+    .cal-week-header-day.today .cal-day-header-date {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    /* Week view body */
+    .cal-week-body {
+      display: flex;
+      flex: 1;
+    }
+
+    .cal-week-body .cal-time-gutter {
+      flex-shrink: 0;
+    }
+
+    .cal-week-body .cal-week-column {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    .cal-week-body .cal-week-column+.cal-week-column {
+      border-left: 1px solid var(--neutral-80);
+    }
+
+    .cal-week-body .cal-week-column:last-child {
+      border-right: 1px solid var(--neutral-80);
+    }
+
+    /* Hour lines - extend partially into gutter (matching header) */
+    .cal-hour-line {
+      position: absolute;
+      left: -44px;
+      right: 0;
+      height: 1px;
+      background: var(--neutral-80);
+      z-index: 18;
+      /* Above DNB hatching (17), below DNB labels (19) */
+    }
+
+    /* When availability is visible, hour lines show through blocks and DNB hatching */
+    .avail-visible .cal-hour-line {
+      z-index: var(--layer-hour-lines);
+    }
+
+    /* Half-hour lines (lighter) */
+    .cal-half-hour-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: hsl(0, 0%, 92%);
+    }
+
+    /* Half-hour tick mark in gutter */
+    .cal-half-hour-tick {
+      position: absolute;
+      right: 0;
+      width: 8px;
+      height: 1px;
+      background: hsl(0, 0%, 80%);
+    }
+
+    /* ==========================================================================
+   Availability Blocks (Background Layer)
+   ========================================================================== */
+
+    .avail-block {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-radius: 0;
+      border: none;
+      pointer-events: none;
+      z-index: var(--layer-avail-blocks);
+    }
+
+    .avail-layer,
+    .week-avail-layer {
+      position: absolute;
+      inset: 0;
+      z-index: var(--layer-avail);
+      pointer-events: none;
+    }
+
+    /* Hatched overlay for occupied time slots */
+    .avail-occupied {
+      position: absolute;
+      pointer-events: auto;
+      cursor: not-allowed;
+      background: repeating-linear-gradient(-45deg,
+          transparent,
+          transparent 4px,
+          rgba(0, 0, 0, 0.08) 4px,
+          rgba(0, 0, 0, 0.08) 8px);
+      z-index: var(--layer-avail-occupied);
+    }
+
+    /* Week V mode: allow scheduling over booked avail blocks (other providers available) */
+    #weekViewContainer .avail-occupied {
+      cursor: pointer;
+      pointer-events: none;
+      /* Let events pass through to column for pill */
+    }
+
+    /* ==========================================================================
+       Do Not Book (DNB) Blocks - Lunch, OOO, etc.
+
+       Layering (gridlines above hatching, labels above gridlines):
+       - .dnb-block: no z-index (avoids stacking context)
+       - .dnb-block::before hatching: z-dnb-hatching (32)
+       - .dnb-block-label: z-dnb-labels (35)
+       - .cal-hour-line (V mode): z-hour-lines (40)
+       ========================================================================== */
+    .dnb-block {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: var(--neutral-95);
+      border-radius: 0;
+      cursor: not-allowed;
+      /* No z-index here - avoids stacking context so label can layer above hour lines */
+      display: flex;
+      align-items: flex-start;
+      padding: var(--sp-1) var(--sp-2);
+      overflow: visible;
+    }
+
+    /* Hatched pattern overlay - sits below hour lines */
+    .dnb-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: var(--layer-dnb-hatching);
+      background: repeating-linear-gradient(-45deg,
+          transparent,
+          transparent 4px,
+          rgba(0, 0, 0, 0.06) 4px,
+          rgba(0, 0, 0, 0.06) 8px);
+      pointer-events: none;
+      z-index: var(--layer-dnb-hatching);
+    }
+
+    .dnb-block-label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-1);
+      position: absolute;
+      top: var(--sp-1);
+      left: 4px;
+      right: 4px;
+      z-index: var(--layer-dnb-labels);
+      background: var(--neutral-95);
+      padding: 2px 6px;
+      border-radius: 2px;
+      line-height: 1.3;
+      opacity: 0;
+      transition: opacity 150ms ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .dnb-block-label .dnb-label-type {
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dnb-block-label .dnb-label-time {
+      flex-shrink: 0;
+      white-space: nowrap;
+      color: var(--text-2);
+    }
+
+    /* Show DNB label on hover */
+    .dnb-block:hover .dnb-block-label {
+      opacity: 1;
+    }
+
+    /* Always show DNB labels in availability (V) mode */
+    .avail-visible .dnb-block-label {
+      opacity: 1;
+    }
+
+    .dnb-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 16;
+      /* Between avail-blocks (15) and hatching (18) */
+      pointer-events: none;
+    }
+
+    .dnb-layer .dnb-block {
+      pointer-events: auto;
+    }
+
+    .avail-block-name {
+      display: none;
+      /* Hidden - using floating labels instead */
+    }
+
+    /* Floating labels - positioned in column above hatching */
+    .avail-floating-label {
+      position: absolute;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-1);
+      pointer-events: none;
+      white-space: nowrap;
+      width: calc(100% - 8px);
+      padding: 2px 6px;
+      border-radius: 2px;
+      z-index: var(--layer-avail-labels);
+      line-height: 1.3;
+      background: var(--neutral-95);
+    }
+
+    /* Week view floating labels: two-row layout */
+    #weekViewContainer .avail-floating-label {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      white-space: normal;
+    }
+
+    #weekViewContainer .avail-floating-label .avail-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #weekViewContainer .avail-floating-label .avail-label-type {
+      font-weight: 600;
+    }
+
+    #weekViewContainer .avail-floating-label .avail-label-name {
+      font-weight: 400;
+    }
+
+    .avail-floating-label .avail-label-type {
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .avail-floating-label .avail-label-time {
+      flex-shrink: 0;
+      color: var(--text-2);
+    }
+
+    /* Week view: two-line layout (Type/Time on top, Name below) */
+    /* Hidden - using floating labels instead */
+    #weekViewContainer .avail-block-name {
+      display: none !important;
+    }
+
+    #weekViewContainer .avail-block-name .avail-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #weekViewContainer .avail-block-name .avail-label-type {
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #weekViewContainer .avail-block-name .avail-label-time {
+      flex-shrink: 0;
+      white-space: nowrap;
+      color: var(--text-2);
+    }
+
+    #weekViewContainer .avail-block-name .avail-label-name {
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Week view DNB: two-line layout */
+    #weekViewContainer .dnb-block-label {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    #weekViewContainer .dnb-block-label .dnb-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #weekViewContainer .dnb-block-label .dnb-label-name {
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Background colors for floating labels */
+    .avail-floating-label[data-color="0"] {
+      background: var(--primary-95);
+    }
+
+    .avail-floating-label[data-color="1"] {
+      background: var(--avail-1);
+    }
+
+    .avail-floating-label[data-color="2"] {
+      background: var(--avail-2);
+    }
+
+    .avail-floating-label[data-color="3"] {
+      background: var(--avail-3);
+    }
+
+    .avail-floating-label[data-color="4"] {
+      background: var(--avail-4);
+    }
+
+    .avail-floating-label[data-color="5"] {
+      background: var(--avail-5);
+    }
+
+    /* Named type colors for floating labels */
+    .avail-floating-label[data-color="intake"] {
+      background: var(--avail-intake);
+    }
+
+    .avail-floating-label[data-color="established"] {
+      background: var(--avail-established);
+    }
+
+    .avail-floating-label[data-color="new"] {
+      background: var(--avail-new);
+    }
+
+    .avail-floating-label[data-color="telehealth"] {
+      background: var(--avail-telehealth);
+    }
+
+    .avail-floating-label[data-color="crisis"] {
+      background: var(--avail-crisis);
+    }
+
+    .avail-floating-label[data-color="group"] {
+      background: var(--avail-group);
+    }
+
+    .avail-floating-label[data-color="evaluation"] {
+      background: var(--avail-evaluation);
+    }
+
+    .avail-floating-label[data-color="medmgmt"] {
+      background: var(--avail-medmgmt);
+    }
+
+    .avail-floating-label[data-color="followup"] {
+      background: var(--avail-followup);
+    }
+
+    .avail-floating-label[data-color="family"] {
+      background: var(--avail-family);
+    }
+
+
+    /* Color variants */
+    .avail-block[data-color="0"] {
+      background: var(--primary-95);
+      border-color: var(--primary-70);
+    }
+
+    .avail-block[data-color="1"] {
+      background: var(--avail-1);
+    }
+
+    .avail-block[data-color="2"] {
+      background: var(--avail-2);
+    }
+
+    .avail-block[data-color="3"] {
+      background: var(--avail-3);
+    }
+
+    .avail-block[data-color="4"] {
+      background: var(--avail-4);
+    }
+
+    .avail-block[data-color="5"] {
+      background: var(--avail-5);
+    }
+
+    /* Named type colors for availability blocks */
+    .avail-block[data-color="intake"] {
+      background: var(--avail-intake);
+    }
+
+    .avail-block[data-color="established"] {
+      background: var(--avail-established);
+    }
+
+    .avail-block[data-color="new"] {
+      background: var(--avail-new);
+    }
+
+    .avail-block[data-color="telehealth"] {
+      background: var(--avail-telehealth);
+    }
+
+    .avail-block[data-color="crisis"] {
+      background: var(--avail-crisis);
+    }
+
+    .avail-block[data-color="group"] {
+      background: var(--avail-group);
+    }
+
+    .avail-block[data-color="evaluation"] {
+      background: var(--avail-evaluation);
+    }
+
+    .avail-block[data-color="medmgmt"] {
+      background: var(--avail-medmgmt);
+    }
+
+    .avail-block[data-color="followup"] {
+      background: var(--avail-followup);
+    }
+
+    .avail-block[data-color="family"] {
+      background: var(--avail-family);
+    }
+
+
+    /* ==========================================================================
+   Appointments (Foreground Layer)
+   ========================================================================== */
+
+    .appt-block {
+      position: absolute;
+      left: 0;
+      right: 16px;
+      background: #fff;
+      border-radius: var(--rad-xs);
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      padding: 0 6px 4px;
+      cursor: pointer;
+      z-index: var(--layer-appointments);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    /* Clip from center: pin first child to top, last to bottom */
+    .appt-block .appt-row:first-child {
+      flex-shrink: 0;
+    }
+
+    .appt-block .appt-detail-row:last-child {
+      flex-shrink: 0;
+    }
+
+    /* Center content for short appointments (30min = 30px height, so ≤34px with padding) */
+    .appt-block.short {
+      justify-content: center;
+    }
+
+    /* Don't center collapsed (concurrent) cards — use top alignment */
+    .appt-block.short.collapsed {
+      justify-content: flex-start;
+    }
+
+    /* 15min appointments: only name + time, vertically centered */
+    .appt-block.appt-15 {
+      justify-content: center;
+      padding-bottom: 0;
+    }
+
+    /* 15min concurrent: also vertically centered */
+    .appt-block.appt-15.collapsed {
+      justify-content: center;
+    }
+
+    .appt-block.appt-15 .appt-detail-row {
+      display: none;
+    }
+
+    .appt-block:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+    }
+
+    /* Appointment type border colors */
+    .appt-block[data-type="intake"] {
+      border-left-color: var(--appt-type-intake-border);
+    }
+
+    .appt-block[data-type="established"] {
+      border-left-color: var(--appt-type-established-border);
+    }
+
+    .appt-block[data-type="new"] {
+      border-left-color: var(--appt-type-new-border);
+    }
+
+    .appt-block[data-type="telehealth"] {
+      border-left-color: var(--appt-type-telehealth-border);
+    }
+
+    .appt-block[data-type="crisis"] {
+      border-left-color: var(--appt-type-crisis-border);
+    }
+
+    .appt-block[data-type="group"] {
+      border-left-color: var(--appt-type-group-border);
+    }
+
+    .appt-block[data-type="evaluation"] {
+      border-left-color: var(--appt-type-evaluation-border);
+    }
+
+    .appt-block[data-type="medmgmt"] {
+      border-left-color: var(--appt-type-medmgmt-border);
+    }
+
+    .appt-block[data-type="followup"] {
+      border-left-color: var(--appt-type-followup-border);
+    }
+
+    .appt-block[data-type="family"] {
+      border-left-color: var(--appt-type-family-border);
+    }
+
+    /* Card background modes */
+    body.card-style-type .appt-block[data-type="established"] {
+      background: var(--appt-type-established-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="new"] {
+      background: var(--appt-type-new-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="crisis"] {
+      background: var(--appt-type-crisis-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="intake"] {
+      background: var(--appt-type-intake-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="group"] {
+      background: var(--appt-type-group-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="evaluation"] {
+      background: var(--appt-type-evaluation-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="medmgmt"] {
+      background: var(--appt-type-medmgmt-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="followup"] {
+      background: var(--appt-type-followup-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="family"] {
+      background: var(--appt-type-family-bg);
+    }
+
+    body.card-style-type .appt-block[data-type="telehealth"] {
+      background: var(--appt-type-telehealth-bg);
+    }
+
+    body.card-style-status .appt-block[data-status="requested"] {
+      background: var(--lemon-95);
+    }
+
+    body.card-style-status .appt-block[data-status="scheduled"] {
+      background: var(--violet-95);
+    }
+
+    body.card-style-status .appt-block[data-status="rescheduled"] {
+      background: var(--violet-95);
+    }
+
+    body.card-style-status .appt-block[data-status="confirmed"] {
+      background: var(--blue-95);
+    }
+
+    body.card-style-status .appt-block[data-status="arrived"] {
+      background: var(--aqua-95);
+    }
+
+    body.card-style-status .appt-block[data-status="checkedin"] {
+      background: var(--aqua-95);
+    }
+
+    body.card-style-status .appt-block[data-status="occurred"] {
+      background: var(--green-95);
+    }
+
+    body.card-style-status .appt-block[data-status="cancelled"] {
+      background: var(--amber-95);
+    }
+
+    body.card-style-status .appt-block[data-status="late"] {
+      background: var(--tomato-95);
+    }
+
+    body.card-style-status .appt-block[data-status="noshow"] {
+      background: var(--red-95);
+    }
+
+    /* Appointment status border colors (right side) */
+    .appt-block[data-status="requested"] {
+      border-right: 4px solid var(--status-requested);
+    }
+
+    .appt-block[data-status="scheduled"] {
+      border-right: 4px solid var(--status-scheduled);
+    }
+
+    .appt-block[data-status="rescheduled"] {
+      border-right: 4px solid var(--status-rescheduled);
+    }
+
+    .appt-block[data-status="confirmed"] {
+      border-right: 4px solid var(--status-confirmed);
+    }
+
+    .appt-block[data-status="arrived"] {
+      border-right: 4px solid var(--status-arrived);
+    }
+
+    .appt-block[data-status="checkedin"] {
+      border-right: 4px solid var(--status-checkedin);
+    }
+
+    .appt-block[data-status="occurred"] {
+      border-right: 4px solid var(--status-occurred);
+    }
+
+    .appt-block[data-status="cancelled"] {
+      border-right: 4px solid var(--status-cancelled);
+    }
+
+    .appt-block[data-status="late"] {
+      border-right: 4px solid var(--status-late);
+    }
+
+    .appt-block[data-status="noshow"] {
+      border-right: 4px solid var(--status-noshow);
+    }
+
+    /* Primary row: name left, time right, same baseline */
+    .appt-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sp-2);
+    }
+
+    .appt-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
+      max-width: 70%;
+    }
+
+    /* Darker text in V mode for contrast on tinted backgrounds */
+    .avail-visible .appt-title {
+      color: var(--text-1);
+    }
+
+    .appt-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .appt-flag {
+      color: var(--red-45);
+      flex-shrink: 0;
+      display: inline-flex;
+      position: relative;
+      top: -3px;
+    }
+
+    .appt-flag svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* In collapsed/stacked mode, title can use more width */
+    .appt-block.collapsed .appt-title {
+      max-width: 100%;
+    }
+
+    .appt-time {
+      font-size: var(--text-sm);
+      font-weight: 400;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .appt-type {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-2);
+      margin-top: 1px;
+    }
+
+    /* Type + Status row for day view */
+    .appt-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--sp-2);
+      margin: 0 -6px -4px;
+    }
+
+    .appt-detail-row .appt-type {
+      margin-top: 0;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-2);
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      padding: 2px 6px;
+      border-radius: 0 var(--rad-xs) var(--rad-xs) 0;
+    }
+
+    .appt-detail-row .appt-status {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-2);
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding: 2px 6px;
+      border-radius: var(--rad-xs) 0 0 var(--rad-xs);
+    }
+
+    /* Type badge colors (border-right, matching left card border) */
+    .appt-block[data-type="intake"] .appt-detail-row .appt-type {
+      background: var(--appt-type-intake-bg);
+      border-right: 4px solid var(--appt-type-intake-border);
+      color: var(--appt-type-intake-fg);
+    }
+
+    .appt-block[data-type="established"] .appt-detail-row .appt-type {
+      background: var(--appt-type-established-bg);
+      border-right: 4px solid var(--appt-type-established-border);
+      color: var(--appt-type-established-fg);
+    }
+
+    .appt-block[data-type="new"] .appt-detail-row .appt-type {
+      background: var(--appt-type-new-bg);
+      border-right: 4px solid var(--appt-type-new-border);
+      color: var(--appt-type-new-fg);
+    }
+
+    .appt-block[data-type="telehealth"] .appt-detail-row .appt-type {
+      background: var(--appt-type-telehealth-bg);
+      border-right: 4px solid var(--appt-type-telehealth-border);
+      color: var(--appt-type-telehealth-fg);
+    }
+
+    .appt-block[data-type="crisis"] .appt-detail-row .appt-type {
+      background: var(--appt-type-crisis-bg);
+      border-right: 4px solid var(--appt-type-crisis-border);
+      color: var(--appt-type-crisis-fg);
+    }
+
+    .appt-block[data-type="group"] .appt-detail-row .appt-type {
+      background: var(--appt-type-group-bg);
+      border-right: 4px solid var(--appt-type-group-border);
+      color: var(--appt-type-group-fg);
+    }
+
+    .appt-block[data-type="evaluation"] .appt-detail-row .appt-type {
+      background: var(--appt-type-evaluation-bg);
+      border-right: 4px solid var(--appt-type-evaluation-border);
+      color: var(--appt-type-evaluation-fg);
+    }
+
+    .appt-block[data-type="medmgmt"] .appt-detail-row .appt-type {
+      background: var(--appt-type-medmgmt-bg);
+      border-right: 4px solid var(--appt-type-medmgmt-border);
+      color: var(--appt-type-medmgmt-fg);
+    }
+
+    .appt-block[data-type="followup"] .appt-detail-row .appt-type {
+      background: var(--appt-type-followup-bg);
+      border-right: 4px solid var(--appt-type-followup-border);
+      color: var(--appt-type-followup-fg);
+    }
+
+    .appt-block[data-type="family"] .appt-detail-row .appt-type {
+      background: var(--appt-type-family-bg);
+      border-right: 4px solid var(--appt-type-family-border);
+      color: var(--appt-type-family-fg);
+    }
+
+    /* Status badge colors (border-left, matching right card border) */
+    .appt-block[data-status="requested"] .appt-detail-row .appt-status {
+      background: var(--lemon-95);
+      border-left: 4px solid var(--status-requested);
+      color: var(--lemon-20);
+    }
+
+    .appt-block[data-status="scheduled"] .appt-detail-row .appt-status {
+      background: var(--violet-95);
+      border-left: 4px solid var(--status-scheduled);
+      color: var(--violet-20);
+    }
+
+    .appt-block[data-status="rescheduled"] .appt-detail-row .appt-status {
+      background: var(--violet-95);
+      border-left: 4px solid var(--status-rescheduled);
+      color: var(--violet-20);
+    }
+
+    .appt-block[data-status="confirmed"] .appt-detail-row .appt-status {
+      background: var(--blue-95);
+      border-left: 4px solid var(--status-confirmed);
+      color: var(--blue-20);
+    }
+
+    .appt-block[data-status="arrived"] .appt-detail-row .appt-status {
+      background: var(--aqua-95);
+      border-left: 4px solid var(--status-arrived);
+      color: var(--aqua-20);
+    }
+
+    .appt-block[data-status="checkedin"] .appt-detail-row .appt-status {
+      background: var(--aqua-95);
+      border-left: 4px solid var(--status-checkedin);
+      color: var(--aqua-20);
+    }
+
+    .appt-block[data-status="occurred"] .appt-detail-row .appt-status {
+      background: var(--green-95);
+      border-left: 4px solid var(--status-occurred);
+      color: var(--green-20);
+    }
+
+    .appt-block[data-status="cancelled"] .appt-detail-row .appt-status {
+      background: var(--amber-95);
+      border-left: 4px solid var(--status-cancelled);
+      color: var(--amber-20);
+    }
+
+    .appt-block[data-status="late"] .appt-detail-row .appt-status {
+      background: var(--tomato-95);
+      border-left: 4px solid var(--status-late);
+      color: var(--tomato-20);
+    }
+
+    .appt-block[data-status="noshow"] .appt-detail-row .appt-status {
+      background: var(--red-95);
+      border-left: 4px solid var(--status-noshow);
+      color: var(--red-20);
+    }
+
+    .appt-status {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-2);
+      text-transform: capitalize;
+    }
+
+    /* ==========================================================================
+   Tooltip
+   ========================================================================== */
+
+    .tooltip {
+      position: fixed;
+      background: var(--primary-10);
+      color: #fff;
+      padding: var(--sp-3);
+      border-radius: var(--rad);
+      font-size: var(--text-sm);
+      max-width: 280px;
+      z-index: var(--layer-tooltip);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .tooltip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--sp-3);
+      margin-bottom: 4px;
+    }
+
+    .tooltip-header:has(.tooltip-header-name:empty):has(.tooltip-header-time:empty) {
+      display: none;
+    }
+
+    .tooltip-header-name {
+      font-weight: 600;
+    }
+
+    .tooltip-header-time {
+      font-weight: 400;
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+
+    .tooltip-meta {
+      font-size: var(--text-xs);
+      opacity: 0.85;
+      line-height: 1.6;
+    }
+
+    .tooltip-section-label {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--neutral-80);
+      letter-spacing: 0.3px;
+      margin-top: var(--sp-2);
+      margin-bottom: 2px;
+    }
+
+    .tooltip-section-label:first-child {
+      margin-top: 0;
+    }
+
+    .tooltip-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: var(--sp-2) 0;
+    }
+
+    /* ==========================================================================
+    /* Clickable time slot overlay */
+    .cal-day-column,
+    .cal-week-column {
+      cursor: pointer;
+    }
+
+    .cal-day-column:hover,
+    .cal-week-column:hover,
+    .cal-day-column.col-hover,
+    .cal-week-column.col-hover {
+      background: hsla(197, 50%, 50%, 0.03);
+    }
+
+    /* Floating time pill (SavvyCal-style) */
+    .time-pill {
+      position: fixed;
+      padding: 4px 12px;
+      background: #fff;
+      color: var(--green-40);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      border: 1px solid var(--green-55);
+      border-radius: var(--rad);
+      pointer-events: none;
+      z-index: var(--layer-hover);
+      opacity: 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+      transform: translateY(-50%);
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .time-pill.visible {
+      opacity: 1;
+    }
+
+    /* Privacy mode - blur patient names */
+    .privacy-mode .appt-name,
+    .privacy-mode .appt-title,
+    .privacy-mode .appt-popover-action[data-action="edit"],
+    .privacy-mode .tooltip-header-name {
+      filter: blur(5px);
+      user-select: none;
+    }
+
+    /* Current time indicator */
+    .current-time-line {
+      position: absolute;
+      left: var(--cal-time-gutter);
+      right: 0;
+      height: 1px;
+      background: var(--red-55);
+      z-index: var(--layer-current-time);
+      pointer-events: none;
+    }
+
+    .current-time-line::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      background: var(--red-55);
+      border-radius: 50%;
+    }
+
+    /* Appointment popover (click-based) */
+    .appt-popover {
+      position: fixed;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: var(--layer-popover);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+
+    .appt-popover.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .appt-popover-actions {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .appt-popover-action {
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      font-size: var(--text-sm);
+      color: var(--text-1);
+      cursor: pointer;
+      transition: background 0.1s;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .appt-popover-action:hover {
+      background: var(--neutral-90);
+    }
+
+    .appt-popover-action:first-child {
+      border-radius: var(--rad) 0 0 var(--rad);
+    }
+
+    .appt-popover-action+.appt-popover-action::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 25%;
+      height: 50%;
+      width: 1px;
+      background: var(--neutral-80);
+    }
+
+    .appt-popover-close {
+      padding: 8px 10px;
+      background: none;
+      border: none;
+      border-left: 1px solid var(--neutral-80);
+      font-size: var(--text-base);
+      color: var(--text-3);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+      border-radius: 0 var(--rad) var(--rad) 0;
+    }
+
+    .appt-popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+    }
+
+    /* ==========================================================================
+       Appointment View Popover (cal.html style, hover-based)
+       ========================================================================== */
+    .appt-view-popover {
+      position: fixed;
+      width: 320px;
+      background: #fff;
+      border: 1px solid var(--neutral-75);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
+      z-index: var(--layer-popover-edit);
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.97) translateY(4px);
+      transition: opacity 160ms cubic-bezier(0.33, 1, 0.68, 1), transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
+      pointer-events: none;
+    }
+
+    .appt-view-popover.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .pop-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 10px 12px 8px;
+    }
+
+    .pop-type-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 6px;
+      border-radius: var(--rad-xs);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-2);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: filter 0.12s;
+      border-left: 4px solid var(--primary-40);
+    }
+
+    .pop-type-chip:hover {
+      filter: brightness(0.96);
+    }
+
+    /* Remove the square swatch - using border instead */
+    .pop-type-sq {
+      display: none;
+    }
+
+    .pop-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px 4px 10px;
+      border-radius: var(--rad-xs);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: filter 0.12s;
+      border-right: 4px solid var(--status-scheduled);
+    }
+
+    .pop-status-chip:hover {
+      filter: brightness(0.96);
+    }
+
+    /* Remove the dot - using border instead */
+    .pop-status-dot {
+      display: none;
+    }
+
+    .pop-divider {
+      height: 1px;
+      background: var(--neutral-85);
+      margin: 0;
+    }
+
+    .pop-body {
+      padding: 10px 12px;
+    }
+
+    .pop-row {
+      opacity: 1;
+    }
+
+    .pop-subhead {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      line-height: 1.5;
+      margin-bottom: 1px;
+    }
+
+    .pop-subhead-name {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pop-subhead-right {
+      font-size: 11px;
+      color: var(--text-3);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pop-subhead2 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-3);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .pop-icon-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .pop-icon-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 6px;
+      border: 1px solid var(--neutral-80);
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--text-2);
+      font-size: 10.5px;
+      position: relative;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+
+    .pop-icon-tile svg {
+      color: var(--text-3);
+      transition: color 0.12s;
+    }
+
+    .pop-icon-tile:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-70);
+      color: var(--text-1);
+    }
+
+    .pop-icon-tile:hover svg {
+      color: var(--text-1);
+    }
+
+    .pop-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-top: 1px solid var(--neutral-85);
+    }
+
+    .pop-footer-edit {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-3);
+      padding: 3px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .pop-footer-edit:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+    }
+
+    .pop-footer-link {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--text-3);
+      text-decoration: none;
+      transition: color 0.12s;
+    }
+
+    .pop-footer-link:hover {
+      color: var(--text-1);
+    }
+
+    /* Dropdown for type/status chips */
+    .pop-dd {
+      position: absolute;
+      background: #fff;
+      border: 1px solid var(--neutral-80);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      padding: 4px;
+      z-index: var(--layer-tooltip);
+      min-width: 180px;
+    }
+
+    .pop-dd-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      color: var(--text-1);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .pop-dd-item:hover {
+      background: var(--neutral-95);
+    }
+
+    .pop-dd-item.selected {
+      font-weight: 500;
+    }
+
+    .pop-dd-swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pop-dd-swatch.sq {
+      border-radius: 2px;
+    }
+
+    .pop-dd-check {
+      margin-left: auto;
+      opacity: 0;
+      font-size: 11px;
+    }
+
+    .pop-dd-item.selected .pop-dd-check {
+      opacity: 1;
+    }
+
+    /* New appointment popover (stub) */
+    .new-appt-popover {
+      position: fixed;
+      width: 320px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad-lg);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: var(--layer-context-menu);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+
+    .new-appt-popover.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .new-appt-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--neutral-80);
+    }
+
+    .new-appt-popover-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .new-appt-popover-close {
+      background: none;
+      border: none;
+      font-size: var(--text-base);
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--rad);
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .new-appt-popover-close:hover {
+      background: var(--neutral-90);
+      color: var(--text-1);
+    }
+
+    .new-appt-popover-body {
+      padding: var(--sp-3) var(--sp-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    .new-appt-popover-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .new-appt-popover-field label {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .new-appt-popover-input-stub {
+      padding: var(--sp-2) var(--sp-3);
+      background: var(--neutral-95);
+      border: 1px solid var(--neutral-80);
+      border-radius: var(--rad);
+      font-size: var(--text-sm);
+      color: var(--text-2);
+    }
+
+    .new-appt-popover-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--sp-2);
+      padding: var(--sp-3) var(--sp-4);
+      border-top: 1px solid var(--neutral-80);
+    }
+
+    /* View Transitions for availability toggle */
+    @view-transition {
+      navigation: auto;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 200ms;
+      animation-timing-function: ease-out;
+    }
+
+    /* CSS Tooltip */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      border-radius: var(--rad);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s, visibility 0.15s;
+      pointer-events: none;
+      z-index: var(--layer-modal);
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 300ms;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header (wireframe) -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-user-name"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar (wireframe) -->
+      <aside class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item" onclick="toggleSidebarSettings()"></div>
+      </aside>
+
+      <!-- Main Content: Calendar -->
+      <main class="shell-main">
+
+        <!-- Calendar Toolbar -->
+        <div class="cal-toolbar">
+          <div class="cal-toolbar-left">
+            <button class="btn btn-ghost date-btn" onclick="toggleDatePicker()">
+              <span class="cal-date-title">Wednesday, Sep 16, 2026</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 2v3" />
+                <path d="M16 2v3" />
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18" />
+              </svg>
+            </button>
+
+            <div class="nav-group">
+              <button class="btn btn-outline btn-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <button class="btn btn-outline btn-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+
+            <button class="btn btn-primary btn-icon" data-tooltip="New Appointment" id="newApptBtn" onclick="showNewApptPopover(event)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="cal-toolbar-center">
+            <div class="view-switcher">
+              <button class="view-switcher-btn active" onclick="setView('day')" title="Day view (D)">Day</button>
+              <button class="view-switcher-btn" onclick="setView('week')" title="Week view (W)">Week</button>
+              <button class="view-switcher-btn" onclick="setView('month')" title="Month view (M)">Month</button>
+              <button class="view-switcher-btn" onclick="setView('agenda')" title="Agenda view (A)">Agenda</button>
+            </div>
+          </div>
+
+          <div class="cal-toolbar-right">
+            <button class="btn btn-outline" onclick="toggleProviderDropdown()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span>Providers</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            <button class="btn btn-outline" onclick="toggleSitesDropdown()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>Sites</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            <button class="btn btn-outline btn-icon filter-btn" onclick="toggleFiltersDropdown()" data-tooltip="Filters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+              <span class="filter-badge"></span>
+            </button>
+
+            <!-- Pending confirmations button -->
+            <button class="btn btn-outline btn-icon pending-confirmations-btn" onclick="showPendingConfirmations()" data-tooltip="Pending">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 2v4" />
+                <path d="M16 2v4" />
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <path d="M3 10h18" />
+                <path d="m9 16 2 2 4-4" />
+              </svg>
+              <span class="notification-dot"></span>
+            </button>
+
+            <button class="btn btn-ghost btn-icon" onclick="toggleSettingsDropdown()" data-tooltip="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Day View (2 providers) -->
+        <div class="cal-container" id="dayViewContainer">
+          <div class="cal-day-scroll">
+            <!-- Provider headers (sticky) -->
+            <div class="cal-day-header-row">
+              <div class="cal-week-header-gutter">CDT</div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Boyles</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Crowley</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Lindell</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Dr. Morningstar</span>
+              </div>
+            </div>
+            <!-- Day body -->
+            <div class="cal-day-body">
+              <div class="cal-time-gutter">
+                <div class="cal-time-slot"><span>7</span></div>
+                <div class="cal-time-slot"><span>8</span></div>
+                <div class="cal-time-slot"><span>9</span></div>
+                <div class="cal-time-slot"><span>10</span></div>
+                <div class="cal-time-slot"><span>11</span></div>
+                <div class="cal-time-slot"><span>12</span></div>
+                <div class="cal-time-slot"><span>1</span></div>
+                <div class="cal-time-slot"><span>2</span></div>
+                <div class="cal-time-slot"><span>3</span></div>
+                <div class="cal-time-slot"><span>4</span></div>
+                <div class="cal-time-slot"><span>5</span></div>
+                <div class="cal-time-slot"><span>6</span></div>
+                <div class="cal-gutter-ticks" id="dayGutterTicks"></div>
+              </div>
+
+              <!-- Dr. Boyles column -->
+              <div class="cal-day-column" id="dayColumn">
+                <div class="avail-layer" id="availLayer">
+                  <div class="avail-block" data-color="1" style="top: 96px; height: 240px; left: 0; right: 0;" data-name="Intakes" data-start="1" data-end="3.5" data-time="8:00–10:30 AM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Intake Assessment">
+                    <span class="avail-block-name"><span class="avail-label-type">Intakes</span><span class="avail-label-time">8:00–10:30 AM</span></span>
+                  </div>
+                  <div class="avail-block" data-color="2" style="top: 576px; height: 288px; left: 0; right: 0;" data-name="Established" data-start="6" data-end="9" data-time="1:00–4:00 PM" data-clinician="Dr. Boyles" data-location="Main Office" data-types="Established Client, Follow Up">
+                    <span class="avail-block-name"><span class="avail-label-type">Established</span><span class="avail-label-time">1:00–4:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="dnb-layer">
+                  <div class="dnb-block" style="top: 480px; height: 96px;">
+                    <span class="dnb-block-label"><span class="dnb-label-type">Lunch</span><span class="dnb-label-time">12:00–1:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block" data-type="intake" data-status="arrived" style="top: calc(var(--cal-hour-height) * 1 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title"><span class="appt-name">Martinez, Sofia</span> <span class="appt-flag"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 22V2.8a.8.8 0 0 1 1.17-.71l11.38 5.69a.8.8 0 0 1 0 1.44L6 15.5" />
+                          </svg></span></div>
+                      <div class="appt-time">8:00–9:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Intake Assessment</div>
+                      <div class="appt-status" data-status="arrived">Arrived</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="new" data-status="requested" style="top: calc(var(--cal-hour-height) * 2.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Thompson, Rachel</div>
+                      <div class="appt-time">9:30–10:30 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">New Client</div>
+                      <div class="appt-status" data-status="requested">Requested</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Garcia, Maria</div>
+                      <div class="appt-time">1:00–2:00 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Established Client</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="followup" data-status="rescheduled" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Rivera, Carlos</div>
+                      <div class="appt-time">2:30–3:30 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Follow Up</div>
+                      <div class="appt-status" data-status="rescheduled">Rescheduled</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dr. Crowley column -->
+              <div class="cal-day-column" id="dayColumn2">
+                <div class="avail-layer" id="availLayer2">
+                  <div class="avail-block" data-color="5" style="top: 192px; height: 192px; left: 0; right: 0;" data-name="Group" data-start="2" data-end="4" data-time="9:00–11:00 AM" data-clinician="Dr. Crowley" data-location="Main Office" data-types="Group Therapy">
+                    <span class="avail-block-name"><span class="avail-label-type">Group</span><span class="avail-label-time">9:00–11:00 AM</span></span>
+                  </div>
+                  <div class="avail-block" data-color="2" style="top: 576px; height: 288px; left: 0; right: 0;" data-name="Established" data-start="6" data-end="9" data-time="1:00–4:00 PM" data-clinician="Dr. Crowley" data-location="Main Office" data-types="Established Client, Med Management">
+                    <span class="avail-block-name"><span class="avail-label-type">Established</span><span class="avail-label-time">1:00–4:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="dnb-layer">
+                  <div class="dnb-block" style="top: 480px; height: 96px;">
+                    <span class="dnb-block-label"><span class="dnb-label-type">Lunch</span><span class="dnb-label-time">12:00–1:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block" data-type="group" data-status="arrived" style="top: calc(var(--cal-hour-height) * 2 + 2px); height: calc(var(--cal-hour-height) * 2 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Anxiety Support Group</div>
+                      <div class="appt-time">9:00–11:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Group Therapy</div>
+                      <div class="appt-status" data-status="arrived">Arrived</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="medmgmt" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 6 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Walker, James</div>
+                      <div class="appt-time">1:00–1:30 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Med Management</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="established" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 7 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Morris, Susan</div>
+                      <div class="appt-time">2:00–3:00 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Established Client</div>
+                      <div class="appt-status" data-status="scheduled">Scheduled</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dr. Lindell column (sparse day) -->
+              <div class="cal-day-column" id="dayColumn3">
+                <div class="avail-layer" id="availLayer3">
+                  <div class="avail-block" data-color="3" style="top: 192px; height: 288px; left: 0; right: 0;" data-name="Telehealth" data-start="2" data-end="5" data-time="9:00 AM–12:00 PM" data-clinician="Dr. Lindell" data-location="Virtual" data-types="Telehealth">
+                    <span class="avail-block-name"><span class="avail-label-type">Telehealth</span><span class="avail-label-time">9:00 AM–12:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="dnb-layer">
+                  <div class="dnb-block" style="top: 480px; height: 96px;">
+                    <span class="dnb-block-label"><span class="dnb-label-type">Lunch</span><span class="dnb-label-time">12:00–1:00 PM</span></span>
+                  </div>
+                  <div class="dnb-block" style="top: 576px; height: 384px;">
+                    <span class="dnb-block-label"><span class="dnb-label-type">OOO - Conference</span><span class="dnb-label-time">1:00–5:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block appt-15" data-type="evaluation" data-status="rescheduled" style="top: calc(var(--cal-hour-height) * 1.75 + 2px); height: calc(var(--cal-hour-height) * 0.25 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Yaggy, Philip</div>
+                      <div class="appt-time">8:45–9:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Complete Evaluation</div>
+                      <div class="appt-status" data-status="rescheduled">Rescheduled</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="telehealth" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 3 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Brooks, Emily</div>
+                      <div class="appt-time">10:00–11:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Telehealth</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dr. Morningstar column -->
+              <div class="cal-day-column" id="dayColumn4">
+                <div class="avail-layer" id="availLayer4">
+                  <div class="avail-block" data-color="4" style="top: 0px; height: 192px; left: 0; right: 0;" data-name="Crisis" data-start="0" data-end="2" data-time="7:00–9:00 AM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Crisis Intervention">
+                    <span class="avail-block-name"><span class="avail-label-type">Crisis</span><span class="avail-label-time">7:00–9:00 AM</span></span>
+                  </div>
+                  <div class="avail-block" data-color="3" style="top: 576px; height: 192px; left: 0; right: 0;" data-name="Telehealth" data-start="6" data-end="8" data-time="1:00–3:00 PM" data-clinician="Dr. Morningstar" data-location="Virtual" data-types="Telehealth">
+                    <span class="avail-block-name"><span class="avail-label-type">Telehealth</span><span class="avail-label-time">1:00–3:00 PM</span></span>
+                  </div>
+                  <div class="avail-block" data-color="2" style="top: 864px; height: 192px; left: 0; right: 0;" data-name="Established" data-start="9" data-end="11" data-time="4:00–6:00 PM" data-clinician="Dr. Morningstar" data-location="Main Office" data-types="Established Client, Family Session">
+                    <span class="avail-block-name"><span class="avail-label-type">Established</span><span class="avail-label-time">4:00–6:00 PM</span></span>
+                  </div>
+                </div>
+                <div class="dnb-layer">
+                  <div class="dnb-block" style="top: 432px; height: 96px;">
+                    <span class="dnb-block-label"><span class="dnb-label-type">Lunch</span><span class="dnb-label-time">11:30 AM–12:30 PM</span></span>
+                  </div>
+                </div>
+                <div class="appt-layer">
+                  <div class="appt-block" data-type="crisis" data-status="occurred" style="top: calc(var(--cal-hour-height) * 1 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Adams, Robert</div>
+                      <div class="appt-time">8:00–9:00 AM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Crisis Intervention</div>
+                      <div class="appt-status" data-status="occurred">Occurred</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="telehealth" data-status="checkedin" style="top: calc(var(--cal-hour-height) * 6 + 2px); height: calc(var(--cal-hour-height) * 1 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Chen, David</div>
+                      <div class="appt-time">1:00–2:00 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Telehealth</div>
+                      <div class="appt-status" data-status="checkedin">Checked-in</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="telehealth" data-status="scheduled" style="top: calc(var(--cal-hour-height) * 7.5 + 2px); height: calc(var(--cal-hour-height) * 0.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title"><span class="appt-name">Patel, Anita</span> <span class="appt-flag"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 22V2.8a.8.8 0 0 1 1.17-.71l11.38 5.69a.8.8 0 0 1 0 1.44L6 15.5" />
+                          </svg></span></div>
+                      <div class="appt-time">2:30–3:00 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Telehealth</div>
+                      <div class="appt-status" data-status="scheduled">Scheduled</div>
+                    </div>
+                  </div>
+                  <div class="appt-block appt-15" data-type="followup" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 8 + 2px); height: calc(var(--cal-hour-height) * 0.25 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Yang, Peggy</div>
+                      <div class="appt-time">3:00–3:15 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Follow Up</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                  <div class="appt-block" data-type="family" data-status="confirmed" style="top: calc(var(--cal-hour-height) * 10 + 2px); height: calc(var(--cal-hour-height) * 1.5 - 4px);">
+                    <div class="appt-row">
+                      <div class="appt-title">Wilson Family</div>
+                      <div class="appt-time">5:00–6:30 PM</div>
+                    </div>
+                    <div class="appt-detail-row">
+                      <div class="appt-type">Family Session</div>
+                      <div class="appt-status" data-status="confirmed">Confirmed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Week View (hidden by default) -->
+        <div class="cal-container" id="weekViewContainer" style="display: none;">
+          <!-- Single scroll container for header + body -->
+          <div class="cal-week-scroll">
+            <!-- Week header (sticky) -->
+            <div class="cal-week-header">
+              <div class="cal-week-header-gutter">CDT</div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Mon</span>
+                <span class="cal-day-header-date">14</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Tue</span>
+                <span class="cal-day-header-date">15</span>
+              </div>
+              <div class="cal-week-header-day today">
+                <span class="cal-day-header-name">Wed</span>
+                <span class="cal-day-header-date">16</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Thu</span>
+                <span class="cal-day-header-date">17</span>
+              </div>
+              <div class="cal-week-header-day">
+                <span class="cal-day-header-name">Fri</span>
+                <span class="cal-day-header-date">18</span>
+              </div>
+            </div>
+            <!-- Week body -->
+            <div class="cal-week-body">
+              <div class="cal-time-gutter" id="weekTimeGutter">
+                <!-- Time slots rendered by JS -->
+              </div>
+              <div class="cal-week-column" data-day="0"></div>
+              <div class="cal-week-column" data-day="1"></div>
+              <div class="cal-week-column" data-day="2"></div>
+              <div class="cal-week-column" data-day="3"></div>
+              <div class="cal-week-column" data-day="4"></div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip">
+    <div class="tooltip-header">
+      <span class="tooltip-header-name"></span>
+      <span class="tooltip-header-time"></span>
+    </div>
+    <div class="tooltip-meta"></div>
+  </div>
+
+  <!-- Time pill -->
+  <div class="time-pill" id="timePill"></div>
+
+  <!-- Appointment popover (card click menu) -->
+  <div class="appt-popover" id="apptPopover">
+    <div class="appt-popover-actions">
+      <button class="appt-popover-action" data-action="view">View</button>
+      <button class="appt-popover-action" data-action="add">Add</button>
+      <button class="appt-popover-close" data-action="close">×</button>
+    </div>
+  </div>
+
+  <!-- Appointment view popover (hover-based, cal.html style) -->
+  <div class="appt-view-popover" id="apptViewPopover">
+    <div class="pop-header">
+      <div class="pop-type-chip" id="viewPopTypeChip">
+        <span class="pop-type-sq"></span>
+        <span class="pop-type-label">Intake</span>
+      </div>
+      <div class="pop-status-chip" id="viewPopStatusChip">
+        <span class="pop-status-label">Scheduled</span>
+        <span class="pop-status-dot"></span>
+      </div>
+    </div>
+    <div class="pop-divider"></div>
+    <div class="pop-body">
+      <div class="pop-row pop-subhead">
+        <span class="pop-subhead-name">Patient Name</span>
+        <span class="pop-subhead-right">9:00 – 10:00 AM</span>
+      </div>
+      <div class="pop-row pop-subhead2">
+        <span class="pop-dob">DOB 01/15/1985</span>
+        <span class="pop-provider">with Dr. Boyles</span>
+      </div>
+      <div class="pop-row pop-icon-grid">
+        <div class="pop-icon-tile" data-action="note">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+            <path d="M9 15h6" />
+            <path d="M12 18v-6" />
+          </svg>
+          Note
+        </div>
+        <div class="pop-icon-tile" data-action="chart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+          </svg>
+          Chart
+        </div>
+      </div>
+      <div class="pop-row pop-icon-grid">
+        <div class="pop-icon-tile" data-action="demographics">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="5" />
+            <path d="M20 21a8 8 0 0 0-16 0" />
+          </svg>
+          Demographics
+        </div>
+        <div class="pop-icon-tile" data-action="messages">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+          </svg>
+          Messages
+        </div>
+      </div>
+      <div class="pop-row pop-icon-grid">
+        <div class="pop-icon-tile" data-action="documents">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1" />
+            <path d="M16 16a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1" />
+            <path d="M21 6a2 2 0 0 0-.586-1.414l-2-2A2 2 0 0 0 17 2h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1z" />
+          </svg>
+          Documents
+        </div>
+        <div class="pop-icon-tile" data-action="account">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="5" rx="2" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+          </svg>
+          Account
+        </div>
+      </div>
+    </div>
+    <div class="pop-footer">
+      <button class="pop-footer-edit" data-action="edit" aria-label="Edit appointment">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+          <path d="m15 5 4 4" />
+        </svg>
+      </button>
+      <a class="pop-footer-link" href="#">Updated 06/11/2026 8:04 AM</a>
+    </div>
+  </div>
+
+  <!-- New appointment popover (stub) -->
+  <div class="new-appt-popover" id="newApptPopover">
+    <div class="new-appt-popover-header">
+      <span class="new-appt-popover-title">New Appointment</span>
+      <button class="new-appt-popover-close" onclick="hideNewApptPopover()">×</button>
+    </div>
+    <div class="new-appt-popover-body">
+      <div class="new-appt-popover-field">
+        <label>Patient</label>
+        <div class="new-appt-popover-input-stub">Search patient...</div>
+      </div>
+      <div class="new-appt-popover-field">
+        <label>Date & Time</label>
+        <div class="new-appt-popover-input-stub">Wed, Sep 16 · 9:00 AM</div>
+      </div>
+      <div class="new-appt-popover-field">
+        <label>Duration</label>
+        <div class="new-appt-popover-input-stub">60 min</div>
+      </div>
+      <div class="new-appt-popover-field">
+        <label>Type</label>
+        <div class="new-appt-popover-input-stub">Follow-up</div>
+      </div>
+      <div class="new-appt-popover-field">
+        <label>Provider</label>
+        <div class="new-appt-popover-input-stub">Dr. Boyles</div>
+      </div>
+    </div>
+    <div class="new-appt-popover-footer">
+      <button class="btn btn-ghost" onclick="hideNewApptPopover()">Cancel</button>
+      <button class="btn btn-primary" onclick="alert('Save appointment')">Save</button>
+    </div>
+  </div>
+
+  <script>
+    // Helper to extract last name from "Dr. Boyles" or "Sarah Boyles"
+    function getLastName(fullName) {
+      if (!fullName) return '';
+      const parts = fullName.replace(/^(Dr\.|Mr\.|Ms\.|Mrs\.)\s*/i, '').trim().split(/\s+/);
+      return parts[parts.length - 1];
+    }
+
+    // ==========================================================================
+    // New Appointment Popover functions (hoisted for access by time pill & appt popover)
+    // ==========================================================================
+    let newApptPrefillTime = '';
+
+    function showNewApptPopoverAt(x, y, time) {
+      const popover = document.getElementById('newApptPopover');
+      if (!popover) return;
+
+      newApptPrefillTime = time || '';
+
+      // Update time field if present
+      const timeStub = popover.querySelector('.new-appt-popover-input-stub');
+      if (timeStub && newApptPrefillTime) {
+        timeStub.textContent = newApptPrefillTime;
+      }
+
+      popover.style.left = x + 'px';
+      popover.style.top = y + 'px';
+      popover.classList.add('visible');
+
+      // Adjust if off-screen
+      requestAnimationFrame(() => {
+        const rect = popover.getBoundingClientRect();
+        if (rect.right > window.innerWidth - 10) {
+          popover.style.left = (x - rect.width) + 'px';
+        }
+        if (rect.bottom > window.innerHeight - 10) {
+          popover.style.top = (y - rect.height - 8) + 'px';
+        }
+        if (rect.left < 10) {
+          popover.style.left = '10px';
+        }
+        if (rect.top < 10) {
+          popover.style.top = '10px';
+        }
+      });
+    }
+
+    function showNewApptPopover(e) {
+      e.stopPropagation();
+
+      // Position near the trigger (+ button)
+      const btn = e.currentTarget;
+      const btnRect = btn.getBoundingClientRect();
+
+      // Position below and aligned to the button
+      showNewApptPopoverAt(btnRect.left, btnRect.bottom + 8, '');
+    }
+
+    function hideNewApptPopover() {
+      const popover = document.getElementById('newApptPopover');
+      if (popover) popover.classList.remove('visible');
+    }
+
+    // Block positioning data
+    // Note: start/end are hour offsets from 7am base. start=1 → 7am, start=7 → 1pm
+    const blocks = [
+      { id: 'block-crisis', name: 'Crisis', start: 1, end: 3, color: 4 },
+      { id: 'block-intakes', name: 'Intakes', start: 2, end: 4.5, color: 1 },
+      { id: 'block-group', name: 'Group', start: 1, end: 4, color: 5 },
+      { id: 'block-established', name: 'Established', start: 7, end: 10, color: 2 },
+      { id: 'block-telehealth', name: 'Telehealth', start: 7, end: 9, color: 3 }
+    ];
+
+    const HOUR_HEIGHT = 96;
+
+    // Render quarter-hour ticks for day view gutter
+    const dayGutterTicks = document.getElementById('dayGutterTicks');
+    if (dayGutterTicks) {
+      for (let hour = 0; hour < 12; hour++) {
+        [15, 30, 45].forEach(min => {
+          const tick = document.createElement('div');
+          tick.className = 'cal-gutter-tick';
+          tick.style.top = `${hour * HOUR_HEIGHT + (min / 60) * HOUR_HEIGHT}px`;
+          dayGutterTicks.appendChild(tick);
+        });
+      }
+    }
+
+    // Render hour lines for day view columns
+    document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+      for (let i = 1; i <= 12; i++) {
+        const line = document.createElement('div');
+        line.className = 'cal-hour-line';
+        line.style.top = `calc(var(--cal-hour-height) * ${i})`;
+        col.appendChild(line);
+      }
+    });
+
+    // Find which blocks overlap
+    function getOverlapGroups() {
+      const groups = {};
+      blocks.forEach(b => groups[b.id] = new Set());
+
+      for (let i = 0; i < blocks.length; i++) {
+        for (let j = i + 1; j < blocks.length; j++) {
+          const a = blocks[i], b = blocks[j];
+          // Check if they overlap
+          if (a.start < b.end && b.start < a.end) {
+            groups[a.id].add(b.id);
+            groups[b.id].add(a.id);
+          }
+        }
+      }
+      return groups;
+    }
+
+    // Get z-index for topmost mode (shorter duration = higher z-index)
+    function getZIndex(block) {
+      const duration = block.end - block.start;
+      return 100 - duration; // Shorter = higher
+    }
+
+    // Position blocks based on mode
+    function setOverlapMode(mode) {
+      const overlapGroups = getOverlapGroups();
+
+      // Remove any existing badges
+      document.querySelectorAll('.avail-overlap-badge').forEach(b => b.remove());
+
+      blocks.forEach(b => {
+        const el = document.getElementById(b.id);
+        if (!el) return;
+
+        const top = (b.start - 1) * HOUR_HEIGHT;
+        const height = (b.end - b.start) * HOUR_HEIGHT;
+
+        el.style.top = `${top}px`;
+        el.style.height = `${height}px`;
+
+        // Reset to defaults
+        el.style.left = '0';
+        el.style.right = '0';
+        el.style.zIndex = '';
+        el.dataset.color = b.color;
+        el.classList.remove('blend');
+        const nameEl = el.querySelector('.avail-block-name');
+        // Use label: Type · Time (Day view - clinician is in column header)
+        const fullLabel = `<span class="avail-label-type">${b.name}</span><span class="avail-label-time">${el.dataset.time}</span>`;
+        nameEl.innerHTML = fullLabel;
+        nameEl.style.display = '';
+
+        const overlaps = overlapGroups[b.id];
+
+        if (mode === 'sidebyside' && overlaps.size > 0) {
+          // Side by side: split width among overlapping blocks
+          const group = [b.id, ...overlaps].sort();
+          const index = group.indexOf(b.id);
+          const total = group.length;
+          const widthPct = 100 / total;
+          const leftPct = index * widthPct;
+
+          el.style.left = `calc(${leftPct}% + 2px)`;
+          el.style.right = `calc(${100 - leftPct - widthPct}% + 2px)`;
+        } else if (mode === 'stacked') {
+          // Full width, overlaps visible through transparency
+          el.style.left = '0';
+          el.style.right = '0';
+          el.classList.add('blend'); // Use transparent colors
+          // Hide labels for non-first blocks in overlap group
+          if (overlaps.size > 0) {
+            const group = [b.id, ...overlaps].sort();
+            if (group.indexOf(b.id) > 0) {
+              nameEl.style.display = 'none';
+            }
+          }
+        } else if (mode === 'topmost' || mode === 'topmost-mono') {
+          // Topmost wins: opaque blocks with z-index
+          el.style.zIndex = getZIndex(b);
+
+          // Apply neutral color for mono variant
+          if (mode === 'topmost-mono') {
+            el.dataset.color = '0';
+          }
+        } else if (mode === 'offset') {
+          // Offset stacking: opaque with visual offset
+
+          if (overlaps.size > 0) {
+            const group = [b.id, ...overlaps].sort();
+            const index = group.indexOf(b.id);
+            const offset = index * 4;
+
+            el.style.left = `${4 + offset}px`;
+            el.style.right = `${4 - offset}px`;
+            el.style.top = `${top + offset}px`;
+            el.style.zIndex = index;
+          }
+        } else if (mode === 'unified') {
+          // Single neutral color, generic "Available" label
+          el.dataset.color = '0';
+          el.querySelector('.avail-block-name').innerHTML = '<span class="avail-label-type">Available</span>';
+        }
+      });
+
+      // Also update second column blocks (Dr. Roberts) for all modes
+      const col2Blocks = document.querySelectorAll('#availLayer2 .avail-block');
+      col2Blocks.forEach(el => {
+        const origColor = el.dataset.origColor || el.dataset.color;
+        if (!el.dataset.origColor) el.dataset.origColor = origColor;
+
+        el.classList.remove('blend');
+
+        // Build label: Type · Time (Day view - clinician is in column header)
+        const fullLabel = `<span class="avail-label-type">${el.dataset.name}</span><span class="avail-label-time">${el.dataset.time}</span>`;
+
+        if (mode === 'unified') {
+          el.dataset.color = '0';
+          el.querySelector('.avail-block-name').innerHTML = '<span class="avail-label-type">Available</span>';
+        } else if (mode === 'topmost-mono') {
+          el.dataset.color = '0';
+          // Keep the full label, just neutral color
+        } else if (mode === 'stacked') {
+          el.dataset.color = origColor;
+          el.classList.add('blend');
+          el.querySelector('.avail-block-name').innerHTML = fullLabel;
+        } else {
+          el.dataset.color = origColor;
+          el.querySelector('.avail-block-name').innerHTML = fullLabel;
+        }
+      });
+
+      // Update UI
+      document.querySelectorAll('.concept-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.mode === mode);
+      });
+
+      // Also update week view if rendered
+      updateWeekViewMode(mode);
+    }
+
+    let currentOverlapMode = 'topmost'; // 'topmost' (colored) or 'topmost-mono' (neutral)
+
+    // Toggle between colored and monochrome block display
+    function setBlockColorMode(mono) {
+      currentOverlapMode = mono ? 'topmost-mono' : 'topmost';
+      // Update day view
+      setOverlapMode(currentOverlapMode);
+      // Update week view
+      updateWeekViewMode(currentOverlapMode);
+    }
+
+    function updateWeekViewMode(mode) {
+      currentOverlapMode = mode;
+
+      // Force re-render week view to apply new mode
+      if (weekViewRendered) {
+        weekViewRendered = false;
+        // Clear the static columns' contents
+        document.querySelectorAll('.cal-week-body .cal-week-column').forEach(col => col.innerHTML = '');
+        document.getElementById('weekTimeGutter').innerHTML = '';
+        if (currentView === 'week') {
+          renderWeekView();
+          // Respect current visibility state
+          const isVisible = availabilityVisible;
+          document.querySelectorAll('.week-avail-layer').forEach(l => {
+            l.style.display = isVisible ? 'block' : 'none';
+          });
+        }
+      }
+    }
+
+    // Toggle availability visibility (keyboard shortcut still works)
+    // =========================================================================
+    // View Switching (Day/Week/Month)
+    // =========================================================================
+    // =========================================================================
+    // View Switching (1/3/5/7/14/30 days)
+    // =========================================================================
+    let currentView = 'day';
+
+    function setView(view) {
+      const doSetView = () => {
+        currentView = view;
+
+        // Update button states
+        document.querySelectorAll('.view-switcher-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.textContent.toLowerCase() === view);
+        });
+
+        // Show/hide views (month and schedule are stubs for now)
+        document.getElementById('dayViewContainer').style.display = view === 'day' ? '' : 'none';
+        document.getElementById('weekViewContainer').style.display = view === 'week' ? '' : 'none';
+
+        if (view === 'week') {
+          renderWeekView();
+        }
+
+        // Refresh availability overlays if visible
+        if (availabilityVisible) {
+          // Re-create hatching and labels for current view
+          createOccupiedOverlays();
+          createFloatingLabels();
+
+          // Ensure layers are visible
+          document.querySelectorAll('.avail-layer').forEach(l => l.style.display = 'block');
+          document.querySelectorAll('.week-avail-layer').forEach(l => l.style.display = 'block');
+
+          // Hide appointments
+          document.querySelectorAll('.appt-block').forEach(el => el.style.visibility = 'hidden');
+        } else {
+          // Ensure layers are hidden and appointments visible
+          document.querySelectorAll('.avail-layer').forEach(l => l.style.display = 'none');
+          document.querySelectorAll('.week-avail-layer').forEach(l => l.style.display = 'none');
+          document.querySelectorAll('.appt-block').forEach(el => el.style.visibility = '');
+        }
+
+        if (view === 'month') {
+          alert('Month view - not yet implemented');
+          setView('week'); // fallback
+        }
+
+        if (view === 'agenda') {
+          alert('Agenda view - not yet implemented');
+          setView('day'); // fallback
+        }
+      };
+
+      // Use View Transitions API if available
+      if (document.startViewTransition) {
+        document.startViewTransition(doSetView);
+      } else {
+        doSetView();
+      }
+    }
+
+    // Keyboard shortcuts for views
+    document.addEventListener('keydown', function (e) {
+      // Ignore if user is typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.key.toLowerCase()) {
+        case 'd': setView('day'); break;
+        case 'w': setView('week'); break;
+        case 'm': setView('month'); break;
+        case 'a': setView('agenda'); break;
+        case 'p': togglePrivacyMode(); break;
+        case '1': setCardStyle('default'); break;
+        case '2': setCardStyle('type'); break;
+        case '3': setCardStyle('status'); break;
+      }
+    });
+
+    // Card background style: 'default' (white), 'type' (type tint), 'status' (status tint)
+    let currentCardStyle = 'default';
+
+    function setCardStyle(style) {
+      currentCardStyle = style;
+      document.body.classList.remove('card-style-default', 'card-style-type', 'card-style-status');
+      document.body.classList.add(`card-style-${style}`);
+
+      // Re-render week view to apply style
+      if (document.getElementById('weekView').classList.contains('active')) {
+        renderWeekView();
+      }
+    }
+
+    // Legacy support
+    function setDaysView(days) {
+      if (days === 1) setView('day');
+      else if (days <= 7) setView('week');
+      else setView('month');
+    }
+
+    function setCalView(view) {
+      setView(view);
+    }
+
+    // Placeholder functions for new toolbar
+    function toggleDatePicker() {
+      alert('Date picker with Today button + mini calendar\n\nCurrent: Wednesday, Sep 16, 2026');
+    }
+
+    function toggleProviderDropdown() {
+      alert('Provider filter dropdown\n\n☑ All Providers\n─────────────────\n☑ Dr. Boyles\n☑ Dr. Crowley\n☑ Dr. Lindell\n☑ Dr. Morningstar');
+    }
+
+    function showPendingConfirmations() {
+      alert('Pending Confirmations\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\nDr. Boyles (2)\n─────────────────\n• Thompson, Rachel — 9:30 AM\n  New Client · Requested\n• Hayes, Emma — 3:30 PM\n  Med Management · Requested\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━\nDr. Lindell (1)\n─────────────────\n• Test, Patient — 8:45 AM\n  Complete Evaluation · Rescheduled');
+    }
+
+    function toggleSitesDropdown() {
+      alert('Sites filter dropdown\n\n☑ All Sites\n─────────────────\n☑ Main Office\n☑ Downtown Clinic\n☐ Telehealth Only');
+    }
+
+    function toggleSettingsDropdown() {
+      const privacyOn = document.body.classList.contains('privacy-mode');
+      const cardStyleDefault = currentCardStyle === 'default';
+      const cardStyleType = currentCardStyle === 'type';
+      const cardStyleStatus = currentCardStyle === 'status';
+      alert(
+        'Calendar Settings\n\n' +
+        'DEFAULT VIEW\n' +
+        '○ Day  ● Week  ○ Month  ○ Agenda\n\n' +
+        'SLOT INTERVAL\n' +
+        '● 15 min  ○ 20 min\n\n' +
+        'TIME FORMAT\n' +
+        '● Full (8:15–8:45 AM)\n' +
+        '○ Compact (8:15a 30m)\n\n' +
+        'NAME FORMAT\n' +
+        '● Last, First (Martinez, Sofia)\n' +
+        '○ First L. (Sofia M.)\n' +
+        '○ Last, F. (Martinez, S.)\n\n' +
+        'AVAILABILITY BLOCKS\n' +
+        '● Colored  ○ Monochrome\n' +
+        '(Press \'v\' to show/hide)\n\n' +
+        'CARD STYLE\n' +
+        (cardStyleDefault ? '●' : '○') + ' Default (1)  ' +
+        (cardStyleType ? '●' : '○') + ' Type color (2)  ' +
+        (cardStyleStatus ? '●' : '○') + ' Status color (3)\n\n' +
+        'PRIVACY MODE\n' +
+        (privacyOn ? '● On' : '○ Off') + '  (Press \'p\' to toggle)\n' +
+        'Blurs patient names on screen\n\n' +
+        '─────────────────\n' +
+        '→ All Calendar Settings'
+      );
+    }
+
+    // Privacy mode toggle
+    function togglePrivacyMode() {
+      document.body.classList.toggle('privacy-mode');
+      const isOn = document.body.classList.contains('privacy-mode');
+      console.log('Privacy mode:', isOn ? 'ON' : 'OFF');
+    }
+
+    function toggleSidebarSettings() {
+      alert(
+        'Settings\n\n' +
+        '─── CALENDAR ───\n\n' +
+        'AVAILABILITY BLOCKS\n' +
+        '● Colored (by type)\n' +
+        '○ Monochrome (neutral)\n\n' +
+        'Block colors map to appointment types:\n' +
+        '• Intakes → Cerulean\n' +
+        '• Established → Violet\n' +
+        '• Telehealth → Jade\n' +
+        '• Crisis → Orange\n' +
+        '• Group → Fuchsia\n\n' +
+        'Shortcut: V to show/hide blocks\n' +
+        '(tap to toggle, hold to peek)\n\n' +
+        '─────────────────\n' +
+        '→ All Settings'
+      );
+    }
+
+    // Keep availability toggle working via hidden state + keyboard
+    let availabilityVisible = false;
+    let vKeyDownTime = 0;
+    let vKeyHeld = false;
+    const HOLD_THRESHOLD = 200; // ms - hold longer than this = peek mode
+
+    // Hide blocks on initial load
+    document.querySelectorAll('.avail-layer').forEach(l => l.style.display = 'none');
+
+    function showAvailability() {
+      const dayLayers = document.querySelectorAll('.avail-layer');
+      const weekLayers = document.querySelectorAll('.week-avail-layer');
+      dayLayers.forEach(l => l.style.display = 'block');
+      weekLayers.forEach(l => l.style.display = 'block');
+
+      // Hide appointment cards (hatching replaces them visually)
+      document.querySelectorAll('.appt-block').forEach(el => el.style.visibility = 'hidden');
+
+      // Enable hour lines above blocks
+      document.body.classList.add('avail-visible');
+
+      // Create hatched overlays for occupied slots (appointments)
+      createOccupiedOverlays();
+
+      // Create floating labels above hatching
+      createFloatingLabels();
+    }
+
+    function hideAvailability() {
+      const dayLayers = document.querySelectorAll('.avail-layer');
+      const weekLayers = document.querySelectorAll('.week-avail-layer');
+      dayLayers.forEach(l => l.style.display = 'none');
+      weekLayers.forEach(l => l.style.display = 'none');
+
+      // Show appointment cards again
+      document.querySelectorAll('.appt-block').forEach(el => el.style.visibility = '');
+
+      // Restore hour lines under appointments
+      document.body.classList.remove('avail-visible');
+
+      // Remove hatched overlays and floating labels
+      document.querySelectorAll('.avail-occupied').forEach(el => el.remove());
+      document.querySelectorAll('.avail-floating-label').forEach(el => el.remove());
+    }
+
+    function createFloatingLabels() {
+      // Remove any existing
+      document.querySelectorAll('.avail-floating-label').forEach(el => el.remove());
+
+      // Get all blocks and sort by start time, then clinician alphabetically
+      const blocks = Array.from(document.querySelectorAll('.avail-block'));
+      blocks.sort((a, b) => {
+        const startA = parseFloat(a.dataset.start) || 0;
+        const startB = parseFloat(b.dataset.start) || 0;
+        if (startA !== startB) return startA - startB;
+        // Same start time — sort by clinician name
+        const clinA = (a.dataset.clinician || '').toLowerCase();
+        const clinB = (b.dataset.clinician || '').toLowerCase();
+        return clinA.localeCompare(clinB);
+      });
+
+      // Group blocks by column and track label positions to offset overlaps
+      const columnLabels = new Map();
+
+      // For each avail-block, create a floating label positioned at its top
+      blocks.forEach(block => {
+        const column = block.closest('.cal-day-column, .cal-week-column');
+        if (!column) return;
+
+        const label = document.createElement('span');
+        label.className = 'avail-floating-label';
+        label.innerHTML = block.querySelector('.avail-block-name')?.innerHTML || '';
+
+        // Get block's top position
+        const blockTop = parseFloat(block.style.top) || 0;
+
+        // Track labels in this column to offset overlaps
+        if (!columnLabels.has(column)) {
+          columnLabels.set(column, []);
+        }
+        const existingLabels = columnLabels.get(column);
+
+        // Find how many labels are already at or near this top position
+        const LABEL_HEIGHT = 44; // approximate label height for two-line labels
+        let offsetCount = 0;
+        existingLabels.forEach(pos => {
+          if (Math.abs(pos - blockTop) < LABEL_HEIGHT) {
+            offsetCount++;
+          }
+        });
+
+        // Position with offset for overlapping labels
+        const topOffset = 4 + (offsetCount * LABEL_HEIGHT);
+        label.style.top = `${blockTop + topOffset}px`;
+        label.style.left = '4px';
+
+        // Record this label's position
+        existingLabels.push(blockTop + topOffset);
+
+        // Copy color for background
+        const color = block.dataset.color;
+        label.dataset.color = color;
+
+        column.appendChild(label);
+      });
+    }
+
+    function createOccupiedOverlays() {
+      // Remove any existing
+      document.querySelectorAll('.avail-occupied').forEach(el => el.remove());
+
+      const HOUR_HEIGHT = 96; // --cal-hour-height
+
+      // Helper to parse top position (handles both "360px" and "calc(var(--cal-hour-height) * 6 + 2px)")
+      function parseTop(el) {
+        const topStyle = el.style.top;
+        if (!topStyle) return 0;
+
+        // Direct pixel value
+        if (topStyle.endsWith('px') && !topStyle.includes('calc')) {
+          return parseFloat(topStyle);
+        }
+
+        // calc(var(--cal-hour-height) * N + Mpx) format
+        const calcMatch = topStyle.match(/\*\s*([\d.]+)\s*\+\s*([\d.]+)px/);
+        if (calcMatch) {
+          const multiplier = parseFloat(calcMatch[1]);
+          const offset = parseFloat(calcMatch[2]);
+          return multiplier * HOUR_HEIGHT + offset;
+        }
+
+        // calc(var(--cal-hour-height) * N) format (no offset)
+        const simpleCalcMatch = topStyle.match(/\*\s*([\d.]+)\s*\)/);
+        if (simpleCalcMatch) {
+          return parseFloat(simpleCalcMatch[1]) * HOUR_HEIGHT;
+        }
+
+        return parseFloat(topStyle) || 0;
+      }
+
+      // Helper to parse height
+      function parseHeight(el) {
+        const heightStyle = el.style.height;
+        if (!heightStyle) return 0;
+
+        // Direct pixel value
+        if (heightStyle.endsWith('px') && !heightStyle.includes('calc')) {
+          return parseFloat(heightStyle);
+        }
+
+        // calc(var(--cal-hour-height) * N - Mpx) format
+        const calcMatch = heightStyle.match(/\*\s*([\d.]+)\s*-\s*([\d.]+)px/);
+        if (calcMatch) {
+          const multiplier = parseFloat(calcMatch[1]);
+          const offset = parseFloat(calcMatch[2]);
+          return multiplier * HOUR_HEIGHT - offset;
+        }
+
+        // calc(var(--cal-hour-height) * N) format (no offset)
+        const simpleCalcMatch = heightStyle.match(/\*\s*([\d.]+)\s*\)/);
+        if (simpleCalcMatch) {
+          return parseFloat(simpleCalcMatch[1]) * HOUR_HEIGHT;
+        }
+
+        return parseFloat(heightStyle) || 0;
+      }
+
+      // For each appointment, check if it overlaps with an avail block
+      // Only create hatched overlay if it does
+      document.querySelectorAll('.appt-block').forEach(appt => {
+        const column = appt.closest('.cal-day-column, .cal-week-column');
+        if (!column) return;
+
+        // Get appointment position
+        const apptTop = parseTop(appt);
+        const apptHeight = parseHeight(appt);
+        const apptBottom = apptTop + apptHeight;
+
+        // Check if this appointment overlaps with any avail block in the column
+        const availBlocks = column.querySelectorAll('.avail-block');
+        let overlapsAvail = false;
+        let overlappingBlock = null;
+
+        availBlocks.forEach(block => {
+          const blockTop = parseTop(block);
+          const blockHeight = parseHeight(block);
+          const blockBottom = blockTop + blockHeight;
+
+          // Check for overlap
+          if (apptTop < blockBottom && apptBottom > blockTop) {
+            overlapsAvail = true;
+            overlappingBlock = block;
+          }
+        });
+
+        // Only create hatching if appointment is within an avail block
+        if (!overlapsAvail) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'avail-occupied';
+
+        // Store avail block data for tooltip
+        if (overlappingBlock) {
+          overlay.dataset.clinician = overlappingBlock.dataset.clinician || '';
+          overlay.dataset.name = overlappingBlock.dataset.name || '';
+          overlay.dataset.time = overlappingBlock.dataset.time || '';
+        }
+
+        // Copy vertical position from appointment, but go edge-to-edge horizontally
+        overlay.style.top = appt.style.top;
+        overlay.style.height = appt.style.height;
+
+        // Parse the appointment's column position for edge-to-edge hatching
+        // Extract percentage from left calc (e.g., "calc(50% + 2px)" → 50)
+        const leftStyle = appt.style.left || '0';
+        const rightStyle = appt.style.right || '16px';
+
+        // Get the percentage boundaries (strip the gap offsets)
+        const leftMatch = leftStyle.match(/calc\((\d+(?:\.\d+)?)%/);
+        const rightMatch = rightStyle.match(/calc\((\d+(?:\.\d+)?)%/);
+
+        if (leftMatch && rightMatch) {
+          // Concurrent: use column percentages without gaps
+          overlay.style.left = `${leftMatch[1]}%`;
+          overlay.style.right = `${rightMatch[1]}%`;
+        } else {
+          // Single appointment: full width
+          overlay.style.left = '0';
+          overlay.style.right = '0';
+        }
+
+        column.appendChild(overlay);
+      });
+    }
+
+    function toggleAvailability() {
+      const doToggle = () => {
+        availabilityVisible = !availabilityVisible;
+        if (availabilityVisible) {
+          showAvailability();
+        } else {
+          hideAvailability();
+        }
+      };
+
+      // Use View Transitions API if available
+      if (document.startViewTransition) {
+        document.startViewTransition(doToggle);
+      } else {
+        doToggle();
+      }
+    }
+
+    // V key: tap to toggle, hold to peek
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key.toLowerCase() === 'v' && !e.repeat) {
+        vKeyDownTime = Date.now();
+        vKeyHeld = true;
+        // Show immediately on keydown (for peek)
+        if (!availabilityVisible) {
+          const doShow = () => showAvailability();
+          if (document.startViewTransition) {
+            document.startViewTransition(doShow);
+          } else {
+            doShow();
+          }
+        }
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key.toLowerCase() === 'v' && vKeyHeld) {
+        vKeyHeld = false;
+        const holdDuration = Date.now() - vKeyDownTime;
+
+        const doHide = () => hideAvailability();
+
+        if (holdDuration < HOLD_THRESHOLD) {
+          // Quick tap: toggle
+          availabilityVisible = !availabilityVisible;
+          if (!availabilityVisible) {
+            if (document.startViewTransition) {
+              document.startViewTransition(doHide);
+            } else {
+              doHide();
+            }
+          }
+          // If toggling on, already shown from keydown
+        } else {
+          // Long hold: peek mode, hide on release (unless it was already visible)
+          if (!availabilityVisible) {
+            if (document.startViewTransition) {
+              document.startViewTransition(doHide);
+            } else {
+              doHide();
+            }
+          }
+        }
+      }
+    });
+
+    // =========================================================================
+    // Week View Rendering
+    // =========================================================================
+    let weekViewRendered = false;
+
+    function renderWeekView() {
+      if (weekViewRendered) return;
+      weekViewRendered = true;
+
+      const timeGutter = document.getElementById('weekTimeGutter');
+
+      // Render time slots
+      timeGutter.innerHTML = '';
+
+      const hours = ['7', '8', '9', '10', '11', '12', '1', '2', '3', '4', '5', '6'];
+      hours.forEach((h, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'cal-time-slot';
+        const span = document.createElement('span');
+        span.textContent = h;
+        slot.appendChild(span);
+        timeGutter.appendChild(slot);
+      });
+
+      // Add tick marks container
+      const ticksContainer = document.createElement('div');
+      ticksContainer.className = 'cal-gutter-ticks';
+
+      for (let hour = 0; hour < 12; hour++) {
+        [15, 30, 45].forEach(min => {
+          const tick = document.createElement('div');
+          tick.className = 'cal-gutter-tick';
+          tick.style.top = `${hour * HOUR_HEIGHT + (min / 60) * HOUR_HEIGHT}px`;
+          ticksContainer.appendChild(tick);
+        });
+      }
+      timeGutter.appendChild(ticksContainer);
+
+      // Week data: Mon-Fri only
+      const weekData = [
+        {
+          day: 'Mon', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Intakes', start: 2, end: 4.5, color: 1 },
+            { name: 'Established', start: 7, end: 10, color: 2 }
+          ],
+          dnbBlocks: [
+            { label: 'Lunch', start: 4.5, end: 5.5, clinician: 'Dr. Morningstar' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Boyles' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Crowley' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Lindell' }
+          ],
+          appts: [
+            { title: 'Lee, Kevin', start: 2, duration: 1, type: 'intake', status: 'occurred' },
+            { title: 'Park, Jenny', start: 7, duration: 0.5, type: 'established', status: 'confirmed' },
+            { title: 'Nguyen, Kim', start: 8, duration: 1, type: 'followup', status: 'checkedin' },
+            { title: 'Hayes, Emma', start: 9.5, duration: 1, type: 'medmgmt', status: 'scheduled' }
+          ]
+        },
+        {
+          day: 'Tue', clinician: 'Dr. Morningstar', blocks: [
+            { name: 'Group', start: 3, end: 5, color: 5 },
+            { name: 'Telehealth', start: 4, end: 5.5, color: 3 },
+            { name: 'Established', start: 7, end: 9, color: 2 }
+          ],
+          dnbBlocks: [
+            { label: 'Lunch', start: 4.5, end: 5.5, clinician: 'Dr. Morningstar' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Boyles' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Crowley' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Lindell' }
+          ],
+          appts: [
+            { title: 'Smith, Anna', start: 3, duration: 1, type: 'group', status: 'arrived' },
+            { title: 'Brown, Tom', start: 7, duration: 1, type: 'established', status: 'scheduled' },
+            { title: 'Clark, James', start: 8.5, duration: 1, type: 'family', status: 'confirmed' }
+          ]
+        },
+        {
+          day: 'Wed', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Crisis', start: 0, end: 2, color: 4, clinician: 'Dr. Morningstar' },
+            { name: 'Intakes', start: 1, end: 3.5, color: 1, clinician: 'Dr. Boyles' },
+            { name: 'Established', start: 6, end: 9, color: 2, clinician: 'Dr. Boyles' },
+            { name: 'Telehealth', start: 6, end: 8, color: 3, clinician: 'Dr. Morningstar' },
+            { name: 'Established', start: 9, end: 11, color: 2, clinician: 'Dr. Morningstar' }
+          ],
+          dnbBlocks: [
+            { label: 'Lunch', start: 4.5, end: 5.5, clinician: 'Dr. Morningstar' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Boyles' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Crowley' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Lindell' },
+            { label: 'OOO - Conference', start: 6, end: 10, clinician: 'Dr. Lindell' }
+          ],
+          appts: [
+            { title: 'Adams, Robert', start: 1, duration: 1, type: 'crisis', status: 'occurred' },
+            { title: 'Martinez, Sofia', start: 1, duration: 1, type: 'intake', status: 'arrived', flag: true },
+            { title: 'Thompson, Rachel', start: 2.5, duration: 1, type: 'new', status: 'requested' },
+            { title: 'Garcia, Maria', start: 6, duration: 1, type: 'established', status: 'confirmed' },
+            { title: 'Rivera, Carlos', start: 7.5, duration: 1, type: 'established', status: 'rescheduled' },
+            { title: 'Chen, David', start: 6, duration: 1, type: 'telehealth', status: 'confirmed' },
+            { title: 'Patel, Anita', start: 7.5, duration: 0.5, type: 'telehealth', status: 'scheduled', flag: true },
+            { title: 'Yang, Peggy', start: 8, duration: 0.25, type: 'followup', status: 'confirmed' },
+            { title: 'Wilson Family', start: 10, duration: 1.5, type: 'family', status: 'confirmed' }
+          ]
+        },
+        {
+          day: 'Thu', clinician: 'Dr. Morningstar', blocks: [
+            { name: 'Crisis', start: 1, end: 3, color: 4 },
+            { name: 'Intakes', start: 2, end: 4, color: 1 },
+            { name: 'Group', start: 1, end: 3, color: 5, clinician: 'Dr. Franklin' },
+            { name: 'Established', start: 7, end: 9.5, color: 2 }
+          ],
+          dnbBlocks: [
+            { label: 'Lunch', start: 4.5, end: 5.5, clinician: 'Dr. Morningstar' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Boyles' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Crowley' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Lindell' }
+          ],
+          appts: [
+            { title: 'Davis, Lisa', start: 3.5, duration: 1, type: 'intake', status: 'late' },
+            { title: 'Wilson, Mark', start: 7, duration: 1, type: 'established', status: 'noshow' },
+            { title: 'Ross, Diana', start: 8.5, duration: 1, type: 'evaluation', status: 'arrived' }
+          ]
+        },
+        {
+          day: 'Fri', clinician: 'Dr. Boyles', blocks: [
+            { name: 'Telehealth', start: 2, end: 5, color: 3 },
+            { name: 'Crisis', start: 7, end: 9, color: 4 }
+          ],
+          dnbBlocks: [
+            { label: 'Lunch', start: 4.5, end: 5.5, clinician: 'Dr. Morningstar' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Boyles' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Crowley' },
+            { label: 'Lunch', start: 5, end: 6, clinician: 'Dr. Lindell' }
+          ],
+          appts: [
+            { title: 'Taylor, Chris', start: 2, duration: 0.5, type: 'telehealth', status: 'occurred' },
+            { title: 'Moore, Pat', start: 4, duration: 1, type: 'telehealth', status: 'cancelled' }
+          ]
+        }
+      ];
+
+      // Get static columns from HTML
+      const columns = document.querySelectorAll('.cal-week-body .cal-week-column');
+
+      // Render into each column
+      weekData.forEach((dayData, dayIndex) => {
+        const col = columns[dayIndex];
+        if (!col) return;
+
+        col.innerHTML = '';
+
+        // Availability layer (rendered first, so hour lines appear above in gaps)
+        const availLayer = document.createElement('div');
+        availLayer.className = 'week-avail-layer';
+        availLayer.style.position = 'absolute';
+        availLayer.style.inset = '0';
+        // z-index controlled by CSS --layer-avail
+        availLayer.style.display = availabilityVisible ? 'block' : 'none';
+
+        // Find overlaps for this day
+        const dayBlocks = dayData.blocks;
+        const overlaps = {};
+        dayBlocks.forEach(b => overlaps[b.name] = new Set());
+        for (let i = 0; i < dayBlocks.length; i++) {
+          for (let j = i + 1; j < dayBlocks.length; j++) {
+            const a = dayBlocks[i], b = dayBlocks[j];
+            if (a.start < b.end && b.start < a.end) {
+              overlaps[a.name].add(b.name);
+              overlaps[b.name].add(a.name);
+            }
+          }
+        }
+
+        dayBlocks.forEach(b => {
+          const block = document.createElement('div');
+          block.className = 'avail-block';
+          block.dataset.color = b.color;
+          block.dataset.origColor = b.color;
+          block.dataset.name = b.name;
+
+          // Format time as "8:00 AM–12:00 PM"
+          const startH = 7 + b.start;
+          const endH = 7 + b.end;
+          const formatHour = h => {
+            const hours = Math.floor(h);
+            const mins = Math.round((h - hours) * 60);
+            const h12 = hours > 12 ? hours - 12 : hours;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            return mins === 0 ? `${h12}:00 ${ampm}` : `${h12}:${mins.toString().padStart(2, '0')} ${ampm}`;
+          };
+          const timeStr = `${formatHour(startH)}–${formatHour(endH)}`.replace(' AM–', '–').replace(' PM–', '–');
+          block.dataset.time = timeStr;
+          block.dataset.clinician = b.clinician || dayData.clinician;
+          block.dataset.location = b.name === 'Telehealth' ? 'Virtual' : 'Main Office';
+          block.dataset.types = b.name;
+          block.dataset.start = b.start;
+          block.dataset.duration = b.end - b.start;
+
+          // Label: "LastName · Type · Time"
+          block.dataset.fullLabel = `${getLastName(b.clinician || dayData.clinician)} · ${b.name} · ${timeStr}`;
+
+          const top = b.start * HOUR_HEIGHT;
+          const height = (b.end - b.start) * HOUR_HEIGHT;
+          block.style.top = `${top}px`;
+          block.style.height = `${height}px`;
+
+          // Handle overlaps based on current mode
+          const hasOverlap = overlaps[b.name].size > 0;
+          const overlappingBlocks = [...overlaps[b.name]].map(name => dayBlocks.find(db => db.name === name));
+
+          if (currentOverlapMode === 'sidebyside' && hasOverlap) {
+            const group = [b.name, ...overlaps[b.name]].sort();
+            const index = group.indexOf(b.name);
+            const total = group.length;
+            const widthPct = 100 / total;
+            const leftPct = index * widthPct;
+            block.style.left = `calc(${leftPct}%)`;
+            block.style.right = `calc(${100 - leftPct - widthPct}%)`;
+          } else if (currentOverlapMode === 'topmost' || currentOverlapMode === 'topmost-mono') {
+            block.style.left = '0';
+            block.style.right = '0';
+
+            // Calculate z-index for stacking order
+            const zIndex = 100 - (b.end - b.start);
+            block.style.zIndex = zIndex;
+          } else if (currentOverlapMode === 'offset' && hasOverlap) {
+            const group = [b.name, ...overlaps[b.name]].sort();
+            const index = group.indexOf(b.name);
+            const offset = index * 4;
+            block.style.left = `${2 + offset}px`;
+            block.style.right = `${2 - offset}px`;
+            block.style.top = `${top + offset}px`;
+            block.style.zIndex = index;
+          } else {
+            block.style.left = '0';
+            block.style.right = '0';
+          }
+
+          // Apply unified or topmost-mono mode if active
+          if (currentOverlapMode === 'unified' || currentOverlapMode === 'topmost-mono') {
+            block.dataset.color = '0';
+          }
+
+          // Apply blend class for stacked mode
+          if (currentOverlapMode === 'stacked') {
+            block.classList.add('blend');
+            // Hide labels for non-first blocks in overlap group (same as topmost behavior)
+            if (hasOverlap) {
+              const group = [b.name, ...overlaps[b.name]].sort();
+              if (group.indexOf(b.name) > 0) {
+                block.dataset.hideLabel = 'true';
+              }
+            }
+          }
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'avail-block-name';
+          // Week view format: two rows - Type/Time on top, Name below
+          if (currentOverlapMode === 'unified') {
+            nameSpan.innerHTML = '<span class="avail-label-type">Available</span>';
+          } else {
+            nameSpan.innerHTML = `<span class="avail-label-row"><span class="avail-label-type">${b.name}</span><span class="avail-label-time">${block.dataset.time}</span></span><span class="avail-label-name">${getLastName(block.dataset.clinician)}</span>`;
+          }
+
+          block.appendChild(nameSpan);
+
+          availLayer.appendChild(block);
+        });
+
+        col.appendChild(availLayer);
+
+        // Hour lines (rendered after avail layer so they show in gaps)
+        for (let i = 1; i <= 12; i++) {
+          const line = document.createElement('div');
+          line.className = 'cal-hour-line';
+          line.style.top = `${i * HOUR_HEIGHT}px`;
+          col.appendChild(line);
+        }
+
+        // DNB layer (after hour lines, before appointments)
+        const dnbLayer = document.createElement('div');
+        dnbLayer.className = 'dnb-layer';
+        dnbLayer.style.position = 'absolute';
+        dnbLayer.style.inset = '0';
+        // No z-index on layer - let individual blocks and labels control their own layers
+        dnbLayer.style.pointerEvents = 'none';
+
+        const dnbBlocks = dayData.dnbBlocks || [];
+
+        // Group DNB blocks by label AND time slot (same start/end = same group)
+        const dnbGroups = [];
+        const usedDnb = new Set();
+
+        dnbBlocks.forEach((dnb, i) => {
+          if (usedDnb.has(i)) return;
+
+          const group = [dnb];
+          usedDnb.add(i);
+
+          // Find blocks with same label AND same time slot
+          dnbBlocks.forEach((other, j) => {
+            if (usedDnb.has(j)) return;
+            if (other.label === dnb.label && other.start === dnb.start && other.end === dnb.end) {
+              group.push(other);
+              usedDnb.add(j);
+            }
+          });
+
+          dnbGroups.push(group);
+        });
+
+        // Format time helper (grid starts at 7am, so start=0 is 7am)
+        const fmtDnbTime = (start, end) => {
+          const startH = 7 + start;
+          const endH = 7 + end;
+          const fmt = h => {
+            const hours = Math.floor(h);
+            const mins = Math.round((h - hours) * 60);
+            const h12 = hours > 12 ? hours - 12 : hours;
+            return `${h12}:${mins.toString().padStart(2, '0')}`;
+          };
+          return `${fmt(startH)}–${fmt(endH)}`;
+        };
+
+        dnbGroups.forEach(group => {
+          // Calculate merged bounds
+          const minStart = Math.min(...group.map(d => d.start));
+          const maxEnd = Math.max(...group.map(d => d.end));
+
+          const dnbEl = document.createElement('div');
+          dnbEl.className = 'dnb-block';
+          dnbEl.style.pointerEvents = 'auto';
+          const top = minStart * HOUR_HEIGHT;
+          const height = (maxEnd - minStart) * HOUR_HEIGHT;
+          dnbEl.style.top = `${top}px`;
+          dnbEl.style.height = `${height}px`;
+
+          const label = document.createElement('span');
+          label.className = 'dnb-block-label';
+
+          if (group.length === 1) {
+            const d = group[0];
+            const providerName = d.clinician ? d.clinician.replace('Dr. ', '') : '';
+            label.innerHTML = `<span class="dnb-label-row"><span class="dnb-label-type">${d.label}</span><span class="dnb-label-time">${fmtDnbTime(d.start, d.end)}</span></span>${providerName ? `<span class="dnb-label-name">${providerName}</span>` : ''}`;
+          } else {
+            // Group by time slot, sort providers A-Z within each slot
+            // Result: Type/Time on top, Names below
+            const byTime = {};
+            group.forEach(d => {
+              const timeKey = `${d.start}-${d.end}`;
+              if (!byTime[timeKey]) {
+                byTime[timeKey] = { start: d.start, end: d.end, providers: [] };
+              }
+              const name = d.clinician ? d.clinician.replace('Dr. ', '') : '';
+              if (name) byTime[timeKey].providers.push(name);
+            });
+
+            // Sort time slots by start time, then format
+            const timeSlots = Object.values(byTime).sort((a, b) => a.start - b.start);
+            // All providers for this DNB type
+            const allProviders = [...new Set(group.map(d => d.clinician ? d.clinician.replace('Dr. ', '') : '').filter(Boolean))].sort().join(', ');
+            // Use the merged time range
+            label.innerHTML = `<span class="dnb-label-row"><span class="dnb-label-type">${group[0].label}</span><span class="dnb-label-time">${fmtDnbTime(minStart, maxEnd)}</span></span>${allProviders ? `<span class="dnb-label-name">${allProviders}</span>` : ''}`;
+          }
+
+          dnbEl.appendChild(label);
+          dnbLayer.appendChild(dnbEl);
+        });
+
+        col.appendChild(dnbLayer);
+
+        // Appointment layer with collision detection
+        const apptLayer = document.createElement('div');
+        apptLayer.style.position = 'absolute';
+        apptLayer.style.inset = '0';
+        apptLayer.style.pointerEvents = 'none';
+
+        // Calculate appointment collisions
+        const appts = dayData.appts || [];
+        const apptPositions = appts.map((appt, idx) => ({
+          ...appt,
+          idx,
+          startPx: (appt.start - 1) * HOUR_HEIGHT,
+          endPx: (appt.start - 1 + appt.duration) * HOUR_HEIGHT
+        }));
+
+        // Find collision groups
+        function findCollisionGroups(items) {
+          const groups = [];
+          const used = new Set();
+
+          items.forEach((item, i) => {
+            if (used.has(i)) return;
+
+            const group = [item];
+            used.add(i);
+
+            // Find all items that overlap with any item in the group
+            let changed = true;
+            while (changed) {
+              changed = false;
+              items.forEach((other, j) => {
+                if (used.has(j)) return;
+                // Check if other overlaps with any item in group
+                const overlaps = group.some(g =>
+                  g.startPx < other.endPx && other.startPx < g.endPx
+                );
+                if (overlaps) {
+                  group.push(other);
+                  used.add(j);
+                  changed = true;
+                }
+              });
+            }
+
+            if (group.length > 0) groups.push(group);
+          });
+
+          return groups;
+        }
+
+        const collisionGroups = findCollisionGroups(apptPositions);
+
+        // Assign columns within each collision group
+        collisionGroups.forEach(group => {
+          if (group.length === 1) {
+            group[0].col = 0;
+            group[0].totalCols = 1;
+            return;
+          }
+
+          // Sort by start time
+          group.sort((a, b) => a.startPx - b.startPx);
+
+          // Greedy column assignment
+          const columns = [];
+          group.forEach(item => {
+            let placed = false;
+            for (let c = 0; c < columns.length; c++) {
+              // Check if this column is free (no overlap with last item in column)
+              const lastInCol = columns[c][columns[c].length - 1];
+              if (lastInCol.endPx <= item.startPx) {
+                columns[c].push(item);
+                item.col = c;
+                placed = true;
+                break;
+              }
+            }
+            if (!placed) {
+              item.col = columns.length;
+              columns.push([item]);
+            }
+          });
+
+          const totalCols = columns.length;
+          group.forEach(item => item.totalCols = totalCols);
+        });
+
+        apptPositions.forEach(appt => {
+          const apptEl = document.createElement('div');
+          let classes = 'appt-block';
+          if (appt.duration <= 0.5) classes += ' short';
+          if (appt.duration <= 0.25) classes += ' appt-15';
+          apptEl.className = classes;
+          if (appt.type) apptEl.dataset.type = appt.type;
+          if (appt.status) apptEl.dataset.status = appt.status;
+          apptEl.style.pointerEvents = 'auto';
+          apptEl.style.top = `${appt.startPx + 2}px`;
+          apptEl.style.height = `${appt.duration * HOUR_HEIGHT - 4}px`;
+
+          // Apply collision positioning
+          const isColliding = appt.totalCols > 1;
+          if (isColliding) {
+            const totalCols = appt.totalCols;
+            const col = appt.col;
+            const gap = 2; // gap between concurrent cards
+            const rightMargin = 8; // smaller margin for week view
+            const widthPct = 100 / totalCols;
+            const leftPct = col * widthPct;
+            const isFirst = col === 0;
+            const isLast = col === totalCols - 1;
+
+            const leftOffset = isFirst ? 0 : gap;
+            const rightOffset = isLast ? rightMargin : gap;
+
+            apptEl.style.left = `calc(${leftPct}% + ${leftOffset}px)`;
+            apptEl.style.right = `calc(${100 - leftPct - widthPct}% + ${rightOffset}px)`;
+            apptEl.classList.add('collapsed');
+          }
+
+          // Format time: "8:00–9:00 AM"
+          const startHour = 6 + appt.start;
+          const endHour = 6 + appt.start + appt.duration;
+          const formatHour = h => {
+            const hour = Math.floor(h);
+            const min = Math.round((h % 1) * 60);
+            const h12 = hour > 12 ? hour - 12 : hour;
+            return `${h12}:${min.toString().padStart(2, '0')}`;
+          };
+          const ampm = endHour >= 12 ? 'PM' : 'AM';
+          const timeStr = `${formatHour(startHour)}–${formatHour(endHour)} ${ampm}`;
+
+          // Abbreviate name for collision mode: "Martinez, Sofia" → "Martinez, S."
+          const abbreviateName = (name) => {
+            const parts = name.split(', ');
+            if (parts.length === 2) {
+              return `${parts[0]}, ${parts[1].charAt(0)}.`;
+            }
+            return name;
+          };
+
+          // Store full name for tooltip
+          apptEl.dataset.fullName = appt.title;
+          apptEl.dataset.time = timeStr;
+
+          if (isColliding) {
+            // Stacked layout: name on line 1, time on line 2 (if tall enough)
+            const titleEl = document.createElement('div');
+            titleEl.className = 'appt-title';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'appt-name';
+            nameSpan.textContent = abbreviateName(appt.title);
+            titleEl.appendChild(nameSpan);
+
+            // Flag after name (won't be truncated)
+            if (appt.flag) {
+              const flagEl = document.createElement('span');
+              flagEl.className = 'appt-flag';
+              flagEl.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V2.8a.8.8 0 0 1 1.17-.71l11.38 5.69a.8.8 0 0 1 0 1.44L6 15.5"/></svg>';
+              titleEl.appendChild(flagEl);
+            }
+            apptEl.appendChild(titleEl);
+
+            // Show time on second line if card is tall enough (≥30 min)
+            if (appt.duration >= 0.5) {
+              const timeEl = document.createElement('div');
+              timeEl.className = 'appt-time';
+              timeEl.style.marginTop = '2px';
+              timeEl.textContent = timeStr;
+              apptEl.appendChild(timeEl);
+            }
+          } else {
+            // Normal layout: name left, time right on same row
+            const rowEl = document.createElement('div');
+            rowEl.className = 'appt-row';
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'appt-title';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'appt-name';
+            nameSpan.textContent = appt.title;
+            titleEl.appendChild(nameSpan);
+
+            // Flag after name
+            if (appt.flag) {
+              const flagEl = document.createElement('span');
+              flagEl.className = 'appt-flag';
+              flagEl.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V2.8a.8.8 0 0 1 1.17-.71l11.38 5.69a.8.8 0 0 1 0 1.44L6 15.5"/></svg>';
+              titleEl.appendChild(flagEl);
+            }
+
+            const timeEl = document.createElement('div');
+            timeEl.className = 'appt-time';
+            timeEl.textContent = timeStr;
+
+            rowEl.appendChild(titleEl);
+            rowEl.appendChild(timeEl);
+            apptEl.appendChild(rowEl);
+          }
+
+          // Type + status row at bottom (for cards tall enough, and not colliding)
+          if (!isColliding) {
+            const detailRow = document.createElement('div');
+            detailRow.className = 'appt-detail-row';
+
+            const typeEl = document.createElement('div');
+            typeEl.className = 'appt-type';
+            const typeMap = {
+              established: 'Established Client',
+              new: 'New Client',
+              crisis: 'Crisis Intervention',
+              intake: 'Intake Assessment',
+              group: 'Group Therapy',
+              evaluation: 'Complete Evaluation',
+              medmgmt: 'Med Management',
+              followup: 'Follow Up',
+              family: 'Family Session',
+              telehealth: 'Telehealth'
+            };
+            typeEl.textContent = typeMap[appt.type] || appt.type || '';
+
+            const statusEl = document.createElement('div');
+            statusEl.className = 'appt-status';
+            const statusMap = { requested: 'Requested', scheduled: 'Scheduled', rescheduled: 'Rescheduled', confirmed: 'Confirmed', arrived: 'Arrived', checkedin: 'Checked In', occurred: 'Occurred', cancelled: 'Cancelled', late: 'Late', noshow: 'No Show' };
+            statusEl.textContent = statusMap[appt.status] || appt.status || '';
+
+            detailRow.appendChild(typeEl);
+            detailRow.appendChild(statusEl);
+            apptEl.appendChild(detailRow);
+          }
+
+          apptLayer.appendChild(apptEl);
+        });
+
+        col.appendChild(apptLayer);
+      });
+    }
+
+    // Tooltip element
+    const tooltip = document.getElementById('tooltip');
+
+    // Initialize with topmost mode (B2)
+    setOverlapMode('topmost');
+
+    // ==========================================================================
+    // Click to Add Appointment (simple JS dialogs)
+    // ==========================================================================
+    function formatTime(hour, minutes) {
+      const h12 = hour > 12 ? hour - 12 : hour;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      return minutes > 0 ? `${h12}:${minutes.toString().padStart(2, '0')} ${ampm}` : `${h12} ${ampm}`;
+    }
+
+    function handleColumnClick(e, column) {
+      // Don't trigger if clicking an appointment or badge
+      if (e.target.closest('.appt-block') || e.target.closest('.avail-overlap-badge')) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Close any open popovers first
+      const apptPopover = document.getElementById('apptPopover');
+      if (apptPopover) apptPopover.classList.remove('visible');
+
+      const rect = column.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const hourIndex = Math.floor(y / HOUR_HEIGHT);
+      const hour = 6 + hourIndex;
+      const minutes = Math.round(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60 / 15) * 15;
+      const timeStr = formatTime(hour, minutes);
+
+      // Open new appointment popover at click position
+      showNewApptPopoverAt(e.clientX + 8, e.clientY, timeStr);
+    }
+
+    function addAppointmentFromToolbar() {
+      // Legacy - now handled by showNewApptPopover
+    }
+
+    // Attach click handlers to day columns (use { once: false } and track)
+    document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+      if (!col.hasAttribute('data-click-bound')) {
+        col.setAttribute('data-click-bound', 'true');
+        col.addEventListener('click', (e) => handleColumnClick(e, col));
+      }
+    });
+
+    // Attach click handlers to week columns (after render)
+    function attachWeekColumnClicks() {
+      document.querySelectorAll('.cal-week-body .cal-week-column').forEach(col => {
+        if (!col.hasAttribute('data-click-bound')) {
+          col.setAttribute('data-click-bound', 'true');
+          col.addEventListener('click', (e) => handleColumnClick(e, col));
+        }
+      });
+    }
+
+    // ==========================================================================
+    // Appointment Tooltip - shows which availability blocks it falls within
+    // ==========================================================================
+    function getBlocksAtTime(column, apptEl) {
+      // Find all avail blocks in the same column that overlap with this appointment
+      const blocks = column.querySelectorAll('.avail-block');
+      const overlapping = [];
+
+      // Get appointment position from computed style (handles calc() values)
+      const apptRect = apptEl.getBoundingClientRect();
+      const columnRect = column.getBoundingClientRect();
+      const relativeTop = apptRect.top - columnRect.top;
+      const relativeBottom = relativeTop + apptRect.height;
+
+      blocks.forEach(block => {
+        const blockTop = parseFloat(block.style.top) || 0;
+        const blockHeight = parseFloat(block.style.height) || 60;
+        const blockBottom = blockTop + blockHeight;
+
+        // Check if appointment overlaps with block (using pixel positions)
+        if (relativeTop < blockBottom && relativeBottom > blockTop) {
+          overlapping.push({
+            name: block.dataset.name,
+            clinician: block.dataset.clinician,
+            time: block.dataset.time
+          });
+        }
+      });
+
+      return overlapping;
+    }
+
+    function showApptTooltip(e, appt) {
+      // Use stored data for collapsed cards, otherwise read from DOM
+      const title = appt.dataset.fullName || appt.querySelector('.appt-title')?.textContent || 'Unknown';
+      const time = appt.dataset.time || appt.querySelector('.appt-time')?.textContent || '';
+      const typeRaw = appt.querySelector('.appt-type')?.textContent || '';
+      const typeKey = appt.dataset.type || '';
+
+      // Map type key to display name
+      const typeDisplayMap = {
+        intake: 'Initial Evaluation',
+        established: 'Follow-up',
+        telehealth: 'Telehealth Session',
+        crisis: 'Crisis Intervention',
+        group: 'Group Session'
+      };
+      const type = typeRaw || typeDisplayMap[typeKey] || typeKey.charAt(0).toUpperCase() + typeKey.slice(1);
+      const status = appt.dataset.status || '';
+
+      // Type colors - using -55 step for tooltip visibility
+      // Constraints: established=primary, new=secondary, crisis=red
+      const typeColors = {
+        established: 'var(--primary-55)',
+        new: 'var(--secondary-55)',
+        crisis: 'var(--red-55)',
+        intake: 'var(--cerulean-55)',
+        group: 'var(--fuchsia-55)',
+        evaluation: 'var(--violet-55)',
+        medmgmt: 'var(--amber-55)',
+        followup: 'var(--jade-55)',
+        family: 'var(--coral-55)',
+        telehealth: 'var(--aqua-55)'
+      };
+
+      // Status colors - using palette -55 step for tooltip visibility
+      // Organized by phase, with severity gradient for "did not occur"
+      const statusColors = {
+        requested: 'oklch(0.55 0.12 100)',    // lemon - action needed
+        scheduled: 'oklch(0.65 0.15 276)',    // violet
+        rescheduled: 'oklch(0.65 0.15 276)',  // violet
+        confirmed: 'oklch(0.65 0.13 234)',    // blue
+        arrived: 'oklch(0.65 0.11 185)',      // aqua
+        checkedin: 'oklch(0.65 0.11 185)',    // aqua
+        occurred: 'oklch(0.65 0.17 145)',     // green
+        cancelled: 'oklch(0.55 0.16 68)',     // amber - managed
+        late: 'oklch(0.55 0.18 38)',          // tomato - disruptive
+        noshow: 'oklch(0.51 0.20 23)'         // red - severe
+      };
+
+      const typeColor = typeColors[typeKey] || 'var(--neutral-60)';
+      const statusColor = statusColors[status] || 'var(--neutral-60)';
+
+      // Find parent column
+      const column = appt.closest('.cal-day-column, .cal-week-column');
+      const withinBlocks = column ? getBlocksAtTime(column, appt) : [];
+
+      let withinHtml = '';
+      if (withinBlocks.length > 0) {
+        const blockList = withinBlocks.map(b => `${b.clinician} · ${b.name} · ${b.time}`).join('<br>');
+        withinHtml = `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.2);"><span class="tooltip-section-label">Availability</span><br>${blockList}</div>`;
+      }
+
+      // Format status for display
+      const statusDisplay = status ? status.replace('checkedin', 'Checked In').replace('noshow', 'No Show').replace('rescheduled', 'Rescheduled').replace(/^\w/, c => c.toUpperCase()) : '';
+
+      // Build type/status row with mini cards (semi-transparent, colored borders)
+      let typeStatusHtml = '';
+      if (type || statusDisplay) {
+        const typeCard = type ? `<span style="display: inline-flex; align-items: center; padding: 2px 6px 2px 4px; background: rgba(255,255,255,0.10); border-radius: 4px; border-left: 3px solid ${typeColor};">${type}</span>` : '';
+        const statusCard = statusDisplay ? `<span style="display: inline-flex; align-items: center; padding: 2px 4px 2px 6px; background: rgba(255,255,255,0.10); border-radius: 4px; border-right: 3px solid ${statusColor};">${statusDisplay}</span>` : '';
+        typeStatusHtml = `<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">${typeCard}${statusCard}</div>`;
+      }
+
+      tooltip.querySelector('.tooltip-header-name').textContent = title;
+      tooltip.querySelector('.tooltip-header-time').textContent = time;
+      tooltip.querySelector('.tooltip-meta').innerHTML = `
+        ${typeStatusHtml}
+        ${withinHtml}
+      `;
+      tooltip.classList.add('visible');
+      tooltip.style.left = e.clientX + 12 + 'px';
+      tooltip.style.top = e.clientY + 12 + 'px';
+    }
+
+    function hideApptTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    function attachApptTooltip(appt) {
+      // Tooltip removed - click to see details instead
+      return;
+    }
+
+    // ==========================================================================
+    // Day View Appointment Collision Detection
+    // ==========================================================================
+    function layoutDayViewAppointments() {
+      document.querySelectorAll('.cal-day-body .cal-day-column').forEach(col => {
+        const apptLayer = col.querySelector('.appt-layer');
+        if (!apptLayer) return;
+
+        const appts = Array.from(apptLayer.querySelectorAll('.appt-block'));
+        if (appts.length === 0) return;
+
+        // Get positions from computed styles
+        const apptPositions = appts.map((el, idx) => {
+          const style = el.style;
+          // Parse top value (handles calc expressions by getting computed value)
+          const rect = el.getBoundingClientRect();
+          const colRect = col.getBoundingClientRect();
+          const top = rect.top - colRect.top;
+          const height = rect.height;
+
+          return {
+            el,
+            idx,
+            startPx: top,
+            endPx: top + height
+          };
+        });
+
+        // Find collision groups
+        function findCollisionGroups(items) {
+          const groups = [];
+          const used = new Set();
+
+          items.forEach((item, i) => {
+            if (used.has(i)) return;
+
+            const group = [item];
+            used.add(i);
+
+            let changed = true;
+            while (changed) {
+              changed = false;
+              items.forEach((other, j) => {
+                if (used.has(j)) return;
+                const overlaps = group.some(g =>
+                  g.startPx < other.endPx && other.startPx < g.endPx
+                );
+                if (overlaps) {
+                  group.push(other);
+                  used.add(j);
+                  changed = true;
+                }
+              });
+            }
+
+            if (group.length > 0) groups.push(group);
+          });
+
+          return groups;
+        }
+
+        const collisionGroups = findCollisionGroups(apptPositions);
+
+        collisionGroups.forEach(group => {
+          if (group.length === 1) {
+            // Single appointment: flush left, 16px right margin for click-to-add
+            group[0].el.style.left = '0';
+            group[0].el.style.right = '16px';
+            return;
+          }
+
+          // Sort by start time
+          group.sort((a, b) => a.startPx - b.startPx);
+
+          // Greedy column assignment
+          const columns = [];
+          group.forEach(item => {
+            let placed = false;
+            for (let c = 0; c < columns.length; c++) {
+              const lastInCol = columns[c][columns[c].length - 1];
+              if (lastInCol.endPx <= item.startPx) {
+                columns[c].push(item);
+                item.col = c;
+                placed = true;
+                break;
+              }
+            }
+            if (!placed) {
+              item.col = columns.length;
+              columns.push([item]);
+            }
+          });
+
+          const totalCols = columns.length;
+          const gap = 2; // gap between concurrent cards
+          const rightMargin = 16; // click-to-add area on right
+
+          group.forEach(item => {
+            const widthPct = 100 / totalCols;
+            const leftPct = item.col * widthPct;
+            const isFirst = item.col === 0;
+            const isLast = item.col === totalCols - 1;
+
+            // First card: left: 0, right gets gap
+            // Middle cards: left gets gap, right gets gap
+            // Last card: left gets gap, right gets rightMargin
+            const leftOffset = isFirst ? 0 : gap;
+            const rightOffset = isLast ? rightMargin : gap;
+
+            item.el.style.left = `calc(${leftPct}% + ${leftOffset}px)`;
+            item.el.style.right = `calc(${100 - leftPct - widthPct}% + ${rightOffset}px)`;
+          });
+        });
+      });
+    }
+
+    // Run after DOM is ready
+    layoutDayViewAppointments();
+
+    // Populate data attributes for day view appointments (static HTML doesn't have them)
+    document.querySelectorAll('.cal-day-body .appt-block').forEach(appt => {
+      // Get name from .appt-title or .appt-name
+      const nameEl = appt.querySelector('.appt-name') || appt.querySelector('.appt-title');
+      if (nameEl && !appt.dataset.fullName) {
+        appt.dataset.fullName = nameEl.textContent.trim();
+      }
+
+      // Get time from .appt-time
+      const timeEl = appt.querySelector('.appt-time');
+      if (timeEl && !appt.dataset.time) {
+        appt.dataset.time = timeEl.textContent.trim();
+      }
+    });
+
+    // Attach to day view appointments
+    document.querySelectorAll('.cal-day-body .appt-block').forEach(attachApptTooltip);
+
+    // Attach tooltips to day view block labels
+    document.querySelectorAll('.cal-day-body .avail-block-name').forEach(nameSpan => {
+      const block = nameSpan.closest('.avail-block');
+      if (!block) return;
+
+      nameSpan.addEventListener('mouseenter', (e) => {
+        tooltip.querySelector('.tooltip-header-name').textContent = '';
+        tooltip.querySelector('.tooltip-header-time').textContent = '';
+        tooltip.querySelector('.tooltip-meta').innerHTML = `<span class="tooltip-section-label">Availability</span><br>${block.dataset.clinician} · ${block.dataset.name} · ${block.dataset.time}`;
+        tooltip.classList.add('visible');
+      });
+      nameSpan.addEventListener('mousemove', (e) => {
+        tooltip.style.left = e.clientX + 12 + 'px';
+        tooltip.style.top = e.clientY + 12 + 'px';
+      });
+      nameSpan.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+    });
+
+    // ==========================================================================
+    // Click to View Appointment
+    // ==========================================================================
+    // Attach week column clicks after initial render
+    const origRenderWeekView = renderWeekView;
+    renderWeekView = function () {
+      origRenderWeekView();
+      attachWeekColumnClicks();
+    };
+
+    // ==========================================================================
+    // Grid row hover -> highlight corresponding gutter number
+    // ==========================================================================
+    function setupGridRowHover() {
+      const HOUR_HEIGHT = 96;
+
+      function updateGutterHighlight(col, clientY) {
+        const rect = col.getBoundingClientRect();
+        const y = clientY - rect.top;
+        const hourIndex = Math.floor(y / HOUR_HEIGHT);
+
+        const body = col.closest('.cal-day-body, .cal-week-body');
+        if (!body) return;
+
+        const gutter = body.querySelector('.cal-time-gutter');
+        if (!gutter) return;
+
+        const slots = gutter.querySelectorAll('.cal-time-slot');
+        slots.forEach((slot, i) => {
+          if (i === hourIndex) {
+            slot.classList.add('row-hover');
+          } else {
+            slot.classList.remove('row-hover');
+          }
+        });
+      }
+
+      function clearGutterHighlight(col) {
+        const body = col.closest('.cal-day-body, .cal-week-body');
+        if (!body) return;
+        const gutter = body.querySelector('.cal-time-gutter');
+        if (!gutter) return;
+        gutter.querySelectorAll('.cal-time-slot').forEach(slot => {
+          slot.classList.remove('row-hover');
+        });
+      }
+
+      document.querySelectorAll('.cal-day-column, .cal-week-column').forEach(col => {
+        col.addEventListener('mousemove', (e) => {
+          updateGutterHighlight(col, e.clientY);
+        });
+
+        col.addEventListener('mouseleave', (e) => {
+          // Don't clear if moving to the time pill
+          const pill = document.getElementById('timePill');
+          if (pill && (e.relatedTarget === pill || pill.contains(e.relatedTarget))) {
+            return;
+          }
+          clearGutterHighlight(col);
+        });
+      });
+
+      // Also handle mousemove on appointment cards and time pill
+      document.addEventListener('mousemove', (e) => {
+        const appt = e.target.closest('.appt-block');
+        if (appt) {
+          const col = appt.closest('.cal-day-column, .cal-week-column');
+          if (col) {
+            updateGutterHighlight(col, e.clientY);
+          }
+        }
+
+        // Keep gutter highlighted when over the pill
+        const pill = document.getElementById('timePill');
+        if (e.target === pill || pill?.contains(e.target)) {
+          const pillTop = parseFloat(pill.style.top);
+          // Find which column the pill is over
+          document.querySelectorAll('.cal-day-column, .cal-week-column').forEach(col => {
+            const rect = col.getBoundingClientRect();
+            const pillLeft = parseFloat(pill.style.left);
+            if (pillLeft >= rect.left && pillLeft < rect.right) {
+              updateGutterHighlight(col, pillTop);
+            }
+          });
+        }
+      });
+    }
+
+    setupGridRowHover();
+
+    // ==========================================================================
+    // Current time indicator
+    // ==========================================================================
+    (function () {
+      const HOUR_HEIGHT = 96;
+      const START_HOUR = 7;
+      const END_HOUR = 19; // 7 PM
+
+      function createTimeLine(container) {
+        const line = document.createElement('div');
+        line.className = 'current-time-line';
+        container.style.position = 'relative';
+        container.appendChild(line);
+        return line;
+      }
+
+      function updateTimeLines() {
+        const now = new Date();
+        // For prototype, use a fixed time that's visible (e.g., 9:30 AM)
+        // In production, use: const hours = now.getHours(); const minutes = now.getMinutes();
+        const hours = 9;
+        const minutes = 30;
+
+        const totalHours = hours + minutes / 60;
+
+        // Check if current time is within visible range
+        if (totalHours < START_HOUR || totalHours > END_HOUR) {
+          document.querySelectorAll('.current-time-line').forEach(line => {
+            line.style.display = 'none';
+          });
+          return;
+        }
+
+        const offsetHours = totalHours - START_HOUR;
+        const topPx = offsetHours * HOUR_HEIGHT;
+
+        document.querySelectorAll('.current-time-line').forEach(line => {
+          line.style.display = 'block';
+          line.style.top = topPx + 'px';
+        });
+      }
+
+      // Create time lines in day and week view bodies
+      document.querySelectorAll('.cal-day-body, .cal-week-body').forEach(body => {
+        createTimeLine(body);
+      });
+
+      // Initial update
+      updateTimeLines();
+
+      // Update every minute
+      setInterval(updateTimeLines, 60000);
+    })();
+
+    // ==========================================================================
+    // Time pill (SavvyCal-style hover) - gaps only, click to add
+    // ==========================================================================
+    (function () {
+      const pill = document.getElementById('timePill');
+      if (!pill) return;
+
+      const HOUR_H = 96;
+      const START_H = 7;
+      const MIN_GAP_PX = 40;
+
+      let currentTimeStr = '';
+      let currentCol = null;
+
+      function fmt(hour, min) {
+        const h = hour > 12 ? hour - 12 : hour;
+        const ap = hour >= 12 ? 'PM' : 'AM';
+        return h + ':' + String(min).padStart(2, '0') + ' ' + ap;
+      }
+
+      // Get appointments in a column at a specific Y position
+      function getApptsAtY(col, snapY, colRect) {
+        const appts = col.querySelectorAll('.appt-block');
+        const results = [];
+        const tolerance = 2;
+
+        appts.forEach(appt => {
+          // In Week V mode, skip hidden appointments (other providers may be available)
+          // In Day V mode, hidden appointments still block (same provider)
+          if (appt.style.visibility === 'hidden' && currentView === 'week') return;
+
+          const apptRect = appt.getBoundingClientRect();
+          const apptTop = apptRect.top - colRect.top;
+          const apptHeight = apptRect.height;
+          const apptLeft = apptRect.left - colRect.left;
+          const apptWidth = apptRect.width;
+
+          if (snapY >= apptTop - tolerance && snapY < apptTop + apptHeight + tolerance) {
+            results.push({
+              left: apptLeft,
+              right: apptLeft + apptWidth
+            });
+          }
+        });
+
+        return results;
+      }
+
+      // Find the largest gap
+      function findGap(appts, colWidth) {
+        if (appts.length === 0) {
+          return { left: 0, width: colWidth };
+        }
+
+        const sorted = [...appts].sort((a, b) => a.left - b.left);
+        const gaps = [];
+        let currentLeft = 0;
+
+        sorted.forEach(appt => {
+          if (appt.left > currentLeft + 1) {
+            gaps.push({ left: currentLeft, width: appt.left - currentLeft });
+          }
+          currentLeft = Math.max(currentLeft, appt.right);
+        });
+
+        if (currentLeft < colWidth - 1) {
+          gaps.push({ left: currentLeft, width: colWidth - currentLeft });
+        }
+
+        if (gaps.length === 0) return null;
+        return gaps.reduce((a, b) => b.width > a.width ? b : a, gaps[0]);
+      }
+
+      // Click to add appointment
+      pill.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const pillRect = pill.getBoundingClientRect();
+        showNewApptPopoverAt(pillRect.left, pillRect.bottom + 8, currentTimeStr);
+      });
+
+      // Let scroll/wheel events pass through the pill
+      // Listen on document capture phase to catch wheel before pill blocks it
+      document.addEventListener('wheel', function () {
+        if (pill.classList.contains('visible')) {
+          pill.classList.remove('visible');
+        }
+      }, { passive: true, capture: true });
+
+      // Prevent pill from triggering mouseleave on columns
+      pill.addEventListener('mouseenter', function () {
+        pill.classList.add('hovered');
+        // Keep column highlighted
+        if (currentCol) {
+          currentCol.classList.add('col-hover');
+        }
+      });
+
+      pill.addEventListener('mouseleave', function (e) {
+        pill.classList.remove('hovered');
+        // Check if we left to outside the column
+        if (currentCol) {
+          const rect = currentCol.getBoundingClientRect();
+          if (e.clientX < rect.left || e.clientX > rect.right ||
+            e.clientY < rect.top || e.clientY > rect.bottom) {
+            pill.classList.remove('visible');
+            currentCol.classList.remove('col-hover');
+          }
+        }
+      });
+
+      document.querySelectorAll('.cal-day-column, .cal-week-column').forEach(function (col) {
+        col.addEventListener('mouseenter', function () {
+          col.classList.add('col-hover');
+        });
+
+        col.addEventListener('mousemove', function (e) {
+          // Skip if popover is open
+          const popover = document.getElementById('apptPopover');
+          if (popover && popover.classList.contains('visible')) {
+            pill.classList.remove('visible');
+            return;
+          }
+
+          currentCol = col;
+          const rect = col.getBoundingClientRect();
+          const y = e.clientY - rect.top;
+          const x = e.clientX;
+          const totalMin = (y / HOUR_H) * 60;
+          const snapMin = Math.round(totalMin / 15) * 15;
+          const hour = START_H + Math.floor(snapMin / 60);
+          const min = snapMin % 60;
+          const snapY = (snapMin / 60) * HOUR_H;
+          currentTimeStr = fmt(hour, min);
+
+          // Check if cursor is over an avail-occupied block (booked avail in V mode)
+          // In Week V mode, show pill over booked avail blocks
+          const availOccupied = col.querySelectorAll('.avail-occupied');
+          let overAvailOccupied = false;
+          availOccupied.forEach(ao => {
+            const aoRect = ao.getBoundingClientRect();
+            if (x >= aoRect.left && x <= aoRect.right &&
+              e.clientY >= aoRect.top && e.clientY <= aoRect.bottom) {
+              overAvailOccupied = true;
+            }
+          });
+
+          // Check if cursor is over an appointment (check actual position, not snapped)
+          // In Week V mode, skip hidden appointments (other providers may be available)
+          // In Day V mode, hidden appointments still block (same provider)
+          const appts = col.querySelectorAll('.appt-block');
+          let overAppt = false;
+          appts.forEach(appt => {
+            if (appt.style.visibility === 'hidden' && currentView === 'week') return;
+            const apptRect = appt.getBoundingClientRect();
+            if (x >= apptRect.left && x <= apptRect.right &&
+              e.clientY >= apptRect.top && e.clientY <= apptRect.bottom) {
+              overAppt = true;
+            }
+          });
+
+          // In Week V mode, allow pill over booked avail blocks (other providers may be available)
+          // Otherwise, hide pill when over appointments
+          if (overAppt && !(overAvailOccupied && currentView === 'week' && availabilityVisible)) {
+            pill.classList.remove('visible');
+            return;
+          }
+
+          // Check if cursor is over a DNB block (only hide pill in Day view, not Week)
+          const dnbBlocks = col.querySelectorAll('.dnb-block');
+          let overDnb = false;
+          dnbBlocks.forEach(dnb => {
+            const dnbRect = dnb.getBoundingClientRect();
+            if (e.clientY >= dnbRect.top && e.clientY <= dnbRect.bottom) {
+              overDnb = true;
+            }
+          });
+
+          // In Day view, DNB blocks prevent scheduling (columns are providers)
+          // In Week view, allow scheduling — columns are days, other providers may be available
+          if (overDnb && currentView === 'day') {
+            pill.classList.remove('visible');
+            return;
+          }
+
+          // Find gap
+          const apptsAtTime = getApptsAtY(col, snapY, rect);
+          const gap = findGap(apptsAtTime, rect.width);
+
+          if (!gap || gap.width < MIN_GAP_PX) {
+            pill.classList.remove('visible');
+            return;
+          }
+
+          pill.textContent = 'Add ' + currentTimeStr;
+          pill.style.left = (rect.left + gap.left) + 'px';
+          pill.style.top = (rect.top + snapY) + 'px';
+          pill.style.width = gap.width + 'px';
+          pill.classList.add('visible');
+        });
+
+        col.addEventListener('mouseleave', function (e) {
+          // Don't hide/remove hover if moving to the pill
+          const toElement = e.relatedTarget;
+          if (toElement === pill || pill.contains(toElement)) {
+            return;
+          }
+          pill.classList.remove('visible');
+          col.classList.remove('col-hover');
+          currentCol = null;
+        });
+
+        // Click on column when pill visible = add appointment
+        col.addEventListener('click', function (e) {
+          if (!pill.classList.contains('visible')) return;
+
+          // Check if click is within pill bounds
+          const pillRect = pill.getBoundingClientRect();
+          if (e.clientX >= pillRect.left && e.clientX <= pillRect.right &&
+            e.clientY >= pillRect.top && e.clientY <= pillRect.bottom) {
+            e.stopPropagation();
+            showNewApptPopoverAt(pillRect.left, pillRect.bottom + 8, currentTimeStr);
+          }
+        });
+      });
+    })();
+
+    // ==========================================================================
+    // Appointment click → popover with actions (View | Add | ×)
+    // ==========================================================================
+    (function () {
+      const popover = document.getElementById('apptPopover');
+      const viewPopover = document.getElementById('apptViewPopover');
+      if (!popover) return;
+
+      const HOUR_H = 96;
+      const START_H = 7;
+
+      let currentAppt = null;
+      let clickedTime = '';
+
+      function fmt(hour, min) {
+        const h = hour > 12 ? hour - 12 : hour;
+        const ap = hour >= 12 ? 'PM' : 'AM';
+        return h + ':' + String(min).padStart(2, '0') + ' ' + ap;
+      }
+
+      function showPopover(appt, clickX, clickY, col) {
+        currentAppt = appt;
+
+        // Calculate snapped time from click Y position relative to column
+        if (col) {
+          const colRect = col.getBoundingClientRect();
+          const y = clickY - colRect.top;
+          const totalMin = (y / HOUR_H) * 60;
+          const snapMin = Math.round(totalMin / 15) * 15;
+          const hour = START_H + Math.floor(snapMin / 60);
+          const min = snapMin % 60;
+          clickedTime = fmt(hour, min);
+        } else {
+          clickedTime = appt.dataset.time || '';
+        }
+
+        // Position popover at click position
+        let x = clickX + 8;
+        let y = clickY;
+
+        popover.style.left = x + 'px';
+        popover.style.top = y + 'px';
+        popover.classList.add('visible');
+
+        // Adjust if off-screen
+        requestAnimationFrame(() => {
+          const rect = popover.getBoundingClientRect();
+          if (rect.right > window.innerWidth - 10) {
+            x = clickX - rect.width - 8;
+            popover.style.left = x + 'px';
+          }
+          if (rect.bottom > window.innerHeight - 10) {
+            popover.style.top = (clickY - rect.height) + 'px';
+          }
+        });
+      }
+
+      function hidePopover() {
+        popover.classList.remove('visible');
+        currentAppt = null;
+        clickedTime = '';
+      }
+
+      // Handle clicks on appointments
+      document.addEventListener('click', function (e) {
+        const appt = e.target.closest('.appt-block');
+
+        if (appt) {
+          e.stopPropagation();
+          const col = appt.closest('.cal-day-column, .cal-week-column');
+          showPopover(appt, e.clientX, e.clientY, col);
+          return;
+        }
+
+        // Click outside closes popover
+        if (!e.target.closest('.appt-popover')) {
+          hidePopover();
+        }
+      });
+
+      // Handle popover actions
+      popover.addEventListener('click', function (e) {
+        const action = e.target.closest('.appt-popover-action') || e.target.closest('.appt-popover-close');
+        if (!action) return;
+
+        const actionType = action.dataset.action;
+
+        if (actionType === 'close') {
+          hidePopover();
+          return;
+        }
+
+        if (actionType === 'view') {
+          // Capture appt and position before hiding
+          const apptToView = currentAppt;
+          const popoverRect = popover.getBoundingClientRect();
+          hidePopover();
+          showViewPopover(apptToView, popoverRect.left, popoverRect.top);
+          return;
+        } else if (actionType === 'add') {
+          // Capture position before hiding
+          const popoverRect = popover.getBoundingClientRect();
+          hidePopover();
+          // Open new appointment popover near where the appt popover was
+          showNewApptPopoverAt(popoverRect.left, popoverRect.top, clickedTime);
+          return;
+        }
+        hidePopover();
+      });
+
+      // Escape key closes popover
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') hidePopover();
+      });
+    })();
+
+    // ==========================================================================
+    // Appointment View Popover (hover-based, cal.html style)
+    // ==========================================================================
+    (function () {
+      const viewPopover = document.getElementById('apptViewPopover');
+      if (!viewPopover) return;
+
+      let currentAppt = null;
+      let leaveTimer = null;
+
+      // Type/status color mappings (matching appt card badge design)
+      const typeColors = {
+        established: { bg: 'var(--appt-type-established-bg)', border: 'var(--appt-type-established-border)', text: 'var(--appt-type-established-fg)' },
+        new: { bg: 'var(--appt-type-new-bg)', border: 'var(--appt-type-new-border)', text: 'var(--appt-type-new-fg)' },
+        crisis: { bg: 'var(--appt-type-crisis-bg)', border: 'var(--appt-type-crisis-border)', text: 'var(--appt-type-crisis-fg)' },
+        intake: { bg: 'var(--appt-type-intake-bg)', border: 'var(--appt-type-intake-border)', text: 'var(--appt-type-intake-fg)' },
+        group: { bg: 'var(--appt-type-group-bg)', border: 'var(--appt-type-group-border)', text: 'var(--appt-type-group-fg)' },
+        evaluation: { bg: 'var(--appt-type-evaluation-bg)', border: 'var(--appt-type-evaluation-border)', text: 'var(--appt-type-evaluation-fg)' },
+        medmgmt: { bg: 'var(--appt-type-medmgmt-bg)', border: 'var(--appt-type-medmgmt-border)', text: 'var(--appt-type-medmgmt-fg)' },
+        followup: { bg: 'var(--appt-type-followup-bg)', border: 'var(--appt-type-followup-border)', text: 'var(--appt-type-followup-fg)' },
+        family: { bg: 'var(--appt-type-family-bg)', border: 'var(--appt-type-family-border)', text: 'var(--appt-type-family-fg)' },
+        telehealth: { bg: 'var(--appt-type-telehealth-bg)', border: 'var(--appt-type-telehealth-border)', text: 'var(--appt-type-telehealth-fg)' }
+      };
+
+      const statusColors = {
+        requested: { bg: 'var(--lemon-95)', border: 'var(--lemon-40)', text: 'var(--lemon-20)' },
+        scheduled: { bg: 'var(--violet-95)', border: 'var(--violet-40)', text: 'var(--violet-20)' },
+        rescheduled: { bg: 'var(--violet-95)', border: 'var(--violet-40)', text: 'var(--violet-20)' },
+        confirmed: { bg: 'var(--blue-95)', border: 'var(--blue-40)', text: 'var(--blue-20)' },
+        arrived: { bg: 'var(--aqua-95)', border: 'var(--aqua-40)', text: 'var(--aqua-20)' },
+        checkedin: { bg: 'var(--aqua-95)', border: 'var(--aqua-40)', text: 'var(--aqua-20)' },
+        occurred: { bg: 'var(--green-95)', border: 'var(--green-40)', text: 'var(--green-20)' },
+        cancelled: { bg: 'var(--amber-95)', border: 'var(--amber-40)', text: 'var(--amber-20)' },
+        late: { bg: 'var(--tomato-95)', border: 'var(--tomato-40)', text: 'var(--tomato-20)' },
+        noshow: { bg: 'var(--red-95)', border: 'var(--red-40)', text: 'var(--red-20)' }
+      };
+
+      function positionViewPopover(x, y) {
+        viewPopover.style.left = x + 'px';
+        viewPopover.style.top = y + 'px';
+
+        requestAnimationFrame(() => {
+          const rect = viewPopover.getBoundingClientRect();
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+
+          let left = x;
+          let top = y;
+
+          if (left + rect.width > vw - 8) left = vw - rect.width - 8;
+          if (left < 8) left = 8;
+          if (top + rect.height > vh - 8) top = y - rect.height - 8;
+          if (top < 8) top = 8;
+
+          viewPopover.style.left = left + 'px';
+          viewPopover.style.top = top + 'px';
+        });
+      }
+
+      window.showViewPopover = function (appt, x, y) {
+        currentAppt = appt;
+        clearTimeout(leaveTimer);
+
+        // Read data from card's data attributes
+        const type = appt?.dataset.type || 'established';
+        const status = appt?.dataset.status || 'scheduled';
+
+        // Read actual labels from card DOM (not generated from type/status)
+        const typeEl = appt?.querySelector('.appt-type');
+        const statusEl = appt?.querySelector('.appt-status');
+        const nameEl = appt?.querySelector('.appt-name') || appt?.querySelector('.appt-title');
+        const timeEl = appt?.querySelector('.appt-time');
+
+        const typeLabel = typeEl?.textContent?.trim() || 'Appointment';
+        const statusLabel = statusEl?.textContent?.trim() || 'Scheduled';
+        const name = nameEl?.textContent?.trim() || 'Patient Name';
+        const time = timeEl?.textContent?.trim() || '';
+
+        const tc = typeColors[type] || typeColors.established;
+        const sc = statusColors[status] || statusColors.scheduled;
+
+        // Update type chip - left border only, text colored
+        const typeChip = viewPopover.querySelector('#viewPopTypeChip');
+        const typeLabelEl = typeChip.querySelector('.pop-type-label');
+        typeChip.style.background = tc.bg;
+        typeChip.style.borderLeftColor = tc.border;
+        typeChip.style.color = tc.text;
+        typeLabelEl.textContent = typeLabel;
+
+        // Update status chip - right border only, text colored
+        const statusChip = viewPopover.querySelector('#viewPopStatusChip');
+        const statusLabelEl = statusChip.querySelector('.pop-status-label');
+        statusChip.style.background = sc.bg;
+        statusChip.style.borderRightColor = sc.border;
+        statusChip.style.color = sc.text;
+        statusLabelEl.textContent = statusLabel;
+
+        // Update name and time
+        viewPopover.querySelector('.pop-subhead-name').textContent = name;
+        viewPopover.querySelector('.pop-subhead-right').textContent = time;
+
+        positionViewPopover(x, y);
+        viewPopover.classList.add('visible');
+      };
+
+      function hideViewPopover() {
+        viewPopover.classList.remove('visible');
+        currentAppt = null;
+      }
+
+      // Mouse-out closes (with small delay to allow moving to popover)
+      viewPopover.addEventListener('mouseenter', () => {
+        clearTimeout(leaveTimer);
+      });
+
+      viewPopover.addEventListener('mouseleave', () => {
+        leaveTimer = setTimeout(hideViewPopover, 180);
+      });
+
+      // Handle clicks inside view popover
+      viewPopover.addEventListener('click', function (e) {
+        const tile = e.target.closest('.pop-icon-tile');
+        const editBtn = e.target.closest('.pop-footer-edit');
+
+        if (tile) {
+          const action = tile.dataset.action;
+          alert('Navigate to: ' + action);
+          return;
+        }
+
+        if (editBtn) {
+          // Open edit form (same as new appt form but in edit mode)
+          const rect = viewPopover.getBoundingClientRect();
+          hideViewPopover();
+          showNewApptPopoverAt(rect.left, rect.top, '');
+          return;
+        }
+      });
+
+      // Escape closes
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') hideViewPopover();
+      });
+
+      // Click outside closes
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.appt-view-popover') && !e.target.closest('.appt-popover') && !e.target.closest('.appt-block')) {
+          hideViewPopover();
+        }
+      });
+    })();
+
+    // ==========================================================================
+    // New Appointment Popover event listeners
+    // ==========================================================================
+    // Close on click outside
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.new-appt-popover') &&
+        !e.target.closest('#newApptBtn') &&
+        !e.target.closest('.time-pill') &&
+        !e.target.closest('.appt-popover')) {
+        hideNewApptPopover();
+      }
+    });
+
+    // Escape closes new appt popover too
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hideNewApptPopover();
+    });
+  </script>
+</body>
+
+</html>

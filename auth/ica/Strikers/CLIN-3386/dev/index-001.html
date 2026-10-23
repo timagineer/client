@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Telehealth waiting room [CLIN-3386]</title>
+
+  <style>
+    :root {
+      /* Primary (from BT-3435) */
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+
+      /* Neutrals - cool oklch (from BT-3435) */
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-light: var(--neutral-75);
+
+      /* Chips (from DO-13613 - 3-tier system) */
+      /* Scheduled = accent/blue */
+      --chip-scheduled-bg: hsl(209, 100%, 92%);
+      --chip-scheduled-fg: hsl(209, 85%, 29%);
+      --chip-scheduled-border: hsl(209, 60%, 82%);
+
+      /* Waiting = attention/yellow */
+      --chip-waiting-bg: hsl(46, 100%, 90%);
+      --chip-waiting-fg: hsl(40, 90%, 22%);
+      --chip-waiting-border: hsl(46, 70%, 78%);
+
+      /* In session = success/green */
+      --chip-insession-bg: hsl(134, 41%, 88%);
+      --chip-insession-fg: hsl(134, 55%, 21%);
+      --chip-insession-border: hsl(134, 35%, 78%);
+
+      /* Ended = neutral */
+      --chip-ended-bg: hsl(210, 16%, 93%);
+      --chip-ended-fg: hsl(210, 10%, 31%);
+      --chip-ended-border: hsl(210, 10%, 82%);
+
+      /* Absent = danger/red */
+      --chip-absent-bg: hsl(0, 80%, 94%);
+      --chip-absent-fg: hsl(0, 70%, 34%);
+      --chip-absent-border: hsl(0, 50%, 85%);
+
+      /* Spacing */
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+
+      /* Radius */
+      --rad: 6px;
+
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: var(--neutral-95);
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ========================================================================
+       Header (wireframe)
+       ======================================================================== */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: 4px;
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: 4px;
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: 4px;
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: 4px;
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ========================================================================
+       Body Layout
+       ======================================================================== */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ========================================================================
+       Sidebar (wireframe)
+       ======================================================================== */
+    .shell-sidebar {
+      width: 80px;
+      background: hsl(0, 0%, 97%);
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: 4px;
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ========================================================================
+       Main Content
+       ======================================================================== */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* ========================================================================
+       Tab Bar (wire box tabs)
+       ======================================================================== */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-4) 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-90);
+      border-radius: var(--rad) var(--rad) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+    }
+
+    /* ========================================================================
+       Content Area
+       ======================================================================== */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--neutral-90);
+      padding: var(--sp-3);
+      overflow: hidden;
+    }
+
+    /* ========================================================================
+       Buttons (from BT-3435)
+       ======================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--neutral-40);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+      color: var(--neutral-30);
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+    }
+
+    .btn-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn:not(.btn-icon) svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Primary button */
+    .btn-primary {
+      background: var(--primary-50);
+      border-color: var(--primary-50);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+      color: #fff;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-25);
+      border-color: var(--primary-25);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Secondary button */
+    .btn-secondary {
+      background: #fff;
+      color: var(--primary-30);
+      border: 1px solid var(--primary-50);
+    }
+
+    .btn-secondary:hover {
+      background: hsl(218, 50%, 97%);
+    }
+
+    /* Ghost button */
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      color: var(--neutral-50);
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .overflow-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+    }
+
+    .overflow-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ========================================================================
+       Session Card (content card from BT-3435)
+       ======================================================================== */
+    .session-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ========================================================================
+       Table Header (date nav, search, new session link)
+       ======================================================================== */
+    .table-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--neutral-80);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    /* Date button */
+    .date-btn {
+      gap: 6px;
+      color: var(--neutral-20);
+      font-weight: 600;
+      height: 32px;
+      padding: 0 var(--sp-3);
+    }
+
+    .date-btn svg {
+      color: var(--neutral-50);
+    }
+
+    /* Nav group - arrows joined */
+    .nav-group {
+      display: flex;
+    }
+
+    .nav-group .btn-icon:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+
+    .nav-group .btn-icon:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    /* Search */
+    .search-wrap {
+      position: relative;
+      width: 320px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 32px;
+      padding: 7px 10px 7px 32px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--neutral-25);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .search-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      color: var(--neutral-50);
+      pointer-events: none;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .header-spacer {
+      flex: 1;
+    }
+
+    /* New session link */
+    .new-session-link {
+      font-size: 13px;
+      color: var(--primary-30);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .new-session-link:hover {
+      color: var(--primary-25);
+      text-decoration: underline;
+    }
+
+    /* ========================================================================
+       Session Table (from BT-3435 combo-table styling)
+       ======================================================================== */
+    .session-table {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+      padding: 0 var(--sp-4);
+    }
+
+    .session-table table {
+      width: 100%;
+      min-width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-table thead,
+    .session-table tbody,
+    .session-table tr {
+      display: table-row-group;
+    }
+
+    .session-table tr {
+      display: table-row;
+    }
+
+    /* Column widths - percentages that add to 100% */
+    .session-table colgroup col.col-time {
+      width: 8%;
+    }
+
+    .session-table colgroup col.col-name {
+      width: 30%;
+    }
+
+    .session-table colgroup col.col-copay {
+      width: 8%;
+    }
+
+    .session-table colgroup col.col-status {
+      width: 14%;
+    }
+
+    .session-table colgroup col.col-waiting {
+      width: 12%;
+    }
+
+    .session-table colgroup col.col-session {
+      width: 12%;
+    }
+
+    .session-table colgroup col.col-actions {
+      width: 16%;
+    }
+
+    .session-table th {
+      text-align: left;
+      padding: 8px var(--sp-3);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      border-bottom: 1.5px solid var(--neutral-80);
+      white-space: nowrap;
+    }
+
+    /* Column alignment */
+    .session-table th.col-copay {
+      text-align: center;
+    }
+
+    .session-table th.col-waiting,
+    .session-table th.col-session {
+      text-align: right;
+    }
+
+    .session-table th.col-actions {
+      text-align: left;
+    }
+
+    .session-table td {
+      padding: 6px var(--sp-3);
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      vertical-align: middle;
+    }
+
+    .session-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .session-table tbody tr:hover td {
+      background: var(--neutral-95);
+    }
+
+    /* Time cell */
+    .time-cell {
+      font-weight: 500;
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    /* Name cell */
+    .name-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      position: relative;
+    }
+
+    .expand-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--neutral-40);
+      border-radius: 4px;
+      flex-shrink: 0;
+      position: absolute;
+      left: -32px;
+    }
+
+    .expand-btn:hover {
+      background: var(--neutral-85);
+      color: var(--neutral-20);
+    }
+
+    .expand-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .expand-placeholder {
+      width: 20px;
+      flex-shrink: 0;
+    }
+
+    .patient-name {
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .session-type {
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
+    /* Copay cell */
+    .copay-cell {
+      text-align: center;
+    }
+
+    /* Checkbox (Lucide check icon) */
+    .copay-check {
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+      margin: 0;
+      cursor: pointer;
+      flex-shrink: 0;
+      border: 1px solid var(--neutral-60);
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .copay-check:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .copay-check:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .copay-check:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--secondary-60);
+    }
+
+    .copay-check:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    /* ========================================================================
+       Status Chips (from DO-13613)
+       ======================================================================== */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px var(--sp-2);
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid transparent;
+    }
+
+    .chip-scheduled {
+      background: var(--chip-scheduled-bg);
+      color: var(--chip-scheduled-fg);
+      border-color: var(--chip-scheduled-border);
+    }
+
+    .chip-waiting {
+      background: var(--chip-waiting-bg);
+      color: var(--chip-waiting-fg);
+      border-color: var(--chip-waiting-border);
+    }
+
+    .chip-insession {
+      background: var(--chip-insession-bg);
+      color: var(--chip-insession-fg);
+      border-color: var(--chip-insession-border);
+    }
+
+    .chip-ended {
+      background: var(--chip-ended-bg);
+      color: var(--chip-ended-fg);
+      border-color: var(--chip-ended-border);
+    }
+
+    .chip-absent {
+      background: var(--chip-absent-bg);
+      color: var(--chip-absent-fg);
+      border-color: var(--chip-absent-border);
+    }
+
+    /* Group status */
+    .group-status {
+      font-size: 12px;
+      color: var(--neutral-40);
+    }
+
+    /* Timer cells */
+    .timer-cell {
+      text-align: right;
+      color: var(--neutral-50);
+    }
+
+    .timer-cell.warning {
+      color: var(--chip-absent-fg);
+      font-weight: 500;
+    }
+
+    .timer-cell.empty {
+      color: var(--neutral-70);
+    }
+
+    /* Actions cell */
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 4px;
+    }
+
+    .actions-cell .btn-primary,
+    .actions-cell .btn-secondary {
+      min-width: 72px;
+      white-space: nowrap;
+    }
+
+    /* Group rows */
+    .group-row td {
+      background: var(--neutral-95);
+    }
+
+    .group-row:hover td {
+      background: var(--neutral-90);
+    }
+
+    .participant-row td {
+      background: #fff;
+    }
+
+    .participant-row .name-cell {
+      padding-left: 28px;
+    }
+
+    .participant-tag {
+      font-size: 12px;
+      color: var(--neutral-50);
+      font-style: italic;
+    }
+
+    /* Hidden rows for collapsed groups */
+    .participant-row.hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header (wireframe) -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <div class="shell-body">
+
+      <!-- Sidebar (wireframe) -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="shell-main">
+
+        <!-- Tab Bar (wireframe) -->
+        <div class="tab-bar">
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 70px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 110px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 125px;"></div>
+          </div>
+          <div class="wire-tab active">Telehealth</div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+          <!-- Session Card (table with header) -->
+          <div class="session-card">
+
+            <!-- Table Header -->
+            <div class="table-header">
+              <div class="header-left">
+                <button class="btn date-btn">
+                  <span>Wednesday, Sep 16, 2026</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 2v4" />
+                    <path d="M16 2v4" />
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M3 10h18" />
+                  </svg>
+                </button>
+                <div class="nav-group">
+                  <button class="btn btn-icon" title="Previous day">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                  <button class="btn btn-icon" title="Next day">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="header-spacer"></div>
+
+              <div class="search-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.34-4.34" />
+                </svg>
+                <input type="search" class="search-input" placeholder="Search patients or groups...">
+              </div>
+
+              <div class="header-spacer"></div>
+
+              <a href="#" class="new-session-link">+ New session</a>
+            </div>
+
+            <!-- Session Table -->
+            <div class="session-table">
+              <table>
+                <colgroup>
+                  <col class="col-time">
+                  <col class="col-name">
+                  <col class="col-copay">
+                  <col class="col-status">
+                  <col class="col-waiting">
+                  <col class="col-session">
+                  <col class="col-actions">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="col-time">Time</th>
+                    <th class="col-name">Name</th>
+                    <th class="col-copay">Copay</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-waiting">Waiting (min)</th>
+                    <th class="col-session">Session (min)</th>
+                    <th class="col-actions">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Ended -->
+                  <tr>
+                    <td class="time-cell">1:00 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Alex Rivera</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" checked disabled></td>
+                    <td><span class="chip chip-ended">Ended</span></td>
+                    <td class="timer-cell">8</td>
+                    <td class="timer-cell">47</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-secondary">Restart</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- In Session -->
+                  <tr>
+                    <td class="time-cell">2:00 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Harley David</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" checked></td>
+                    <td><span class="chip chip-insession">In session</span></td>
+                    <td class="timer-cell">12</td>
+                    <td class="timer-cell">4</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-secondary">Join</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Waiting (long wait) -->
+                  <tr>
+                    <td class="time-cell">2:15 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Maria Chen</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check"></td>
+                    <td><span class="chip chip-waiting">Waiting</span></td>
+                    <td class="timer-cell warning">18</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Scheduled -->
+                  <tr>
+                    <td class="time-cell">2:30 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Devon Brooks</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" disabled></td>
+                    <td><span class="chip chip-scheduled">Scheduled</span></td>
+                    <td class="timer-cell empty">—</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary" disabled>Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Group (expanded) -->
+                  <tr class="group-row" data-group="group-1">
+                    <td class="time-cell">3:00 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <button class="expand-btn" onclick="toggleGroup('group-1')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg>
+                        </button>
+                        <div>
+                          <div class="patient-name">Group Therapy — Tuesday</div>
+                          <div class="session-type">Group · 7 participants</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><span style="font-size: 12px; color: var(--text-2);">5/7</span></td>
+                    <td><span class="group-status">4 waiting · 2 in session</span></td>
+                    <td class="timer-cell empty">—</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit all</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Group participants -->
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Ric Racecar</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" checked></td>
+                    <td><span class="chip chip-insession">In session</span></td>
+                    <td class="timer-cell">11</td>
+                    <td class="timer-cell">4</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-secondary">Join</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Sam Okafor <span class="participant-tag">(guardian)</span></div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" disabled title="Not billed"></td>
+                    <td><span class="chip chip-insession">In session</span></td>
+                    <td class="timer-cell">11</td>
+                    <td class="timer-cell">4</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-secondary">Join</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Jason Alexander</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check"></td>
+                    <td><span class="chip chip-waiting">Waiting</span></td>
+                    <td class="timer-cell warning">14</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Priya Sharma</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check"></td>
+                    <td><span class="chip chip-waiting">Waiting</span></td>
+                    <td class="timer-cell">6</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Marcus Johnson</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check"></td>
+                    <td><span class="chip chip-waiting">Waiting</span></td>
+                    <td class="timer-cell">3</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Emily Watson</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check"></td>
+                    <td><span class="chip chip-waiting">Waiting</span></td>
+                    <td class="timer-cell">1</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary">Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="participant-row" data-parent="group-1">
+                    <td></td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Logan THtest</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" disabled></td>
+                    <td><span class="chip chip-absent">Absent</span></td>
+                    <td class="timer-cell empty">—</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary" disabled>Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Another scheduled -->
+                  <tr>
+                    <td class="time-cell">4:00 PM</td>
+                    <td>
+                      <div class="name-cell">
+                        <div class="patient-name">Taylor Kim</div>
+                      </div>
+                    </td>
+                    <td class="copay-cell"><input type="checkbox" class="copay-check" disabled></td>
+                    <td><span class="chip chip-scheduled">Scheduled</span></td>
+                    <td class="timer-cell empty">—</td>
+                    <td class="timer-cell empty">—</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="btn btn-primary" disabled>Admit</button>
+                        <button class="btn btn-ghost overflow-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="12" cy="5" r="1" />
+                            <circle cx="12" cy="19" r="1" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function toggleGroup(groupId) {
+      const participants = document.querySelectorAll(`[data-parent="${groupId}"]`);
+      const btn = document.querySelector(`[data-group="${groupId}"] .expand-btn`);
+
+      participants.forEach(row => {
+        row.classList.toggle('hidden');
+      });
+
+      const isExpanded = !participants[0].classList.contains('hidden');
+      btn.innerHTML = isExpanded
+        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`
+        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+    }
+  </script>
+</body>
+
+</html>

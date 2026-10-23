@@ -335,9 +335,13 @@
       display: inline-flex;
     }
 
-    .date-picker-wrap .date-btn {
-      position: relative;
-      z-index: 1;
+    /* Forward hover/active to the button since input sits on top */
+    .date-picker-wrap:hover .date-btn {
+      background: var(--neutral-90);
+    }
+
+    .date-picker-wrap:active .date-btn {
+      background: var(--neutral-85);
     }
 
     .date-btn {
@@ -1604,7 +1608,7 @@
         <div class="page-toolbar">
           <div class="header-left">
             <div class="date-picker-wrap">
-              <button class="btn btn-ghost date-btn" onclick="openDatePicker()">
+              <button class="btn btn-ghost date-btn" tabindex="-1">
                 <span class="cal-date-title" id="dateDisplay">Wed, Sep 30, 2026</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M8 2v4" />
@@ -2418,7 +2422,7 @@
 
     function openDatePicker() {
       var picker = document.getElementById('datePicker');
-      if (picker) picker.showPicker ? picker.showPicker() : picker.click();
+      if (picker) picker.click();
     }
 
     function onDateChange(val) {

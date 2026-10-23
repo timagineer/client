@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Telehealth Waiting Room — Prototype</title>
+<style>
+  :root{
+    --ink:#152238; --ink-soft:#5b6b82; --line:#dde3ec; --line-soft:#eef1f6;
+    --bg:#f6f8fb; --panel:#ffffff; --brand:#1f5c8b; --brand-deep:#123a58; --brand-soft:#e7f0f7;
+    --good:#2f8f5b; --good-soft:#e6f4ec; --bad:#96a1b1; --bad-soft:#eef1f5;
+    --alert:#c0483a; --alert-soft:#fbeae7; --warn:#b8863a; --warn-soft:#faf1e1; --mute:#98a3b3;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  .app{max-width:1440px;margin:0 auto;padding:22px 26px 60px;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .brand{display:flex;align-items:baseline;gap:12px;}
+  .brand h1{font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;font-size:26px;font-weight:600;margin:0;color:var(--brand-deep);letter-spacing:.2px;}
+  .brand span.tag{font-size:13px;color:var(--ink-soft);}
+  .view-toggle{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;}
+  .view-toggle button{border:none;background:transparent;padding:7px 16px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  .view-toggle button.active{background:var(--brand);color:#fff;}
+
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start;}
+  @media (max-width:1080px){.layout{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+
+  .queue-toolbar{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
+  .search{flex:1;min-width:180px;position:relative;}
+  .search input{width:100%;padding:9px 12px 9px 32px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;background:var(--bg);color:var(--ink);}
+  .search input:focus{outline:2px solid var(--brand);outline-offset:1px;}
+  .search::before{content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:1.6px solid var(--mute);border-radius:50%;}
+  .filter-chips{display:flex;gap:6px;}
+  .filter-chips button{border:1px solid var(--line);background:var(--bg);color:var(--ink-soft);padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+  .filter-chips button.active{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-deep);}
+  .btn{border:none;border-radius:8px;padding:9px 15px;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .btn-primary{background:var(--brand);color:#fff;}
+  .btn-primary:hover{background:var(--brand-deep);}
+  .btn-ghost{background:var(--panel);border:1px solid var(--line);color:var(--ink);}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;font-size:11px;color:var(--ink-soft);font-weight:700;padding:10px 6px;border-bottom:1px solid var(--line);background:var(--bg);letter-spacing:.2px;}
+  th.center, td.center{text-align:center;}
+  tbody td{padding:10px 6px;border-bottom:1px solid var(--line-soft);vertical-align:middle;}
+  tbody tr.row{cursor:pointer;}
+  tbody tr.row:hover{background:#fafbfd;}
+  tbody tr.row.selected{background:var(--brand-soft);}
+  tbody tr.row.selected:hover{background:var(--brand-soft);}
+  tbody tr.child-row{background:#fbfcfe;cursor:pointer;}
+  tbody tr.child-row.selected{background:#e3edf6;}
+  tbody tr.child-row td{padding-top:7px;padding-bottom:7px;}
+  tbody tr.group-summary td{padding:6px 6px 12px 44px;border-bottom:1px solid var(--line-soft);}
+
+  .name-cell{display:flex;align-items:center;gap:8px;}
+  .expand{width:18px;height:18px;border:1px solid var(--line);border-radius:5px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-soft);cursor:pointer;flex:none;}
+  .name-main{font-weight:600;color:var(--ink);font-size:13.5px;}
+  .name-sub{font-size:11.5px;color:var(--ink-soft);}
+  .pill-type{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:6px;}
+  .pill-individual{background:#eef1f6;color:var(--ink-soft);}
+  .pill-group{background:var(--brand-soft);color:var(--brand-deep);}
+  .pill-guardian{background:var(--warn-soft);color:#8a6221;}
+
+  .toggle-btn{width:27px;height:27px;border-radius:7px;border:1px solid var(--line);background:var(--bad-soft);color:var(--bad);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:700;user-select:none;transition:all .12s ease;}
+  .toggle-btn.on{background:var(--good-soft);border-color:var(--good);color:var(--good);}
+  .toggle-btn:active{transform:scale(.92);}
+  .toggle-btn.disabled{opacity:.3;cursor:not-allowed;background:var(--bg);color:var(--mute);border-style:dashed;}
+
+  .time-cell{font-variant-numeric:tabular-nums;color:var(--ink-soft);font-size:13px;}
+  .time-cell.stale{color:var(--warn);font-weight:700;}
+
+  .menu-wrap{position:relative;display:inline-block;}
+  .menu{position:absolute;right:0;top:30px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(20,30,50,.12);min-width:190px;z-index:20;padding:6px;display:none;}
+  .menu.open{display:block;}
+  .menu button{width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:13px;border-radius:6px;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .menu button:hover{background:var(--bg);}
+  .menu button.danger{color:#c0483a;}
+  .menu hr{border:none;border-top:1px solid var(--line-soft);margin:5px 0;}
+
+  .status-note{padding:14px 18px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--line-soft);background:var(--bg);}
+
+  .actions-cell{display:flex;align-items:center;gap:4px;justify-content:flex-end;}
+  .icon-btn{width:27px;height:27px;border-radius:7px;border:1px solid var(--line);background:var(--panel);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--ink-soft);flex:none;}
+  .icon-btn:hover{background:var(--bg);}
+  .admit-pill{border:1px solid var(--brand);background:var(--brand);color:#fff;font-size:11px;font-weight:700;padding:0 9px;height:27px;border-radius:7px;cursor:pointer;white-space:nowrap;flex:none;}
+  .admit-pill:hover{background:var(--brand-deep);}
+  .admit-pill.bulk{border-color:var(--good);background:var(--good);}
+  .admit-pill.bulk:hover{background:#256b45;}
+  .admit-pill[disabled]{opacity:.4;cursor:not-allowed;background:var(--mute);border-color:var(--mute);}
+  .in-session-tag{font-size:10.5px;font-weight:700;color:var(--good);background:var(--good-soft);border:1px solid var(--good);padding:0 8px;height:27px;border-radius:7px;display:inline-flex;align-items:center;flex:none;white-space:nowrap;}
+
+  .link-wrap, .to-wrap{position:relative;display:inline-block;}
+  .link-popover, .to-popover{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 26px rgba(20,30,50,.14);padding:8px;z-index:30;display:none;min-width:190px;}
+  .link-popover{right:0;top:32px;}
+  .link-popover.open, .to-popover.open{display:block;}
+  .link-popover .lbl, .to-popover .lbl{font-size:10.5px;color:var(--ink-soft);font-weight:700;padding:2px 4px 6px;}
+  .link-popover button{width:100%;text-align:left;background:none;border:none;padding:7px 8px;font-size:12.5px;border-radius:6px;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .link-popover button:hover{background:var(--bg);}
+
+  .toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:100;}
+  .toast{background:var(--brand-deep);color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;box-shadow:0 10px 26px rgba(10,20,40,.25);opacity:0;transform:translateY(6px);transition:all .18s ease;max-width:320px;}
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  .session-panel{padding:16px 16px 6px;}
+  .session-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .session-head h3{margin:0;font-size:15px;}
+  .session-head p{margin:2px 0 0;font-size:12px;color:var(--ink-soft);}
+  .video-mock{height:130px;border-radius:8px;background:linear-gradient(135deg,#1c3350,#274a72);display:flex;align-items:center;justify-content:center;color:#cfe0f0;font-size:12px;margin-bottom:10px;position:relative;overflow:hidden;}
+  .video-mock .avatar{width:48px;height:48px;border-radius:50%;background:#3c6690;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px;}
+  .session-actions{display:flex;gap:8px;margin-bottom:14px;}
+  .session-actions .btn{flex:1;font-size:12.5px;padding:8px 6px;}
+  .btn-leave{background:var(--warn-soft);color:#8a6221;border:1px solid var(--warn);}
+  .btn-end{background:#fbeae7;color:#c0483a;border:1px solid #c0483a;}
+
+  .chat-box{border-top:1px solid var(--line-soft);padding-top:12px;}
+  .chat-box h4{margin:0 0 8px;font-size:12.5px;color:var(--ink-soft);font-weight:700;}
+  .chat-log{height:135px;overflow-y:auto;border:1px solid var(--line-soft);border-radius:8px;padding:8px;font-size:12px;background:var(--bg);margin-bottom:8px;}
+  .chat-msg{margin-bottom:9px;}
+  .chat-msg b{color:var(--brand-deep);}
+  .chat-msg span.time{color:var(--mute);font-size:10px;margin-left:4px;}
+  .chat-to-tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:5px;vertical-align:middle;}
+  .chat-to-tag.everyone{background:var(--brand-soft);color:var(--brand-deep);}
+  .chat-to-tag.direct{background:var(--warn-soft);color:#8a6221;}
+  .chat-offline-note{font-size:10px;color:var(--mute);margin-top:2px;font-style:italic;}
+
+  .chat-to-btn{width:100%;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:600;color:var(--ink-soft);cursor:pointer;margin-bottom:6px;}
+  .to-popover{bottom:38px;left:0;width:250px;max-height:230px;overflow-y:auto;}
+  .to-row{display:flex;align-items:center;gap:8px;padding:6px 6px;border-radius:6px;cursor:pointer;font-size:12.5px;}
+  .to-row:hover{background:var(--bg);}
+  .to-row input{width:14px;height:14px;flex:none;}
+  .status-dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .status-dot.online{background:var(--good);}
+  .status-dot.offline{background:var(--mute);}
+  .to-role{font-size:10.5px;color:var(--mute);margin-left:auto;}
+
+  .chat-input{display:flex;gap:6px;}
+  .chat-input input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;}
+  .chat-input button{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:0 12px;cursor:pointer;}
+  .chat-caption{margin-top:8px;font-size:10.5px;color:var(--mute);line-height:1.4;}
+
+  .restart-card{margin:14px 16px 0;padding:12px;border:1px dashed var(--warn);border-radius:8px;background:var(--warn-soft);font-size:12.5px;color:#7a5a22;}
+  .restart-card button{margin-top:8px;background:#fff;border:1px solid var(--warn);color:#8a6221;font-weight:700;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px;}
+
+  .patient-wrap{max-width:520px;margin:60px auto;}
+  .patient-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:34px 30px;text-align:center;}
+  .patient-card .icon{width:56px;height:56px;border-radius:50%;background:var(--brand-soft);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;}
+  .patient-card h2{margin:0 0 6px;font-size:20px;color:var(--brand-deep);font-family:"Iowan Old Style",Georgia,serif;}
+  .patient-card p{margin:0 0 4px;color:var(--ink-soft);font-size:14px;line-height:1.5;}
+  .patient-card .appt-time{display:inline-block;margin:16px 0;padding:10px 18px;border-radius:8px;background:var(--bg);font-weight:700;color:var(--ink);font-size:15px;}
+  .patient-scenarios{display:flex;justify-content:center;gap:8px;margin-top:26px;flex-wrap:wrap;}
+  .patient-scenarios button{border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:999px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;font-weight:600;}
+  .patient-scenarios button.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+  .waiting-dots{display:inline-flex;gap:4px;margin-top:4px;}
+  .waiting-dots span{width:6px;height:6px;border-radius:50%;background:var(--brand);opacity:.35;animation:pulse 1.2s infinite;}
+  .waiting-dots span:nth-child(2){animation-delay:.2s;}
+  .waiting-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes pulse{0%,100%{opacity:.25;}50%{opacity:.9;}}
+
+  .hidden{display:none !important;}
+
+  .overlay{position:fixed;inset:0;background:rgba(15,25,40,.42);display:flex;align-items:center;justify-content:center;z-index:50;}
+  .modal{background:var(--panel);border-radius:12px;width:420px;max-width:92vw;padding:22px 24px;box-shadow:0 20px 60px rgba(10,20,40,.25);}
+  .modal h3{margin:0 0 4px;font-size:17px;color:var(--brand-deep);}
+  .modal p.sub{margin:0 0 16px;font-size:12.5px;color:var(--ink-soft);}
+  .roster-item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
+  .roster-item input{width:15px;height:15px;}
+  .modal-row{display:flex;gap:10px;margin-top:16px;}
+  .send-toggle{display:flex;gap:6px;margin:14px 0 4px;}
+  .send-toggle button{flex:1;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px;font-size:12.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;}
+  .send-toggle button.active{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-deep);}
+  .modal-close{margin-left:auto;background:none;border:none;font-size:13px;color:var(--ink-soft);cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>Telehealth Waiting Room</h1>
+      <span class="tag">ICANotes Plus &nbsp;·&nbsp; Riverbend Behavioral Health</span>
+    </div>
+    <div class="view-toggle">
+      <button id="tabStaff" class="active" onclick="setView('staff')">Staff view</button>
+      <button id="tabPatient" onclick="setView('patient')">Patient view</button>
+    </div>
+  </div>
+
+  <div id="staffView" class="layout">
+    <div class="panel">
+      <div class="queue-toolbar">
+        <div class="search"><input id="searchInput" placeholder="Search patients or groups" oninput="filterRows()"></div>
+        <div class="filter-chips">
+          <button id="chipFuture" class="active" onclick="setTimeFilter('future')">Future</button>
+          <button id="chipPast" onclick="setTimeFilter('past')">Past</button>
+        </div>
+        <button class="btn btn-primary" onclick="openInvite()">+ Send the link</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30%">Name</th>
+            <th class="center" title="Patient has joined and is waiting">Arrived</th>
+            <th class="center" title="Patient has been let into the session">Admitted</th>
+            <th class="center" title="Copay collected for this visit">Copay</th>
+            <th>Time in queue</th>
+            <th style="width:160px;text-align:right;">Quick actions</th>
+          </tr>
+        </thead>
+        <tbody id="queueBody"></tbody>
+      </table>
+
+      <div class="status-note">
+        Click a row to bring that session up on the right. For a group, every participant gets their own Arrived / Admitted / Copay controls — the group row shows the totals. "Admit all arrived" on the group row admits everyone who's showed up in one click. Guardians and other non-billed participants have Copay disabled with an explanation on hover.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="session-panel">
+        <div class="session-head">
+          <div>
+            <h3 id="groupHeadTitle">Group Therapy — Tue 2:00 PM</h3>
+            <p id="groupHeadNote">Click any row on the left to bring it up here</p>
+          </div>
+        </div>
+        <div class="video-mock"><div class="avatar">LR</div></div>
+        <div class="session-actions">
+          <button class="btn btn-leave" title="Session stays open, patients keep waiting">Leave room</button>
+          <button class="btn btn-end" title="Ends the session for everyone, permanently">End meeting</button>
+        </div>
+
+        <div class="chat-box">
+          <h4>Staff chat</h4>
+
+          <div class="to-wrap">
+            <button class="chat-to-btn" onclick="toggleToPopover(event)">
+              <span id="toLabel">To: Everyone</span><span>▾</span>
+            </button>
+            <div class="to-popover" id="toPopover">
+              <div class="lbl">Send to</div>
+              <div class="to-row" onclick="selectEveryone()">
+                <input type="checkbox" id="toEveryone" onclick="event.stopPropagation(); selectEveryone()">
+                <span style="font-weight:700;">Everyone in the waiting room</span>
+              </div>
+              <hr style="border:none;border-top:1px solid var(--line-soft);margin:4px 0;">
+              <div id="staffList"></div>
+            </div>
+          </div>
+
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-input">
+            <input id="chatInput" placeholder="Write a message">
+            <button onclick="sendChat()">Send</button>
+          </div>
+          <div class="chat-caption">Messages to specific colleagues are only visible to them. Broadcast messages go to everyone currently in the waiting room.</div>
+        </div>
+      </div>
+
+      <div class="restart-card">
+        <b>Wed 10:00 AM · Individual session</b> was closed by front desk before the provider joined.
+        <button onclick="restartSession()">Restart session</button>
+        <div style="margin-top:6px;font-size:11px;">Restarting sends the patient an automatic notification that the session is active again.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="patientView" class="layout hidden" style="grid-template-columns:1fr;">
+    <div class="patient-wrap">
+      <div class="patient-scenarios">
+        <button class="active" onclick="setPatientScenario('early', this)">Before activation window</button>
+        <button onclick="setPatientScenario('waiting', this)">In the waiting room</button>
+        <button onclick="setPatientScenario('admitted', this)">Admitted</button>
+      </div>
+      <div class="patient-card" id="patientCard"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="overlay hidden" id="inviteOverlay">
+  <div class="modal">
+    <div style="display:flex;"><h3>Send the link</h3><button class="modal-close" onclick="closeInvite()">Close</button></div>
+    <p class="sub">Group Therapy — Tuesday 2:00 PM. Everyone below gets the same session link at once.</p>
+    <div class="roster-item"><input type="checkbox" checked><span>Harley David</span></div>
+    <div class="roster-item"><input type="checkbox" checked><span>Ric Racecar</span></div>
+    <div class="roster-item"><input type="checkbox" checked><span>Jason Alexander</span></div>
+    <div class="roster-item"><input type="checkbox"><span>+ Add ad hoc participant (name &amp; email)</span></div>
+    <div class="send-toggle">
+      <button class="active" onclick="toggleSend(this)">Email</button>
+      <button onclick="toggleSend(this)">SMS</button>
+      <button onclick="toggleSend(this)">Both</button>
+    </div>
+    <div class="modal-row">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeInvite()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="closeInvite()">Send link</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- Practice staff directory (for targeted chat) ----------
+const staff = [
+  {id:'s1', name:'Dr. Rogers', role:'Provider', online:true},
+  {id:'s2', name:'Dr. Chen', role:'Provider', online:false},
+  {id:'s3', name:'Priya Shah', role:'Front desk', online:true},
+  {id:'s4', name:'Marcus Webb', role:'Case manager', online:true},
+  {id:'s5', name:'Jordan Lee', role:'Intern', online:true},
+  {id:'s6', name:'Alicia Ford', role:'Billing', online:false},
+];
+let selectedRecipients = []; // staff ids; empty = everyone
+
+// ---------- Demo data ----------
+let rows = [
+  {id:'r1', type:'individual', name:'Harley David', sub:'Ind. session · 2:00 PM', arrived:true, admitted:false, copay:true, copayAmount:25, time:'00:04:12', future:true},
+  {id:'r2', type:'individual', name:'Maria Chen', sub:'Ind. session · 2:15 PM', arrived:true, admitted:true, copay:false, copayAmount:25, time:'00:12:30', future:true},
+  {id:'r3', type:'individual', name:'Devon Brooks', sub:'Ind. session · 2:30 PM', arrived:false, admitted:false, copay:false, copayAmount:40, time:'00:00:00', future:true},
+  {id:'g1', type:'group', name:'Group Therapy — Tuesday', sub:'', arrived:true, admitted:true, copay:false, time:'00:11:47', future:true,
+    children:[
+      {name:'Ric Racecar', arrived:true, admitted:true, absent:false, copay:true, copayAmount:25, billable:true, time:'00:11:47'},
+      {name:'Jason Alexander', arrived:true, admitted:true, absent:false, copay:false, copayAmount:25, billable:true, time:'00:09:02'},
+      {name:'logan THtest', arrived:false, admitted:false, absent:true, copay:false, copayAmount:25, billable:true, time:'—'},
+      {name:'tom jerry', arrived:true, admitted:true, absent:false, copay:true, copayAmount:25, billable:true, time:'00:03:15'},
+      {name:'Aisha Patel', arrived:false, admitted:false, absent:false, copay:false, copayAmount:25, billable:true, time:'—'},
+      {name:'Sam Okafor (guardian for minor)', arrived:true, admitted:true, absent:false, copay:false, copayAmount:0, billable:false, time:'00:11:40'},
+      {name:'Nora Whitfield', arrived:false, admitted:false, absent:false, copay:false, copayAmount:25, billable:true, time:'—'},
+    ]},
+  {id:'r4', type:'individual', name:'Juan Vanegas', sub:'Ind. session · 3:30 PM', arrived:false, admitted:false, copay:false, copayAmount:25, time:'00:00:00', future:true},
+  {id:'r5', type:'individual', name:'Priya Subramaniam', sub:'Ind. session · 3:45 PM', arrived:true, admitted:false, copay:true, copayAmount:15, time:'00:02:05', future:true},
+  {id:'g2', type:'group', name:'Adolescent Skills Group — Wed', sub:'', arrived:true, admitted:false, copay:false, time:'00:06:40', future:true,
+    children:[
+      {name:'Ethan Malloy', arrived:true, admitted:true, absent:false, copay:false, copayAmount:20, billable:true, time:'00:06:40'},
+      {name:'Grace Liu', arrived:true, admitted:true, absent:false, copay:true, copayAmount:20, billable:true, time:'00:05:10'},
+      {name:'Owen Castillo', arrived:false, admitted:false, absent:false, copay:false, copayAmount:20, billable:true, time:'—'},
+      {name:'Parent of Owen Castillo', arrived:false, admitted:false, absent:false, copay:false, copayAmount:0, billable:false, time:'—'},
+      {name:'Isla Fontaine', arrived:false, admitted:false, absent:false, copay:false, copayAmount:20, billable:true, time:'—'},
+    ]},
+  {id:'r6', type:'individual', name:'henry Gill', sub:'Ind. session · Mon 10:00 AM', arrived:true, admitted:true, copay:true, copayAmount:25, time:'00:41:03', future:false, stale:true},
+  {id:'r7', type:'individual', name:'Telehealth test', sub:'Ind. session · Mon 11:00 AM', arrived:true, admitted:true, copay:false, copayAmount:25, time:'00:22:18', future:false},
+  {id:'g3', type:'group', name:'Group Therapy — Monday', sub:'', arrived:true, admitted:true, copay:true, time:'00:52:10', future:false,
+    children:[
+      {name:'Telehealth test', arrived:true, admitted:true, absent:false, copay:true, copayAmount:25, billable:true, time:'00:44:00'},
+      {name:'Juan Vanegas', arrived:true, admitted:true, absent:false, copay:true, copayAmount:25, billable:true, time:'00:47:12'},
+      {name:'Maria Chen', arrived:true, admitted:true, absent:false, copay:false, copayAmount:25, billable:true, time:'00:45:30'},
+      {name:'Devon Brooks', arrived:true, admitted:true, absent:false, copay:true, copayAmount:40, billable:true, time:'00:43:55'},
+      {name:'Priya Subramaniam', arrived:true, admitted:true, absent:false, copay:true, copayAmount:15, billable:true, time:'00:46:02'},
+    ]},
+];
+
+let timeFilter = 'future';
+let expanded = {};
+let selectedId = null;
+
+function groupCounts(g){
+  const total = g.children.length;
+  const admitted = g.children.filter(c=>c.admitted).length;
+  const copay = g.children.filter(c=>c.copay).length;
+  const arrived = g.children.filter(c=>c.arrived).length;
+  return {total, admitted, copay, arrived};
+}
+function groupSubtitle(g){
+  const c = groupCounts(g);
+  return `${c.admitted}/${c.total} admitted &nbsp;·&nbsp; ${c.copay}/${c.total} copay &nbsp;·&nbsp; ${c.arrived}/${c.total} arrived`;
+}
+
+function cellHtmlLeaf(r, field){
+  const on = r[field];
+  return `<span class="toggle-btn ${on?'on':''}" onclick="event.stopPropagation(); toggleLeafCell('${r.id}','${field}')" title="${field==='copay' ? (on?('Copay collected — $'+r.copayAmount):('Copay due — $'+r.copayAmount)) : ''}">${on ? '✓' : '✕'}</span>`;
+}
+
+function cellHtmlChild(groupId, idx, field){
+  const g = rows.find(x=>x.id===groupId);
+  const c = g.children[idx];
+  if(field==='copay' && !c.billable){
+    return `<span class="toggle-btn disabled" title="No billing record — not a billed patient on this appointment">–</span>`;
+  }
+  const on = c[field];
+  const tip = field==='copay' ? (on?('Copay collected — $'+c.copayAmount):('Copay due — $'+c.copayAmount)) : '';
+  return `<span class="toggle-btn ${on?'on':''}" onclick="event.stopPropagation(); toggleChildCell('${groupId}',${idx},'${field}')" title="${tip}">${on ? '✓' : '✕'}</span>`;
+}
+
+function toggleLeafCell(rowId, field){
+  const r = rows.find(x => x.id === rowId);
+  r[field] = !r[field];
+  renderRows();
+}
+function toggleChildCell(groupId, idx, field){
+  const g = rows.find(x=>x.id===groupId);
+  g.children[idx][field] = !g.children[idx][field];
+  renderRows();
+}
+
+function childStatusLabel(c){
+  if(c.absent) return {text:'Absent', cls:'badge-absent'};
+  if(c.admitted) return {text:'In session', cls:'badge-present'};
+  if(c.arrived) return {text:'Waiting', cls:'badge-waiting'};
+  return {text:'Not yet joined', cls:'badge-pending'};
+}
+
+function quickActionsLeaf(key, name, arrived, admitted){
+  const admitControl = admitted
+    ? `<span class="in-session-tag">In session</span>`
+    : `<button class="admit-pill" ${arrived ? '' : 'disabled'} onclick="event.stopPropagation(); quickAdmit('${key}')">Admit</button>`;
+  return `
+    <div class="actions-cell">
+      ${admitControl}
+      <div class="link-wrap">
+        <div class="icon-btn" title="Resend link" onclick="event.stopPropagation(); toggleLinkPopover(event,'${key}')">🔗</div>
+        <div class="link-popover" id="link-${key}">
+          <div class="lbl">Resend link to ${name}</div>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${name}','Email')">✉️ &nbsp;Email</button>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${name}','SMS')">💬 &nbsp;SMS</button>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${name}','Copy')">🔗 &nbsp;Copy link</button>
+        </div>
+      </div>
+      <div class="menu-wrap">
+        <div class="icon-btn" onclick="event.stopPropagation(); toggleMenu(event, '${key}')">⋮</div>
+        <div class="menu" id="menu-${key}">
+          <button onclick="closeAllMenus()">Mark as no-show</button>
+          <button class="danger" onclick="closeAllMenus()">Remove session</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function quickActionsChild(groupId, idx, c){
+  const key = groupId + '-c' + idx;
+  const admitControl = c.admitted
+    ? `<span class="in-session-tag">In session</span>`
+    : `<button class="admit-pill" ${c.arrived ? '' : 'disabled'} onclick="event.stopPropagation(); quickAdmit('${key}')">Admit</button>`;
+  return `
+    <div class="actions-cell">
+      ${admitControl}
+      <div class="link-wrap">
+        <div class="icon-btn" title="Resend link" onclick="event.stopPropagation(); toggleLinkPopover(event,'${key}')">🔗</div>
+        <div class="link-popover" id="link-${key}">
+          <div class="lbl">Resend link to ${c.name}</div>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${c.name}','Email')">✉️ &nbsp;Email</button>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${c.name}','SMS')">💬 &nbsp;SMS</button>
+          <button onclick="event.stopPropagation(); sendLink('${key}','${c.name}','Copy')">🔗 &nbsp;Copy link</button>
+        </div>
+      </div>
+      <div class="menu-wrap">
+        <div class="icon-btn" onclick="event.stopPropagation(); toggleMenu(event, '${key}')">⋮</div>
+        <div class="menu" id="menu-${key}">
+          <button onclick="toggleChildAbsent('${groupId}',${idx}); closeAllMenus()">${c.absent ? 'Unmark absent' : 'Mark as absent'}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleChildAbsent(groupId, idx){
+  const g = rows.find(x=>x.id===groupId);
+  g.children[idx].absent = !g.children[idx].absent;
+  if(g.children[idx].absent){ g.children[idx].admitted = false; }
+  renderRows();
+}
+
+function quickActionsGroup(g){
+  const anyAdmittable = g.children.some(ch => ch.arrived && !ch.admitted);
+  return `
+    <div class="actions-cell">
+      <button class="admit-pill bulk" title="Admit every arrived participant into the session at once" ${anyAdmittable?'':'disabled'} onclick="event.stopPropagation(); admitAllArrived('${g.id}')">Admit all</button>
+      <div class="icon-btn" title="Invite participant" onclick="event.stopPropagation(); closeAllMenus();">👥+</div>
+      <div class="menu-wrap">
+        <div class="icon-btn" onclick="event.stopPropagation(); toggleMenu(event, '${g.id}')">⋮</div>
+        <div class="menu" id="menu-${g.id}">
+          <button onclick="closeAllMenus()">View participants</button>
+          <button onclick="closeAllMenus()">Mark all remaining absent</button>
+          <hr>
+          <button class="danger" onclick="closeAllMenus()">Remove session</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function admitAllArrived(groupId){
+  const g = rows.find(x=>x.id===groupId);
+  let n = 0;
+  g.children.forEach(c => { if(c.arrived && !c.admitted){ c.admitted = true; n++; } });
+  renderRows();
+  showToast(`Admitted ${n} participant${n===1?'':'s'} in ${g.name}`);
+}
+
+function renderRows(){
+  const body = document.getElementById('queueBody');
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  body.innerHTML = '';
+  rows.filter(r => r.future === (timeFilter==='future')).forEach((r) => {
+    if(q && !r.name.toLowerCase().includes(q)) return;
+    const tr = document.createElement('tr');
+    tr.className = 'row' + (selectedId === r.id ? ' selected' : '');
+    tr.onclick = () => selectSession(r.id, r.name);
+    const isGroup = r.type === 'group';
+    const expandBtn = isGroup ? `<div class="expand" onclick="event.stopPropagation(); toggleExpand('${r.id}')">${expanded[r.id] ? '–' : '+'}</div>` : `<div style="width:18px"></div>`;
+
+    if(isGroup){
+      const counts = groupCounts(r);
+      tr.innerHTML = `
+        <td><div class="name-cell">${expandBtn}
+          <div><div class="name-main">${r.name}<span class="pill-type pill-group">Group</span></div></div>
+        </div></td>
+        <td class="center">${counts.arrived}/${counts.total}</td>
+        <td class="center">${counts.admitted}/${counts.total}</td>
+        <td class="center">${counts.copay}/${counts.total}</td>
+        <td class="time-cell">${r.time}</td>
+        <td>${quickActionsGroup(r)}</td>`;
+      body.appendChild(tr);
+
+      if(expanded[r.id]){
+        r.children.forEach((c,idx) => {
+          const key = r.id + '-c' + idx;
+          const ctr = document.createElement('tr');
+          ctr.className = 'child-row' + (selectedId === key ? ' selected' : '');
+          ctr.onclick = () => selectSession(key, c.name);
+          const st = childStatusLabel(c);
+          const isGuardian = !c.billable;
+          const stColor = st.cls==='badge-present'?'var(--good)':st.cls==='badge-absent'?'var(--alert)':st.cls==='badge-waiting'?'var(--warn)':'var(--mute)';
+          ctr.innerHTML = `
+            <td><div class="name-cell" style="padding-left:26px;">
+              <div><div class="name-main" style="font-weight:500;font-size:13px;">${c.name}${isGuardian?'<span class="pill-type pill-guardian">Not billed</span>':''}</div>
+              <div style="font-size:11px;font-weight:700;color:${stColor};">${st.text}</div></div>
+            </div></td>
+            <td class="center">${cellHtmlChild(r.id, idx, 'arrived')}</td>
+            <td class="center">${cellHtmlChild(r.id, idx, 'admitted')}</td>
+            <td class="center">${cellHtmlChild(r.id, idx, 'copay')}</td>
+            <td class="time-cell">${c.time}</td>
+            <td>${quickActionsChild(r.id, idx, c)}</td>`;
+          body.appendChild(ctr);
+        });
+        const sumTr = document.createElement('tr');
+        sumTr.className = 'group-summary';
+        sumTr.innerHTML = `<td colspan="6" style="font-size:11px;color:var(--ink-soft);">${groupSubtitle(r)}</td>`;
+        body.appendChild(sumTr);
+      }
+    } else {
+      tr.innerHTML = `
+        <td><div class="name-cell">${expandBtn}
+          <div><div class="name-main">${r.name}<span class="pill-type pill-individual">Individual</span></div>
+          <div class="name-sub">${r.sub}</div></div>
+        </div></td>
+        <td class="center">${cellHtmlLeaf(r,'arrived')}</td>
+        <td class="center">${cellHtmlLeaf(r,'admitted')}</td>
+        <td class="center">${cellHtmlLeaf(r,'copay')}</td>
+        <td class="time-cell ${r.stale?'stale':''}">${r.time}${r.stale?' ⚠':''}</td>
+        <td>${quickActionsLeaf(r.id, r.name, r.arrived, r.admitted)}</td>`;
+      body.appendChild(tr);
+    }
+  });
+}
+
+function toggleExpand(id){ expanded[id] = !expanded[id]; renderRows(); }
+function filterRows(){ renderRows(); }
+function setTimeFilter(f){
+  timeFilter = f;
+  document.getElementById('chipFuture').classList.toggle('active', f==='future');
+  document.getElementById('chipPast').classList.toggle('active', f==='past');
+  renderRows();
+}
+function toggleMenu(e, id){
+  e.stopPropagation();
+  closeAllMenus();
+  document.getElementById('menu-'+id).classList.add('open');
+}
+function closeAllMenus(){ document.querySelectorAll('.menu').forEach(m=>m.classList.remove('open')); }
+document.addEventListener('click', closeAllMenus);
+
+function selectSession(id, name){
+  selectedId = id;
+  document.getElementById('groupHeadTitle').textContent = name;
+  renderRows();
+}
+
+function quickAdmit(key){
+  const r = rows.find(x => x.id === key);
+  if(r){ r.admitted = true; renderRows(); showToast('Admitted ' + r.name + ' to the session'); return; }
+  for(const g of rows){
+    if(!g.children) continue;
+    for(let i=0;i<g.children.length;i++){
+      if(g.id + '-c' + i === key){ g.children[i].admitted = true; renderRows(); showToast('Admitted ' + g.children[i].name + ' to the session'); return; }
+    }
+  }
+}
+
+function toggleLinkPopover(e, key){
+  e.stopPropagation();
+  const isOpen = document.getElementById('link-'+key).classList.contains('open');
+  closeAllPopovers(); closeAllMenus();
+  if(!isOpen) document.getElementById('link-'+key).classList.add('open');
+}
+function closeAllPopovers(){ document.querySelectorAll('.link-popover').forEach(p=>p.classList.remove('open')); }
+document.addEventListener('click', closeAllPopovers);
+
+function sendLink(key, name, channel){
+  closeAllPopovers();
+  if(channel === 'Copy'){ showToast('Link copied for ' + name); }
+  else { showToast('Link resent to ' + name + ' via ' + channel); }
+}
+
+let toastTimer = null;
+function showToast(msg){
+  let wrap = document.querySelector('.toast-wrap');
+  if(!wrap){ wrap = document.createElement('div'); wrap.className = 'toast-wrap'; document.body.appendChild(wrap); }
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(), 200); }, 2600);
+}
+
+function restartSession(){
+  alert('Session restarted. The patient will automatically receive a notification that the session is active again.');
+}
+
+function openInvite(){ document.getElementById('inviteOverlay').classList.remove('hidden'); }
+function closeInvite(){ document.getElementById('inviteOverlay').classList.add('hidden'); }
+function toggleSend(btn){
+  btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setView(v){
+  document.getElementById('tabStaff').classList.toggle('active', v==='staff');
+  document.getElementById('tabPatient').classList.toggle('active', v==='patient');
+  document.getElementById('staffView').classList.toggle('hidden', v!=='staff');
+  document.getElementById('patientView').classList.toggle('hidden', v!=='patient');
+}
+
+function setPatientScenario(kind, btn){
+  document.querySelectorAll('.patient-scenarios button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const card = document.getElementById('patientCard');
+  if(kind==='early'){
+    card.innerHTML = `<div class="icon">⏳</div><h2>Not quite time yet</h2><p>Your appointment with Dr. Rogers is coming up. This link becomes active shortly before your session starts.</p><div class="appt-time">Today · 2:00 PM</div><p style="font-size:12.5px;color:var(--mute);">Come back around 1:00 PM and click this same link again.</p>`;
+  } else if(kind==='waiting'){
+    card.innerHTML = `<div class="icon">🕘</div><h2>You're in the waiting room</h2><p>Dr. Rogers will start the session shortly. Please don't close this tab.</p><div class="waiting-dots"><span></span><span></span><span></span></div><p style="font-size:12px;color:var(--mute);margin-top:16px;">You won't see other participants until you're admitted.</p>`;
+  } else {
+    card.innerHTML = `<div class="icon">✓</div><h2>You're connected</h2><p>You've been admitted to the session with Dr. Rogers.</p><div class="appt-time" style="background:var(--good-soft);color:var(--good);">Session in progress</div>`;
+  }
+}
+
+// ---------- Chat: recipient picker ----------
+function renderStaffList(){
+  const list = document.getElementById('staffList');
+  list.innerHTML = staff.map(s => `
+    <div class="to-row" onclick="event.stopPropagation(); toggleRecipient('${s.id}')">
+      <input type="checkbox" ${selectedRecipients.includes(s.id)?'checked':''} onclick="event.stopPropagation(); toggleRecipient('${s.id}')">
+      <span class="status-dot ${s.online?'online':'offline'}"></span>
+      <span>${s.name}</span>
+      <span class="to-role">${s.role}${s.online?'':' · offline'}</span>
+    </div>`).join('');
+  document.getElementById('toEveryone').checked = selectedRecipients.length === 0;
+}
+function toggleRecipient(id){
+  const i = selectedRecipients.indexOf(id);
+  if(i>-1) selectedRecipients.splice(i,1); else selectedRecipients.push(id);
+  updateToLabel(); renderStaffList();
+}
+function selectEveryone(){
+  selectedRecipients = [];
+  updateToLabel(); renderStaffList();
+}
+function updateToLabel(){
+  const lbl = document.getElementById('toLabel');
+  if(selectedRecipients.length === 0){ lbl.textContent = 'To: Everyone'; return; }
+  const names = selectedRecipients.map(id => staff.find(s=>s.id===id).name);
+  lbl.textContent = 'To: ' + (names.length > 2 ? names.slice(0,2).join(', ') + ' +' + (names.length-2) : names.join(', '));
+}
+function toggleToPopover(e){
+  e.stopPropagation();
+  const pop = document.getElementById('toPopover');
+  const willOpen = !pop.classList.contains('open');
+  closeAllMenus(); closeAllPopovers();
+  if(willOpen){ renderStaffList(); pop.classList.add('open'); }
+}
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.to-wrap')) document.getElementById('toPopover').classList.remove('open');
+});
+
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  if(!input.value.trim()) return;
+  const log = document.getElementById('chatLog');
+  const div = document.createElement('div');
+  div.className = 'chat-msg';
+  let tag, offlineNote = '';
+  if(selectedRecipients.length === 0){
+    tag = `<span class="chat-to-tag everyone">Everyone</span>`;
+  } else {
+    const names = selectedRecipients.map(id => staff.find(s=>s.id===id));
+    tag = `<span class="chat-to-tag direct">${names.map(n=>n.name).join(', ')}</span>`;
+    const offline = names.filter(n=>!n.online);
+    if(offline.length) offlineNote = `<div class="chat-offline-note">${offline.map(o=>o.name).join(', ')} offline — will see this on next login</div>`;
+  }
+  div.innerHTML = `<b>You:</b> ${input.value}${tag}<span class="time">now</span>${offlineNote}`;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  input.value = '';
+}
+
+function seedChat(){
+  const log = document.getElementById('chatLog');
+  log.innerHTML = `
+    <div class="chat-msg"><b>Priya Shah:</b> Harley's checked in and copay's done.<span class="chat-to-tag everyone">Everyone</span><span class="time">2:01 PM</span></div>
+    <div class="chat-msg"><b>Dr. Rogers:</b> Great, I'll admit them now.<span class="chat-to-tag everyone">Everyone</span><span class="time">2:02 PM</span></div>
+    <div class="chat-msg"><b>Priya Shah:</b> Your 3:45 patient called, running 5 min late.<span class="chat-to-tag direct">Dr. Rogers</span><span class="time">2:04 PM</span></div>`;
+}
+
+// init
+renderRows();
+seedChat();
+setPatientScenario('early', document.querySelector('.patient-scenarios button'));
+</script>
+</body>
+</html>
