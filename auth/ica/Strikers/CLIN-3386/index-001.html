@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+  <meta ycharset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Telehealth waiting room [CLIN-3386]</title>
 
@@ -2132,6 +2132,7 @@
 
       if (status === 'insession') {
         var endArg = groupId ? groupId + ', ' + id : id;
+        html += mi('Join', 'joinSession(' + idArg + ')');
         html += mi('End session', 'endSession(' + endArg + ')');
         html += '<hr>';
       } else if (status === 'mixed') {
@@ -2142,7 +2143,16 @@
         var undoArg = groupId ? groupId + ', ' + id : id;
         html += mi('Undo no-show', 'undoNoShow(' + undoArg + ')');
         html += '<hr>';
-      } else if (status === 'waiting' || status === 'scheduled') {
+      } else if (status === 'ended') {
+        html += mi('Restart', 'restartSession(' + idArg + ')');
+        html += '<hr>';
+      } else if (status === 'waiting') {
+        var admitFn = type === 'member' ? 'admitMember(' + groupId + ',' + idArg + ')' : 'admitSession(' + idArg + ')';
+        html += mi('Admit', admitFn);
+        var noShowArg = groupId ? groupId + ', ' + id : id;
+        html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
+        html += '<hr>';
+      } else if (status === 'scheduled') {
         var noShowArg = groupId ? groupId + ', ' + id : id;
         html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
         html += '<hr>';
