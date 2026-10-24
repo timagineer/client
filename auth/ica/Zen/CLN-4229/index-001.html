@@ -1389,3 +1389,47 @@
 </body>
 
 </html>
+
+<script>
+  // ── Table sort ──
+  var _sortCol = null;
+  var _sortDir = 'asc';
+  var _statusOrder = {
+    'share-shared-signed': 0, 'share-signed': 1, 'share-to-sign': 2,
+    'share-completed': 3, 'share-shared': 4, 'share-restricted': 5, 'share-not-shared': 6
+  };
+
+  function sortTable(col) {
+    if (_sortCol === col) { _sortDir = _sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { _sortCol = col; _sortDir = 'asc'; }
+
+    document.querySelectorAll('.data-table th.sortable').forEach(function (th) {
+      th.classList.remove('sorted', 'asc', 'desc');
+    });
+    var th = col === 'doc'
+      ? document.querySelector('[onclick="sortTable(\'doc\')"]')
+      : document.querySelector('[onclick="sortTable(\'status\')"]');
+    if (th) th.classList.add('sorted', _sortDir);
+
+    var tbody = document.querySelector('.data-table tbody');
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort(function (a, b) {
+      var av, bv;
+      if (col === 'doc') {
+        var al = a.querySelector('td:nth-child(2) a'), bl = b.querySelector('td:nth-child(2) a');
+        av = al ? al.textContent.toLowerCase() : '';
+        bv = bl ? bl.textContent.toLowerCase() : '';
+      } else {
+        var as = a.querySelector('td:nth-child(7) span'), bs = b.querySelector('td:nth-child(7) span');
+        var ac = as ? Array.from(as.classList).find(function (c) { return c.startsWith('share-') && c !== 'share-status'; }) : '';
+        var bc = bs ? Array.from(bs.classList).find(function (c) { return c.startsWith('share-') && c !== 'share-status'; }) : '';
+        av = _statusOrder[ac] !== undefined ? _statusOrder[ac] : 99;
+        bv = _statusOrder[bc] !== undefined ? _statusOrder[bc] : 99;
+      }
+      if (av < bv) return _sortDir === 'asc' ? -1 : 1;
+      if (av > bv) return _sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    rows.forEach(function (r) { tbody.appendChild(r); });
+  }
+</script>
