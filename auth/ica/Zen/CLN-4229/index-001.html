@@ -1,11 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Documents share to sign [CLN-4229]</title>
+  <style>
+    /* ── Tokens (source: CLIN-3386) ── */
+    :root {
+      --primary-20: oklch(33.5% 0.077 258.7);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-45: oklch(0.563 0.018 234.07);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-55: oklch(0.653 0.017 233.85);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+
+      --border-btn: var(--neutral-70);
+      --border-light: var(--neutral-75);
+
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
+
+    /* ── App shell (CLIN-3386) ── */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ── Wire header ── */
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ── Body ── */
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar (CLIN-3386) ── */
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ── Main ── */
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* ── Context bar (DO-14563) ── */
+    .context-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .wire-patient-avatar {
+      width: 38px;
+      height: 38px;
+      background: var(--neutral-85);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: var(--sp-2);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .context-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .context-spacer {
+      flex: 1;
+    }
+
+    .action-block {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .wire-chip {
+      height: 22px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-chip-sm {
+      height: 18px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    /* ── Tab bar (CLIN-3386 style) ── */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-4) 0;
+      background: oklch(0.965 0.006 234);
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-85);
+      border-radius: var(--rad) var(--rad) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      box-shadow: 0 1px 0 0 #fff;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Page content ── */
+    .page-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+      padding: var(--sp-4);
+      background: oklch(0.965 0.006 234);
+    }
+  </style>
 </head>
+
 <body>
-  <p>CLN-4229 — Documents share to sign</p>
+
+  <div class="app-shell">
+
+    <!-- Wire header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar — second item active -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <main class="shell-main">
+
+        <!-- Context bar (DO-14563) — client/patient header -->
+        <div class="context-bar">
+          <div class="wire-patient-avatar"></div>
+          <div class="patient-info">
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+              <div class="wire-text" style="width: 100px;"></div>
+              <div class="wire-text" style="width: 28px;"></div>
+              <div class="wire-text" style="width: 14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+            </div>
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 50px;"></div>
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-chip-sm" style="width: 36px;"></div>
+              <div class="wire-text" style="width: 22px;"></div>
+              <div class="wire-text" style="width: 70px;"></div>
+            </div>
+          </div>
+          <div class="action-block">
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+          </div>
+        </div>
+
+        <!-- Tab bar (CLIN-3386 style) — Documents active -->
+        <div class="tab-bar">
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 60px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 44px;"></div>
+          </div>
+          <div class="wire-tab active">Documents</div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 88px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 72px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 56px;"></div>
+          </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="page-content">
+        </div>
+
+      </main>
+    </div>
+  </div>
+
 </body>
+
 </html>
