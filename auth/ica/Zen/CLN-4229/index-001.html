@@ -32,7 +32,7 @@
       --neutral-85: oklch(0.9234 0.0081 233.18);
       --neutral-90: oklch(0.9542 0.0045 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
-      --white: white;
+      --white: oklch(100% 0.00011 271.152);
 
       --border-btn: var(--neutral-70);
       --border-light: var(--neutral-75);
@@ -298,193 +298,220 @@
   <div class="app-shell">
 
     <!-- Wire header -->
-    /* ── Page content ── */
-    .page-content {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: auto;
-    background: oklch(0.965 0.006 234);
-    }
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
 
-    /* ── Table toolbar ── */
-    .table-toolbar {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    padding: var(--sp-3) var(--sp-4);
-    background: #fff;
-    border-bottom: 1px solid var(--border-light);
-    }
+    <div class="shell-body">
 
-    .table-toolbar-spacer { flex: 1; }
+      <!-- Sidebar — second item active -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
 
-    /* ── Data table (BT-3479) ── */
-    .data-table-wrap {
-    flex: 1;
-    overflow: auto;
-    background: #fff;
-    }
+      <main class="shell-main">
 
-    .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    }
-
-    .data-table th {
-    text-align: left;
-    padding: 10px var(--sp-3);
-    border-bottom: 1px solid var(--border-light);
-    font-weight: 500;
-    color: var(--neutral-40);
-    position: sticky;
-    top: 0;
-    z-index: 200;
-    white-space: nowrap;
-    background: #fff;
-    }
-
-    .data-table td {
-    padding: 10px var(--sp-3);
-    border-bottom: 1px solid var(--neutral-90);
-    color: var(--neutral-30);
-    white-space: nowrap;
-    }
-
-    .data-table > tbody > tr:hover > td { background: var(--neutral-95); }
-
-    .col-checkbox { width: 40px; }
-    th.col-checkbox { overflow: visible; }
-
-    .wire-checkbox {
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--neutral-60);
-    border-radius: 2px;
-    background: var(--neutral-90);
-    }
-
-    /* Table links */
-    .table-link { color: hsl(218, 45%, 45%); text-decoration: none; }
-    .table-link:hover { text-decoration: underline; }
-
-    /* Status badges */
-    .status-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    }
-
-    .status-badge.signed {
-    background: hsl(209, 100%, 92%);
-    color: hsl(209, 85%, 29%);
-    border: 1px solid hsl(209, 70%, 65%);
-    }
-
-    .status-badge.finished {
-    background: hsl(134, 41%, 88%);
-    color: hsl(134, 55%, 21%);
-    border: 1px solid hsl(134, 40%, 60%);
-    }
-
-    .status-badge.not-shared {
-    background: hsl(46, 100%, 90%);
-    color: hsl(40, 90%, 22%);
-    border: 1px solid hsl(46, 70%, 70%);
-    }
-
-    .status-badge.shared {
-    background: hsl(209, 100%, 92%);
-    color: hsl(209, 85%, 29%);
-    border: 1px solid hsl(209, 70%, 65%);
-    } <div class="wire-icon"></div>
-    <div class="wire-icon"></div>
-    <div class="wire-icon"></div>
-    <div class="wire-avatar"></div>
-  </div>
-  </header>
-
-  <div class="shell-body">
-
-    <!-- Sidebar — second item active -->
-    <nav class="shell-sidebar">
-      <div class="wire-nav-item"></div>
-      <div class="wire-nav-item active"></div>
-      <div class="wire-nav-item"></div>
-      <div class="wire-nav-item"></div>
-      <div class="wire-nav-item"></div>
-      <div class="wire-nav-item"></div>
-      <div class="sidebar-spacer"></div>
-      <div class="wire-nav-item"></div>
-    </nav>
-
-    <main class="shell-main">
-
-      <!-- Context bar (DO-14563) — client/patient header -->
-      <div class="context-bar">
-        <div class="wire-patient-avatar"></div>
-        <div class="patient-info">
-          <div class="context-row">
-            <div class="wire-chip-sm" style="width: 14px;"></div>
-            <div class="wire-text" style="width: 100px;"></div>
-            <div class="wire-text" style="width: 28px;"></div>
-            <div class="wire-text" style="width: 14px;"></div>
-            <div class="wire-chip-sm" style="width: 14px;"></div>
+        <!-- Context bar (DO-14563) — client/patient header -->
+        <div class="context-bar">
+          <div class="wire-patient-avatar"></div>
+          <div class="patient-info">
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+              <div class="wire-text" style="width: 100px;"></div>
+              <div class="wire-text" style="width: 28px;"></div>
+              <div class="wire-text" style="width: 14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+            </div>
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width: 50px;"></div>
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-chip-sm" style="width: 36px;"></div>
+              <div class="wire-text" style="width: 22px;"></div>
+              <div class="wire-text" style="width: 70px;"></div>
+            </div>
           </div>
-          <div class="context-row">
-            <div class="wire-chip-sm" style="width: 50px;"></div>
-            <div class="wire-text" style="width: 40px;"></div>
-            <div class="wire-chip-sm" style="width: 36px;"></div>
-            <div class="wire-text" style="width: 22px;"></div>
-            <div class="wire-text" style="width: 70px;"></div>
+          <div class="action-block">
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
           </div>
         </div>
-        <div class="action-block">
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-          <div class="wire-chip"></div>
-        </div>
-      </div>
 
-      <!-- Tab bar (CLIN-3386 style) — Documents active -->
-      <div class="tab-bar">
-        <div class="wire-tab">
-          <div class="wire-text" style="width: 72px;"></div>
+        <!-- Tab bar (CLIN-3386 style) — Documents active -->
+        <div class="tab-bar">
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 72px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 96px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 118px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 104px;"></div>
+          </div>
+          <div class="wire-tab active">Documents</div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 112px;"></div>
+          </div>
         </div>
-        <div class="wire-tab">
-          <div class="wire-text" style="width: 96px;"></div>
-        </div>
-        <div class="wire-tab">
-          <div class="wire-text" style="width: 118px;"></div>
-        </div>
-        <div class="wire-tab">
-          <div class="wire-text" style="width: 104px;"></div>
-        </div>
-        <div class="wire-tab active">Documents</div>
-        <div class="wire-tab">
-          <div class="wire-text" style="width: 112px;"></div>
-        </div>
-      </div>
 
-      <!-- Page content -->
-      <div class="page-content">
-      </div>
+        <!-- Page content -->
+        <div class="page-content">
 
-    </main>
-  </div>
+          <!-- Table toolbar -->
+          <div class="table-toolbar">
+            <div class="wire-search" style="width: 240px; height: 28px;"></div>
+            <div class="table-toolbar-spacer"></div>
+            <div class="wire-text" style="width: 80px; height: 14px;"></div>
+            <div class="wire-chip" style="width: 100px;"></div>
+          </div>
+
+          <!-- Documents table -->
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="col-checkbox">
+                    <div class="wire-checkbox"></div>
+                  </th>
+                  <th>Document</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Clinician</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Intake Assessment</a></td>
+                  <td>10/14/2026</td>
+                  <td>Intake Form</td>
+                  <td>Sarah Rogers, LCSW</td>
+                  <td><span class="status-badge signed">Signed</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Progress Note</a></td>
+                  <td>10/10/2026</td>
+                  <td>Individual Therapy</td>
+                  <td>Sarah Rogers, LCSW</td>
+                  <td><span class="status-badge not-shared">Not shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Treatment Plan</a></td>
+                  <td>09/28/2026</td>
+                  <td>Treatment Plan</td>
+                  <td>Sarah Rogers, LCSW</td>
+                  <td><span class="status-badge shared">Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Psychiatric Evaluation</a></td>
+                  <td>09/15/2026</td>
+                  <td>Evaluation</td>
+                  <td>Marcus Webb, MD</td>
+                  <td><span class="status-badge signed">Signed</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Progress Note</a></td>
+                  <td>09/08/2026</td>
+                  <td>Individual Therapy</td>
+                  <td>Sarah Rogers, LCSW</td>
+                  <td><span class="status-badge finished">Finished</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Medication Management Note</a></td>
+                  <td>09/02/2026</td>
+                  <td>Med Management</td>
+                  <td>Marcus Webb, MD</td>
+                  <td><span class="status-badge signed">Signed</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Intake Assessment</a></td>
+                  <td>08/20/2026</td>
+                  <td>Intake Form</td>
+                  <td>James Okafor, LPC</td>
+                  <td><span class="status-badge not-shared">Not shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width: 60px;"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
   </div>
 
 </body>
