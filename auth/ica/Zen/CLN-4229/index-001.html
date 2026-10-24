@@ -8,41 +8,34 @@
   <style>
     /* ── Tokens (source: CLIN-3386) ── */
     :root {
-      --primary-20: oklch(33.5% 0.077 258.7);
+      /* Color palette — exact from CLIN-3386 / BT-3435 */
       --primary-25: oklch(38.052% 0.0888 258.539);
       --primary-30: oklch(43.332% 0.10422 258.384);
       --primary-50: oklch(49.153% 0.12057 258.167);
       --secondary-60: oklch(0.7169 0.2209 128.71);
-      --neutral-05: oklch(0.1698 0.0008 234.96);
-      --neutral-10: oklch(0.2044 0.0073 234.85);
-      --neutral-15: oklch(0.2484 0.0122 234.74);
-      --neutral-20: oklch(0.3008 0.0163 234.63);
-      --neutral-25: oklch(0.3608 0.0197 234.51);
-      --neutral-30: oklch(0.4089 0.0222 234.40);
-      --neutral-35: oklch(0.4649 0.0241 234.29);
-      --neutral-40: oklch(0.5192 0.0251 234.18);
-      --neutral-45: oklch(0.5634 0.0255 234.07);
-      --neutral-50: oklch(0.6068 0.0252 233.96);
-      --neutral-55: oklch(0.6494 0.0242 233.85);
-      --neutral-60: oklch(0.6996 0.0226 233.74);
-      --neutral-65: oklch(0.7489 0.0205 233.63);
-      --neutral-70: oklch(0.7974 0.0179 233.51);
-      --neutral-75: oklch(0.8373 0.0149 233.40);
-      --neutral-80: oklch(0.8845 0.0116 233.29);
-      --neutral-85: oklch(0.9234 0.0081 233.18);
-      --neutral-90: oklch(0.9542 0.0045 233.07);
+
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
-      --white: oklch(100% 0.00011 271.152);
+
+      --primary-20: oklch(33.5% 0.077 258.7);
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-45: oklch(0.563 0.018 234.07);
+      --neutral-55: oklch(0.653 0.017 233.85);
 
       --border-btn: var(--neutral-70);
       --border-light: var(--neutral-75);
 
-      --rad: 6px;
-      --sp-2: 8px;
-      --sp-3: 12px;
-      --sp-4: 16px;
-
-      /* Status chip tokens (CLIN-3386) */
+      /* Status chip tokens */
       --chip-scheduled-bg: hsl(209, 100%, 92%);
       --chip-scheduled-fg: hsl(209, 85%, 29%);
       --chip-scheduled-border: hsl(209, 60%, 82%);
@@ -62,6 +55,11 @@
       --chip-absent-bg: hsl(0, 80%, 94%);
       --chip-absent-fg: hsl(0, 70%, 34%);
       --chip-absent-border: hsl(0, 50%, 85%);
+
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
     }
 
     *,
