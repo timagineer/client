@@ -9,28 +9,49 @@
     /* ── Tokens (source: CLIN-3386) ── */
     :root {
       /* Color palette — exact from CLIN-3386 / BT-3435 */
+      --primary-20: oklch(33.5% 0.077 258.7);
       --primary-25: oklch(38.052% 0.0888 258.539);
       --primary-30: oklch(43.332% 0.10422 258.384);
       --primary-50: oklch(49.153% 0.12057 258.167);
       --secondary-60: oklch(0.7169 0.2209 128.71);
-
-      --neutral-20: oklch(0.3008 0.0116 234.63);
-      --neutral-25: oklch(0.3608 0.0139 234.51);
-      --neutral-30: oklch(0.4089 0.0157 234.40);
-      --neutral-40: oklch(0.5192 0.0178 234.18);
-      --neutral-50: oklch(0.6068 0.0178 233.96);
-      --neutral-60: oklch(0.6996 0.0160 233.74);
-      --neutral-70: oklch(0.7974 0.0127 233.51);
-      --neutral-75: oklch(0.8373 0.0106 233.40);
-      --neutral-80: oklch(0.8845 0.0083 233.29);
-      --neutral-85: oklch(0.9234 0.0059 233.18);
-      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-05: oklch(0.1698 0.0008 234.96);
+      /* WCAG 19.2:1 white / 1.1:1 black · APCA Lc -106 white / 0 black */
+      --neutral-10: oklch(0.2044 0.0073 234.85);
+      /* WCAG 17.9:1 white / 1.2:1 black · APCA Lc -105 white / 1 black */
+      --neutral-15: oklch(0.2484 0.0122 234.74);
+      /* WCAG 16.1:1 white / 1.3:1 black · APCA Lc -103 white / 3 black */
+      --neutral-20: oklch(0.3008 0.0163 234.63);
+      /* WCAG 13.6:1 white / 1.5:1 black · APCA Lc -100 white / 7 black */
+      --neutral-25: oklch(0.3608 0.0197 234.51);
+      /* WCAG 10.8:1 white / 1.9:1 black · APCA Lc -96 white / 13 black */
+      --neutral-30: oklch(0.4089 0.0222 234.40);
+      /* WCAG 8.8:1 white / 2.4:1 black · APCA Lc -91 white / 18 black */
+      --neutral-35: oklch(0.4649 0.0241 234.29);
+      /* WCAG 6.9:1 white / 3.0:1 black · APCA Lc -85 white / 24 black */
+      --neutral-40: oklch(0.5192 0.0251 234.18);
+      /* WCAG 5.5:1 white / 3.8:1 black · APCA Lc -80 white / 30 black */
+      --neutral-45: oklch(0.5634 0.0255 234.07);
+      /* WCAG 4.6:1 white / 4.6:1 black · APCA Lc -74 white / 36 black */
+      --neutral-50: oklch(0.6068 0.0252 233.96);
+      /* WCAG 3.8:1 white / 5.5:1 black · APCA Lc -68 white / 41 black */
+      --neutral-55: oklch(0.6494 0.0242 233.85);
+      /* WCAG 3.2:1 white / 6.5:1 black · APCA Lc -62 white / 48 black */
+      --neutral-60: oklch(0.6996 0.0226 233.74);
+      /* WCAG 2.7:1 white / 7.9:1 black · APCA Lc -54 white / 55 black */
+      --neutral-65: oklch(0.7489 0.0205 233.63);
+      /* WCAG 2.2:1 white / 9.4:1 black · APCA Lc -46 white / 62 black */
+      --neutral-70: oklch(0.7974 0.0179 233.51);
+      /* WCAG 1.9:1 white / 11.2:1 black · APCA Lc -38 white / 70 black */
+      --neutral-75: oklch(0.8373 0.0149 233.40);
+      /* WCAG 1.6:1 white / 12.8:1 black · APCA Lc -30 white / 77 black */
+      --neutral-80: oklch(0.8845 0.0116 233.29);
+      /* WCAG 1.4:1 white / 14.8:1 black · APCA Lc -22 white / 85 black */
+      --neutral-85: oklch(0.9234 0.0081 233.18);
+      /* WCAG 1.2:1 white / 16.8:1 black · APCA Lc -13 white / 92 black */
+      --neutral-90: oklch(0.9542 0.0045 233.07);
+      /* WCAG 1.1:1 white / 18.3:1 black · APCA Lc -7 white / 97 black */
       --neutral-95: oklch(0.9772 0.0008 232.96);
-
-      --primary-20: oklch(33.5% 0.077 258.7);
-      --neutral-15: oklch(0.245 0.009 234.74);
-      --neutral-45: oklch(0.563 0.018 234.07);
-      --neutral-55: oklch(0.653 0.017 233.85);
+      /* WCAG 1.1:1 white / 19.6:1 black · APCA Lc -2 white / 102 black */
 
       --border-btn: var(--neutral-70);
       --border-light: var(--neutral-75);
@@ -664,83 +685,96 @@
     }
 
     .share-signed {
-      background: var(--chip-insession-bg);
-      color: var(--chip-insession-fg);
-      border-color: var(--chip-insession-border);
-    }
+      .share-signed {
+        background: var(--chip-insession-bg);
+        color: var(--chip-insession-fg);
+        border-color: var(--chip-insession-border);
+      }
 
-    .share-restricted {
-      background: var(--chip-absent-bg);
-      color: var(--chip-absent-fg);
-      border-color: var(--chip-absent-border);
-    }
+      .share-shared-signed {
+        background: var(--chip-insession-bg);
+        color: var(--chip-insession-fg);
+        border-color: var(--chip-insession-border);
+      }
 
-    /* Search input */
-    .table-search {
-      height: 32px;
-      width: 220px;
-      padding: 0 10px;
-      border: 1px solid var(--neutral-70);
-      border-radius: var(--rad);
-      font-size: 13px;
-      font-family: inherit;
-      background: #fff;
-      color: var(--neutral-20);
-    }
+      .share-completed {
+        background: var(--chip-insession-bg);
+        color: var(--chip-insession-fg);
+        border-color: var(--chip-insession-border);
+      }
 
-    .table-search:focus {
-      outline: none;
-      border-color: var(--primary-30);
-    }
+      .share-restricted {
+        -chip-absent-bg);
+        color: var(--chip-absent-fg);
+        border-color: var(--chip-absent-border);
+      }
 
-    /* Pagination */
-    .table-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--sp-3) var(--sp-4);
-      font-size: 12px;
-      color: var(--neutral-50);
-      background: #fff;
-      border-top: 1px solid var(--neutral-90);
-    }
+      /* Search input */
+      .table-search {
+        height: 32px;
+        width: 220px;
+        padding: 0 10px;
+        border: 1px solid var(--neutral-70);
+        border-radius: var(--rad);
+        font-size: 13px;
+        font-family: inherit;
+        background: #fff;
+        color: var(--neutral-20);
+      }
 
-    .pagination {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
+      .table-search:focus {
+        outline: none;
+        border-color: var(--primary-30);
+      }
 
-    .page-btn {
-      height: 28px;
-      min-width: 28px;
-      padding: 0 6px;
-      border: 1px solid var(--neutral-75);
-      border-radius: var(--rad);
-      background: #fff;
-      color: var(--neutral-40);
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+      /* Pagination */
+      .table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--sp-3) var(--sp-4);
+        font-size: 12px;
+        color: var(--neutral-50);
+        background: #fff;
+        border-top: 1px solid var(--neutral-90);
+      }
 
-    .page-btn.active {
-      background: var(--neutral-90);
-      color: var(--neutral-25);
-    }
+      .pagination {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
 
-    .page-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+      .page-btn {
+        height: 28px;
+        min-width: 28px;
+        padding: 0 6px;
+        border: 1px solid var(--neutral-75);
+        border-radius: var(--rad);
+        background: #fff;
+        color: var(--neutral-40);
+        font-size: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    th.col-upload {
-      text-align: right;
-      width: 1px;
-      white-space: nowrap;
-    }
+      .page-btn.active {
+        background: var(--neutral-90);
+        color: var(--neutral-25);
+      }
+
+      .page-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      th.col-upload {
+        text-align: right;
+        width: 1px;
+        white-space: nowrap;
+      }
   </style>
 </head>
 
@@ -1118,6 +1152,182 @@
                         <path d="m6 9 6 6 6-6" />
                       </svg></button></td>
                 </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Informed Consent for Treatment</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-signed">Signed</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">HIPAA Acknowledgment</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-completed">Completed</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Discharge Summary</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-shared-signed">Shared and Signed</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Group Therapy Progress Note</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Medication Review Note</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Safety Plan</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-to-sign">Shared to Sign</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Release of Information</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-shared">Shared</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="wire-checkbox"></div>
+                  </td>
+                  <td><a href="#" class="table-link">Case Management Note</a></td>
+                  <td>
+                    <div class="wire-text" style="width:90px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
+                  <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1132,7 +1342,7 @@
               <button class="page-btn">&#8250;</button>
               <button class="page-btn">&#187;</button>
             </div>
-            <span>1 – 10 of 18 items</span>
+            <span>1 – 18 of 18 items</span>
           </div>
 
         </div>
