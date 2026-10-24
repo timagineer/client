@@ -1106,13 +1106,62 @@
     </div>
   </div>
 
-</body>
+  <!-- Row Action Menu -->
+  <div class="row-action-menu" id="actionMenu">
+    <div class="menu-section-label">Send link</div>
+    <button>Email</button>
+    <button>SMS</button>
+    <button>Copy link</button>
+    <hr>
+    <button>Share to sign</button>
+    <button>View</button>
+    <hr>
+    <button class="menu-danger">Remove</button>
+  </div>
 
-</html>
+  <script>
+    var _menuOpen = false;
+    var _menuOpenBtn = null;
 
-</main>
-</div>
-</div>
+    function hideMenu(callback) {
+      if (!_menuOpen) { if (callback) callback(); return; }
+      _menuOpen = false;
+      _menuOpenBtn = null;
+      var menu = document.getElementById('actionMenu');
+      if (!menu) return;
+      menu.classList.remove('open');
+      menu.addEventListener('transitionend', function () {
+        menu.style.display = 'none';
+        if (callback) callback();
+      }, { once: true });
+    }
+
+    function openActionMenu(btn, event) {
+      event.stopPropagation();
+      var menu = document.getElementById('actionMenu');
+      if (!menu) return;
+      var isSameBtn = _menuOpen && _menuOpenBtn === btn;
+      var doOpen = function () {
+        menu.style.display = 'block';
+        var r = btn.getBoundingClientRect();
+        menu.style.top = (r.bottom + 4) + 'px';
+        menu.style.left = Math.max(4, r.right - 180) + 'px';
+        _menuOpen = true;
+        _menuOpenBtn = btn;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { menu.classList.add('open'); });
+        });
+      };
+      if (isSameBtn) { hideMenu(); return; }
+      if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
+    }
+
+    document.addEventListener('click', function (e) {
+      if (!_menuOpen) return;
+      var menu = document.getElementById('actionMenu');
+      if (menu && !menu.contains(e.target)) hideMenu();
+    });
+  </script>
 
 </body>
 
