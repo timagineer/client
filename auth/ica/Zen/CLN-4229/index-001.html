@@ -41,6 +41,27 @@
       --sp-2: 8px;
       --sp-3: 12px;
       --sp-4: 16px;
+
+      /* Status chip tokens (CLIN-3386) */
+      --chip-scheduled-bg: hsl(209, 100%, 92%);
+      --chip-scheduled-fg: hsl(209, 85%, 29%);
+      --chip-scheduled-border: hsl(209, 60%, 82%);
+
+      --chip-waiting-bg: hsl(46, 100%, 90%);
+      --chip-waiting-fg: hsl(40, 90%, 22%);
+      --chip-waiting-border: hsl(46, 70%, 78%);
+
+      --chip-insession-bg: hsl(134, 41%, 88%);
+      --chip-insession-fg: hsl(134, 55%, 21%);
+      --chip-insession-border: hsl(134, 35%, 78%);
+
+      --chip-ended-bg: hsl(210, 16%, 93%);
+      --chip-ended-fg: hsl(210, 10%, 31%);
+      --chip-ended-border: hsl(210, 10%, 82%);
+
+      --chip-absent-bg: hsl(0, 80%, 94%);
+      --chip-absent-fg: hsl(0, 70%, 34%);
+      --chip-absent-border: hsl(0, 50%, 85%);
     }
 
     *,
@@ -445,6 +466,18 @@
       background: #fff;
       color: var(--neutral-45);
       cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+      color: var(--neutral-15);
+    }
+
+    .btn:active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-50);
     }
 
     .btn-primary {
@@ -475,26 +508,46 @@
       text-decoration: underline;
     }
 
-    /* Share status */
+    /* Share status badges (CLIN-3386 chip semantics) */
+    .share-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
     .share-not-shared {
-      color: var(--neutral-40);
+      background: var(--chip-ended-bg);
+      color: var(--chip-ended-fg);
+      border-color: var(--chip-ended-border);
     }
 
     .share-shared {
-      color: var(--neutral-30);
+      background: var(--chip-scheduled-bg);
+      color: var(--chip-scheduled-fg);
+      border-color: var(--chip-scheduled-border);
     }
 
     .share-to-sign {
-      color: var(--primary-30);
-      cursor: pointer;
+      background: var(--chip-waiting-bg);
+      color: var(--chip-waiting-fg);
+      border-color: var(--chip-waiting-border);
     }
 
-    .share-to-sign:hover {
-      text-decoration: underline;
+    .share-signed {
+      background: var(--chip-insession-bg);
+      color: var(--chip-insession-fg);
+      border-color: var(--chip-insession-border);
     }
 
     .share-restricted {
-      color: var(--neutral-50);
+      background: var(--chip-absent-bg);
+      color: var(--chip-absent-fg);
+      border-color: var(--chip-absent-border);
     }
 
     /* Search input */
@@ -666,7 +719,6 @@
             <input class="table-search" type="search" placeholder="Search documents">
             <div class="table-toolbar-spacer"></div>
             <button class="btn-link">Activity log</button>
-            <button class="btn btn-primary">Upload</button>
           </div>
 
           <!-- Documents table -->
@@ -723,10 +775,16 @@
                   </td>
                   <td><a href="#" class="table-link">Treatment Plan</a></td>
                   <td>Treatment Plan</td>
-                  <td>09/28/2026 05:14 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -735,10 +793,16 @@
                   </td>
                   <td><a href="#" class="table-link">Treatment Plan Review</a></td>
                   <td>Treatment Plan</td>
-                  <td>09/28/2026 05:12 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -747,10 +811,16 @@
                   </td>
                   <td><a href="#" class="table-link">Clinical Message 09/28/2026</a></td>
                   <td>Clinical Message</td>
-                  <td>09/28/2026 04:49 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-shared">Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-shared">Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -759,10 +829,16 @@
                   </td>
                   <td><a href="#" class="table-link">Progress Note 09/28/2026</a></td>
                   <td>Progress Note</td>
-                  <td>09/28/2026 01:00 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -771,10 +847,16 @@
                   </td>
                   <td><a href="#" class="table-link">Informed Consent for Treatment</a></td>
                   <td>Form</td>
-                  <td>09/25/2026 04:42 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><a href="#" class="share-to-sign">Shared to Sign</a></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-to-sign">Shared to Sign</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -783,10 +865,16 @@
                   </td>
                   <td><a href="#" class="table-link">Progress Note 09/24/2026</a></td>
                   <td>Progress Note</td>
-                  <td>09/24/2026 12:44 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-restricted">Restricted</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-restricted">Restricted</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -795,10 +883,16 @@
                   </td>
                   <td><a href="#" class="table-link">Release of Information</a></td>
                   <td>Form</td>
-                  <td>09/24/2026 11:18 AM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -807,10 +901,16 @@
                   </td>
                   <td><a href="#" class="table-link">Progress Note 09/23/2026</a></td>
                   <td>Progress Note</td>
-                  <td>09/23/2026 02:28 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -819,10 +919,16 @@
                   </td>
                   <td><a href="#" class="table-link">Initial Treatment Plan</a></td>
                   <td>Treatment Plan</td>
-                  <td>09/23/2026 01:00 PM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
                 <tr>
@@ -831,10 +937,16 @@
                   </td>
                   <td><a href="#" class="table-link">Execution Form</a></td>
                   <td>Form</td>
-                  <td>09/23/2026 09:58 AM</td>
-                  <td>Clinical Notes</td>
-                  <td>Christian Carlstrom</td>
-                  <td><span class="share-not-shared">Not Shared</span></td>
+                  <td>
+                    <div class="wire-text" style="width:110px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:80px;"></div>
+                  </td>
+                  <td>
+                    <div class="wire-text" style="width:120px;"></div>
+                  </td>
+                  <td><span class="share-status share-not-shared">Not Shared</span></td>
                   <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
                 </tr>
               </tbody>
