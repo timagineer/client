@@ -1202,7 +1202,7 @@
     }
 
     .modal {
-      width: 560px;
+      width: 480px;
       max-width: calc(100vw - 48px);
       max-height: calc(100vh - 48px);
       background: #fff;
@@ -1394,6 +1394,7 @@
       flex-direction: column;
       gap: var(--sp-3);
       min-height: 148px;
+      margin-top: 6px;
       animation: panelIn 180ms cubic-bezier(.165, .84, .44, 1) forwards;
     }
 
@@ -2445,14 +2446,14 @@
     function getPatientPanelHTML(type) {
       if (type === 'existing') {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-search">Search by name or chart ID</label><input id="ns-search" type="search" class="modal-field-input" placeholder="e.g. Rivera, Alex or #12345"></div>' +
-          '<div class="modal-form-row"><div class="modal-field"><label class="modal-field-label" for="ns-dob">Date of birth</label><input id="ns-dob" type="text" class="modal-field-input" placeholder="MM/DD/YYYY"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option>Email</option><option>SMS</option><option>Both</option><option>Copy link only</option></select></div></div>';
+          '<div class="modal-field"><label class="modal-field-label" for="ns-dob">Date of birth</label><input id="ns-dob" type="text" class="modal-field-input" placeholder="MM/DD/YYYY"></div>' +
+          '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option>Email</option><option>SMS</option><option>Both</option><option>Copy link only</option></select></div>';
       } else {
-        return '<div class="modal-form-row"><div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div></div>' +
+        return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
+          '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
           '<div class="modal-field"><label class="modal-field-label" for="ns-email">Email</label><input id="ns-email" type="email" class="modal-field-input" placeholder="patient@email.com"></div>' +
-          '<div class="modal-form-row"><div class="modal-field"><label class="modal-field-label" for="ns-phone">Phone <span style="color:var(--neutral-50);font-weight:400">(optional)</span></label><input id="ns-phone" type="tel" class="modal-field-input" placeholder="(555) 000-0000"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-send-ext">Send link via</label><select id="ns-send-ext" class="modal-field-select"><option>Email</option><option>SMS</option><option>Both</option><option>Copy link only</option></select></div></div>';
+          '<div class="modal-field"><label class="modal-field-label" for="ns-phone">Phone <span style="color:var(--neutral-50);font-weight:400">(optional)</span></label><input id="ns-phone" type="tel" class="modal-field-input" placeholder="(555) 000-0000"></div>' +
+          '<div class="modal-field"><label class="modal-field-label" for="ns-send-ext">Send link via</label><select id="ns-send-ext" class="modal-field-select"><option>Email</option><option>SMS</option><option>Both</option><option>Copy link only</option></select></div>';
       }
     }
 
@@ -2589,27 +2590,23 @@
       <div class="modal-body">
         <div class="patient-type-toggle">
           <button data-type="existing" class="active" onclick="setPatientType('existing')">Existing client</button>
-          <button data-type="external" onclick="setPatientType('external')">External / not in system</button>
+          <button data-type="external" onclick="setPatientType('external')">External</button>
         </div>
 
         <div id="patientPanel" class="modal-patient-panel"></div>
 
-        <hr class="modal-divider">
 
-        <p class="modal-section-label">Session</p>
-        <div class="modal-form-row">
-          <div class="modal-field">
-            <label class="modal-field-label" for="ns-clinician">Clinician</label>
-            <select id="ns-clinician" class="modal-field-select">
-              <option>Dr. Sarah Chen</option>
-              <option>Dr. James Wilson</option>
-              <option>Dr. Lisa Park</option>
-            </select>
-          </div>
-          <div class="modal-field">
-            <label class="modal-field-label" for="ns-time">Start time</label>
-            <input id="ns-time" type="time" class="modal-field-input">
-          </div>
+        <div class="modal-field">
+          <label class="modal-field-label" for="ns-clinician">Clinician</label>
+          <select id="ns-clinician" class="modal-field-select">
+            <option>Dr. Sarah Chen</option>
+            <option>Dr. James Wilson</option>
+            <option>Dr. Lisa Park</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-field-label" for="ns-time">Start time</label>
+          <input id="ns-time" type="time" class="modal-field-input">
         </div>
 
       </div>
