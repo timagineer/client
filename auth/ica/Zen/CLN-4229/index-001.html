@@ -530,6 +530,78 @@
       border-color: transparent;
     }
 
+    .btn-chevron {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ── Row action menu (CLIN-3386) ── */
+    .row-action-menu {
+      position: fixed;
+      inset: auto;
+      margin: 0;
+      background: #fff;
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      padding: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      min-width: 180px;
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      transform: scale(0.97) translateY(-4px);
+      transition: opacity 120ms cubic-bezier(.39, .575, .565, 1), transform 120ms cubic-bezier(.39, .575, .565, 1);
+    }
+
+    .row-action-menu.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition: opacity 180ms cubic-bezier(.39, .575, .565, 1), transform 180ms cubic-bezier(.39, .575, .565, 1);
+    }
+
+    .row-action-menu hr {
+      border: none;
+      border-top: 1px solid var(--neutral-90);
+      margin: 4px 0;
+    }
+
+    .row-action-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 7px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .row-action-menu button:hover {
+      background: var(--neutral-95);
+    }
+
+    .row-action-menu .menu-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neutral-50);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 6px 10px 2px;
+    }
+
+    .row-action-menu .menu-danger {
+      color: hsl(352, 92%, 43%);
+    }
+
+    .row-action-menu .menu-danger:hover {
+      background: hsl(0, 80%, 97%);
+    }
+
     /* Share status badges (CLIN-3386 chip semantics) */
     .share-status {
       display: inline-flex;
@@ -809,7 +881,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -829,7 +903,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -849,7 +925,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-shared">Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -869,7 +947,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -889,7 +969,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-to-sign">Shared to Sign</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -909,7 +991,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-restricted">Restricted</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -929,7 +1013,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -949,7 +1035,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -969,7 +1057,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
                 <tr>
                   <td>
@@ -989,7 +1079,9 @@
                     <div class="wire-text" style="width:120px;"></div>
                   </td>
                   <td><span class="share-status share-not-shared">Not Shared</span></td>
-                  <td><button class="btn" style="height:26px;font-size:12px;padding:0 10px;">Actions</button></td>
+                  <td><button class="btn" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></button></td>
                 </tr>
               </tbody>
             </table>
