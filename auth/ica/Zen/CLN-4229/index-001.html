@@ -13,22 +13,26 @@
       --primary-30: oklch(43.332% 0.10422 258.384);
       --primary-50: oklch(49.153% 0.12057 258.167);
       --secondary-60: oklch(0.7169 0.2209 128.71);
-
-      --neutral-15: oklch(0.245 0.009 234.74);
-      --neutral-20: oklch(0.3008 0.0116 234.63);
-      --neutral-25: oklch(0.3608 0.0139 234.51);
-      --neutral-30: oklch(0.4089 0.0157 234.40);
-      --neutral-40: oklch(0.5192 0.0178 234.18);
-      --neutral-45: oklch(0.563 0.018 234.07);
-      --neutral-50: oklch(0.6068 0.0178 233.96);
-      --neutral-55: oklch(0.653 0.017 233.85);
-      --neutral-60: oklch(0.6996 0.0160 233.74);
-      --neutral-70: oklch(0.7974 0.0127 233.51);
-      --neutral-75: oklch(0.8373 0.0106 233.40);
-      --neutral-80: oklch(0.8845 0.0083 233.29);
-      --neutral-85: oklch(0.9234 0.0059 233.18);
-      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-05: oklch(0.1698 0.0008 234.96);
+      --neutral-10: oklch(0.2044 0.0073 234.85);
+      --neutral-15: oklch(0.2484 0.0122 234.74);
+      --neutral-20: oklch(0.3008 0.0163 234.63);
+      --neutral-25: oklch(0.3608 0.0197 234.51);
+      --neutral-30: oklch(0.4089 0.0222 234.40);
+      --neutral-35: oklch(0.4649 0.0241 234.29);
+      --neutral-40: oklch(0.5192 0.0251 234.18);
+      --neutral-45: oklch(0.5634 0.0255 234.07);
+      --neutral-50: oklch(0.6068 0.0252 233.96);
+      --neutral-55: oklch(0.6494 0.0242 233.85);
+      --neutral-60: oklch(0.6996 0.0226 233.74);
+      --neutral-65: oklch(0.7489 0.0205 233.63);
+      --neutral-70: oklch(0.7974 0.0179 233.51);
+      --neutral-75: oklch(0.8373 0.0149 233.40);
+      --neutral-80: oklch(0.8845 0.0116 233.29);
+      --neutral-85: oklch(0.9234 0.0081 233.18);
+      --neutral-90: oklch(0.9542 0.0045 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
+      --white: white;
 
       --border-btn: var(--neutral-70);
       --border-light: var(--neutral-75);
@@ -45,8 +49,13 @@
       box-sizing: border-box;
     }
 
+    html {
+      height: 100%;
+    }
+
     body {
       margin: 0;
+      height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 13px;
       line-height: 1.5;
@@ -56,9 +65,11 @@
 
     /* ── App shell (CLIN-3386) ── */
     .app-shell {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 48px 1fr;
+      overflow: hidden;
     }
 
     /* ── Wire header ── */
@@ -121,9 +132,10 @@
 
     /* ── Body ── */
     .shell-body {
-      display: flex;
-      flex: 1;
+      display: grid;
+      grid-template-columns: 80px 1fr;
       overflow: hidden;
+      min-height: 0;
     }
 
     /* ── Sidebar (CLIN-3386) ── */
@@ -135,7 +147,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--sp-3);
-      flex-shrink: 0;
+      overflow: hidden;
     }
 
     .wire-nav-item {
@@ -156,9 +168,10 @@
 
     /* ── Main ── */
     .shell-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-height: 0;
+      min-width: 0;
       background: #fff;
       overflow: hidden;
     }
@@ -169,7 +182,7 @@
       align-items: center;
       gap: var(--sp-2);
       padding: var(--sp-2) var(--sp-3);
-      background: #fff;
+      background: oklch(0.965 0.006 234);
       border-bottom: 1px solid var(--border-light);
       flex-shrink: 0;
     }
@@ -285,99 +298,193 @@
   <div class="app-shell">
 
     <!-- Wire header -->
-    <header class="shell-header">
-      <div class="wire-logo">
-        <div class="wire-logo-mark"></div>
-        <div class="wire-logo-text"></div>
+    /* ── Page content ── */
+    .page-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    background: oklch(0.965 0.006 234);
+    }
+
+    /* ── Table toolbar ── */
+    .table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    background: #fff;
+    border-bottom: 1px solid var(--border-light);
+    }
+
+    .table-toolbar-spacer { flex: 1; }
+
+    /* ── Data table (BT-3479) ── */
+    .data-table-wrap {
+    flex: 1;
+    overflow: auto;
+    background: #fff;
+    }
+
+    .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    }
+
+    .data-table th {
+    text-align: left;
+    padding: 10px var(--sp-3);
+    border-bottom: 1px solid var(--border-light);
+    font-weight: 500;
+    color: var(--neutral-40);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    white-space: nowrap;
+    background: #fff;
+    }
+
+    .data-table td {
+    padding: 10px var(--sp-3);
+    border-bottom: 1px solid var(--neutral-90);
+    color: var(--neutral-30);
+    white-space: nowrap;
+    }
+
+    .data-table > tbody > tr:hover > td { background: var(--neutral-95); }
+
+    .col-checkbox { width: 40px; }
+    th.col-checkbox { overflow: visible; }
+
+    .wire-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--neutral-60);
+    border-radius: 2px;
+    background: var(--neutral-90);
+    }
+
+    /* Table links */
+    .table-link { color: hsl(218, 45%, 45%); text-decoration: none; }
+    .table-link:hover { text-decoration: underline; }
+
+    /* Status badges */
+    .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    }
+
+    .status-badge.signed {
+    background: hsl(209, 100%, 92%);
+    color: hsl(209, 85%, 29%);
+    border: 1px solid hsl(209, 70%, 65%);
+    }
+
+    .status-badge.finished {
+    background: hsl(134, 41%, 88%);
+    color: hsl(134, 55%, 21%);
+    border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    .status-badge.not-shared {
+    background: hsl(46, 100%, 90%);
+    color: hsl(40, 90%, 22%);
+    border: 1px solid hsl(46, 70%, 70%);
+    }
+
+    .status-badge.shared {
+    background: hsl(209, 100%, 92%);
+    color: hsl(209, 85%, 29%);
+    border: 1px solid hsl(209, 70%, 65%);
+    } <div class="wire-icon"></div>
+    <div class="wire-icon"></div>
+    <div class="wire-icon"></div>
+    <div class="wire-avatar"></div>
+  </div>
+  </header>
+
+  <div class="shell-body">
+
+    <!-- Sidebar — second item active -->
+    <nav class="shell-sidebar">
+      <div class="wire-nav-item"></div>
+      <div class="wire-nav-item active"></div>
+      <div class="wire-nav-item"></div>
+      <div class="wire-nav-item"></div>
+      <div class="wire-nav-item"></div>
+      <div class="wire-nav-item"></div>
+      <div class="sidebar-spacer"></div>
+      <div class="wire-nav-item"></div>
+    </nav>
+
+    <main class="shell-main">
+
+      <!-- Context bar (DO-14563) — client/patient header -->
+      <div class="context-bar">
+        <div class="wire-patient-avatar"></div>
+        <div class="patient-info">
+          <div class="context-row">
+            <div class="wire-chip-sm" style="width: 14px;"></div>
+            <div class="wire-text" style="width: 100px;"></div>
+            <div class="wire-text" style="width: 28px;"></div>
+            <div class="wire-text" style="width: 14px;"></div>
+            <div class="wire-chip-sm" style="width: 14px;"></div>
+          </div>
+          <div class="context-row">
+            <div class="wire-chip-sm" style="width: 50px;"></div>
+            <div class="wire-text" style="width: 40px;"></div>
+            <div class="wire-chip-sm" style="width: 36px;"></div>
+            <div class="wire-text" style="width: 22px;"></div>
+            <div class="wire-text" style="width: 70px;"></div>
+          </div>
+        </div>
+        <div class="action-block">
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+          <div class="wire-chip"></div>
+        </div>
       </div>
-      <div class="wire-search"></div>
-      <div class="wire-header-right">
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-avatar"></div>
+
+      <!-- Tab bar (CLIN-3386 style) — Documents active -->
+      <div class="tab-bar">
+        <div class="wire-tab">
+          <div class="wire-text" style="width: 72px;"></div>
+        </div>
+        <div class="wire-tab">
+          <div class="wire-text" style="width: 96px;"></div>
+        </div>
+        <div class="wire-tab">
+          <div class="wire-text" style="width: 118px;"></div>
+        </div>
+        <div class="wire-tab">
+          <div class="wire-text" style="width: 104px;"></div>
+        </div>
+        <div class="wire-tab active">Documents</div>
+        <div class="wire-tab">
+          <div class="wire-text" style="width: 112px;"></div>
+        </div>
       </div>
-    </header>
 
-    <div class="shell-body">
+      <!-- Page content -->
+      <div class="page-content">
+      </div>
 
-      <!-- Sidebar — second item active -->
-      <nav class="shell-sidebar">
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item active"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="sidebar-spacer"></div>
-        <div class="wire-nav-item"></div>
-      </nav>
-
-      <main class="shell-main">
-
-        <!-- Context bar (DO-14563) — client/patient header -->
-        <div class="context-bar">
-          <div class="wire-patient-avatar"></div>
-          <div class="patient-info">
-            <div class="context-row">
-              <div class="wire-chip-sm" style="width: 14px;"></div>
-              <div class="wire-text" style="width: 100px;"></div>
-              <div class="wire-text" style="width: 28px;"></div>
-              <div class="wire-text" style="width: 14px;"></div>
-              <div class="wire-chip-sm" style="width: 14px;"></div>
-            </div>
-            <div class="context-row">
-              <div class="wire-chip-sm" style="width: 50px;"></div>
-              <div class="wire-text" style="width: 40px;"></div>
-              <div class="wire-chip-sm" style="width: 36px;"></div>
-              <div class="wire-text" style="width: 22px;"></div>
-              <div class="wire-text" style="width: 70px;"></div>
-            </div>
-          </div>
-          <div class="action-block">
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-            <div class="wire-chip"></div>
-          </div>
-        </div>
-
-        <!-- Tab bar (CLIN-3386 style) — Documents active -->
-        <div class="tab-bar">
-          <div class="wire-tab">
-            <div class="wire-text" style="width: 60px;"></div>
-          </div>
-          <div class="wire-tab">
-            <div class="wire-text" style="width: 44px;"></div>
-          </div>
-          <div class="wire-tab active">Documents</div>
-          <div class="wire-tab">
-            <div class="wire-text" style="width: 88px;"></div>
-          </div>
-          <div class="wire-tab">
-            <div class="wire-text" style="width: 72px;"></div>
-          </div>
-          <div class="wire-tab">
-            <div class="wire-text" style="width: 56px;"></div>
-          </div>
-        </div>
-
-        <!-- Page content -->
-        <div class="page-content">
-        </div>
-
-      </main>
-    </div>
+    </main>
+  </div>
   </div>
 
 </body>
