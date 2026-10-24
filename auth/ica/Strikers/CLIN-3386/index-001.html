@@ -217,10 +217,16 @@
       margin-bottom: -1px;
       border: 1px solid var(--border-light);
       border-bottom: none;
+      display: flex;
+      align-items: center;
       font-size: 14px;
       font-weight: 600;
       color: var(--neutral-20);
       box-shadow: 0 1px 0 0 #fff;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* ========== Page Toolbar (like availability-blocks-015 cal-toolbar) ========== */
@@ -478,13 +484,16 @@
       position: sticky;
       top: 0;
       background: #fff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: inset 0 -1.5px 0 var(--neutral-80), 0 2px 4px rgba(0, 0, 0, 0.025);
       z-index: 10;
     }
 
     .data-table th {
       text-align: left;
       padding: 0 8px;
-      height: 48px;
+      height: 44px;
       font-size: 14px;
       font-weight: 500;
       vertical-align: middle;
@@ -774,8 +783,7 @@
     }
 
     .timer-value.warning {
-      color: var(--chip-absent-fg);
-      font-weight: 500;
+      color: hsl(352, 92%, 43%);
     }
 
     .timer-value.muted {
@@ -1605,7 +1613,7 @@
           <div class="wire-tab">
             <div class="wire-text" style="width: 125px;"></div>
           </div>
-          <div class="wire-tab active">Telehealth</div>
+          <div class="wire-tab active">Telehealth Waiting Room</div>
         </div>
 
         <!-- Page Toolbar -->
@@ -1664,7 +1672,7 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th class="sortable" data-sort="time" onclick="sortTable('time')">Time<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <th class="sortable" data-sort="time" onclick="sortTable('time')">EDT<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m21 16-4 4-4-4" />
                         <path d="M17 20V4" />
                         <path d="m3 8 4-4 4 4" />
@@ -1701,7 +1709,12 @@
                         <path d="m3 8 4-4 4 4" />
                         <path d="M7 4v16" />
                       </svg></span></th>
-                  <th>Note</th>
+                  <th class="sortable" data-sort="note" onclick="sortTable('note')">Note<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
                   <th style="width: 1px;">Actions</th>
                 </tr>
               </thead>
@@ -1756,29 +1769,29 @@
   <script>
     // Stub data — current time: ~3:15 PM
     const sessions = [
-      { id: 1, time: '1:00 PM', name: 'Alex Rivera', clinician: 'Dr. Sarah Chen', copay: true, status: 'ended', waiting: 8, session: 47, note: { type: 'Progress Note' } },
-      { id: 2, time: '2:00 PM', name: 'Harley David', clinician: 'Dr. Sarah Chen', copay: true, status: 'ended', waiting: 12, session: 52, note: { type: 'Progress Note' } },
-      { id: 3, time: '2:15 PM', name: 'Maria Chen', clinician: 'Dr. James Wilson', copay: false, status: 'ended', waiting: 6, session: 38, note: { type: 'Progress Note' } },
-      { id: 4, time: '2:30 PM', name: 'Devon Brooks', clinician: 'Dr. James Wilson', copay: false, status: 'insession', waiting: 5, session: 44, note: { type: 'Progress Note' } },
-      { id: 5, time: '2:45 PM', name: 'Dana Pierce', clinician: 'Dr. James Wilson', copay: null, status: 'absent', waiting: null, session: null },
+      { id: 1, time: '1:00 PM', name: 'Alex Rivera', clinician: 'Sarah Rogers, LCSW', copay: true, status: 'ended', waiting: 16, session: 47, note: { type: 'Progress Note' } },
+      { id: 2, time: '2:00 PM', name: 'Harley David', clinician: 'Sarah Rogers, LCSW', copay: true, status: 'ended', waiting: 12, session: 52, note: { type: 'Progress Note' } },
+      { id: 3, time: '2:15 PM', name: 'Maria Chen', clinician: 'James Okafor, LPC', copay: false, status: 'ended', waiting: 6, session: 38, note: { type: 'Progress Note' } },
+      { id: 4, time: '2:30 PM', name: 'Devon Brooks', clinician: 'James Okafor, LPC', copay: false, status: 'insession', waiting: 5, session: 44, note: { type: 'Progress Note' } },
+      { id: 5, time: '2:45 PM', name: 'Dana Pierce', clinician: 'James Okafor, LPC', copay: null, status: 'absent', waiting: null, session: null },
       {
-        id: 6, time: '3:00 PM', name: 'Group Therapy — Tuesday', clinician: 'Dr. Lisa Park', type: 'group', participants: 7, copay: '3/5', status: 'mixed', statusText: '3 waiting · 2 in session', waiting: null, session: null, note: { type: 'Group Therapy Progress Note' },
+        id: 6, time: '3:00 PM', name: 'Group Therapy — Tuesday', clinician: 'Lisa Park, LMFT', type: 'group', participants: 7, copay: '3/5', status: 'mixed', statusText: '3 waiting · 2 in session', waiting: null, session: null, note: { type: 'Group Therapy Progress Note' },
         members: [
           { id: 61, name: 'Ric Racecar', copay: true, status: 'insession', waiting: 11, session: 4 },
           { id: 62, name: 'Sam Okafor', copay: null, status: 'insession', waiting: 11, session: 4, guardian: true, notBilled: true },
-          { id: 63, name: 'Jason Alexander', copay: false, status: 'waiting', waiting: 6, session: null },
+          { id: 63, name: 'Jason Alexander', copay: false, status: 'waiting', waiting: 16, session: null },
           { id: 64, name: 'Kim Wexler', copay: false, status: 'waiting', waiting: 3, session: null },
           { id: 65, name: 'Mike Ehrmantraut', copay: false, status: 'waiting', waiting: 1, session: null },
           { id: 66, name: 'Nacho Varga', copay: null, status: 'scheduled', waiting: null, session: null },
           { id: 67, name: 'Lalo Salamanca', copay: null, status: 'scheduled', waiting: null, session: null },
         ]
       },
-      { id: 7, time: '3:15 PM', name: 'Chris Taylor', clinician: 'Dr. Sarah Chen', copay: false, status: 'waiting', waiting: 4, session: null, adHoc: true },
-      { id: 8, time: '3:30 PM', name: 'Sam Johnson', clinician: 'Dr. Sarah Chen', copay: null, status: 'scheduled', waiting: null, session: null },
-      { id: 9, time: '3:45 PM', name: 'Taylor Kim', clinician: 'Dr. Lisa Park', copay: null, status: 'scheduled', waiting: null, session: null },
-      { id: 10, time: '4:00 PM', name: 'Jordan Lee', clinician: 'Dr. James Wilson', copay: null, status: 'scheduled', waiting: null, session: null },
-      { id: 11, time: '4:15 PM', name: 'Casey Morgan', clinician: 'Dr. Sarah Chen', copay: null, status: 'scheduled', waiting: null, session: null },
-      { id: 12, time: '4:30 PM', name: 'Riley Parker', clinician: 'Dr. Lisa Park', copay: null, status: 'scheduled', waiting: null, session: null },
+      { id: 7, time: '3:15 PM', name: 'Chris Taylor', clinician: 'Sarah Rogers, LCSW', copay: false, status: 'waiting', waiting: 4, session: null, adHoc: true },
+      { id: 8, time: '3:30 PM', name: 'Sam Johnson', clinician: 'Sarah Rogers, LCSW', copay: null, status: 'scheduled', waiting: null, session: null },
+      { id: 9, time: '3:45 PM', name: 'Taylor Kim', clinician: 'Marcus Webb, MD', copay: null, status: 'scheduled', waiting: null, session: null },
+      { id: 10, time: '4:00 PM', name: 'Jordan Lee', clinician: 'Marcus Webb, MD', copay: null, status: 'scheduled', waiting: null, session: null },
+      { id: 11, time: '4:15 PM', name: 'Casey Morgan', clinician: 'Sarah Rogers, LCSW', copay: null, status: 'scheduled', waiting: null, session: null },
+      { id: 12, time: '4:30 PM', name: 'Riley Parker', clinician: 'Lisa Park, LMFT', copay: null, status: 'scheduled', waiting: null, session: null },
     ];
 
     const icons = {
@@ -1844,7 +1857,7 @@
 
     function renderTimer(val, isWarning = false) {
       if (val === null) return `<span class="timer-value muted">—</span>`;
-      const cls = isWarning && val >= 15 ? ' warning' : '';
+      const cls = isWarning && val > 15 ? ' warning' : '';
       const padded = val.toString().padStart(2, '0');
       return `<span class="timer-value${cls}">:${padded}</span>`;
     }
@@ -1979,7 +1992,7 @@
           case 'clinician': aVal = (a.clinician || '').toLowerCase(); bVal = (b.clinician || '').toLowerCase(); break;
           case 'status': aVal = a.status || ''; bVal = b.status || ''; break;
           case 'waiting': aVal = a.waiting ?? -1; bVal = b.waiting ?? -1; break;
-          case 'session': aVal = a.session ?? -1; bVal = b.session ?? -1; break;
+          case 'note': aVal = (a.note && a.note.type) ? a.note.type.toLowerCase() : 'zzz'; bVal = (b.note && b.note.type) ? b.note.type.toLowerCase() : 'zzz'; break;
           default: return 0;
         }
         if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
@@ -2057,31 +2070,46 @@
 
     // ===== Row Action Menu =====
     var _menuOpen = false;
+    var _menuOpenBtn = null;
 
-    function hideMenu() {
-      if (!_menuOpen) return;
+    function hideMenu(callback) {
+      if (!_menuOpen) {
+        if (callback) callback();
+        return;
+      }
       _menuOpen = false;
+      _menuOpenBtn = null;
       var menu = document.getElementById('actionMenu');
       if (!menu) return;
       menu.classList.remove('open');
       menu.addEventListener('transitionend', function () {
         menu.style.display = 'none';
+        if (callback) callback();
       }, { once: true });
     }
 
     function openMenuFromBtn(btn, event) {
       var menu = document.getElementById('actionMenu');
       if (!menu) return;
-      if (_menuOpen) { hideMenu(); return; }
-      var sessionId = parseInt(btn.dataset.sessionId);
-      var status = btn.dataset.status;
-      var type = btn.dataset.type;
-      var groupId = btn.dataset.groupId ? parseInt(btn.dataset.groupId) : null;
-      menu.innerHTML = buildMenuItems(sessionId, status, { type: type, groupId: groupId });
-      positionMenu(menu, btn);
-      menu.style.display = 'block';
-      _menuOpen = true;
-      requestAnimationFrame(function () { menu.classList.add('open'); });
+      var isSameBtn = _menuOpen && _menuOpenBtn === btn;
+      if (isSameBtn) { hideMenu(); return; }
+
+      var doOpen = function () {
+        var sessionId = parseInt(btn.dataset.sessionId);
+        var status = btn.dataset.status;
+        var type = btn.dataset.type;
+        var groupId = btn.dataset.groupId ? parseInt(btn.dataset.groupId) : null;
+        menu.innerHTML = buildMenuItems(sessionId, status, { type: type, groupId: groupId });
+        positionMenu(menu, btn);
+        menu.style.display = 'block';
+        _menuOpen = true;
+        _menuOpenBtn = btn;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { menu.classList.add('open'); });
+        });
+      };
+
+      if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
     }
 
     function mi(label, action, danger) {
@@ -2540,17 +2568,26 @@
         var noteBtn = e.target.closest('.note-start-btn');
         if (noteBtn) {
           e.stopPropagation();
-          if (_menuOpen) { hideMenu(); return; }
-          var menu2 = document.getElementById('actionMenu');
-          if (!menu2) return;
-          var nid = parseInt(noteBtn.dataset.sessionId);
-          menu2.innerHTML = noteTypes.map(function (t) {
-            return '<button onclick="createNote(' + nid + ',\'' + t + '\');hideMenu();">' + t + '</button>';
-          }).join('');
-          positionMenu(menu2, noteBtn);
-          menu2.style.display = 'block';
-          _menuOpen = true;
-          requestAnimationFrame(function () { menu2.classList.add('open'); });
+          var isSameBtn = _menuOpen && _menuOpenBtn === noteBtn;
+          if (isSameBtn) { hideMenu(); return; }
+
+          var doOpenNote = function () {
+            var menu2 = document.getElementById('actionMenu');
+            if (!menu2) return;
+            var nid = parseInt(noteBtn.dataset.sessionId);
+            menu2.innerHTML = noteTypes.map(function (t) {
+              return '<button onclick="createNote(' + nid + ',\'' + t + '\');hideMenu();">' + t + '</button>';
+            }).join('');
+            positionMenu(menu2, noteBtn);
+            menu2.style.display = 'block';
+            _menuOpen = true;
+            _menuOpenBtn = noteBtn;
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () { menu2.classList.add('open'); });
+            });
+          };
+
+          if (_menuOpen) { hideMenu(doOpenNote); } else { doOpenNote(); }
           return;
         }
         if (!menu || !_menuOpen) return;
@@ -2599,9 +2636,10 @@
         <div class="modal-field">
           <label class="modal-field-label" for="ns-clinician">Clinician</label>
           <select id="ns-clinician" class="modal-field-select">
-            <option>Dr. Sarah Chen</option>
-            <option>Dr. James Wilson</option>
-            <option>Dr. Lisa Park</option>
+            <option>Sarah Rogers, LCSW</option>
+            <option>James Okafor, LPC</option>
+            <option>Lisa Park, LMFT</option>
+            <option>Marcus Webb, MD</option>
           </select>
         </div>
         <div class="modal-field">
