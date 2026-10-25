@@ -1306,7 +1306,7 @@
         av = al ? al.textContent.toLowerCase() : '';
         bv = bl ? bl.textContent.toLowerCase() : '';
       } else {
-        var as = a.querySelector('td:nth-child(7) span'), bs = b.querySelector('td:nth-child(7) span');
+        var as = a.querySelector('td:nth-child(3) span'), bs = b.querySelector('td:nth-child(3) span');
         var ac = as ? Array.from(as.classList).find(function (c) { return c.startsWith('share-') && c !== 'share-status'; }) : '';
         var bc = bs ? Array.from(bs.classList).find(function (c) { return c.startsWith('share-') && c !== 'share-status'; }) : '';
         av = _statusOrder[ac] !== undefined ? _statusOrder[ac] : 99;
