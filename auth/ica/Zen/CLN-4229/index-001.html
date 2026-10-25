@@ -811,12 +811,15 @@
       z-index: 300;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 180ms cubic-bezier(.39, .575, .565, 1), visibility 180ms;
+      pointer-events: none;
+      transition: opacity 120ms cubic-bezier(.39, .575, .565, 1), visibility 0ms linear 120ms;
     }
 
     .share-backdrop.open {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
+      transition: opacity 180ms cubic-bezier(.39, .575, .565, 1);
     }
 
     .share-modal {
