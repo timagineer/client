@@ -1344,7 +1344,7 @@
       display: flex;
     }
 
-    .share-banner svg {
+    .share-banner>svg {
       width: 15px;
       height: 15px;
       flex-shrink: 0;
@@ -2580,7 +2580,8 @@
                     <td><button class="btn btn-outline" onclick="openActionMenu(this,event)">Actions <svg class="btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m6 9 6 6 6-6" />
                         </svg></button></td>
-                  </tr></tbody>
+                  </tr>
+                </tbody>
               </table>
             </div>
 
@@ -3102,7 +3103,7 @@
     function continueShare() {
       if (_shareMethod === 'portal') {
         closeShareModal();
-        showToast('success', _docName + ' shared via client portal.');
+        showToast('success', _docName + ' shared via client portal');
       } else {
         goToStep(2);
         updateSendBtn();
@@ -3375,7 +3376,7 @@
         var person = Object.keys(peopleMap2)[0];
         var first = person ? person.split(' ')[0] : 'recipient';
         var channels = peopleMap2[person] || [];
-        var msg = 'Sent to ' + first + ' by ' + (channels.join(' and ') || 'email') + '.';
+        var msg = 'Sent to ' + first + ' by ' + (channels.join(' and ') || 'email');
         closeShareModal();
         showToast('success', msg);
       }
