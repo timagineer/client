@@ -1548,6 +1548,18 @@
       color: var(--chip-waiting-fg);
     }
 
+    /* SMS-off: disable phone rows and hide all SMS-specific UI */
+    #sStep2.sms-off [data-sms-row] {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    #sStep2.sms-off .sms-status,
+    #sStep2.sms-off .contact-warn,
+    #sStep2.sms-off .btn-record-consent {
+      display: none;
+    }
+
     .sms-status svg {
       width: 10px;
       height: 10px;
@@ -2811,7 +2823,7 @@
           </div>
 
           <!-- Jordan: SMS 1 — opted in -->
-          <div class="contact-row">
+          <div class="contact-row" data-sms-row="true">
             <label class="contact-check">
               <div class="contact-info">
                 <div class="contact-val">(401) 555-7890</div>
@@ -2844,7 +2856,7 @@
           </div>
 
           <!-- Rachel: SMS — not opted in (consent flow) -->
-          <div class="contact-row contact-row--not-opted" id="row-r-sms">
+          <div class="contact-row contact-row--not-opted" id="row-r-sms" data-sms-row="true">
             <div class="contact-check has-sub">
               <div class="contact-info">
                 <div class="contact-val">(401) 555-3301</div>
@@ -3061,6 +3073,10 @@
           if (tipLink) tipLink.style.display = row.dataset.smsOffAdmin ? '' : 'none';
         }
       }
+      // Step 2: disable phone rows when SMS is off
+      var sStep2El = document.getElementById('sStep2');
+      if (sStep2El) sStep2El.classList.toggle('sms-off', !!smsOff);
+
       if (portalOff && smsOff) {
         if (portalCard) portalCard.classList.add('card-disabled', 'card-show-full');
         if (linkCard) linkCard.classList.add('card-disabled');
@@ -3107,11 +3123,7 @@
         if (hiddenCb) { hiddenCb.style.display = 'none'; hiddenCb.checked = false; }
       }
 
-      // Preselect preferred opted-in contacts
-      ['j-email', 'j-sms1'].forEach(function (id) {
-        var cb = document.querySelector('#sStep2 input[data-contact-id="' + id + '"]');
-        if (cb && !cb.disabled) cb.checked = true;
-      });
+      // Preselect preferred opted-in contacts — removed; contacts start unchecked
       updateSendBtn();
 
       document.getElementById('btnContinue').disabled = true;
