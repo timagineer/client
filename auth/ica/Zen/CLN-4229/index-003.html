@@ -1685,48 +1685,6 @@
       }
     }
 
-    flex-shrink: 0;
-    }
-
-    /* Not opted in — interactive consent card */
-    .contact-row--not-opted {
-      border-style: dashed;
-      border-color: var(--neutral-75);
-      cursor: default;
-    }
-
-    .contact-row--not-opted:hover {
-      border-color: var(--neutral-65);
-    }
-
-    /* Record consent button — matches .btn neutral style, slightly smaller */
-    .btn-record-consent {
-      display: inline-flex;
-      align-items: center;
-      line-height: 1;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 500;
-      border-radius: 4px;
-      border: 1px solid var(--neutral-70);
-      background: #fff;
-      color: var(--neutral-30);
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 100ms ease, border-color 100ms ease;
-    }
-
-    .btn-record-consent:hover {
-      background: var(--neutral-95);
-      border-color: var(--neutral-60);
-    }
-
-    .btn-record-consent:focus-visible {
-      outline: 2px solid var(--primary-50);
-      outline-offset: 2px;
-    }
-
     /* Not opted in — interactive consent card */
     .contact-row--not-opted {
       border-style: dashed;
@@ -1774,7 +1732,6 @@
       box-shadow: none;
       background: var(--neutral-93, oklch(0.9367 0.0063 233.12));
       border-color: var(--neutral-75);
-    }
     }
 
     .contact-row--disabled .contact-check {
@@ -2800,16 +2757,6 @@
                 <div class="share-method-feat"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>Link expires in 48 hours</div>
-                <div class="card-notice" id="noticeSms">
-                  <div class="card-notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 8v4" />
-                      <path d="M12 16h.01" />
-                    </svg></div>
-                  <div class="card-notice-body">
-                    <span class="card-notice-text">SMS not enabled for this practice</span>
-                  </div>
-                </div>
               </div>
               <p class="card-admin-tip" id="noticeSmsTip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10" />
@@ -3061,7 +3008,6 @@
       var portalCard = document.getElementById('card-portal');
       var linkCard = document.getElementById('card-link');
       var noticePortal = document.getElementById('noticePortal');
-      var noticeSms = document.getElementById('noticeSms');
       var noticeSmsTip = document.getElementById('noticeSmsTip');
       var shareBanner = document.getElementById('shareBanner');
       var linkCardName = document.getElementById('linkCardName');
@@ -3069,7 +3015,6 @@
       if (portalCard) portalCard.classList.remove('card-disabled', 'card-show-full');
       if (linkCard) linkCard.classList.remove('card-disabled');
       if (noticePortal) noticePortal.classList.remove('visible');
-      if (noticeSms) noticeSms.classList.remove('visible');
       if (noticeSmsTip) noticeSmsTip.classList.remove('visible');
       var tipLink = document.getElementById('noticeSmsTipLink');
       if (tipLink) tipLink.style.display = '';
