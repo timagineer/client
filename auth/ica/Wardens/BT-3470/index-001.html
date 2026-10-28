@@ -2049,6 +2049,11 @@
       background: var(--neutral-95);
     }
 
+    /* Hide balance summary when Account Ledger is collapsed */
+    #sectionLedger:not(.open) .ledger-summary {
+      display: none;
+    }
+
     /* ── Ledger filter bar ── */
     .ledger-filter-bar {
       display: flex;
