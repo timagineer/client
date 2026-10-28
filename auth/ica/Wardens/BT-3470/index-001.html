@@ -2039,6 +2039,36 @@
       padding-top: var(--sp-4);
     }
 
+
+    /* ── Account Ledger: dark blue header using primary-30 ── */
+    #sectionLedger > .section-header {
+      background: var(--primary-30);
+      border-radius: var(--rad) var(--rad) 0 0;
+      cursor: pointer;
+    }
+    #sectionLedger > .section-header .section-caret { color: rgba(255,255,255,0.7); }
+    #sectionLedger.open > .section-header .section-caret { color: rgba(255,255,255,0.9); }
+    #sectionLedger > .section-header .section-label { color: #fff; }
+    #sectionLedger > .section-header .ledger-col-label { color: rgba(255,255,255,0.6); }
+    #sectionLedger > .section-header .ledger-col-val,
+    #sectionLedger > .section-header .ledger-col-val.neg { color: #fff; }
+    #sectionLedger > .section-header .freeze-label { color: rgba(255,255,255,0.75); }
+    #sectionLedger > .section-header .wire-toggle { background: rgba(255,255,255,0.25); }
+    #sectionLedger > .section-header .wire-text { background: rgba(255,255,255,0.22); }
+
+    /* ── Ledger filter bar ── */
+    .ledger-filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px var(--sp-4);
+      border-bottom: 1px solid var(--neutral-90);
+      background: var(--neutral-95);
+    }
+
+    /* ── Wire number cells ── */
+    .wire-num {
+      display: block; height: 10px; background: var(--neutral-80);
+      border-radius: 2px; width: 40px; margin-left: auto;
+    }
     /* ── Section accordions ── */
     .section-card {
       border: 1px solid var(--neutral-85);
@@ -2509,31 +2539,39 @@
                 </svg></span>
               <span class="section-label">Account Ledger</span>
               <div class="ledger-summary">
-                <div class="ledger-col"><span class="ledger-col-label">Charges</span><span class="ledger-col-val">$180.00</span></div>
-                <div class="ledger-col"><span class="ledger-col-label">Paid</span><span class="ledger-col-val">$0.00</span></div>
-                <div class="ledger-col"><span class="ledger-col-label">Adjusted</span><span class="ledger-col-val">$0.00</span></div>
-                <div class="ledger-col"><span class="ledger-col-label">Client Bal</span><span class="ledger-col-val neg">$180.00</span></div>
-                <div class="ledger-col"><span class="ledger-col-label">Insurance Bal</span><span class="ledger-col-val">$0.00</span></div>
-                <div class="ledger-col"><span class="ledger-col-label">Total Bal</span><span class="ledger-col-val neg">$180.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Charges</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
+                <div class="ledger-col"><span class="ledger-col-label">Paid</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
+                <div class="ledger-col"><span class="ledger-col-label">Adjusted</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
+                <div class="ledger-col"><span class="ledger-col-label">Client Bal</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
+                <div class="ledger-col"><span class="ledger-col-label">Insurance Bal</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
+                <div class="ledger-col"><span class="ledger-col-label">Total Bal</span><div class="wire-text" style="width:36px;margin:3px auto 0;"></div></div>
                 <div class="freeze-label" onclick="event.stopPropagation()">
                   <div class="wire-toggle"></div>Freeze Account
                 </div>
               </div>
             </div>
             <div class="section-body">
+              <div class="ledger-filter-bar">
+                <div class="wire-text" style="width:70px;"></div>
+                <div class="wire-chip-sm" style="width:120px;height:24px;border-radius:4px;"></div>
+                <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+                  <div class="wire-text" style="width:88px;"></div>
+                  <div class="wire-toggle"></div>
+                </div>
+              </div>
               <div class="encounter-table-wrap">
                 <table class="encounter-table">
                   <thead>
                     <tr>
                       <th style="width:20px;"></th>
-                      <th>Date</th>
-                      <th>Note</th>
-                      <th class="num">Charge</th>
-                      <th class="num">Paid</th>
-                      <th class="num">Adjusted</th>
-                      <th class="num">Client Bal</th>
-                      <th class="num">Ins Bal</th>
-                      <th class="num">Balance</th>
+                      <th><div class="wire-text" style="width:32px;height:10px;"></div></th>
+                      <th><div class="wire-text" style="width:28px;height:10px;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:36px;height:10px;margin-left:auto;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:28px;height:10px;margin-left:auto;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:44px;height:10px;margin-left:auto;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:44px;height:10px;margin-left:auto;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:36px;height:10px;margin-left:auto;"></div></th>
+                      <th class="num"><div class="wire-text" style="width:40px;height:10px;margin-left:auto;"></div></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2542,16 +2580,16 @@
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m9 18 6-6-6-6" />
                           </svg></span></td>
-                      <td>09/20/2026</td>
+                      <td><div class="wire-text" style="width:68px;"></div></td>
                       <td>
                         <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
                       </td>
-                      <td class="num">$180.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
                     </tr>
                     <tr class="enc-detail-row open" id="enc1">
                       <td colspan="9">
@@ -2559,12 +2597,12 @@
                           <table class="service-table">
                             <thead>
                               <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th class="num">Units</th>
-                                <th class="num">Charge</th>
-                                <th class="num">Paid</th>
-                                <th class="num">Balance</th>
+                                <th><div class="wire-text" style="width:28px;height:9px;"></div></th>
+                                <th><div class="wire-text" style="width:68px;height:9px;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:9px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:36px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:40px;height:10px;margin-left:auto;"></div></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -2578,13 +2616,13 @@
                                 <td class="num">
                                   <div class="wire-text" style="width:20px;margin-left:auto;"></div>
                                 </td>
-                                <td class="num">$180.00</td>
-                                <td class="num">$0.00</td>
-                                <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
                               </tr>
                             </tbody>
                           </table>
-                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="enc-actions"><button class="btn btn-primary">+ Add Transaction</button></div>
                           <div class="activity-section open" id="activity1">
                             <div class="activity-toggle" onclick="toggleActivity('activity1')">
                               <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2620,16 +2658,16 @@
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m9 18 6-6-6-6" />
                           </svg></span></td>
-                      <td>08/14/2026</td>
+                      <td><div class="wire-text" style="width:68px;"></div></td>
                       <td>
                         <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
                       </td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$120.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$30.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
                     </tr>
                     <tr class="enc-detail-row" id="enc2">
                       <td colspan="9">
@@ -2637,12 +2675,12 @@
                           <table class="service-table">
                             <thead>
                               <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th class="num">Units</th>
-                                <th class="num">Charge</th>
-                                <th class="num">Paid</th>
-                                <th class="num">Balance</th>
+                                <th><div class="wire-text" style="width:28px;height:9px;"></div></th>
+                                <th><div class="wire-text" style="width:68px;height:9px;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:9px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:36px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:40px;height:10px;margin-left:auto;"></div></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -2656,13 +2694,13 @@
                                 <td class="num">
                                   <div class="wire-text" style="width:20px;margin-left:auto;"></div>
                                 </td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$120.00</td>
-                                <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
                               </tr>
                             </tbody>
                           </table>
-                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="enc-actions"><button class="btn btn-primary">+ Add Transaction</button></div>
                           <div class="activity-section" id="activity2">
                             <div class="activity-toggle" onclick="toggleActivity('activity2')">
                               <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2689,16 +2727,16 @@
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m9 18 6-6-6-6" />
                           </svg></span></td>
-                      <td>07/09/2026</td>
+                      <td><div class="wire-text" style="width:68px;"></div></td>
                       <td>
                         <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
                       </td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
+                      <td class="num"><span class="wire-num"></span></td>
                     </tr>
                     <tr class="enc-detail-row" id="enc3">
                       <td colspan="9">
@@ -2706,12 +2744,12 @@
                           <table class="service-table">
                             <thead>
                               <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th class="num">Units</th>
-                                <th class="num">Charge</th>
-                                <th class="num">Paid</th>
-                                <th class="num">Balance</th>
+                                <th><div class="wire-text" style="width:28px;height:9px;"></div></th>
+                                <th><div class="wire-text" style="width:68px;height:9px;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:9px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:36px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:28px;height:10px;margin-left:auto;"></div></th>
+                                <th class="num"><div class="wire-text" style="width:40px;height:10px;margin-left:auto;"></div></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -2725,13 +2763,13 @@
                                 <td class="num">
                                   <div class="wire-text" style="width:20px;margin-left:auto;"></div>
                                 </td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$0.00</td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
+                                <td class="num"><span class="wire-num"></span></td>
                               </tr>
                             </tbody>
                           </table>
-                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="enc-actions"><button class="btn btn-primary">+ Add Transaction</button></div>
                           <div class="activity-section" id="activity3">
                             <div class="activity-toggle" onclick="toggleActivity('activity3')">
                               <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
