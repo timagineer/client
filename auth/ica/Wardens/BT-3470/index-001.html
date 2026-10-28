@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Account ledger activity history [BT-3470]</title>
   <style>
-    /* ── Tokens (CLIN-3386 / CLN-4229) ── */
+    /* ── Tokens (source: CLIN-3386) ── */
     :root {
+      /* Color palette — exact from CLIN-3386 / BT-3435 */
       --primary-20: oklch(33.5% 0.077 258.7);
       --primary-25: oklch(38.052% 0.0888 258.539);
       --primary-30: oklch(43.332% 0.10422 258.384);
@@ -15,118 +16,2029 @@
       --secondary-60: oklch(0.7169 0.2209 128.71);
       --neutral-05: oklch(0.1698 0.0008 234.96);
       --neutral-10: oklch(0.2044 0.0073 234.85);
+      --neutral-15: oklch(0.2484 0.0122 234.74);
       --neutral-20: oklch(0.3008 0.0163 234.63);
       --neutral-25: oklch(0.3608 0.0197 234.51);
       --neutral-30: oklch(0.4089 0.0222 234.40);
       --neutral-35: oklch(0.4649 0.0241 234.29);
       --neutral-40: oklch(0.5192 0.0251 234.18);
+      --neutral-45: oklch(0.5634 0.0255 234.07);
       --neutral-50: oklch(0.6068 0.0252 233.96);
+      --neutral-55: oklch(0.6494 0.0242 233.85);
       --neutral-60: oklch(0.6996 0.0226 233.74);
+      --neutral-65: oklch(0.7489 0.0205 233.63);
       --neutral-70: oklch(0.7974 0.0179 233.51);
       --neutral-75: oklch(0.8373 0.0149 233.40);
       --neutral-80: oklch(0.8845 0.0116 233.29);
       --neutral-85: oklch(0.9234 0.0081 233.18);
       --neutral-90: oklch(0.9542 0.0045 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
-      --danger-fg: hsl(352, 92%, 43%);
+
+      --border-btn: var(--neutral-70);
+      --border-light: var(--neutral-75);
+
+      /* Status chip tokens */
+      --chip-scheduled-bg: hsl(209, 100%, 92%);
+      --chip-scheduled-fg: hsl(209, 85%, 29%);
+      --chip-scheduled-border: hsl(209, 60%, 82%);
+
+      --chip-waiting-bg: hsl(46, 100%, 90%);
+      --chip-waiting-fg: hsl(40, 90%, 22%);
+      --chip-waiting-border: hsl(46, 70%, 78%);
+
+      --chip-insession-bg: hsl(134, 41%, 88%);
+      --chip-insession-fg: hsl(134, 75%, 21%);
+      --chip-insession-border: hsl(134, 35%, 78%);
+
+      --chip-ended-bg: hsl(210, 16%, 93%);
+      --chip-ended-fg: hsl(210, 10%, 31%);
+      --chip-ended-border: hsl(210, 10%, 82%);
+
+      --chip-absent-bg: hsl(0, 80%, 94%);
+      --chip-absent-fg: hsl(0, 70%, 34%);
+      --chip-absent-border: hsl(0, 50%, 85%);
+
       --rad: 6px;
       --sp-2: 8px;
       --sp-3: 12px;
       --sp-4: 16px;
+
+      /* ── Timing tokens ── */
       --t: 60ms;
-      --voila: fadeIn calc(var(--t) * 4) ease calc(var(--t) * 6) backwards;
+      --t-2: calc(var(--t) * 2);
+      /* 120ms */
+      --t-3: calc(var(--t) * 3);
+      /* 180ms */
+      --t-4: calc(var(--t) * 4);
+      /* 240ms */
+      --t-5: calc(var(--t) * 5);
+      /* 300ms */
+      --t-6: calc(var(--t) * 6);
+      /* 360ms */
+      --t-7: calc(var(--t) * 7);
+      /* 420ms */
+
+      /* ── Page entry ── */
+      --voila: fadeIn var(--t-4) ease var(--t-6) backwards;
     }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
 
-    *, *::before, *::after { box-sizing: border-box; }
-    html { height: 100%; }
+      to {
+        opacity: 1;
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+    }
+
     body {
-      margin: 0; height: 100%;
+      margin: 0;
+      height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 13px; line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.5;
       color: var(--neutral-20);
       background: oklch(0.965 0.006 234);
       animation: var(--voila);
     }
-    @media (prefers-reduced-motion: reduce) { body { animation: none; } }
 
-    /* ── App shell ── */
+    @media (prefers-reduced-motion: reduce) {
+      body {
+        animation: none;
+      }
+    }
+
+    /* ── App shell (CLIN-3386) ── */
     .app-shell {
-      position: fixed; inset: 0;
-      display: grid; grid-template-rows: 48px 1fr;
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 48px 1fr;
       overflow: hidden;
     }
 
-    /* ── Header ── */
+    /* ── Wire header ── */
     .shell-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
-      background: #fff; border-bottom: 1px solid var(--neutral-85);
-      height: 48px; flex-shrink: 0;
-    }
-    .wire-logo { display: flex; gap: 2px; }
-    .wire-logo-mark { width: 32px; height: 18px; background: var(--primary-50); border-radius: var(--rad); }
-    .wire-logo-text { width: 48px; height: 18px; background: var(--secondary-60); border-radius: var(--rad); }
-    .wire-search { width: 320px; height: 28px; background: var(--neutral-90); border-radius: var(--rad); }
-    .wire-header-right { display: flex; align-items: center; gap: var(--sp-2); }
-    .wire-icon { width: 28px; height: 28px; background: var(--neutral-90); border-radius: 50%; }
-    .wire-avatar { width: 28px; height: 28px; background: var(--primary-50); border-radius: 50%; opacity: 0.4; }
-
-    /* ── Shell body ── */
-    .shell-body { display: grid; grid-template-columns: 52px 1fr; overflow: hidden; }
-
-    .shell-sidebar {
-      background: oklch(0.22 0.022 258);
-      display: flex; flex-direction: column; align-items: center;
-      padding: var(--sp-3) 0; gap: 4px;
-    }
-    .wire-nav-item { width: 36px; height: 36px; background: rgba(255,255,255,0.12); border-radius: var(--rad); }
-    .wire-nav-item.active { background: rgba(255,255,255,0.25); }
-    .sidebar-spacer { flex: 1; }
-
-    .shell-main { display: flex; flex-direction: column; overflow: hidden; }
-
-    /* ── Context bar ── */
-    .context-bar {
-      display: flex; align-items: flex-start; gap: var(--sp-3);
-      padding: var(--sp-2) var(--sp-4);
-      background: #fff; border-bottom: 1px solid var(--neutral-85);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
       flex-shrink: 0;
     }
-    .wire-patient-avatar { width: 36px; height: 36px; flex-shrink: 0; background: var(--neutral-85); border-radius: 50%; margin-top: 2px; }
-    .patient-info { flex: 1; }
-    .context-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .wire-chip-sm { height: 14px; background: var(--neutral-85); border-radius: 3px; min-width: 14px; }
-    .wire-text { height: 12px; background: var(--neutral-90); border-radius: 3px; min-width: 20px; }
-    .action-block { display: flex; flex-wrap: wrap; gap: 4px; max-width: 420px; }
-    .wire-chip { height: 24px; width: 88px; background: var(--neutral-90); border-radius: 4px; }
 
-    /* ── Tab bar — no active tab ── */
-    .tab-bar {
-      display: flex; align-items: flex-end; gap: 2px;
-      padding: 0 var(--sp-4);
-      background: var(--neutral-95);
-      border-bottom: 1px solid var(--neutral-85);
-      flex-shrink: 0; height: 36px;
-      overflow-x: auto;
+    .wire-logo {
+      display: flex;
+      gap: 2px;
     }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    /* ── Body ── */
+    .shell-body {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ── Sidebar (CLIN-3386) ── */
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      overflow: hidden;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    /* ── Main ── */
+    .shell-main {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-height: 0;
+      min-width: 0;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    /* ── Context bar (DO-14563) ── */
+    .context-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-3);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .wire-patient-avatar {
+      width: 38px;
+      height: 38px;
+      background: var(--neutral-85);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: var(--sp-2);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .context-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .context-spacer {
+      flex: 1;
+    }
+
+    .action-block {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .wire-chip {
+      height: 22px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-chip-sm {
+      height: 18px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+    }
+
+    /* ── Tab bar (CLIN-3386 style) ── */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-4) 0;
+      background: oklch(0.965 0.006 234);
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
     .wire-tab {
-      height: 28px; padding: 0 14px;
-      background: var(--neutral-90); border-radius: 4px 4px 0 0;
-      display: flex; align-items: center;
-      font-size: 12px; color: var(--neutral-40);
-      white-space: nowrap; flex-shrink: 0;
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-85);
+      border-radius: var(--rad) var(--rad) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      box-shadow: 0 1px 0 0 #fff;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* ── Page content ── */
-    .page-content { flex: 1; overflow-y: auto; padding: var(--sp-4); }
-
-    /* ── Accordion sections (wire) ── */
-    .section-card {
+    .page-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+      padding: 0 18px 18px 18px;
       background: #fff;
+    }
+
+    /* ── Table card ── */
+    .table-card {
+      background: #fff;
+    }
+
+    /* ── Table toolbar ── */
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table-toolbar-spacer {
+      flex: 1;
+    }
+
+    /* ── Data table (BT-3479) ── */
+    .data-table-wrap {
+      background: #fff;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0 8px;
+      height: 44px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      white-space: nowrap;
+      background: #fff;
+      border-bottom: none;
+      box-shadow: inset 0 -1.5px 0 var(--neutral-80);
+    }
+
+    .data-table td {
+      padding: 8px 8px;
+      height: 44px;
+      border-bottom: 1px solid var(--neutral-90);
+      color: var(--neutral-30);
+      vertical-align: middle;
+    }
+
+    .data-table>tbody>tr:hover>td {
+      background: var(--neutral-95);
+    }
+
+    .data-table>tbody>tr:hover .wire-text {
+      background: var(--neutral-80);
+    }
+
+    .data-table th:first-child,
+    .data-table td:first-child {
+      padding-left: 0;
+    }
+
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) {
+      padding-left: 3px;
+    }
+
+    .data-table th:last-child,
+    .data-table td:last-child {
+      padding-right: 0;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .col-checkbox {
+      width: 1px;
+    }
+
+    th.col-checkbox {
+      overflow: visible;
+    }
+
+    .wire-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--neutral-60);
+      border-radius: 2px;
+      background: transparent;
+    }
+
+    .table-link {
+      color: hsl(218, 45%, 45%);
+      text-decoration: none;
+    }
+
+    .table-link:hover {
+      text-decoration: underline;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.signed {
+      background: hsl(209, 100%, 92%);
+      color: hsl(209, 85%, 29%);
+      border: 1px solid hsl(209, 70%, 65%);
+    }
+
+    .status-badge.finished {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+      border: 1px solid hsl(134, 40%, 60%);
+    }
+
+    .status-badge.not-shared {
+      background: hsl(46, 100%, 90%);
+      color: hsl(40, 90%, 22%);
+      border: 1px solid hsl(46, 70%, 70%);
+    }
+
+    .status-badge.shared {
+      background: hsl(209, 100%, 92%);
+      color: hsl(209, 85%, 29%);
+      border: 1px solid hsl(209, 70%, 65%);
+    }
+
+    /* Sort icons (CLIN-3386) */
+    .data-table th.sortable {
+      cursor: pointer;
+    }
+
+    .data-table th.sortable:hover {
+      color: var(--neutral-30);
+    }
+
+    .data-table th.sorted {
+      color: var(--neutral-20);
+    }
+
+    .data-table th .sort-icon {
+      margin-inline-start: 4px;
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+
+    .data-table th .sort-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .data-table th.sortable:hover .sort-icon {
+      color: var(--neutral-40);
+    }
+
+    .data-table th.sorted .sort-icon {
+      color: var(--neutral-30);
+    }
+
+    /* Buttons — exact copy from CLIN-3386 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: inherit;
+      font-size: 13px;
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      background: #fff;
+      color: var(--neutral-45);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+      color: var(--neutral-15);
+    }
+
+    .btn:not(.btn-icon) svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border-color: var(--border-btn);
+      color: var(--neutral-20);
+      box-shadow: rgba(12, 12, 12, 0.09) 0px 1px 3px 0px;
+    }
+
+    .btn-outline:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+    }
+
+    .btn-outline:active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-50);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--neutral-20);
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      border-color: transparent;
+    }
+
+    .btn-ghost:active {
+      background: var(--neutral-85);
+      border-color: transparent;
+    }
+
+    .btn-primary {
+      background: var(--primary-50);
+      border-color: var(--primary-50);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+      color: #fff;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-20);
+      border-color: var(--primary-20);
+      color: #fff;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--primary-30);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 0 4px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-chevron {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ── Row action menu (CLIN-3386) ── */
+    .row-action-menu {
+      position: fixed;
+      inset: auto;
+      margin: 0;
+      background: #fff;
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      padding: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      min-width: 180px;
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      transform: scale(0.97) translateY(-4px);
+      transform-origin: top right;
+      transition: opacity 120ms cubic-bezier(0.22, 0.88, 0.44, 1), transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1);
+    }
+
+    .row-action-menu.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      transition: opacity 180ms cubic-bezier(0.22, 0.88, 0.44, 1), transform 180ms cubic-bezier(0.22, 0.88, 0.44, 1);
+    }
+
+    .row-action-menu hr {
+      border: none;
+      border-top: 1px solid var(--neutral-90);
+      margin: 4px 0;
+    }
+
+    .row-action-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 7px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .row-action-menu button:hover {
+      background: var(--neutral-95);
+    }
+
+    .row-action-menu .menu-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neutral-50);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 6px 10px 2px;
+    }
+
+    .row-action-menu .menu-danger {
+      color: hsl(352, 92%, 43%);
+    }
+
+    .row-action-menu .menu-danger:hover {
+      background: hsl(0, 80%, 97%);
+    }
+
+    /* Share status badges (CLIN-3386 chip semantics) */
+    .share-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .share-not-shared {
+      background: var(--chip-ended-bg);
+      color: var(--chip-ended-fg);
+      border-color: var(--chip-ended-border);
+    }
+
+    .share-shared {
+      background: var(--chip-scheduled-bg);
+      color: var(--chip-scheduled-fg);
+      border-color: var(--chip-scheduled-border);
+    }
+
+    .share-to-sign {
+      background: var(--chip-waiting-bg);
+      color: var(--chip-waiting-fg);
+      border-color: var(--chip-waiting-border);
+    }
+
+    .share-signed {
+      background: var(--chip-insession-bg);
+      color: var(--chip-insession-fg);
+      border-color: var(--chip-insession-border);
+    }
+
+    .share-shared-signed {
+      background: var(--chip-insession-bg);
+      color: var(--chip-insession-fg);
+      border-color: var(--chip-insession-border);
+    }
+
+    .share-completed {
+      background: var(--chip-insession-bg);
+      color: var(--chip-insession-fg);
+      border-color: var(--chip-insession-border);
+    }
+
+    .share-restricted {
+      background: var(--chip-absent-bg);
+      color: var(--chip-absent-fg);
+      border-color: var(--chip-absent-border);
+    }
+
+    /* Search input */
+    .table-search {
+      height: 32px;
+      width: 220px;
+      padding: 0 10px;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--neutral-20);
+    }
+
+    .table-search:focus {
+      outline: none;
+      border-color: var(--primary-30);
+    }
+
+    /* Pagination */
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-3) 0;
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
+    .pagination {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--neutral-40);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .page-btn.active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-60);
+      color: var(--neutral-25);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-size-select {
+      height: 28px;
+      padding: 0 24px 0 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--neutral-30);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center;
+      appearance: none;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .page-size-label {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin-left: 6px;
+    }
+
+    th.col-upload {
+      text-align: right;
+      width: 1px;
+      white-space: nowrap;
+    }
+
+    /* ── Toast System (DO-14563) ── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast.error svg {
+      color: hsl(352, 92%, 62%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
+
+    /* ── Proto scenario dots ── */
+    .proto-dot {
+      display: inline-flex;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-left: 7px;
+      cursor: help;
+      position: relative;
+      flex-shrink: 0;
+      animation: proto-pulse 1.8s ease-in-out infinite;
+    }
+
+    .proto-dot.dot-amber,
+    .proto-dot.dot-blue,
+    .proto-dot.dot-purple,
+    .proto-dot.dot-red,
+    .proto-dot.dot-green {
+      background: hsl(270, 55%, 58%);
+    }
+
+    @keyframes proto-pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 hsla(270, 55%, 58%, 0.7);
+      }
+
+      60% {
+        box-shadow: 0 0 0 5px hsla(270, 55%, 58%, 0);
+      }
+    }
+
+    .proto-dot::after {
+      display: none;
+    }
+
+    /* tooltip rendered via JS */
+
+    .proto-tip {
+      position: fixed;
+      background: hsl(218, 25%, 14%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: nowrap;
+      padding: 5px 9px;
+      border-radius: 5px;
+      pointer-events: none;
+      z-index: 99999;
+      animation: none;
+    }
+
+    .proto-dot:hover::after {
+      opacity: 1;
+    }
+
+    /* ── Share to Sign Modal ── */
+    .share-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 180ms ease, visibility 180ms;
+    }
+
+    .share-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 240ms ease, visibility 240ms;
+    }
+
+    .share-modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 520px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.97) translateY(8px);
+      transition: opacity 180ms cubic-bezier(0.22, 0.88, 0.44, 1), transform 180ms cubic-bezier(0.22, 0.88, 0.44, 1), visibility 180ms;
+    }
+
+    .share-backdrop.open .share-modal {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition: opacity 240ms cubic-bezier(0.22, 0.88, 0.44, 1), transform 240ms cubic-bezier(0.22, 0.88, 0.44, 1), visibility 240ms;
+    }
+
+    .share-modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 24px 0;
+    }
+
+    .share-modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0 0 3px;
+    }
+
+    .share-modal-subtitle {
+      font-size: 13px;
+      color: var(--neutral-30);
+      margin: 0;
+    }
+
+    .share-modal-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      color: var(--neutral-50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: -4px;
+      margin-right: -8px;
+    }
+
+    .share-modal-close:hover {
+      background: var(--neutral-90);
+    }
+
+    .share-modal-close svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .share-divider {
+      border: none;
+      border-top: 1px solid var(--neutral-90);
+      margin: 12px 0 0;
+    }
+
+    .share-body {
+      padding: 16px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .share-footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 12px 24px;
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .send-summary {
+      display: none;
+      font-size: 12px;
+      color: var(--neutral-30);
+      padding: 10px 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .send-summary.visible {
+      display: block;
+    }
+
+    /* Doc context */
+    .share-doc-ctx {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 10px 12px;
+      background: var(--neutral-95);
+      border: 1px solid var(--neutral-90);
+      border-radius: var(--rad);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+      margin-bottom: 16px;
+    }
+
+    .share-doc-ctx svg {
+      color: var(--neutral-40);
+      flex-shrink: 0;
+    }
+
+    #shareDocIcon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .share-doc-files {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--neutral-20);
+    }
+
+    .share-doc-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+    }
+
+    .share-doc-meta {
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
+    /* Method cards */
+    .share-method-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .share-method-card {
+      border: 1.5px solid var(--border-btn);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+
+    .share-method-card:hover {
+      border-color: var(--neutral-55);
+    }
+
+    .share-method-card.selected {
+      border-color: var(--primary-50);
+      box-shadow: 0 0 0 1px var(--primary-50);
+      background: hsl(218, 80%, 98%);
+    }
+
+    .share-method-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--neutral-90);
+      border-radius: 8px;
+      color: var(--neutral-40);
+      margin-bottom: 12px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .share-method-card.selected .share-method-icon {
+      background: oklch(92% 0.04 258);
+      color: var(--primary-30);
+    }
+
+    .share-method-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0 0 3px;
+    }
+
+    .share-method-desc {
+      font-size: 12px;
+      color: var(--neutral-30);
+      margin: 0 0 10px;
+    }
+
+    .share-method-sep {
+      border: none;
+      border-top: 1px solid var(--neutral-90);
+      margin: 8px 0;
+    }
+
+    .share-method-feat {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--neutral-30);
+      margin: 3px 0;
+    }
+
+    .share-method-feat svg {
+      color: var(--secondary-60);
+      flex-shrink: 0;
+    }
+
+    /* Disabled card state */
+    .share-method-card.card-disabled {
+      background: var(--neutral-98);
+      border-color: var(--neutral-85);
+      cursor: default;
+    }
+
+    .share-method-card.card-disabled .share-method-icon,
+    .share-method-card.card-disabled .share-method-name,
+    .share-method-card.card-disabled .share-method-desc,
+    .share-method-card.card-disabled .share-method-sep,
+    .share-method-card.card-disabled .share-method-feat {
+      opacity: 0.4;
+    }
+
+    .share-method-card.card-disabled .card-lower {
+      display: none;
+    }
+
+    .share-method-card.card-disabled.card-show-full .card-lower {
+      display: block;
+    }
+
+    /* Inline card notice (amber — portal not active) */
+    .card-notice {
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 10px;
+      background: hsl(48, 100%, 96%);
+      border: 1px solid hsl(45, 70%, 75%);
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .card-notice.visible {
+      display: flex;
+    }
+
+    .card-notice-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      color: hsl(35, 50%, 35%);
+      margin-top: 1px;
+    }
+
+    .card-notice-body {
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .card-notice-icon svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .card-notice-text {
+      font-size: 12px;
+      color: hsl(35, 50%, 35%);
+      line-height: 1.25;
+      display: inline;
+    }
+
+    .card-notice-link {
+      font-size: 12px;
+      line-height: 1.25;
+      color: hsl(218, 60%, 45%);
+      font-weight: 500;
+      text-decoration: none;
+      display: inline;
+    }
+
+    .card-notice-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Card footnote (subtle — SMS off, practice-level info) */
+    .card-footnote {
+      display: none;
+      font-size: 11px;
+      color: var(--neutral-50);
+      margin: 8px 0 0;
+      font-style: italic;
+    }
+
+    .card-footnote.visible {
+      display: block;
+    }
+
+    /* Overlay notice — covers feature rows without extending card height */
+    .card-feats-zone {
+      position: relative;
+    }
+
+    .card-feats-zone .card-notice {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      border-radius: 4px;
+      align-items: center;
+    }
+
+    /* Admin tip — subtle line for admins who can fix SMS off */
+    .card-admin-tip {
+      display: none;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      text-align: left;
+      color: var(--neutral-30);
+      margin: 10px 0 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--neutral-90);
+      line-height: 1.4;
+    }
+
+    .card-admin-tip a {
+      color: hsl(218, 60%, 45%);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .card-admin-tip a:hover {
+      text-decoration: underline;
+    }
+
+    .card-admin-tip.visible {
+      display: flex;
+    }
+
+    .card-admin-tip svg {
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* Modal-level banner (both methods unavailable) */
+    .share-banner {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: hsl(48, 100%, 96%);
+      border: 1px solid hsl(45, 70%, 75%);
+      border-radius: var(--rad);
+      margin-bottom: 14px;
+    }
+
+    .share-banner.visible {
+      display: flex;
+    }
+
+    .share-banner>svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: hsl(38, 70%, 38%);
+      margin-top: 1px;
+    }
+
+    .share-banner p {
+      font-size: 12px;
+      color: hsl(35, 50%, 35%);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .share-banner a {
+      color: hsl(218, 60%, 45%);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .share-banner a:hover {
+      text-decoration: underline;
+    }
+
+    /* Contact picker */
+    .contact-group-hd {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      padding: 10px 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-rel {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--chip-ended-bg);
+      color: var(--chip-ended-fg);
+      border: 1px solid var(--chip-ended-border);
+    }
+
+    .contact-row {
+      border: 1.5px solid var(--border-btn);
+      border-radius: var(--rad);
+      padding: 9px 12px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color 100ms ease, background 100ms ease;
+    }
+
+    .contact-row:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .contact-row:has(input:checked) {
+      border-color: var(--primary-50);
+      background: hsl(218, 80%, 98%);
+      box-shadow: inset 0 0 0 1px var(--primary-50);
+    }
+
+    .contact-row:hover:not(:has(input:checked)) {
+      border-color: var(--neutral-60);
+    }
+
+    .contact-check {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      cursor: pointer;
+      gap: 10px;
+    }
+
+    .contact-check.has-sub {
+      align-items: flex-start;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-trail {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+      min-width: 32px;
+    }
+
+    .contact-check.has-sub .contact-trail {
+      align-self: center;
+    }
+
+    .contact-check input[type=checkbox] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+      border: 1.5px solid var(--neutral-60);
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 4px;
+      position: relative;
+      vertical-align: middle;
+      flex-shrink: 0;
+      transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .contact-check input[type=checkbox]:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .contact-check input[type=checkbox]:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .contact-check input[type=checkbox]:focus-visible {
+      outline: 2px solid var(--primary-50);
+      outline-offset: 2px;
+    }
+
+    .contact-check input[type=checkbox]:disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .contact-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .contact-meta {
+      font-size: 12px;
+      color: var(--neutral-30);
+    }
+
+    .badge-pref {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: hsl(218, 80%, 94%);
+      color: var(--primary-30);
+      border: 1px solid hsl(218, 60%, 82%);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* SMS opt-in status */
+    .sms-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sms-status.opted-in {
+      color: var(--chip-insession-fg);
+    }
+
+    .sms-status.not-opted {
+      color: var(--chip-waiting-fg);
+    }
+
+    /* SMS-off: disable phone rows and hide all SMS-specific UI */
+    #sStep2.sms-off [data-sms-row] {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    #sStep2.sms-off .sms-status,
+    #sStep2.sms-off .contact-warn,
+    #sStep2.sms-off .btn-record-consent {
+      display: none;
+    }
+
+    .sms-status svg {
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Consent row (lives inside contact-info for tall rows) */
+    .contact-consent-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .contact-warn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--chip-waiting-fg);
+      white-space: nowrap;
+    }
+
+    .btn-consent {
+      display: none;
+      background: var(--primary-50);
+      border: 1px solid var(--primary-50);
+      color: #fff;
+      font-size: 12px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: var(--rad);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-consent:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+    }
+
+    .contact-group-sep {
+      border: none;
+      border-top: 1px solid var(--neutral-90);
+      margin: 6px 0;
+    }
+
+    .contact-edit-link {
+      font-size: 12px;
+      color: var(--primary-30);
+      text-decoration: none;
+      display: block;
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    .contact-edit-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Tertiary text button (Edit contacts in footer) */
+    .btn-tertiary {
+      background: none;
+      border: none;
+      color: hsl(218, 60%, 45%);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 3px;
+    }
+
+    .btn-tertiary:hover {
+      text-decoration: underline;
+    }
+
+    .btn-tertiary:focus-visible {
+      outline: 2px solid var(--primary-50);
+      outline-offset: 2px;
+    }
+
+    .btn-tertiary svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    /* Contacts updated notification */
+    .contacts-refresh-note {
+      display: none;
+      font-size: 12px;
+      color: var(--chip-insession-fg);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .contacts-refresh-note.show {
+      display: block;
+      animation: fadeNote 2.5s ease forwards;
+    }
+
+    @keyframes fadeNote {
+      0% {
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Not opted in — interactive consent card */
+    .contact-row--not-opted {
+      border-style: dashed;
+      border-color: var(--neutral-75);
+      cursor: default;
+    }
+
+    .contact-row--not-opted:hover {
+      border-color: var(--neutral-65);
+    }
+
+    /* Record consent button — matches .btn neutral style, slightly smaller */
+    .btn-record-consent {
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid var(--neutral-70);
+      background: #fff;
+      color: var(--neutral-30);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 100ms ease, border-color 100ms ease;
+    }
+
+    .btn-record-consent:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+    }
+
+    .btn-record-consent:focus-visible {
+      outline: 2px solid var(--primary-50);
+      outline-offset: 2px;
+    }
+
+    .contact-row--disabled:hover {
+      border-color: var(--neutral-75);
+    }
+
+    .contact-row--disabled:has(input:checked) {
+      box-shadow: none;
+      background: var(--neutral-93, oklch(0.9367 0.0063 233.12));
+      border-color: var(--neutral-75);
+    }
+
+    .contact-row--disabled .contact-check {
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .contact-row--disabled .contact-val,
+    .contact-row--disabled .contact-meta {
+      color: var(--neutral-60);
+    }
+
+    /* Focus-visible ring on card */
+    .contact-row:focus-within {
+      outline: 2px solid var(--primary-50);
+      outline-offset: 1px;
+    }
+
+    /* Spacing between people sections — replace divider */
+    .contact-row+.contact-group-hd {
+      margin-top: 8px;
+    }
+
+    /* Inline Preferred component */
+    .contact-preferred {
+      display: inline;
+      color: var(--neutral-30);
+      font-weight: 500;
+    }
+
+    .contact-preferred svg {
+      display: inline-block;
+      line-height: 0;
+      width: 12px;
+      height: 12px;
+      vertical-align: -2px;
+      margin-left: -2px;
+    }
+
+    /* Review step */
+    .review-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: hsl(46, 100%, 95%);
+      border: 1px solid hsl(45, 70%, 78%);
+      border-radius: var(--rad);
+      margin-bottom: 16px;
+    }
+
+    .review-banner-icon {
+      flex-shrink: 0;
+      color: hsl(38, 70%, 38%);
+      margin-top: 1px;
+    }
+
+    .review-banner-icon svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .review-banner-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: hsl(35, 50%, 30%);
+      margin: 0 0 4px;
+    }
+
+    .review-banner-body {
+      font-size: 12px;
+      color: hsl(35, 50%, 30%);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .review-summary {
+      margin-bottom: 16px;
+    }
+
+    .review-row {
+      display: flex;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--neutral-90);
+      font-size: 12px;
+    }
+
+    .review-row:first-child {
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .review-label {
+      width: 88px;
+      flex-shrink: 0;
+      color: var(--neutral-30);
+    }
+
+    .review-val {
+      color: var(--neutral-20);
+      font-weight: 500;
+    }
+
+    .review-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--neutral-50);
+      margin: 0 0 8px;
+    }
+
+    .review-recipients {
+      border: 1px solid var(--neutral-90);
+      border-radius: var(--rad);
+      overflow: hidden;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+
+    .review-person {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--neutral-90);
+    }
+
+    .review-person:last-child {
+      border-bottom: none;
+    }
+
+    .review-person-hd {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+    }
+
+    .review-non-client {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--chip-waiting-fg);
+    }
+
+    .review-non-client svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    .review-contact {
+      color: var(--neutral-50);
+      margin-top: 2px;
+    }
+
+    .review-ack {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 12px;
+      color: var(--neutral-30);
+      cursor: pointer;
+      line-height: 1.4;
+      padding: 12px 0 2px;
+    }
+
+    .review-ack input[type=checkbox] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      flex-shrink: 0;
+      margin-top: 1px;
+      border: 1.5px solid var(--neutral-60);
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .review-ack input[type=checkbox]:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .review-ack input[type=checkbox]:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+      background-size: 11px 11px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Result step (non-client send success) */
+    .share-result-hd {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .share-result-hd svg {
+      color: var(--chip-insession-fg);
+      flex-shrink: 0;
+    }
+
+    .share-result-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .share-result-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--neutral-90);
+      font-size: 12px;
+      color: var(--neutral-30);
+    }
+
+    .share-result-row:first-child {
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .share-result-ok {
+      color: var(--chip-insession-fg);
+      flex-shrink: 0;
+    }
+
+    .share-result-ok svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* Success */
+    .share-success {
+      text-align: center;
+      padding: 32px 24px;
+    }
+
+    .share-success svg {
+      color: var(--chip-insession-fg);
+      margin-bottom: 16px;
+    }
+
+    .share-success-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0 0 8px;
+    }
+
+    .share-success-msg {
+      font-size: 13px;
+      color: var(--neutral-40);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Step transitions */
+    .s-step {
+      display: none;
+    }
+
+    .s-step.active {
+      display: block;
+    }
+
+    .s-footer {
+      display: none;
+    }
+
+    .s-footer.active {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #sFooter2.active,
+    #sFooter3.active {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    #sFooter2.active .footer-actions,
+    #sFooter3.active .footer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ── Section accordions ── */
+    .section-card {
       border: 1px solid var(--neutral-85);
       border-radius: var(--rad);
+      background: #fff;
       margin-bottom: 6px;
     }
     .section-header {
@@ -135,10 +2047,8 @@
       cursor: pointer; user-select: none;
     }
     .section-caret {
-      color: var(--neutral-50); display: flex; align-items: center;
-      flex-shrink: 0;
-      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1),
-                  color 120ms ease;
+      color: var(--neutral-60); display: flex; align-items: center; flex-shrink: 0;
+      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
     }
     .section-caret svg { width: 14px; height: 14px; }
     .section-card.open .section-caret { transform: rotate(90deg); color: var(--primary-30); }
@@ -146,7 +2056,7 @@
     .section-body { display: none; border-top: 1px solid var(--neutral-90); }
     .section-card.open .section-body { display: block; }
 
-    /* ── Account Ledger header summary ── */
+    /* ── Ledger header summary ── */
     .ledger-summary {
       display: flex; gap: 20px; align-items: center;
       margin-left: auto; flex-shrink: 0;
@@ -157,15 +2067,12 @@
       color: var(--neutral-50); text-transform: uppercase; letter-spacing: 0.04em;
     }
     .ledger-col-val { font-size: 12px; font-weight: 600; color: var(--neutral-25); }
-    .ledger-col-val.neg { color: var(--danger-fg); }
+    .ledger-col-val.neg { color: hsl(352,92%,43%); }
     .freeze-label {
       display: flex; align-items: center; gap: 6px; margin-left: 8px;
       font-size: 12px; color: var(--neutral-40);
     }
-    .wire-toggle {
-      width: 30px; height: 16px;
-      background: var(--neutral-85); border-radius: 8px; flex-shrink: 0;
-    }
+    .wire-toggle { width: 30px; height: 16px; background: var(--neutral-85); border-radius: 8px; flex-shrink: 0; }
 
     /* ── Encounter table ── */
     .encounter-table-wrap { padding: var(--sp-3) var(--sp-4); overflow-x: auto; }
@@ -174,120 +2081,78 @@
       text-align: left; padding: 6px 10px;
       font-size: 11px; font-weight: 600; color: var(--neutral-40);
       text-transform: uppercase; letter-spacing: 0.04em;
-      border-bottom: 1px solid var(--neutral-85);
-      white-space: nowrap;
+      border-bottom: 1px solid var(--neutral-85); white-space: nowrap;
     }
-    .encounter-table th.num,
-    .encounter-table td.num { text-align: right; }
-    .encounter-table td {
-      padding: 9px 10px;
-      border-bottom: 1px solid var(--neutral-90);
-      vertical-align: middle;
-    }
+    .encounter-table th.num, .encounter-table td.num { text-align: right; }
+    .encounter-table td { padding: 9px 10px; border-bottom: 1px solid var(--neutral-90); vertical-align: middle; }
     .encounter-row { cursor: pointer; }
     .encounter-row:hover td { background: var(--neutral-95); }
-    .encounter-row.open td {
-      background: oklch(0.966 0.014 258);
-      border-bottom-color: oklch(0.966 0.014 258);
-    }
+    .encounter-row.open td { background: oklch(0.966 0.014 258); border-bottom-color: oklch(0.966 0.014 258); }
     .enc-caret {
-      display: inline-flex; align-items: center; color: var(--neutral-50);
-      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
+      display: inline-flex; align-items: center; color: var(--neutral-60);
+      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
     }
     .enc-caret svg { width: 13px; height: 13px; }
     .encounter-row.open .enc-caret { transform: rotate(90deg); color: var(--primary-30); }
-
-    /* Expanded encounter detail row */
     .enc-detail-row { display: none; }
     .enc-detail-row.open { display: table-row; }
     .enc-detail-row td {
-      padding: 0;
-      background: oklch(0.970 0.010 258);
+      padding: 0; background: oklch(0.970 0.010 258);
       border-bottom: 2px solid oklch(0.89 0.032 258);
     }
     .enc-detail-inner { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
 
-    /* Service lines sub-table */
+    /* ── Service lines ── */
     .service-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: var(--sp-3); }
     .service-table th {
       text-align: left; padding: 4px 8px;
       font-size: 11px; font-weight: 500; color: var(--neutral-50);
       border-bottom: 1px solid var(--neutral-90);
     }
-    .service-table th.num,
-    .service-table td.num { text-align: right; }
+    .service-table th.num, .service-table td.num { text-align: right; }
     .service-table td { padding: 7px 8px; border-bottom: 1px solid var(--neutral-95); }
-
-    /* Buttons */
-    .btn {
-      height: 28px; padding: 0 12px;
-      border: 1px solid; border-radius: 4px;
-      font-family: inherit; font-size: 12px; font-weight: 500;
-      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
-      background: #fff; border-color: var(--neutral-70); color: var(--neutral-25);
-    }
-    .btn:hover { background: var(--neutral-95); border-color: var(--neutral-60); }
-
     .enc-actions { display: flex; gap: 6px; margin-bottom: var(--sp-3); }
 
     /* ── Activity & Notes ── */
-    .activity-section {
-      border: 1px solid var(--neutral-85);
-      border-radius: var(--rad); overflow: hidden;
-    }
+    .activity-section { border: 1px solid var(--neutral-85); border-radius: var(--rad); overflow: hidden; }
     .activity-toggle {
       display: flex; align-items: center; gap: 8px;
-      padding: 8px 12px; cursor: pointer; user-select: none;
-      background: #fff;
+      padding: 8px 12px; cursor: pointer; user-select: none; background: #fff;
     }
     .activity-toggle:hover { background: var(--neutral-95); }
     .activity-toggle-caret {
-      display: flex; align-items: center; color: var(--neutral-50);
-      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
+      display: flex; align-items: center; color: var(--neutral-60);
+      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
     }
     .activity-toggle-caret svg { width: 13px; height: 13px; }
     .activity-section.open .activity-toggle-caret { transform: rotate(90deg); color: var(--primary-30); }
-    .activity-label {
-      font-size: 11px; font-weight: 700; color: var(--neutral-30);
-      text-transform: uppercase; letter-spacing: 0.06em;
-    }
+    .activity-label { font-size: 11px; font-weight: 700; color: var(--neutral-30); text-transform: uppercase; letter-spacing: 0.06em; }
     .activity-count { font-size: 11px; color: var(--neutral-50); font-weight: 600; }
     .activity-body { display: none; border-top: 1px solid var(--neutral-90); }
     .activity-section.open .activity-body { display: block; }
-
     .activity-item {
       display: grid; grid-template-columns: 172px 1fr;
       gap: 12px; padding: 8px 12px;
-      border-bottom: 1px solid var(--neutral-95);
-      font-size: 12px;
+      border-bottom: 1px solid var(--neutral-95); font-size: 12px;
     }
     .activity-item:last-child { border-bottom: none; }
     .activity-meta { color: var(--neutral-50); line-height: 1.4; }
     .activity-meta strong { display: block; font-weight: 500; color: var(--neutral-35); }
     .activity-desc { color: var(--neutral-20); line-height: 1.4; }
-    .activity-note {
-      margin-top: 3px; font-size: 11px;
-      color: var(--neutral-40); font-style: italic;
-    }
-
-    /* Proto dot */
-    .proto-dot {
-      display: inline-block; width: 7px; height: 7px;
-      border-radius: 50%; vertical-align: 1px; margin-left: 4px;
-      background: hsl(270, 55%, 58%);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.45; }
-    }
+    .activity-note { margin-top: 3px; font-size: 11px; color: var(--neutral-40); font-style: italic; }
   </style>
+  <!-- <link rel="stylesheet" href="color.css"> -->
+
 </head>
 
 <body>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <div class="app-shell">
 
-    <!-- Header -->
+    <!-- Wire header -->
     <header class="shell-header">
       <div class="wire-logo">
         <div class="wire-logo-mark"></div>
@@ -304,7 +2169,7 @@
 
     <div class="shell-body">
 
-      <!-- Sidebar -->
+      <!-- Sidebar — second item active -->
       <nav class="shell-sidebar">
         <div class="wire-nav-item"></div>
         <div class="wire-nav-item active"></div>
@@ -318,23 +2183,23 @@
 
       <main class="shell-main">
 
-        <!-- Context bar -->
+        <!-- Context bar (DO-14563) — client/patient header -->
         <div class="context-bar">
           <div class="wire-patient-avatar"></div>
           <div class="patient-info">
             <div class="context-row">
-              <div class="wire-chip-sm" style="width:14px;"></div>
-              <div class="wire-text" style="width:110px;"></div>
-              <div class="wire-text" style="width:32px;"></div>
-              <div class="wire-text" style="width:16px;"></div>
-              <div class="wire-chip-sm" style="width:14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
+              <div class="wire-text" style="width: 100px;"></div>
+              <div class="wire-text" style="width: 28px;"></div>
+              <div class="wire-text" style="width: 14px;"></div>
+              <div class="wire-chip-sm" style="width: 14px;"></div>
             </div>
             <div class="context-row">
-              <div class="wire-chip-sm" style="width:50px;"></div>
-              <div class="wire-text" style="width:44px;"></div>
-              <div class="wire-chip-sm" style="width:36px;"></div>
-              <div class="wire-text" style="width:22px;"></div>
-              <div class="wire-text" style="width:72px;"></div>
+              <div class="wire-chip-sm" style="width: 50px;"></div>
+              <div class="wire-text" style="width: 40px;"></div>
+              <div class="wire-chip-sm" style="width: 36px;"></div>
+              <div class="wire-text" style="width: 22px;"></div>
+              <div class="wire-text" style="width: 70px;"></div>
             </div>
           </div>
           <div class="action-block">
@@ -346,24 +2211,41 @@
             <div class="wire-chip"></div>
             <div class="wire-chip"></div>
             <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
           </div>
         </div>
 
-        <!-- Tab bar — no active tab (ICANotes pattern) -->
+        <!-- Tab bar (CLIN-3386 style) — Documents active -->
         <div class="tab-bar">
-          <div class="wire-tab"><div class="wire-text" style="width:60px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:80px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:132px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:90px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:66px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:92px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:98px;"></div></div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 72px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 96px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 118px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 104px;"></div>
+          </div>
+          <div class="wire-tab"><div class="wire-text" style="width:72px;"></div></div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width: 112px;"></div>
+          </div>
         </div>
 
         <!-- Page content -->
         <div class="page-content">
 
-          <!-- Insurance — wire accordion -->
+          <!-- Accordion sections -->
+
+          <!-- Insurance -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
@@ -375,7 +2257,7 @@
             </div>
           </div>
 
-          <!-- Eligibility — wire accordion -->
+          <!-- Eligibility -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
@@ -383,7 +2265,7 @@
             </div>
           </div>
 
-          <!-- Invoicing — wire accordion -->
+          <!-- Invoicing -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
@@ -391,7 +2273,7 @@
             </div>
           </div>
 
-          <!-- Statements — wire accordion -->
+          <!-- Statements -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
@@ -405,37 +2287,15 @@
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
               <span class="section-label">Account Ledger</span>
               <div class="ledger-summary">
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Charges</span>
-                  <span class="ledger-col-val">$180.00</span>
-                </div>
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Paid</span>
-                  <span class="ledger-col-val">$0.00</span>
-                </div>
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Adjusted</span>
-                  <span class="ledger-col-val">$0.00</span>
-                </div>
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Client Bal</span>
-                  <span class="ledger-col-val neg">$180.00</span>
-                </div>
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Insurance Bal</span>
-                  <span class="ledger-col-val">$0.00</span>
-                </div>
-                <div class="ledger-col">
-                  <span class="ledger-col-label">Total Bal</span>
-                  <span class="ledger-col-val neg">$180.00</span>
-                </div>
-                <div class="freeze-label" onclick="event.stopPropagation()">
-                  <div class="wire-toggle"></div>
-                  Freeze Account
-                </div>
+                <div class="ledger-col"><span class="ledger-col-label">Charges</span><span class="ledger-col-val">$180.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Paid</span><span class="ledger-col-val">$0.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Adjusted</span><span class="ledger-col-val">$0.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Client Bal</span><span class="ledger-col-val neg">$180.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Insurance Bal</span><span class="ledger-col-val">$0.00</span></div>
+                <div class="ledger-col"><span class="ledger-col-label">Total Bal</span><span class="ledger-col-val neg">$180.00</span></div>
+                <div class="freeze-label" onclick="event.stopPropagation()"><div class="wire-toggle"></div>Freeze Account</div>
               </div>
             </div>
-
             <div class="section-body">
               <div class="encounter-table-wrap">
                 <table class="encounter-table">
@@ -453,242 +2313,153 @@
                     </tr>
                   </thead>
                   <tbody>
-
-                    <!-- Encounter 1 — open (demo scenario) -->
+                    <!-- Encounter 1 — open -->
                     <tr class="encounter-row open" onclick="toggleEncounter('enc1')">
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
-                      <td>09/20/2026 <span class="proto-dot" title="Scenario: Activity &amp; Notes expanded"></span></td>
+                      <td>09/20/2026</td>
                       <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$180.00</td>
+                      <td class="num">$180.00</td><td class="num">$0.00</td><td class="num">$0.00</td>
+                      <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
                       <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:var(--danger-fg)">$180.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:var(--danger-fg)">$180.00</td>
+                      <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
                     </tr>
                     <tr class="enc-detail-row open" id="enc1">
-                      <td colspan="9">
-                        <div class="enc-detail-inner">
-
-                          <!-- Service lines -->
-                          <table class="service-table">
-                            <thead>
-                              <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th class="num">Units</th>
-                                <th class="num">Charge</th>
-                                <th class="num">Paid</th>
-                                <th class="num">Balance</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td><div class="wire-text" style="width:40px;"></div></td>
-                                <td><div class="wire-text" style="width:160px;"></div></td>
-                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                                <td class="num">$180.00</td>
-                                <td class="num">$0.00</td>
-                                <td class="num" style="color:var(--danger-fg)">$180.00</td>
-                              </tr>
-                            </tbody>
-                          </table>
-
-                          <!-- Actions -->
-                          <div class="enc-actions">
-                            <button class="btn">+ Add Transaction</button>
+                      <td colspan="9"><div class="enc-detail-inner">
+                        <table class="service-table"><thead><tr>
+                          <th>Code</th><th>Description</th>
+                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
+                        </tr></thead><tbody><tr>
+                          <td><div class="wire-text" style="width:40px;"></div></td>
+                          <td><div class="wire-text" style="width:160px;"></div></td>
+                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                          <td class="num">$180.00</td><td class="num">$0.00</td>
+                          <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
+                        </tr></tbody></table>
+                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                        <div class="activity-section open" id="activity1">
+                          <div class="activity-toggle" onclick="toggleActivity('activity1')">
+                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(4)</span>
                           </div>
-
-                          <!-- Activity & Notes — open for demo -->
-                          <div class="activity-section open" id="activity1">
-                            <div class="activity-toggle" onclick="toggleActivity('activity1')">
-                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                              <span class="activity-label">Activity &amp; Notes</span>
-                              <span class="activity-count">&nbsp;(4)</span>
+                          <div class="activity-body">
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>System</strong>10/15/2026 2:14 PM</div>
+                              <div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div>
                             </div>
-                            <div class="activity-body">
-                              <div class="activity-item">
-                                <div class="activity-meta">
-                                  <strong>System</strong>
-                                  10/15/2026 2:14 PM
-                                </div>
-                                <div class="activity-desc">
-                                  ERA auto-posted $130.00 payment from Aetna (EFT #882741)
-                                </div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta">
-                                  <strong>Dr. S. Martinez</strong>
-                                  10/05/2026 9:30 AM
-                                </div>
-                                <div class="activity-desc">
-                                  Claim submitted to Aetna
-                                  <div class="activity-note">"Submitted after eligibility confirmed"</div>
-                                </div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta">
-                                  <strong>Jordan T.</strong>
-                                  09/28/2026 4:15 PM
-                                </div>
-                                <div class="activity-desc">
-                                  $50.00 client payment posted
-                                </div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta">
-                                  <strong>Dr. S. Martinez</strong>
-                                  09/20/2026 11:00 AM
-                                </div>
-                                <div class="activity-desc">
-                                  Charge of $180.00 entered
-                                </div>
-                              </div>
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>10/05/2026 9:30 AM</div>
+                              <div class="activity-desc">Claim submitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div></div>
                             </div>
-                          </div><!-- /activity-section -->
-
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Jordan T.</strong>09/28/2026 4:15 PM</div>
+                              <div class="activity-desc">$50.00 client payment posted</div>
+                            </div>
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>09/20/2026 11:00 AM</div>
+                              <div class="activity-desc">Charge of $180.00 entered</div>
+                            </div>
+                          </div>
                         </div>
-                      </td>
+                      </div></td>
                     </tr>
-
                     <!-- Encounter 2 — collapsed -->
                     <tr class="encounter-row" onclick="toggleEncounter('enc2')">
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
                       <td>08/14/2026</td>
                       <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$120.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$30.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num" style="color:var(--danger-fg)">$30.00</td>
+                      <td class="num">$150.00</td><td class="num">$120.00</td><td class="num">$0.00</td>
+                      <td class="num">$30.00</td><td class="num">$0.00</td>
+                      <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
                     </tr>
                     <tr class="enc-detail-row" id="enc2">
-                      <td colspan="9">
-                        <div class="enc-detail-inner">
-                          <table class="service-table">
-                            <thead>
-                              <tr>
-                                <th>Code</th><th>Description</th>
-                                <th class="num">Units</th><th class="num">Charge</th>
-                                <th class="num">Paid</th><th class="num">Balance</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td><div class="wire-text" style="width:40px;"></div></td>
-                                <td><div class="wire-text" style="width:160px;"></div></td>
-                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$120.00</td>
-                                <td class="num" style="color:var(--danger-fg)">$30.00</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <div class="enc-actions">
-                            <button class="btn">+ Add Transaction</button>
+                      <td colspan="9"><div class="enc-detail-inner">
+                        <table class="service-table"><thead><tr>
+                          <th>Code</th><th>Description</th>
+                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
+                        </tr></thead><tbody><tr>
+                          <td><div class="wire-text" style="width:40px;"></div></td>
+                          <td><div class="wire-text" style="width:160px;"></div></td>
+                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                          <td class="num">$150.00</td><td class="num">$120.00</td>
+                          <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
+                        </tr></tbody></table>
+                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                        <div class="activity-section" id="activity2">
+                          <div class="activity-toggle" onclick="toggleActivity('activity2')">
+                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(2)</span>
                           </div>
-                          <div class="activity-section" id="activity2">
-                            <div class="activity-toggle" onclick="toggleActivity('activity2')">
-                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                              <span class="activity-label">Activity &amp; Notes</span>
-                              <span class="activity-count">&nbsp;(2)</span>
+                          <div class="activity-body">
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>System</strong>09/01/2026 10:00 AM</div>
+                              <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
                             </div>
-                            <div class="activity-body">
-                              <div class="activity-item">
-                                <div class="activity-meta"><strong>System</strong>09/01/2026 10:00 AM</div>
-                                <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>08/14/2026 9:00 AM</div>
-                                <div class="activity-desc">Charge of $150.00 entered</div>
-                              </div>
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>08/14/2026 9:00 AM</div>
+                              <div class="activity-desc">Charge of $150.00 entered</div>
                             </div>
                           </div>
                         </div>
-                      </td>
+                      </div></td>
                     </tr>
-
                     <!-- Encounter 3 — collapsed -->
                     <tr class="encounter-row" onclick="toggleEncounter('enc3')">
                       <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
                       <td>07/09/2026</td>
                       <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$150.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
-                      <td class="num">$0.00</td>
+                      <td class="num">$150.00</td><td class="num">$150.00</td><td class="num">$0.00</td>
+                      <td class="num">$0.00</td><td class="num">$0.00</td><td class="num">$0.00</td>
                     </tr>
                     <tr class="enc-detail-row" id="enc3">
-                      <td colspan="9">
-                        <div class="enc-detail-inner">
-                          <table class="service-table">
-                            <thead>
-                              <tr>
-                                <th>Code</th><th>Description</th>
-                                <th class="num">Units</th><th class="num">Charge</th>
-                                <th class="num">Paid</th><th class="num">Balance</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td><div class="wire-text" style="width:40px;"></div></td>
-                                <td><div class="wire-text" style="width:160px;"></div></td>
-                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$150.00</td>
-                                <td class="num">$0.00</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <div class="enc-actions">
-                            <button class="btn">+ Add Transaction</button>
+                      <td colspan="9"><div class="enc-detail-inner">
+                        <table class="service-table"><thead><tr>
+                          <th>Code</th><th>Description</th>
+                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
+                        </tr></thead><tbody><tr>
+                          <td><div class="wire-text" style="width:40px;"></div></td>
+                          <td><div class="wire-text" style="width:160px;"></div></td>
+                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                          <td class="num">$150.00</td><td class="num">$150.00</td><td class="num">$0.00</td>
+                        </tr></tbody></table>
+                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                        <div class="activity-section" id="activity3">
+                          <div class="activity-toggle" onclick="toggleActivity('activity3')">
+                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(3)</span>
                           </div>
-                          <div class="activity-section" id="activity3">
-                            <div class="activity-toggle" onclick="toggleActivity('activity3')">
-                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                              <span class="activity-label">Activity &amp; Notes</span>
-                              <span class="activity-count">&nbsp;(3)</span>
+                          <div class="activity-body">
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>System</strong>08/01/2026 3:00 PM</div>
+                              <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
                             </div>
-                            <div class="activity-body">
-                              <div class="activity-item">
-                                <div class="activity-meta"><strong>System</strong>08/01/2026 3:00 PM</div>
-                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/15/2026 10:00 AM</div>
-                                <div class="activity-desc">Claim submitted to Aetna</div>
-                              </div>
-                              <div class="activity-item">
-                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/09/2026 9:00 AM</div>
-                                <div class="activity-desc">Charge of $150.00 entered</div>
-                              </div>
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/15/2026 10:00 AM</div>
+                              <div class="activity-desc">Claim submitted to Aetna</div>
+                            </div>
+                            <div class="activity-item">
+                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/09/2026 9:00 AM</div>
+                              <div class="activity-desc">Charge of $150.00 entered</div>
                             </div>
                           </div>
                         </div>
-                      </td>
+                      </div></td>
                     </tr>
-
                   </tbody>
                 </table>
-              </div><!-- /encounter-table-wrap -->
-            </div><!-- /section-body -->
+              </div>
+            </div>
           </div><!-- /Account Ledger -->
 
-          <!-- Unapplied Payments — wire accordion -->
+          <!-- Unapplied Payments -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
               <span class="section-label">Unapplied Payments</span>
-              <div style="margin-left:10px;">
-                <div class="wire-chip-sm" style="width:60px;height:18px;border-radius:4px;"></div>
-              </div>
+              <div style="margin-left:10px;"><div class="wire-chip-sm" style="width:60px;height:18px;border-radius:4px;"></div></div>
             </div>
           </div>
 
-          <!-- Managed Care Authorizations — wire accordion -->
+          <!-- Managed Care Authorizations -->
           <div class="section-card">
             <div class="section-header">
               <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
@@ -696,10 +2467,14 @@
             </div>
           </div>
 
-        </div><!-- /page-content -->
+
+        </div>
+
       </main>
-    </div><!-- /shell-body -->
-  </div><!-- /app-shell -->
+    </div>
+  </div>
+
+
 
   <script>
     function toggleSection(id) {
