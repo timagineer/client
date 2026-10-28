@@ -2034,6 +2034,11 @@
       gap: 8px;
     }
 
+    /* BT-3470: top spacing before first section */
+    .page-content {
+      padding-top: var(--sp-4);
+    }
+
     /* ── Section accordions ── */
     .section-card {
       border: 1px solid var(--neutral-85);
@@ -2041,105 +2046,310 @@
       background: #fff;
       margin-bottom: 6px;
     }
+
     .section-header {
-      display: flex; align-items: center; gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       padding: 11px var(--sp-4);
-      cursor: pointer; user-select: none;
+      cursor: pointer;
+      user-select: none;
     }
+
     .section-caret {
-      color: var(--neutral-60); display: flex; align-items: center; flex-shrink: 0;
-      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
+      color: var(--neutral-60);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
     }
-    .section-caret svg { width: 14px; height: 14px; }
-    .section-card.open .section-caret { transform: rotate(90deg); color: var(--primary-30); }
-    .section-label { font-size: 13px; font-weight: 600; color: var(--neutral-20); }
-    .section-body { display: none; border-top: 1px solid var(--neutral-90); }
-    .section-card.open .section-body { display: block; }
+
+    .section-caret svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .section-card.open .section-caret {
+      transform: rotate(90deg);
+      color: var(--primary-30);
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+    }
+
+    .section-body {
+      display: none;
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .section-card.open .section-body {
+      display: block;
+    }
 
     /* ── Ledger header summary ── */
     .ledger-summary {
-      display: flex; gap: 20px; align-items: center;
-      margin-left: auto; flex-shrink: 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-left: auto;
+      flex-shrink: 0;
     }
-    .ledger-col { text-align: center; }
+
+    .ledger-col {
+      text-align: center;
+    }
+
     .ledger-col-label {
-      display: block; font-size: 10px; font-weight: 600;
-      color: var(--neutral-50); text-transform: uppercase; letter-spacing: 0.04em;
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--neutral-50);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    .ledger-col-val { font-size: 12px; font-weight: 600; color: var(--neutral-25); }
-    .ledger-col-val.neg { color: hsl(352,92%,43%); }
+
+    .ledger-col-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--neutral-25);
+    }
+
+    .ledger-col-val.neg {
+      color: hsl(352, 92%, 43%);
+    }
+
     .freeze-label {
-      display: flex; align-items: center; gap: 6px; margin-left: 8px;
-      font-size: 12px; color: var(--neutral-40);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      font-size: 12px;
+      color: var(--neutral-40);
     }
-    .wire-toggle { width: 30px; height: 16px; background: var(--neutral-85); border-radius: 8px; flex-shrink: 0; }
+
+    .wire-toggle {
+      width: 30px;
+      height: 16px;
+      background: var(--neutral-85);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
 
     /* ── Encounter table ── */
-    .encounter-table-wrap { padding: var(--sp-3) var(--sp-4); overflow-x: auto; }
-    .encounter-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .encounter-table-wrap {
+      padding: var(--sp-3) var(--sp-4);
+      overflow-x: auto;
+    }
+
+    .encounter-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
     .encounter-table th {
-      text-align: left; padding: 6px 10px;
-      font-size: 11px; font-weight: 600; color: var(--neutral-40);
-      text-transform: uppercase; letter-spacing: 0.04em;
-      border-bottom: 1px solid var(--neutral-85); white-space: nowrap;
+      text-align: left;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neutral-40);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--neutral-85);
+      white-space: nowrap;
     }
-    .encounter-table th.num, .encounter-table td.num { text-align: right; }
-    .encounter-table td { padding: 9px 10px; border-bottom: 1px solid var(--neutral-90); vertical-align: middle; }
-    .encounter-row { cursor: pointer; }
-    .encounter-row:hover td { background: var(--neutral-95); }
-    .encounter-row.open td { background: oklch(0.966 0.014 258); border-bottom-color: oklch(0.966 0.014 258); }
+
+    .encounter-table th.num,
+    .encounter-table td.num {
+      text-align: right;
+    }
+
+    .encounter-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--neutral-90);
+      vertical-align: middle;
+    }
+
+    .encounter-row {
+      cursor: pointer;
+    }
+
+    .encounter-row:hover td {
+      background: var(--neutral-95);
+    }
+
+    .encounter-row.open td {
+      background: oklch(0.966 0.014 258);
+      border-bottom-color: oklch(0.966 0.014 258);
+    }
+
     .enc-caret {
-      display: inline-flex; align-items: center; color: var(--neutral-60);
-      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
+      display: inline-flex;
+      align-items: center;
+      color: var(--neutral-60);
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
     }
-    .enc-caret svg { width: 13px; height: 13px; }
-    .encounter-row.open .enc-caret { transform: rotate(90deg); color: var(--primary-30); }
-    .enc-detail-row { display: none; }
-    .enc-detail-row.open { display: table-row; }
+
+    .enc-caret svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .encounter-row.open .enc-caret {
+      transform: rotate(90deg);
+      color: var(--primary-30);
+    }
+
+    .enc-detail-row {
+      display: none;
+    }
+
+    .enc-detail-row.open {
+      display: table-row;
+    }
+
     .enc-detail-row td {
-      padding: 0; background: oklch(0.970 0.010 258);
+      padding: 0;
+      background: oklch(0.970 0.010 258);
       border-bottom: 2px solid oklch(0.89 0.032 258);
     }
-    .enc-detail-inner { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
+
+    .enc-detail-inner {
+      padding: var(--sp-3) var(--sp-4) var(--sp-4);
+    }
 
     /* ── Service lines ── */
-    .service-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: var(--sp-3); }
+    .service-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: var(--sp-3);
+    }
+
     .service-table th {
-      text-align: left; padding: 4px 8px;
-      font-size: 11px; font-weight: 500; color: var(--neutral-50);
+      text-align: left;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--neutral-50);
       border-bottom: 1px solid var(--neutral-90);
     }
-    .service-table th.num, .service-table td.num { text-align: right; }
-    .service-table td { padding: 7px 8px; border-bottom: 1px solid var(--neutral-95); }
-    .enc-actions { display: flex; gap: 6px; margin-bottom: var(--sp-3); }
+
+    .service-table th.num,
+    .service-table td.num {
+      text-align: right;
+    }
+
+    .service-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--neutral-95);
+    }
+
+    .enc-actions {
+      display: flex;
+      gap: 6px;
+      margin-bottom: var(--sp-3);
+    }
 
     /* ── Activity & Notes ── */
-    .activity-section { border: 1px solid var(--neutral-85); border-radius: var(--rad); overflow: hidden; }
+    .activity-section {
+      border: 1px solid var(--neutral-85);
+      border-radius: var(--rad);
+      overflow: hidden;
+    }
+
     .activity-toggle {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 12px; cursor: pointer; user-select: none; background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      user-select: none;
+      background: #fff;
     }
-    .activity-toggle:hover { background: var(--neutral-95); }
+
+    .activity-toggle:hover {
+      background: var(--neutral-95);
+    }
+
     .activity-toggle-caret {
-      display: flex; align-items: center; color: var(--neutral-60);
-      transition: transform 120ms cubic-bezier(0.22,0.88,0.44,1), color 120ms ease;
+      display: flex;
+      align-items: center;
+      color: var(--neutral-60);
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
     }
-    .activity-toggle-caret svg { width: 13px; height: 13px; }
-    .activity-section.open .activity-toggle-caret { transform: rotate(90deg); color: var(--primary-30); }
-    .activity-label { font-size: 11px; font-weight: 700; color: var(--neutral-30); text-transform: uppercase; letter-spacing: 0.06em; }
-    .activity-count { font-size: 11px; color: var(--neutral-50); font-weight: 600; }
-    .activity-body { display: none; border-top: 1px solid var(--neutral-90); }
-    .activity-section.open .activity-body { display: block; }
+
+    .activity-toggle-caret svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .activity-section.open .activity-toggle-caret {
+      transform: rotate(90deg);
+      color: var(--primary-30);
+    }
+
+    .activity-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neutral-30);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .activity-count {
+      font-size: 11px;
+      color: var(--neutral-50);
+      font-weight: 600;
+    }
+
+    .activity-body {
+      display: none;
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .activity-section.open .activity-body {
+      display: block;
+    }
+
     .activity-item {
-      display: grid; grid-template-columns: 172px 1fr;
-      gap: 12px; padding: 8px 12px;
-      border-bottom: 1px solid var(--neutral-95); font-size: 12px;
+      display: grid;
+      grid-template-columns: 172px 1fr;
+      gap: 12px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--neutral-95);
+      font-size: 12px;
     }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-meta { color: var(--neutral-50); line-height: 1.4; }
-    .activity-meta strong { display: block; font-weight: 500; color: var(--neutral-35); }
-    .activity-desc { color: var(--neutral-20); line-height: 1.4; }
-    .activity-note { margin-top: 3px; font-size: 11px; color: var(--neutral-40); font-style: italic; }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-meta {
+      color: var(--neutral-50);
+      line-height: 1.4;
+    }
+
+    .activity-meta strong {
+      display: block;
+      font-weight: 500;
+      color: var(--neutral-35);
+    }
+
+    .activity-desc {
+      color: var(--neutral-20);
+      line-height: 1.4;
+    }
+
+    .activity-note {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--neutral-40);
+      font-style: italic;
+    }
   </style>
   <!-- <link rel="stylesheet" href="color.css"> -->
 
@@ -2234,7 +2444,9 @@
           <div class="wire-tab">
             <div class="wire-text" style="width: 104px;"></div>
           </div>
-          <div class="wire-tab"><div class="wire-text" style="width:72px;"></div></div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width:72px;"></div>
+          </div>
           <div class="wire-tab">
             <div class="wire-text" style="width: 112px;"></div>
           </div>
@@ -2248,7 +2460,9 @@
           <!-- Insurance -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Insurance</span>
               <div style="margin-left:10px;display:flex;gap:8px;align-items:center;">
                 <div class="wire-chip-sm" style="width:46px;height:18px;border-radius:4px;"></div>
@@ -2260,7 +2474,9 @@
           <!-- Eligibility -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Eligibility</span>
             </div>
           </div>
@@ -2268,7 +2484,9 @@
           <!-- Invoicing -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Invoicing</span>
             </div>
           </div>
@@ -2276,7 +2494,9 @@
           <!-- Statements -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Statements</span>
             </div>
           </div>
@@ -2284,7 +2504,9 @@
           <!-- Account Ledger — open -->
           <div class="section-card open" id="sectionLedger">
             <div class="section-header" onclick="toggleSection('sectionLedger')">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Account Ledger</span>
               <div class="ledger-summary">
                 <div class="ledger-col"><span class="ledger-col-label">Charges</span><span class="ledger-col-val">$180.00</span></div>
@@ -2293,7 +2515,9 @@
                 <div class="ledger-col"><span class="ledger-col-label">Client Bal</span><span class="ledger-col-val neg">$180.00</span></div>
                 <div class="ledger-col"><span class="ledger-col-label">Insurance Bal</span><span class="ledger-col-val">$0.00</span></div>
                 <div class="ledger-col"><span class="ledger-col-label">Total Bal</span><span class="ledger-col-val neg">$180.00</span></div>
-                <div class="freeze-label" onclick="event.stopPropagation()"><div class="wire-toggle"></div>Freeze Account</div>
+                <div class="freeze-label" onclick="event.stopPropagation()">
+                  <div class="wire-toggle"></div>Freeze Account
+                </div>
               </div>
             </div>
             <div class="section-body">
@@ -2315,134 +2539,223 @@
                   <tbody>
                     <!-- Encounter 1 — open -->
                     <tr class="encounter-row open" onclick="toggleEncounter('enc1')">
-                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6" />
+                          </svg></span></td>
                       <td>09/20/2026</td>
-                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$180.00</td><td class="num">$0.00</td><td class="num">$0.00</td>
+                      <td>
+                        <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
+                      </td>
+                      <td class="num">$180.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
                       <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
                       <td class="num">$0.00</td>
                       <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
                     </tr>
                     <tr class="enc-detail-row open" id="enc1">
-                      <td colspan="9"><div class="enc-detail-inner">
-                        <table class="service-table"><thead><tr>
-                          <th>Code</th><th>Description</th>
-                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
-                        </tr></thead><tbody><tr>
-                          <td><div class="wire-text" style="width:40px;"></div></td>
-                          <td><div class="wire-text" style="width:160px;"></div></td>
-                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                          <td class="num">$180.00</td><td class="num">$0.00</td>
-                          <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
-                        </tr></tbody></table>
-                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
-                        <div class="activity-section open" id="activity1">
-                          <div class="activity-toggle" onclick="toggleActivity('activity1')">
-                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(4)</span>
-                          </div>
-                          <div class="activity-body">
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>System</strong>10/15/2026 2:14 PM</div>
-                              <div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div>
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th class="num">Units</th>
+                                <th class="num">Charge</th>
+                                <th class="num">Paid</th>
+                                <th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <div class="wire-text" style="width:40px;"></div>
+                                </td>
+                                <td>
+                                  <div class="wire-text" style="width:160px;"></div>
+                                </td>
+                                <td class="num">
+                                  <div class="wire-text" style="width:20px;margin-left:auto;"></div>
+                                </td>
+                                <td class="num">$180.00</td>
+                                <td class="num">$0.00</td>
+                                <td class="num" style="color:hsl(352,92%,43%)">$180.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="activity-section open" id="activity1">
+                            <div class="activity-toggle" onclick="toggleActivity('activity1')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(4)</span>
                             </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>10/05/2026 9:30 AM</div>
-                              <div class="activity-desc">Claim submitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div></div>
-                            </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Jordan T.</strong>09/28/2026 4:15 PM</div>
-                              <div class="activity-desc">$50.00 client payment posted</div>
-                            </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>09/20/2026 11:00 AM</div>
-                              <div class="activity-desc">Charge of $180.00 entered</div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>System</strong>10/15/2026 2:14 PM</div>
+                                <div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>10/05/2026 9:30 AM</div>
+                                <div class="activity-desc">Claim submitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div>
+                                </div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Jordan T.</strong>09/28/2026 4:15 PM</div>
+                                <div class="activity-desc">$50.00 client payment posted</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>09/20/2026 11:00 AM</div>
+                                <div class="activity-desc">Charge of $180.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div></td>
+                      </td>
                     </tr>
                     <!-- Encounter 2 — collapsed -->
                     <tr class="encounter-row" onclick="toggleEncounter('enc2')">
-                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6" />
+                          </svg></span></td>
                       <td>08/14/2026</td>
-                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$150.00</td><td class="num">$120.00</td><td class="num">$0.00</td>
-                      <td class="num">$30.00</td><td class="num">$0.00</td>
+                      <td>
+                        <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
+                      </td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$120.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$30.00</td>
+                      <td class="num">$0.00</td>
                       <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
                     </tr>
                     <tr class="enc-detail-row" id="enc2">
-                      <td colspan="9"><div class="enc-detail-inner">
-                        <table class="service-table"><thead><tr>
-                          <th>Code</th><th>Description</th>
-                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
-                        </tr></thead><tbody><tr>
-                          <td><div class="wire-text" style="width:40px;"></div></td>
-                          <td><div class="wire-text" style="width:160px;"></div></td>
-                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                          <td class="num">$150.00</td><td class="num">$120.00</td>
-                          <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
-                        </tr></tbody></table>
-                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
-                        <div class="activity-section" id="activity2">
-                          <div class="activity-toggle" onclick="toggleActivity('activity2')">
-                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(2)</span>
-                          </div>
-                          <div class="activity-body">
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>System</strong>09/01/2026 10:00 AM</div>
-                              <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th class="num">Units</th>
+                                <th class="num">Charge</th>
+                                <th class="num">Paid</th>
+                                <th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <div class="wire-text" style="width:40px;"></div>
+                                </td>
+                                <td>
+                                  <div class="wire-text" style="width:160px;"></div>
+                                </td>
+                                <td class="num">
+                                  <div class="wire-text" style="width:20px;margin-left:auto;"></div>
+                                </td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$120.00</td>
+                                <td class="num" style="color:hsl(352,92%,43%)">$30.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="activity-section" id="activity2">
+                            <div class="activity-toggle" onclick="toggleActivity('activity2')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(2)</span>
                             </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>08/14/2026 9:00 AM</div>
-                              <div class="activity-desc">Charge of $150.00 entered</div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>System</strong>09/01/2026 10:00 AM</div>
+                                <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>08/14/2026 9:00 AM</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div></td>
+                      </td>
                     </tr>
                     <!-- Encounter 3 — collapsed -->
                     <tr class="encounter-row" onclick="toggleEncounter('enc3')">
-                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6" />
+                          </svg></span></td>
                       <td>07/09/2026</td>
-                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
-                      <td class="num">$150.00</td><td class="num">$150.00</td><td class="num">$0.00</td>
-                      <td class="num">$0.00</td><td class="num">$0.00</td><td class="num">$0.00</td>
+                      <td>
+                        <div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div>
+                      </td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
                     </tr>
                     <tr class="enc-detail-row" id="enc3">
-                      <td colspan="9"><div class="enc-detail-inner">
-                        <table class="service-table"><thead><tr>
-                          <th>Code</th><th>Description</th>
-                          <th class="num">Units</th><th class="num">Charge</th><th class="num">Paid</th><th class="num">Balance</th>
-                        </tr></thead><tbody><tr>
-                          <td><div class="wire-text" style="width:40px;"></div></td>
-                          <td><div class="wire-text" style="width:160px;"></div></td>
-                          <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
-                          <td class="num">$150.00</td><td class="num">$150.00</td><td class="num">$0.00</td>
-                        </tr></tbody></table>
-                        <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
-                        <div class="activity-section" id="activity3">
-                          <div class="activity-toggle" onclick="toggleActivity('activity3')">
-                            <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-                            <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(3)</span>
-                          </div>
-                          <div class="activity-body">
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>System</strong>08/01/2026 3:00 PM</div>
-                              <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th class="num">Units</th>
+                                <th class="num">Charge</th>
+                                <th class="num">Paid</th>
+                                <th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <div class="wire-text" style="width:40px;"></div>
+                                </td>
+                                <td>
+                                  <div class="wire-text" style="width:160px;"></div>
+                                </td>
+                                <td class="num">
+                                  <div class="wire-text" style="width:20px;margin-left:auto;"></div>
+                                </td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$0.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="enc-actions"><button class="btn btn-outline">+ Add Transaction</button></div>
+                          <div class="activity-section" id="activity3">
+                            <div class="activity-toggle" onclick="toggleActivity('activity3')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span><span class="activity-count">&nbsp;(3)</span>
                             </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/15/2026 10:00 AM</div>
-                              <div class="activity-desc">Claim submitted to Aetna</div>
-                            </div>
-                            <div class="activity-item">
-                              <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/09/2026 9:00 AM</div>
-                              <div class="activity-desc">Charge of $150.00 entered</div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>System</strong>08/01/2026 3:00 PM</div>
+                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/15/2026 10:00 AM</div>
+                                <div class="activity-desc">Claim submitted to Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/09/2026 9:00 AM</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div></td>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -2453,16 +2766,22 @@
           <!-- Unapplied Payments -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Unapplied Payments</span>
-              <div style="margin-left:10px;"><div class="wire-chip-sm" style="width:60px;height:18px;border-radius:4px;"></div></div>
+              <div style="margin-left:10px;">
+                <div class="wire-chip-sm" style="width:60px;height:18px;border-radius:4px;"></div>
+              </div>
             </div>
           </div>
 
           <!-- Managed Care Authorizations -->
           <div class="section-card">
             <div class="section-header">
-              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg></span>
               <span class="section-label">Managed Care Authorizations</span>
             </div>
           </div>
@@ -2494,4 +2813,5 @@
     }
   </script>
 </body>
+
 </html>
