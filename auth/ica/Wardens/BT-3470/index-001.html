@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Account ledger activity history [BT-3470]</title>
+  <style>
+    /* ── Tokens (CLIN-3386 / CLN-4229) ── */
+    :root {
+      --primary-20: oklch(33.5% 0.077 258.7);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+      --neutral-05: oklch(0.1698 0.0008 234.96);
+      --neutral-10: oklch(0.2044 0.0073 234.85);
+      --neutral-20: oklch(0.3008 0.0163 234.63);
+      --neutral-25: oklch(0.3608 0.0197 234.51);
+      --neutral-30: oklch(0.4089 0.0222 234.40);
+      --neutral-35: oklch(0.4649 0.0241 234.29);
+      --neutral-40: oklch(0.5192 0.0251 234.18);
+      --neutral-50: oklch(0.6068 0.0252 233.96);
+      --neutral-60: oklch(0.6996 0.0226 233.74);
+      --neutral-70: oklch(0.7974 0.0179 233.51);
+      --neutral-75: oklch(0.8373 0.0149 233.40);
+      --neutral-80: oklch(0.8845 0.0116 233.29);
+      --neutral-85: oklch(0.9234 0.0081 233.18);
+      --neutral-90: oklch(0.9542 0.0045 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --danger-fg: hsl(352, 92%, 43%);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --t: 60ms;
+      --voila: fadeIn calc(var(--t) * 4) ease calc(var(--t) * 6) backwards;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { height: 100%; }
+    body {
+      margin: 0; height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px; line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+      animation: var(--voila);
+    }
+    @media (prefers-reduced-motion: reduce) { body { animation: none; } }
+
+    /* ── App shell ── */
+    .app-shell {
+      position: fixed; inset: 0;
+      display: grid; grid-template-rows: 48px 1fr;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .shell-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff; border-bottom: 1px solid var(--neutral-85);
+      height: 48px; flex-shrink: 0;
+    }
+    .wire-logo { display: flex; gap: 2px; }
+    .wire-logo-mark { width: 32px; height: 18px; background: var(--primary-50); border-radius: var(--rad); }
+    .wire-logo-text { width: 48px; height: 18px; background: var(--secondary-60); border-radius: var(--rad); }
+    .wire-search { width: 320px; height: 28px; background: var(--neutral-90); border-radius: var(--rad); }
+    .wire-header-right { display: flex; align-items: center; gap: var(--sp-2); }
+    .wire-icon { width: 28px; height: 28px; background: var(--neutral-90); border-radius: 50%; }
+    .wire-avatar { width: 28px; height: 28px; background: var(--primary-50); border-radius: 50%; opacity: 0.4; }
+
+    /* ── Shell body ── */
+    .shell-body { display: grid; grid-template-columns: 52px 1fr; overflow: hidden; }
+
+    .shell-sidebar {
+      background: oklch(0.22 0.022 258);
+      display: flex; flex-direction: column; align-items: center;
+      padding: var(--sp-3) 0; gap: 4px;
+    }
+    .wire-nav-item { width: 36px; height: 36px; background: rgba(255,255,255,0.12); border-radius: var(--rad); }
+    .wire-nav-item.active { background: rgba(255,255,255,0.25); }
+    .sidebar-spacer { flex: 1; }
+
+    .shell-main { display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Context bar ── */
+    .context-bar {
+      display: flex; align-items: flex-start; gap: var(--sp-3);
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff; border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+    .wire-patient-avatar { width: 36px; height: 36px; flex-shrink: 0; background: var(--neutral-85); border-radius: 50%; margin-top: 2px; }
+    .patient-info { flex: 1; }
+    .context-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .wire-chip-sm { height: 14px; background: var(--neutral-85); border-radius: 3px; min-width: 14px; }
+    .wire-text { height: 12px; background: var(--neutral-90); border-radius: 3px; min-width: 20px; }
+    .action-block { display: flex; flex-wrap: wrap; gap: 4px; max-width: 420px; }
+    .wire-chip { height: 24px; width: 88px; background: var(--neutral-90); border-radius: 4px; }
+
+    /* ── Tab bar — no active tab ── */
+    .tab-bar {
+      display: flex; align-items: flex-end; gap: 2px;
+      padding: 0 var(--sp-4);
+      background: var(--neutral-95);
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0; height: 36px;
+      overflow-x: auto;
+    }
+    .wire-tab {
+      height: 28px; padding: 0 14px;
+      background: var(--neutral-90); border-radius: 4px 4px 0 0;
+      display: flex; align-items: center;
+      font-size: 12px; color: var(--neutral-40);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── Page content ── */
+    .page-content { flex: 1; overflow-y: auto; padding: var(--sp-4); }
+
+    /* ── Accordion sections (wire) ── */
+    .section-card {
+      background: #fff;
+      border: 1px solid var(--neutral-85);
+      border-radius: var(--rad);
+      margin-bottom: 6px;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px var(--sp-4);
+      cursor: pointer; user-select: none;
+    }
+    .section-caret {
+      color: var(--neutral-50); display: flex; align-items: center;
+      flex-shrink: 0;
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1),
+                  color 120ms ease;
+    }
+    .section-caret svg { width: 14px; height: 14px; }
+    .section-card.open .section-caret { transform: rotate(90deg); color: var(--primary-30); }
+    .section-label { font-size: 13px; font-weight: 600; color: var(--neutral-20); }
+    .section-body { display: none; border-top: 1px solid var(--neutral-90); }
+    .section-card.open .section-body { display: block; }
+
+    /* ── Account Ledger header summary ── */
+    .ledger-summary {
+      display: flex; gap: 20px; align-items: center;
+      margin-left: auto; flex-shrink: 0;
+    }
+    .ledger-col { text-align: center; }
+    .ledger-col-label {
+      display: block; font-size: 10px; font-weight: 600;
+      color: var(--neutral-50); text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .ledger-col-val { font-size: 12px; font-weight: 600; color: var(--neutral-25); }
+    .ledger-col-val.neg { color: var(--danger-fg); }
+    .freeze-label {
+      display: flex; align-items: center; gap: 6px; margin-left: 8px;
+      font-size: 12px; color: var(--neutral-40);
+    }
+    .wire-toggle {
+      width: 30px; height: 16px;
+      background: var(--neutral-85); border-radius: 8px; flex-shrink: 0;
+    }
+
+    /* ── Encounter table ── */
+    .encounter-table-wrap { padding: var(--sp-3) var(--sp-4); overflow-x: auto; }
+    .encounter-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .encounter-table th {
+      text-align: left; padding: 6px 10px;
+      font-size: 11px; font-weight: 600; color: var(--neutral-40);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--neutral-85);
+      white-space: nowrap;
+    }
+    .encounter-table th.num,
+    .encounter-table td.num { text-align: right; }
+    .encounter-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--neutral-90);
+      vertical-align: middle;
+    }
+    .encounter-row { cursor: pointer; }
+    .encounter-row:hover td { background: var(--neutral-95); }
+    .encounter-row.open td {
+      background: oklch(0.966 0.014 258);
+      border-bottom-color: oklch(0.966 0.014 258);
+    }
+    .enc-caret {
+      display: inline-flex; align-items: center; color: var(--neutral-50);
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
+    }
+    .enc-caret svg { width: 13px; height: 13px; }
+    .encounter-row.open .enc-caret { transform: rotate(90deg); color: var(--primary-30); }
+
+    /* Expanded encounter detail row */
+    .enc-detail-row { display: none; }
+    .enc-detail-row.open { display: table-row; }
+    .enc-detail-row td {
+      padding: 0;
+      background: oklch(0.970 0.010 258);
+      border-bottom: 2px solid oklch(0.89 0.032 258);
+    }
+    .enc-detail-inner { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
+
+    /* Service lines sub-table */
+    .service-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: var(--sp-3); }
+    .service-table th {
+      text-align: left; padding: 4px 8px;
+      font-size: 11px; font-weight: 500; color: var(--neutral-50);
+      border-bottom: 1px solid var(--neutral-90);
+    }
+    .service-table th.num,
+    .service-table td.num { text-align: right; }
+    .service-table td { padding: 7px 8px; border-bottom: 1px solid var(--neutral-95); }
+
+    /* Buttons */
+    .btn {
+      height: 28px; padding: 0 12px;
+      border: 1px solid; border-radius: 4px;
+      font-family: inherit; font-size: 12px; font-weight: 500;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+      background: #fff; border-color: var(--neutral-70); color: var(--neutral-25);
+    }
+    .btn:hover { background: var(--neutral-95); border-color: var(--neutral-60); }
+
+    .enc-actions { display: flex; gap: 6px; margin-bottom: var(--sp-3); }
+
+    /* ── Activity & Notes ── */
+    .activity-section {
+      border: 1px solid var(--neutral-85);
+      border-radius: var(--rad); overflow: hidden;
+    }
+    .activity-toggle {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; cursor: pointer; user-select: none;
+      background: #fff;
+    }
+    .activity-toggle:hover { background: var(--neutral-95); }
+    .activity-toggle-caret {
+      display: flex; align-items: center; color: var(--neutral-50);
+      transition: transform 120ms cubic-bezier(0.22, 0.88, 0.44, 1), color 120ms ease;
+    }
+    .activity-toggle-caret svg { width: 13px; height: 13px; }
+    .activity-section.open .activity-toggle-caret { transform: rotate(90deg); color: var(--primary-30); }
+    .activity-label {
+      font-size: 11px; font-weight: 700; color: var(--neutral-30);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .activity-count { font-size: 11px; color: var(--neutral-50); font-weight: 600; }
+    .activity-body { display: none; border-top: 1px solid var(--neutral-90); }
+    .activity-section.open .activity-body { display: block; }
+
+    .activity-item {
+      display: grid; grid-template-columns: 172px 1fr;
+      gap: 12px; padding: 8px 12px;
+      border-bottom: 1px solid var(--neutral-95);
+      font-size: 12px;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-meta { color: var(--neutral-50); line-height: 1.4; }
+    .activity-meta strong { display: block; font-weight: 500; color: var(--neutral-35); }
+    .activity-desc { color: var(--neutral-20); line-height: 1.4; }
+    .activity-note {
+      margin-top: 3px; font-size: 11px;
+      color: var(--neutral-40); font-style: italic;
+    }
+
+    /* Proto dot */
+    .proto-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; vertical-align: 1px; margin-left: 4px;
+      background: hsl(270, 55%, 58%);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+
+    <div class="shell-body">
+
+      <!-- Sidebar -->
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+
+      <main class="shell-main">
+
+        <!-- Context bar -->
+        <div class="context-bar">
+          <div class="wire-patient-avatar"></div>
+          <div class="patient-info">
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width:14px;"></div>
+              <div class="wire-text" style="width:110px;"></div>
+              <div class="wire-text" style="width:32px;"></div>
+              <div class="wire-text" style="width:16px;"></div>
+              <div class="wire-chip-sm" style="width:14px;"></div>
+            </div>
+            <div class="context-row">
+              <div class="wire-chip-sm" style="width:50px;"></div>
+              <div class="wire-text" style="width:44px;"></div>
+              <div class="wire-chip-sm" style="width:36px;"></div>
+              <div class="wire-text" style="width:22px;"></div>
+              <div class="wire-text" style="width:72px;"></div>
+            </div>
+          </div>
+          <div class="action-block">
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+            <div class="wire-chip"></div>
+          </div>
+        </div>
+
+        <!-- Tab bar — no active tab (ICANotes pattern) -->
+        <div class="tab-bar">
+          <div class="wire-tab"><div class="wire-text" style="width:60px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:80px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:132px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:90px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:66px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:92px;"></div></div>
+          <div class="wire-tab"><div class="wire-text" style="width:98px;"></div></div>
+        </div>
+
+        <!-- Page content -->
+        <div class="page-content">
+
+          <!-- Insurance — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Insurance</span>
+              <div style="margin-left:10px;display:flex;gap:8px;align-items:center;">
+                <div class="wire-chip-sm" style="width:46px;height:18px;border-radius:4px;"></div>
+                <div class="wire-text" style="width:36px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eligibility — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Eligibility</span>
+            </div>
+          </div>
+
+          <!-- Invoicing — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Invoicing</span>
+            </div>
+          </div>
+
+          <!-- Statements — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Statements</span>
+            </div>
+          </div>
+
+          <!-- Account Ledger — open -->
+          <div class="section-card open" id="sectionLedger">
+            <div class="section-header" onclick="toggleSection('sectionLedger')">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Account Ledger</span>
+              <div class="ledger-summary">
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Charges</span>
+                  <span class="ledger-col-val">$180.00</span>
+                </div>
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Paid</span>
+                  <span class="ledger-col-val">$0.00</span>
+                </div>
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Adjusted</span>
+                  <span class="ledger-col-val">$0.00</span>
+                </div>
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Client Bal</span>
+                  <span class="ledger-col-val neg">$180.00</span>
+                </div>
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Insurance Bal</span>
+                  <span class="ledger-col-val">$0.00</span>
+                </div>
+                <div class="ledger-col">
+                  <span class="ledger-col-label">Total Bal</span>
+                  <span class="ledger-col-val neg">$180.00</span>
+                </div>
+                <div class="freeze-label" onclick="event.stopPropagation()">
+                  <div class="wire-toggle"></div>
+                  Freeze Account
+                </div>
+              </div>
+            </div>
+
+            <div class="section-body">
+              <div class="encounter-table-wrap">
+                <table class="encounter-table">
+                  <thead>
+                    <tr>
+                      <th style="width:20px;"></th>
+                      <th>Date</th>
+                      <th>Note</th>
+                      <th class="num">Charge</th>
+                      <th class="num">Paid</th>
+                      <th class="num">Adjusted</th>
+                      <th class="num">Client Bal</th>
+                      <th class="num">Ins Bal</th>
+                      <th class="num">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <!-- Encounter 1 — open (demo scenario) -->
+                    <tr class="encounter-row open" onclick="toggleEncounter('enc1')">
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td>09/20/2026 <span class="proto-dot" title="Scenario: Activity &amp; Notes expanded"></span></td>
+                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
+                      <td class="num">$180.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num" style="color:var(--danger-fg)">$180.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num" style="color:var(--danger-fg)">$180.00</td>
+                    </tr>
+                    <tr class="enc-detail-row open" id="enc1">
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+
+                          <!-- Service lines -->
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th class="num">Units</th>
+                                <th class="num">Charge</th>
+                                <th class="num">Paid</th>
+                                <th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><div class="wire-text" style="width:40px;"></div></td>
+                                <td><div class="wire-text" style="width:160px;"></div></td>
+                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                                <td class="num">$180.00</td>
+                                <td class="num">$0.00</td>
+                                <td class="num" style="color:var(--danger-fg)">$180.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                          <!-- Actions -->
+                          <div class="enc-actions">
+                            <button class="btn">+ Add Transaction</button>
+                          </div>
+
+                          <!-- Activity & Notes — open for demo -->
+                          <div class="activity-section open" id="activity1">
+                            <div class="activity-toggle" onclick="toggleActivity('activity1')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span>
+                              <span class="activity-count">&nbsp;(4)</span>
+                            </div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta">
+                                  <strong>System</strong>
+                                  10/15/2026 2:14 PM
+                                </div>
+                                <div class="activity-desc">
+                                  ERA auto-posted $130.00 payment from Aetna (EFT #882741)
+                                </div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">
+                                  <strong>Dr. S. Martinez</strong>
+                                  10/05/2026 9:30 AM
+                                </div>
+                                <div class="activity-desc">
+                                  Claim submitted to Aetna
+                                  <div class="activity-note">"Submitted after eligibility confirmed"</div>
+                                </div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">
+                                  <strong>Jordan T.</strong>
+                                  09/28/2026 4:15 PM
+                                </div>
+                                <div class="activity-desc">
+                                  $50.00 client payment posted
+                                </div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">
+                                  <strong>Dr. S. Martinez</strong>
+                                  09/20/2026 11:00 AM
+                                </div>
+                                <div class="activity-desc">
+                                  Charge of $180.00 entered
+                                </div>
+                              </div>
+                            </div>
+                          </div><!-- /activity-section -->
+
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Encounter 2 — collapsed -->
+                    <tr class="encounter-row" onclick="toggleEncounter('enc2')">
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td>08/14/2026</td>
+                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$120.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$30.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num" style="color:var(--danger-fg)">$30.00</td>
+                    </tr>
+                    <tr class="enc-detail-row" id="enc2">
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th><th>Description</th>
+                                <th class="num">Units</th><th class="num">Charge</th>
+                                <th class="num">Paid</th><th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><div class="wire-text" style="width:40px;"></div></td>
+                                <td><div class="wire-text" style="width:160px;"></div></td>
+                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$120.00</td>
+                                <td class="num" style="color:var(--danger-fg)">$30.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="enc-actions">
+                            <button class="btn">+ Add Transaction</button>
+                          </div>
+                          <div class="activity-section" id="activity2">
+                            <div class="activity-toggle" onclick="toggleActivity('activity2')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span>
+                              <span class="activity-count">&nbsp;(2)</span>
+                            </div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>System</strong>09/01/2026 10:00 AM</div>
+                                <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>08/14/2026 9:00 AM</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Encounter 3 — collapsed -->
+                    <tr class="encounter-row" onclick="toggleEncounter('enc3')">
+                      <td><span class="enc-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></td>
+                      <td>07/09/2026</td>
+                      <td><div class="wire-chip-sm" style="width:52px;height:18px;border-radius:4px;"></div></td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$150.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                      <td class="num">$0.00</td>
+                    </tr>
+                    <tr class="enc-detail-row" id="enc3">
+                      <td colspan="9">
+                        <div class="enc-detail-inner">
+                          <table class="service-table">
+                            <thead>
+                              <tr>
+                                <th>Code</th><th>Description</th>
+                                <th class="num">Units</th><th class="num">Charge</th>
+                                <th class="num">Paid</th><th class="num">Balance</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><div class="wire-text" style="width:40px;"></div></td>
+                                <td><div class="wire-text" style="width:160px;"></div></td>
+                                <td class="num"><div class="wire-text" style="width:20px;margin-left:auto;"></div></td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$150.00</td>
+                                <td class="num">$0.00</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="enc-actions">
+                            <button class="btn">+ Add Transaction</button>
+                          </div>
+                          <div class="activity-section" id="activity3">
+                            <div class="activity-toggle" onclick="toggleActivity('activity3')">
+                              <span class="activity-toggle-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+                              <span class="activity-label">Activity &amp; Notes</span>
+                              <span class="activity-count">&nbsp;(3)</span>
+                            </div>
+                            <div class="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>System</strong>08/01/2026 3:00 PM</div>
+                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/15/2026 10:00 AM</div>
+                                <div class="activity-desc">Claim submitted to Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta"><strong>Dr. S. Martinez</strong>07/09/2026 9:00 AM</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div><!-- /encounter-table-wrap -->
+            </div><!-- /section-body -->
+          </div><!-- /Account Ledger -->
+
+          <!-- Unapplied Payments — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Unapplied Payments</span>
+              <div style="margin-left:10px;">
+                <div class="wire-chip-sm" style="width:60px;height:18px;border-radius:4px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Managed Care Authorizations — wire accordion -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+              <span class="section-label">Managed Care Authorizations</span>
+            </div>
+          </div>
+
+        </div><!-- /page-content -->
+      </main>
+    </div><!-- /shell-body -->
+  </div><!-- /app-shell -->
+
+  <script>
+    function toggleSection(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+
+    function toggleEncounter(id) {
+      var detail = document.getElementById(id);
+      var row = detail.previousElementSibling;
+      var opening = !detail.classList.contains('open');
+      detail.classList.toggle('open', opening);
+      if (row) row.classList.toggle('open', opening);
+    }
+
+    function toggleActivity(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
