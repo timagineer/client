@@ -3148,6 +3148,7 @@
                             <div class="dx-modal-suggestion" ng-repeat="s in vm.visibleSuggestions() track by $index" ng-class="{dismissed: s.dismissed, leaving: s.leaving}" style="animation-delay: {{$index * 60}}ms">
                                 <span class="dx-modal-suggestion-code">{{s.code}}</span>
                                 <span class="dx-modal-suggestion-desc" title="{{s.description}}">{{s.description}}</span>
+                                <span class="badge dx-modal-suggestion-badge" ng-class="{'badge-positive': s.confidence === 'high', 'badge-notice': s.confidence === 'moderate', 'badge-neutral': s.confidence === 'low'}" ng-show="!s.dismissed">{{s.confidenceLabel}}</span>
                                 <div class="dx-modal-suggestion-actions" ng-show="!s.dismissed">
                                     <button ng-click="vm.addSuggestion(s)" aria-label="Add {{s.code}}">Add</button>
                                     <button ng-click="vm.dismissSuggestion(s)" aria-label="Skip {{s.code}}">Skip</button>
