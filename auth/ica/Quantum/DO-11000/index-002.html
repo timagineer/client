@@ -2360,10 +2360,6 @@
                 margin-block-end: -1px;
             }
 
-            .dx-modal-tab-group:last-of-type {
-                flex: 1;
-            }
-
             .dx-modal-tab-group:hover {
                 border-block-end-color: var(--gray-400);
             }
@@ -3117,7 +3113,7 @@
                         <!-- <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AIDx<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button> -->
                         <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AI-suggested<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button>
                     </div>
-                    <button class="dx-icon-btn dx-modal-info-btn" aria-label="How AI suggestions work" style="color:white;pointer-events:none;">
+                    <button class="dx-icon-btn dx-modal-info-btn" popovertarget="ai-info-popover" aria-label="How AI suggestions work">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <use href="#icon-info" />
                         </svg>
@@ -3267,6 +3263,14 @@
         </div>
 
     </div><!-- /.app-shell -->
+
+    <!-- AI Info Popover -->
+    <div id="ai-info-popover" class="ai-info-popover" popover="auto">
+        <dl class="ai-info-dl">
+            <dt>How AI Suggestions Work</dt>
+            <dd>ICD-10 code suggestions are ranked by relevance to your note and the patient's history. Non-billable codes are automatically filtered out.</dd>
+        </dl>
+        <div class="ai-info-notice"><strong>AI suggestions require your review</strong><br>Nothing is saved or pre-filled automatically.</div>
     </div>
 
     <div id="dx-fields-info" class="ai-info-popover" popover="auto">
