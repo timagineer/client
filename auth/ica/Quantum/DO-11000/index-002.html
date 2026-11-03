@@ -3111,7 +3111,12 @@
                     </div>
                     <div class="dx-modal-tab-group">
                         <!-- <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AIDx<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button> -->
-                        <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AI-suggested<span class="notif-badge visible" aria-hidden="true"></span></button>
+                        <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AI-suggested<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button>
+                        <button class="dx-modal-tab-icon" ng-click="vm.reAnalyze()" ng-class="{spinning: vm.analyzing}" ng-disabled="vm.analyzing" aria-label="Reanalyze note" data-tooltip-dark="Reanalyze">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" style="opacity:0 !important">
+                                <use href="#icon-refresh" />
+                            </svg>
+                        </button>
                     </div>
                     <button class="dx-icon-btn dx-modal-info-btn" popovertarget="ai-info-popover" aria-label="How AI suggestions work">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
