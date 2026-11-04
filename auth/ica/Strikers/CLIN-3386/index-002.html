@@ -2796,7 +2796,7 @@
     function getPatientPanelHTML(type) {
       if (type === 'existing') {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-search">Search by name or chart ID</label><input id="ns-search" type="search" class="modal-field-input" placeholder="e.g. Rivera, Alex or #12345"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option value="email">Email</option><option value="sms">SMS</option></select></div>';
+          '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option value="email">Email</option><option value="sms">SMS</option><option value="both">Both</option></select></div>';
       } else {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
           '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
