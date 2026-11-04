@@ -1988,7 +1988,7 @@
         var isCollapsed = collapsedGroups.has(s.id);
         let html = `
         <tr class="group-row ${isCollapsed ? '' : 'expanded'}" data-group="${s.id}">
-          <td class="time-cell">${s.time}</td>
+          <td class="time-cell">${formatDateCell(s.time)}</td>
           <td>
             <div class="name-cell">
               <button class="expand-btn${isCollapsed ? ' collapsed' : ''}" onclick="toggleGroup(${s.id})">${icons.chevronDown}</button>
@@ -2004,6 +2004,7 @@
           <td>
             <div class="actions-cell">
               ${getActionBtn(s.status, s.id, { type: 'group' })}
+              ${getSendLinkBtn(s.id)}
             </div>
           </td>
         </tr>`;
@@ -2026,6 +2027,7 @@
               <td>
                 <div class="actions-cell">
                   ${getActionBtn(m.status, m.id, { type: 'member', groupId: s.id })}
+                  ${getSendLinkBtn(m.id)}
                 </div>
               </td>
             </tr>`;
@@ -2037,7 +2039,7 @@
       // Regular row
       return `
         <tr>
-          <td class="time-cell">${s.time}</td>
+          <td class="time-cell">${formatDateCell(s.time)}</td>
           <td><div class="name-cell"><a href="#" class="patient-name">${s.name}${s.adHoc ? ' <span class="badge-adhoc">Ad hoc</span>' : ''}</a></div></td>
           <td class="clinician-cell">${s.clinician}</td>
           <td class="col-copay">${renderCopay(s.copay, s.status)}</td>
@@ -2048,6 +2050,7 @@
           <td>
             <div class="actions-cell">
               ${getActionBtn(s.status, s.id, { type: 'individual' })}
+              ${getSendLinkBtn(s.id)}
             </div>
           </td>
         </tr>`;
@@ -2612,6 +2615,17 @@
       activeFilters.status = (document.getElementById('filterStatus') || {}).value || '';
       currentPage = 1;
       render();
+    }
+
+    function formatDateCell(time) {
+      var from = document.getElementById('dateFrom');
+      var dateStr = from ? from.value : '';
+      if (!dateStr) return time;
+      var d = new Date(dateStr + 'T00:00:00');
+      var mm = String(d.getMonth() + 1).padStart(2, '0');
+      var dd = String(d.getDate()).padStart(2, '0');
+      var yyyy = d.getFullYear();
+      return mm + '/' + dd + '/' + yyyy + ' ' + time;
     }
 
     function getSendLinkBtn(sessionId) {
