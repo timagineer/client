@@ -969,6 +969,45 @@
       height: 14px;
     }
 
+    /* ── Toolbar divider ── */
+    .toolbar-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border-light);
+      flex-shrink: 0;
+    }
+
+    /* ── Send link ghost button ── */
+    .btn-send-link-text {
+      height: 28px;
+      padding: 0 8px;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--primary-30);
+      cursor: pointer;
+      white-space: nowrap;
+      border-radius: var(--rad);
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .btn-send-link-text:hover {
+      background: var(--neutral-95);
+      color: var(--primary-20);
+    }
+
+    /* ── Actions column header ── */
+    .col-actions-hd {
+      text-align: right;
+    }
+
+    .btn-sm {
+      height: 26px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
     /* Split buttons */
     .split-btn {
       display: inline-flex;
@@ -1735,11 +1774,11 @@
           <div class="wire-tab active">Telehealth Waiting Room</div>
         </div>
 
-        <!-- Page Toolbar -->
-        <div class="page-toolbar">
-          <!-- Row 1: temporal nav + create session -->
-          <div class="toolbar-row">
-            <div class="date-nav-cluster">
+        <div class="page-content">
+
+          <!-- Page Toolbar -->
+          <div class="page-toolbar">
+            <div class="toolbar-row">
               <button class="btn btn-outline btn-today" onclick="goToToday()">Today</button>
               <div class="nav-group">
                 <button class="btn btn-outline btn-icon" title="Previous" onclick="navigateDay(-1)">
@@ -1758,35 +1797,22 @@
                 <span class="date-range-sep">–</span>
                 <input type="date" id="dateTo" class="date-range-input" value="2026-09-30" onchange="onDateRangeChange()">
               </div>
-            </div>
-            <div class="header-spacer"></div>
-            <button class="btn btn-primary" onclick="openNewSessionModal()">+ Session</button>
-          </div>
-          <!-- Row 2: filters + search -->
-          <div class="filter-row">
-            <div class="filter-group">
-              <div class="filter-item">
-                <label class="filter-label">Client</label>
-                <select class="filter-select" id="filterClient" onchange="applyFilters()">
+              <div class="toolbar-divider"></div>
+              <div class="filter-group">
+                <select class="filter-select" id="filterClient" onchange="applyFilters()" title="Client">
                   <option value="">All clients</option>
                   <option>Maria Rivera</option>
                   <option>Devon Patel</option>
                   <option>Sara Chen</option>
                 </select>
-              </div>
-              <div class="filter-item">
-                <label class="filter-label">Clinician</label>
-                <select class="filter-select" id="filterClinician" onchange="applyFilters()">
+                <select class="filter-select" id="filterClinician" onchange="applyFilters()" title="Clinician">
                   <option value="">All clinicians</option>
                   <option>Sarah Rogers, LCSW</option>
                   <option>James Okafor, LPC</option>
                   <option>Lisa Park, LMFT</option>
                   <option>Marcus Webb, MD</option>
                 </select>
-              </div>
-              <div class="filter-item">
-                <label class="filter-label">Status</label>
-                <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+                <select class="filter-select" id="filterStatus" onchange="applyFilters()" title="Status">
                   <option value="">All statuses</option>
                   <option value="scheduled">Scheduled</option>
                   <option value="waiting">Waiting</option>
@@ -1795,117 +1821,115 @@
                   <option value="absent">Absent</option>
                 </select>
               </div>
+              <div class="table-search">
+                <span class="table-search-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.34-4.34" />
+                  </svg>
+                </span>
+                <input type="search" class="table-search-input" id="searchInput" placeholder="Search patients or groups...">
+              </div>
             </div>
-            <div class="header-spacer"></div>
-            <div class="table-search">
-              <span class="table-search-icon">
+          </div>
+
+          <!-- Table -->
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="time" onclick="sortTable('time')">Date &amp; Time<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="sortable" data-sort="name" onclick="sortTable('name')">Name<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="sortable" data-sort="clinician" onclick="sortTable('clinician')">Clinician<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="col-copay" style="width: 1px;">Copay</th>
+                  <th class="sortable" style="width: 1px;" data-sort="status" onclick="sortTable('status')">Status<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="col-waiting sortable" data-sort="waiting" onclick="sortTable('waiting')">Wait<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="col-session sortable" data-sort="session" onclick="sortTable('session')">Duration<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="sortable" data-sort="note" onclick="sortTable('note')">Note<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 16-4 4-4-4" />
+                        <path d="M17 20V4" />
+                        <path d="m3 8 4-4 4 4" />
+                        <path d="M7 4v16" />
+                      </svg></span></th>
+                  <th class="col-actions-hd" style="width: 1px; white-space: nowrap;"><button class="btn btn-primary btn-sm" onclick="openNewSessionModal()">+ Session</button></th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <!-- Rows rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="table-footer">
+            <div class="pagination">
+              <button class="page-btn" id="btnFirst" disabled title="First page" onclick="goToPage(1)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.34-4.34" />
+                  <path d="m11 17-5-5 5-5" />
+                  <path d="m18 17-5-5 5-5" />
                 </svg>
-              </span>
-              <input type="search" class="table-search-input" id="searchInput" placeholder="Search patients or groups...">
+              </button>
+              <button class="page-btn" id="btnPrev" disabled title="Previous page" onclick="goToPage(currentPage-1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+              <span id="pageNums" style="display:flex;gap:4px;"></span>
+              <button class="page-btn" id="btnNext" title="Next page" onclick="goToPage(currentPage+1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+              <button class="page-btn" id="btnLast" title="Last page" onclick="goToPage(Math.ceil(getFilteredData().length/pageSize)||1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m13 17 5-5-5-5" />
+                  <path d="m6 17 5-5-5-5" />
+                </svg>
+              </button>
+              <select class="page-size-select" onchange="pageSize=parseInt(this.value);currentPage=1;render();updateSortHeaders();">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+              <span class="page-size-label">items per page</span>
             </div>
+            <div id="pageCount">— sessions</div>
           </div>
+
         </div>
 
-        <!-- Table -->
-        <div class="data-table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th class="sortable" data-sort="time" onclick="sortTable('time')">Date &amp; Time<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="sortable" data-sort="name" onclick="sortTable('name')">Name<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="sortable" data-sort="clinician" onclick="sortTable('clinician')">Clinician<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="col-copay" style="width: 1px;">Copay</th>
-                <th class="sortable" style="width: 1px;" data-sort="status" onclick="sortTable('status')">Status<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="col-waiting sortable" data-sort="waiting" onclick="sortTable('waiting')">Wait<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="col-session sortable" data-sort="session" onclick="sortTable('session')">Duration<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th class="sortable" data-sort="note" onclick="sortTable('note')">Note<span class="sort-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="m21 16-4 4-4-4" />
-                      <path d="M17 20V4" />
-                      <path d="m3 8 4-4 4 4" />
-                      <path d="M7 4v16" />
-                    </svg></span></th>
-                <th style="width: 1px;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <!-- Rows rendered by JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="table-footer">
-          <div class="pagination">
-            <button class="page-btn" id="btnFirst" disabled title="First page" onclick="goToPage(1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m11 17-5-5 5-5" />
-                <path d="m18 17-5-5 5-5" />
-              </svg>
-            </button>
-            <button class="page-btn" id="btnPrev" disabled title="Previous page" onclick="goToPage(currentPage-1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-            <span id="pageNums" style="display:flex;gap:4px;"></span>
-            <button class="page-btn" id="btnNext" title="Next page" onclick="goToPage(currentPage+1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </button>
-            <button class="page-btn" id="btnLast" title="Last page" onclick="goToPage(Math.ceil(getFilteredData().length/pageSize)||1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m13 17 5-5-5-5" />
-                <path d="m6 17 5-5-5-5" />
-              </svg>
-            </button>
-            <select class="page-size-select" onchange="pageSize=parseInt(this.value);currentPage=1;render();updateSortHeaders();">
-              <option value="10" selected>10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-            </select>
-            <span class="page-size-label">items per page</span>
-          </div>
-          <div id="pageCount">— sessions</div>
-        </div>
-
+      </main>
     </div>
-
-    </main>
-  </div>
   </div>
 
   <script>
@@ -2029,8 +2053,8 @@
           ${renderNoteCell(s)}
           <td>
             <div class="actions-cell">
-              ${getActionBtn(s.status, s.id, { type: 'group' })}
               ${getSendLinkBtn(s.id)}
+              ${getActionBtn(s.status, s.id, { type: 'group' })}
             </div>
           </td>
         </tr>`;
@@ -2052,8 +2076,8 @@
               <td></td>
               <td>
                 <div class="actions-cell">
-                  ${getActionBtn(m.status, m.id, { type: 'member', groupId: s.id })}
                   ${getSendLinkBtn(m.id)}
+                  ${getActionBtn(m.status, m.id, { type: 'member', groupId: s.id })}
                 </div>
               </td>
             </tr>`;
@@ -2075,8 +2099,8 @@
           ${renderNoteCell(s)}
           <td>
             <div class="actions-cell">
-              ${getActionBtn(s.status, s.id, { type: 'individual' })}
               ${getSendLinkBtn(s.id)}
+              ${getActionBtn(s.status, s.id, { type: 'individual' })}
             </div>
           </td>
         </tr>`;
@@ -2655,12 +2679,7 @@
     }
 
     function getSendLinkBtn(sessionId) {
-      return '<button class="btn-send-link" title="Send link" onclick="openSendLinkMenu(' + sessionId + ',event)">'
-        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-        + '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>'
-        + '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'
-        + '</svg>'
-        + '</button>';
+      return '<button class="btn-send-link-text" onclick="openSendLinkMenu(' + sessionId + ',event)">Send link</button>';
     }
 
     function openSendLinkMenu(sessionId, event) {
