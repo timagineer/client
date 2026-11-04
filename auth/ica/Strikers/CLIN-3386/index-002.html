@@ -231,12 +231,7 @@
 
     /* ========== Page Toolbar (like availability-blocks-015 cal-toolbar) ========== */
     .page-toolbar {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-4);
-      padding: var(--sp-3) var(--sp-4);
-      background: #fff;
-      border-bottom: 1px solid var(--border-light);
+      display: block;
       flex-shrink: 0;
     }
 
@@ -846,6 +841,7 @@
     .actions-cell {
       display: flex;
       align-items: center;
+      gap: 4px;
       gap: 4px;
       white-space: nowrap;
     }
@@ -1733,7 +1729,7 @@
               </div>
             </div>
             <div class="header-spacer"></div>
-            <button class="btn btn-primary" onclick="openNewSessionModal()">Create session</button>
+            <button class="btn btn-primary" onclick="openNewSessionModal()">+ Session</button>
           </div>
           <!-- Row 2: filters + search -->
           <div class="filter-row">
@@ -2625,11 +2621,12 @@
     }
 
     function getSendLinkBtn(sessionId) {
-      var chev = icons.chevronDown;
-      return '<div class="split-btn split-btn-secondary send-link-btn">'
-        + '<button class="split-main" onclick="openSendLinkMenu(' + sessionId + ',event)">Send link</button>'
-        + '<button class="split-toggle" onclick="openSendLinkMenu(' + sessionId + ',event)">' + chev + '</button>'
-        + '</div>';
+      return '<button class="btn-send-link" title="Send link" onclick="openSendLinkMenu(' + sessionId + ',event)">'
+        + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        + '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>'
+        + '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'
+        + '</svg>'
+        + '</button>';
     }
 
     function openSendLinkMenu(sessionId, event) {
