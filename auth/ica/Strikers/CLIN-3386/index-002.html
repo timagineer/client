@@ -2713,7 +2713,7 @@
     }
 
     function getSendLinkBtn(sessionId) {
-      return '<button class="btn-send-link-text" onclick="openSendLinkMenu(' + sessionId + ',event)">Send link</button>';
+      return '<button class="btn-send-link-text" onclick="openSendLinkMenu(' + sessionId + ',event,this)">Send link</button>';
     }
 
 
@@ -2741,7 +2741,7 @@
       if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
     }
 
-    function openSendLinkMenu(sessionId, event) {
+    function openSendLinkMenu(sessionId, event, btn) {
       event.stopPropagation();
       var items = [
         { label: 'Email', fn: function () { showToast('Link sent via email'); } },
@@ -2754,7 +2754,7 @@
           }
         }
       ];
-      openContextMenu(items, event.currentTarget, event);
+      openContextMenu(items, btn, event);
     }
 
     function showToast(msg) {
