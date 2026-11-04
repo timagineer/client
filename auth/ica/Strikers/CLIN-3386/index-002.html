@@ -2335,565 +2335,581 @@
 
       if (status !== 'ended' && status !== 'absent') {
         html += '<div class="menu-section-label">Send link</div>';
-        html += mi('Email', 'sendLink(' + idArg + ", 'email')");
-        html += mi('SMS', 'sendLink(' + idArg + ", 'sms')");
-        html += mi('Copy link', 'sendLink(' + idArg + ", 'copy')");
-        html += '<hr>';
+        if (status === 'insession') {
+          var endArg = groupId ? groupId + ', ' + id : id;
+          html += mi('Join', 'joinSession(' + idArg + ')');
+          html += mi('End session', 'endSession(' + endArg + ')');
+          html += '<hr>';
+        } else if (status === 'mixed') {
+          html += mi('Admit all arrived', 'admitAll(' + idArg + ')');
+          html += mi('End group session', 'endGroup(' + idArg + ')');
+          html += '<hr>';
+        } else if (status === 'absent') {
+          var undoArg = groupId ? groupId + ', ' + id : id;
+          html += mi('Undo no-show', 'undoNoShow(' + undoArg + ')');
+          html += '<hr>';
+        } else if (status === 'ended') {
+          html += mi('Restart', 'restartSession(' + idArg + ')');
+          html += '<hr>';
+        } else if (status === 'waiting') {
+          var admitFn = type === 'member' ? 'admitMember(' + groupId + ',' + idArg + ')' : 'admitSession(' + idArg + ')';
+          html += mi('Admit', admitFn);
+          var noShowArg = groupId ? groupId + ', ' + id : id;
+          html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
+          html += '<hr>';
+        } else if (status === 'scheduled') {
+          var noShowArg = groupId ? groupId + ', ' + id : id;
+          html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
+          html += '<hr>';
+        }
+
+        var removeArg = groupId ? groupId + ', ' + id : id;
+        html += mi('Remove session', 'confirmRemoveSession(' + removeArg + ')', true);
+        return html;
       }
 
-      if (status === 'insession') {
-        var endArg = groupId ? groupId + ', ' + id : id;
-        html += mi('Join', 'joinSession(' + idArg + ')');
-        html += mi('End session', 'endSession(' + endArg + ')');
-        html += '<hr>';
-      } else if (status === 'mixed') {
-        html += mi('Admit all arrived', 'admitAll(' + idArg + ')');
-        html += mi('End group session', 'endGroup(' + idArg + ')');
-        html += '<hr>';
-      } else if (status === 'absent') {
-        var undoArg = groupId ? groupId + ', ' + id : id;
-        html += mi('Undo no-show', 'undoNoShow(' + undoArg + ')');
-        html += '<hr>';
-      } else if (status === 'ended') {
-        html += mi('Restart', 'restartSession(' + idArg + ')');
-        html += '<hr>';
-      } else if (status === 'waiting') {
-        var admitFn = type === 'member' ? 'admitMember(' + groupId + ',' + idArg + ')' : 'admitSession(' + idArg + ')';
-        html += mi('Admit', admitFn);
-        var noShowArg = groupId ? groupId + ', ' + id : id;
-        html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
-        html += '<hr>';
-      } else if (status === 'scheduled') {
-        var noShowArg = groupId ? groupId + ', ' + id : id;
-        html += mi('Mark no-show', 'markNoShow(' + noShowArg + ')');
-        html += '<hr>';
+      // ===== Status Transitions =====
+
+      function findSession(id) {
+        return sessions.find(function (s) { return s.id === id; });
       }
 
-      var removeArg = groupId ? groupId + ', ' + id : id;
-      html += mi('Remove session', 'confirmRemoveSession(' + removeArg + ')', true);
-      return html;
-    }
+      function findMember(groupId, memberId) {
+        var group = findSession(groupId);
+        return group && group.members ? group.members.find(function (m) { return m.id === memberId; }) : null;
+      }
 
-    // ===== Status Transitions =====
-
-    function findSession(id) {
-      return sessions.find(function (s) { return s.id === id; });
-    }
-
-    function findMember(groupId, memberId) {
-      var group = findSession(groupId);
-      return group && group.members ? group.members.find(function (m) { return m.id === memberId; }) : null;
-    }
-
-    function admitSession(id) {
-      var s = findSession(id);
-      if (!s) return;
-      s.status = 'insession';
-      if (s.session === null || s.session === undefined) s.session = 0;
-      render(); updateSortHeaders();
-      showToast(s.name + ' admitted');
-    }
-
-    function admitMember(groupId, memberId) {
-      var m = findMember(groupId, memberId);
-      if (!m) return;
-      m.status = 'insession';
-      if (m.session === null || m.session === undefined) m.session = 0;
-      updateGroupStatus(groupId);
-      render(); updateSortHeaders();
-      showToast(m.name + ' admitted');
-    }
-
-    function admitAll(groupId) {
-      var group = findSession(groupId);
-      if (!group || !group.members) return;
-      var count = 0;
-      group.members.forEach(function (m) {
-        if (m.status === 'waiting') { m.status = 'insession'; if (!m.session) m.session = 0; count++; }
-      });
-      updateGroupStatus(groupId);
-      render(); updateSortHeaders();
-      showToast(count + ' participants admitted');
-    }
-
-    function joinSession(id) {
-      showToast('Opening session...', 'info');
-    }
-
-    function endSession(groupId, memberId) {
-      if (memberId !== undefined) {
-        var m = findMember(groupId, memberId);
-        if (!m) return;
-        m.status = 'ended';
-        updateGroupStatus(groupId);
-      } else {
-        var s = findSession(groupId);
+      function admitSession(id) {
+        var s = findSession(id);
         if (!s) return;
-        s.status = 'ended';
+        s.status = 'insession';
+        if (s.session === null || s.session === undefined) s.session = 0;
+        render(); updateSortHeaders();
+        showToast(s.name + ' admitted');
       }
-      render(); updateSortHeaders();
-      showToast('Session ended');
-    }
 
-    function endGroup(groupId) {
-      var group = findSession(groupId);
-      if (!group || !group.members) return;
-      group.members.forEach(function (m) {
-        if (m.status === 'insession' || m.status === 'waiting') m.status = 'ended';
-      });
-      updateGroupStatus(groupId);
-      render(); updateSortHeaders();
-      showToast('Group session ended');
-    }
-
-    function restartSession(id) {
-      var s = findSession(id);
-      if (!s) return;
-      s.status = 'waiting';
-      s.session = null;
-      render(); updateSortHeaders();
-      showToast('Session restarted — patient notified');
-    }
-
-    function markNoShow(groupId, memberId) {
-      if (memberId !== undefined) {
+      function admitMember(groupId, memberId) {
         var m = findMember(groupId, memberId);
         if (!m) return;
-        m.status = 'absent'; m.waiting = null; m.session = null;
+        m.status = 'insession';
+        if (m.session === null || m.session === undefined) m.session = 0;
         updateGroupStatus(groupId);
         render(); updateSortHeaders();
-        showToast(m.name + ' marked as no-show');
-      } else {
-        var s = findSession(groupId);
-        if (!s) return;
-        s.status = 'absent'; s.waiting = null; s.session = null;
-        render(); updateSortHeaders();
-        showToast(s.name + ' marked as no-show');
+        showToast(m.name + ' admitted');
       }
-    }
 
-    function undoNoShow(groupId, memberId) {
-      if (memberId !== undefined) {
-        var m = findMember(groupId, memberId);
-        if (!m) return;
-        m.status = 'scheduled';
-        updateGroupStatus(groupId);
-      } else {
-        var s = findSession(groupId);
-        if (!s) return;
-        s.status = 'scheduled';
-      }
-      render(); updateSortHeaders();
-      showToast('No-show undone');
-    }
-
-    function removeSession(groupId, memberId) {
-      if (memberId !== undefined) {
+      function admitAll(groupId) {
         var group = findSession(groupId);
         if (!group || !group.members) return;
-        group.members = group.members.filter(function (m) { return m.id !== memberId; });
-        group.participants = group.members.length;
+        var count = 0;
+        group.members.forEach(function (m) {
+          if (m.status === 'waiting') { m.status = 'insession'; if (!m.session) m.session = 0; count++; }
+        });
         updateGroupStatus(groupId);
         render(); updateSortHeaders();
-        showToast('Participant removed');
-      } else {
-        var idx = sessions.findIndex(function (s) { return s.id === groupId; });
-        if (idx !== -1) { sessions.splice(idx, 1); render(); updateSortHeaders(); }
-        showToast('Session removed');
+        showToast(count + ' participants admitted');
       }
-    }
 
-    function updateGroupStatus(groupId) {
-      var group = findSession(groupId);
-      if (!group || !group.members) return;
-      var waiting = group.members.filter(function (m) { return m.status === 'waiting'; }).length;
-      var inSession = group.members.filter(function (m) { return m.status === 'insession'; }).length;
-      var scheduled = group.members.filter(function (m) { return m.status === 'scheduled'; }).length;
-      var absent = group.members.filter(function (m) { return m.status === 'absent'; }).length;
-      var copayDone = group.members.filter(function (m) { return m.copay === true; }).length;
-      var copayApplicable = group.members.filter(function (m) { return m.copay !== null; }).length;
-      group.copay = copayDone + '/' + copayApplicable;
-      group.participants = group.members.length;
-      var parts = [];
-      if (inSession > 0) parts.push(inSession + ' in session');
-      if (waiting > 0) parts.push(waiting + ' waiting');
-      if (absent > 0) parts.push(absent + ' absent');
-      group.statusText = parts.join(' · ') || (scheduled > 0 ? 'Scheduled' : 'Ended');
-      if (inSession > 0 || waiting > 0) { group.status = 'mixed'; }
-      else if (group.members.every(function (m) { return m.status === 'ended' || m.status === 'absent'; })) { group.status = 'ended'; }
-      else { group.status = 'scheduled'; }
-    }
+      function joinSession(id) {
+        showToast('Opening session...', 'info');
+      }
 
-    function sendLink(id, method) {
-      if (method === 'copy') {
-        var url = 'https://portal.icanotes.com/join/' + id;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(url).then(function () {
-            showToast('Link copied to clipboard');
-          }).catch(function () {
-            showToast('Could not copy — paste manually: ' + url, 'error');
-          });
+      function endSession(groupId, memberId) {
+        if (memberId !== undefined) {
+          var m = findMember(groupId, memberId);
+          if (!m) return;
+          m.status = 'ended';
+          updateGroupStatus(groupId);
         } else {
-          showToast('Could not copy — paste manually: ' + url, 'error');
+          var s = findSession(groupId);
+          if (!s) return;
+          s.status = 'ended';
         }
-      } else if (method === 'sms') {
-        showToast('SMS could not be delivered — check number and try again', 'error');
-      } else {
-        var msgs = { email: 'Link sent via email' };
-        showToast(msgs[method] || 'Link sent');
+        render(); updateSortHeaders();
+        showToast('Session ended');
       }
-    }
 
-    // ===== Toast =====
-    var _toastIcons = {
-      success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
-      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
-      info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
-    };
-
-    function showToast(msg, type) {
-      type = type || 'success';
-      var container = document.getElementById('toastContainer');
-      if (!container) return;
-      var t = document.createElement('div');
-      t.className = 'toast ' + type;
-      t.innerHTML = (_toastIcons[type] || _toastIcons.success) + '<span>' + msg + '</span>';
-      container.appendChild(t);
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () { t.classList.add('show'); });
-      });
-      setTimeout(function () {
-        t.classList.add('leaving');
-        t.classList.remove('show');
-        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 150);
-      }, 2500);
-    }
-
-    function render() {
-      const filtered = getFilteredData();
-      const sorted = getSortedData(filtered);
-      const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
-      if (currentPage > totalPages) currentPage = totalPages;
-      const start = (currentPage - 1) * pageSize;
-      const paged = sorted.slice(start, start + pageSize);
-      const tbody = document.getElementById('tableBody');
-      tbody.innerHTML = paged.map(renderRow).join('');
-      updatePagination(sorted.length, totalPages);
-    }
-
-    function updatePagination(total, totalPages) {
-      // Count label
-      var countEl = document.getElementById('pageCount');
-      if (countEl) {
-        var start = Math.min((currentPage - 1) * pageSize + 1, total);
-        var end = Math.min(currentPage * pageSize, total);
-        countEl.textContent = total === 0 ? 'No sessions' : start + '–' + end + ' of ' + total + ' sessions';
+      function endGroup(groupId) {
+        var group = findSession(groupId);
+        if (!group || !group.members) return;
+        group.members.forEach(function (m) {
+          if (m.status === 'insession' || m.status === 'waiting') m.status = 'ended';
+        });
+        updateGroupStatus(groupId);
+        render(); updateSortHeaders();
+        showToast('Group session ended');
       }
-      // Page buttons
-      var btnFirst = document.getElementById('btnFirst');
-      var btnPrev = document.getElementById('btnPrev');
-      var btnNext = document.getElementById('btnNext');
-      var btnLast = document.getElementById('btnLast');
-      var pgNums = document.getElementById('pageNums');
-      if (btnFirst) btnFirst.disabled = currentPage <= 1;
-      if (btnPrev) btnPrev.disabled = currentPage <= 1;
-      if (btnNext) btnNext.disabled = currentPage >= totalPages;
-      if (btnLast) btnLast.disabled = currentPage >= totalPages;
-      if (pgNums) {
-        pgNums.innerHTML = '';
-        for (var i = 1; i <= totalPages; i++) {
-          var btn = document.createElement('button');
-          btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
-          btn.textContent = i;
-          btn.dataset.page = i;
-          btn.onclick = function () { goToPage(parseInt(this.dataset.page)); };
-          pgNums.appendChild(btn);
+
+      function restartSession(id) {
+        var s = findSession(id);
+        if (!s) return;
+        s.status = 'waiting';
+        s.session = null;
+        render(); updateSortHeaders();
+        showToast('Session restarted — patient notified');
+      }
+
+      function markNoShow(groupId, memberId) {
+        if (memberId !== undefined) {
+          var m = findMember(groupId, memberId);
+          if (!m) return;
+          m.status = 'absent'; m.waiting = null; m.session = null;
+          updateGroupStatus(groupId);
+          render(); updateSortHeaders();
+          showToast(m.name + ' marked as no-show');
+        } else {
+          var s = findSession(groupId);
+          if (!s) return;
+          s.status = 'absent'; s.waiting = null; s.session = null;
+          render(); updateSortHeaders();
+          showToast(s.name + ' marked as no-show');
         }
       }
-    }
 
-    function goToPage(n) {
-      currentPage = n;
-      render();
-      updateSortHeaders();
-    }
+      function undoNoShow(groupId, memberId) {
+        if (memberId !== undefined) {
+          var m = findMember(groupId, memberId);
+          if (!m) return;
+          m.status = 'scheduled';
+          updateGroupStatus(groupId);
+        } else {
+          var s = findSession(groupId);
+          if (!s) return;
+          s.status = 'scheduled';
+        }
+        render(); updateSortHeaders();
+        showToast('No-show undone');
+      }
 
-    render();
-    updateSortHeaders();
+      function removeSession(groupId, memberId) {
+        if (memberId !== undefined) {
+          var group = findSession(groupId);
+          if (!group || !group.members) return;
+          group.members = group.members.filter(function (m) { return m.id !== memberId; });
+          group.participants = group.members.length;
+          updateGroupStatus(groupId);
+          render(); updateSortHeaders();
+          showToast('Participant removed');
+        } else {
+          var idx = sessions.findIndex(function (s) { return s.id === groupId; });
+          if (idx !== -1) { sessions.splice(idx, 1); render(); updateSortHeaders(); }
+          showToast('Session removed');
+        }
+      }
 
-    // ===== Confirm Dialog (DO-12982 pattern) =====
-    function openConfirmDialog(title, message, actionLabel, callback) {
-      var dialog = document.getElementById('confirmDialog');
-      if (!dialog) return;
-      document.getElementById('confirmTitle').textContent = title;
-      document.getElementById('confirmMessage').textContent = message;
-      var btn = document.getElementById('confirmBtn');
-      btn.textContent = actionLabel;
-      btn.onclick = function () { closeConfirmDialog(); callback(); };
-      dialog.showModal();
-      requestAnimationFrame(function () { dialog.classList.add('animate-in'); });
-    }
+      function updateGroupStatus(groupId) {
+        var group = findSession(groupId);
+        if (!group || !group.members) return;
+        var waiting = group.members.filter(function (m) { return m.status === 'waiting'; }).length;
+        var inSession = group.members.filter(function (m) { return m.status === 'insession'; }).length;
+        var scheduled = group.members.filter(function (m) { return m.status === 'scheduled'; }).length;
+        var absent = group.members.filter(function (m) { return m.status === 'absent'; }).length;
+        var copayDone = group.members.filter(function (m) { return m.copay === true; }).length;
+        var copayApplicable = group.members.filter(function (m) { return m.copay !== null; }).length;
+        group.copay = copayDone + '/' + copayApplicable;
+        group.participants = group.members.length;
+        var parts = [];
+        if (inSession > 0) parts.push(inSession + ' in session');
+        if (waiting > 0) parts.push(waiting + ' waiting');
+        if (absent > 0) parts.push(absent + ' absent');
+        group.statusText = parts.join(' · ') || (scheduled > 0 ? 'Scheduled' : 'Ended');
+        if (inSession > 0 || waiting > 0) { group.status = 'mixed'; }
+        else if (group.members.every(function (m) { return m.status === 'ended' || m.status === 'absent'; })) { group.status = 'ended'; }
+        else { group.status = 'scheduled'; }
+      }
 
-    function closeConfirmDialog() {
-      var dialog = document.getElementById('confirmDialog');
-      if (!dialog || !dialog.open) return;
-      dialog.classList.add('closing');
-      dialog.addEventListener('transitionend', function () {
-        dialog.classList.remove('animate-in', 'closing');
-        dialog.close();
-      }, { once: true });
-    }
+      function sendLink(id, method) {
+        if (method === 'copy') {
+          var url = 'https://portal.icanotes.com/join/' + id;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () {
+              showToast('Link copied to clipboard');
+            }).catch(function () {
+              showToast('Could not copy — paste manually: ' + url, 'error');
+            });
+          } else {
+            showToast('Could not copy — paste manually: ' + url, 'error');
+          }
+        } else if (method === 'sms') {
+          showToast('SMS could not be delivered — check number and try again', 'error');
+        } else {
+          var msgs = { email: 'Link sent via email' };
+          showToast(msgs[method] || 'Link sent');
+        }
+      }
 
-    function confirmRemoveSession(id, groupId) {
-      var s = groupId ? findMember(groupId, id) : findSession(id);
-      var name = s ? s.name : 'this session';
-      var isGroup = !groupId && s && s.type === 'group';
-      var title = isGroup ? 'Remove group session?' : 'Remove session?';
-      var msg = isGroup
-        ? name + ' and all ' + (s.members ? s.members.length : '') + ' participants will be removed from the waiting room.'
-        : name + ' will be removed from the waiting room.';
-      var label = isGroup ? 'Remove group' : 'Remove session';
-      openConfirmDialog(title, msg, label, function () {
-        if (groupId) { removeSession(groupId, id); } else { removeSession(id); }
-      });
-    }
+      // ===== Toast =====
+      var _toastIcons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+        info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+      };
 
-    // ===== Date Navigation =====
-    var currentDate = new Date('2026-09-30T12:00:00');
+      function showToast(msg, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var t = document.createElement('div');
+        t.className = 'toast ' + type;
+        t.innerHTML = (_toastIcons[type] || _toastIcons.success) + '<span>' + msg + '</span>';
+        container.appendChild(t);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { t.classList.add('show'); });
+        });
+        setTimeout(function () {
+          t.classList.add('leaving');
+          t.classList.remove('show');
+          setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 150);
+        }, 2500);
+      }
 
-    function formatDate(d) {
-      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-    }
+      function render() {
+        const filtered = getFilteredData();
+        const sorted = getSortedData(filtered);
+        const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * pageSize;
+        const paged = sorted.slice(start, start + pageSize);
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = paged.map(renderRow).join('');
+        updatePagination(sorted.length, totalPages);
+      }
 
-    function updateDateDisplay() {
-      var iso = currentDate.toISOString().slice(0, 10);
-      var picker = document.getElementById('datePicker');
-      var display = document.getElementById('dateDisplay');
-      if (picker) picker.value = iso;
-      if (display) display.textContent = formatDate(currentDate);
-    }
-
-    function openDatePicker() {
-      var picker = document.getElementById('datePicker');
-      if (picker) picker.click();
-    }
-
-    function onDateChange(val) {
-      if (!val) return;
-      currentDate = new Date(val + 'T12:00:00');
-      updateDateDisplay();
-    }
-
-    function goToToday() {
-      var today = new Date();
-      var iso = today.toISOString().slice(0, 10);
-      document.getElementById('dateFrom').value = iso;
-      document.getElementById('dateTo').value = iso;
-      onDateChange(iso);
-    }
-
-    function onDateRangeChange() {
-      var from = document.getElementById('dateFrom').value;
-      var to = document.getElementById('dateTo').value;
-      if (to && to < from) { document.getElementById('dateTo').value = from; }
-      onDateChange(from);
-    }
-
-    var activeFilters = { client: '', clinician: '', status: '' };
-
-    function applyFilters() {
-      activeFilters.client = (document.getElementById('filterClient') || {}).value || '';
-      activeFilters.clinician = (document.getElementById('filterClinician') || {}).value || '';
-      activeFilters.status = (document.getElementById('filterStatus') || {}).value || '';
-      currentPage = 1;
-      render();
-    }
-
-    function formatDateCell(time) {
-      var from = document.getElementById('dateFrom');
-      var dateStr = from ? from.value : '';
-      if (!dateStr) return time;
-      var d = new Date(dateStr + 'T00:00:00');
-      var mm = String(d.getMonth() + 1).padStart(2, '0');
-      var dd = String(d.getDate()).padStart(2, '0');
-      var yyyy = d.getFullYear();
-      return mm + '/' + dd + '/' + yyyy + ' ' + time;
-    }
-
-    function getSendLinkBtn(sessionId) {
-      return '<button class="btn-send-link-text" onclick="openSendLinkMenu(' + sessionId + ',event)">Send link</button>';
-    }
-
-    function openSendLinkMenu(sessionId, event) {
-      event.stopPropagation();
-      var items = [
-        { label: 'Email', fn: function () { showToast('Link sent via email'); } },
-        { label: 'SMS', fn: function () { showToast('Link sent via SMS'); } },
-        { label: 'Email & SMS', fn: function () { showToast('Link sent via email and SMS'); } },
-        {
-          label: 'Copy link', fn: function () {
-            if (navigator.clipboard) navigator.clipboard.writeText('https://ica.app/tele/' + sessionId);
-            showToast('Link copied to clipboard');
+      function updatePagination(total, totalPages) {
+        // Count label
+        var countEl = document.getElementById('pageCount');
+        if (countEl) {
+          var start = Math.min((currentPage - 1) * pageSize + 1, total);
+          var end = Math.min(currentPage * pageSize, total);
+          countEl.textContent = total === 0 ? 'No sessions' : start + '–' + end + ' of ' + total + ' sessions';
+        }
+        // Page buttons
+        var btnFirst = document.getElementById('btnFirst');
+        var btnPrev = document.getElementById('btnPrev');
+        var btnNext = document.getElementById('btnNext');
+        var btnLast = document.getElementById('btnLast');
+        var pgNums = document.getElementById('pageNums');
+        if (btnFirst) btnFirst.disabled = currentPage <= 1;
+        if (btnPrev) btnPrev.disabled = currentPage <= 1;
+        if (btnNext) btnNext.disabled = currentPage >= totalPages;
+        if (btnLast) btnLast.disabled = currentPage >= totalPages;
+        if (pgNums) {
+          pgNums.innerHTML = '';
+          for (var i = 1; i <= totalPages; i++) {
+            var btn = document.createElement('button');
+            btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+            btn.textContent = i;
+            btn.dataset.page = i;
+            btn.onclick = function () { goToPage(parseInt(this.dataset.page)); };
+            pgNums.appendChild(btn);
           }
         }
-      ];
-      openContextMenu(items, event.currentTarget, event);
-    }
-
-    function showToast(msg) {
-      var t = document.createElement('div');
-      t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
-        + 'background:var(--neutral-15);color:#fff;padding:8px 16px;border-radius:6px;'
-        + 'font-size:13px;z-index:9999;pointer-events:none;white-space:nowrap;';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(function () { t.remove(); }, 2500);
-    }
-
-    function navigateDay(delta) {
-      currentDate = new Date(currentDate.getTime() + delta * 86400000);
-      updateDateDisplay();
-    }
-
-    // ===== New Session Modal =====
-    var patientType = 'existing';
-
-    function getPatientPanelHTML(type) {
-      if (type === 'existing') {
-        return '<div class="modal-field"><label class="modal-field-label" for="ns-search">Search by name or chart ID</label><input id="ns-search" type="search" class="modal-field-input" placeholder="e.g. Rivera, Alex or #12345"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option value="email">Email</option><option value="sms">SMS</option></select></div>';
-      } else {
-        return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-email">Email</label><input id="ns-email" type="email" class="modal-field-input" placeholder="patient@email.com"></div>' +
-          '<div class="modal-field"><label class="modal-field-label" for="ns-send-ext">Send link via</label><select id="ns-send-ext" class="modal-field-select"><option value="email">Email</option></select></div>';
-      }
-    }
-
-    function setPatientType(type) {
-      patientType = type;
-      document.querySelectorAll('.patient-type-toggle button').forEach(function (btn) {
-        btn.classList.toggle('active', btn.dataset.type === type);
-      });
-
-      var panel = document.getElementById('patientPanel');
-      if (!panel) return;
-      var modal = panel.closest('.modal');
-      var backdrop = document.getElementById('newSessionModal');
-      var isOpen = backdrop && backdrop.classList.contains('open');
-
-      // If modal isn't open yet, just swap — no animation needed
-      if (!isOpen || !modal) {
-        panel.innerHTML = getPatientPanelHTML(type);
-        panel.className = 'modal-patient-panel';
-        return;
       }
 
-      // 1. Measure current height
-      var startH = modal.getBoundingClientRect().height;
+      function goToPage(n) {
+        currentPage = n;
+        render();
+        updateSortHeaders();
+      }
 
-      // 2. Lock modal height
-      modal.style.height = startH + 'px';
-      modal.style.overflow = 'hidden';
-      modal.style.transition = 'none';
+      render();
+      updateSortHeaders();
 
-      // 3. Swap content
-      panel.innerHTML = getPatientPanelHTML(type);
-      panel.className = 'modal-patient-panel';
+      // ===== Confirm Dialog (DO-12982 pattern) =====
+      function openConfirmDialog(title, message, actionLabel, callback) {
+        var dialog = document.getElementById('confirmDialog');
+        if (!dialog) return;
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        var btn = document.getElementById('confirmBtn');
+        btn.textContent = actionLabel;
+        btn.onclick = function () { closeConfirmDialog(); callback(); };
+        dialog.showModal();
+        requestAnimationFrame(function () { dialog.classList.add('animate-in'); });
+      }
 
-      // 4. Measure new height
-      modal.style.height = 'auto';
-      var endH = modal.getBoundingClientRect().height;
-
-      // 5. Animate from start to end
-      modal.style.height = startH + 'px';
-
-      requestAnimationFrame(function () {
-        modal.style.transition = 'height 220ms cubic-bezier(.165, .84, .44, 1)';
-        modal.style.height = endH + 'px';
-        modal.addEventListener('transitionend', function () {
-          modal.style.height = '';
-          modal.style.overflow = '';
-          modal.style.transition = '';
+      function closeConfirmDialog() {
+        var dialog = document.getElementById('confirmDialog');
+        if (!dialog || !dialog.open) return;
+        dialog.classList.add('closing');
+        dialog.addEventListener('transitionend', function () {
+          dialog.classList.remove('animate-in', 'closing');
+          dialog.close();
         }, { once: true });
-      });
-    }
+      }
 
-    function openNewSessionModal() {
-      patientType = 'existing';
-      // Set content first (no animation since backdrop not open yet)
-      setPatientType('existing');
-      // Pre-fill Start time with current time
-      document.getElementById('ns-time').value = new Date().toTimeString().slice(0, 5);
-      // Then open
-      document.getElementById('newSessionModal').classList.add('open');
-    }
+      function confirmRemoveSession(id, groupId) {
+        var s = groupId ? findMember(groupId, id) : findSession(id);
+        var name = s ? s.name : 'this session';
+        var isGroup = !groupId && s && s.type === 'group';
+        var title = isGroup ? 'Remove group session?' : 'Remove session?';
+        var msg = isGroup
+          ? name + ' and all ' + (s.members ? s.members.length : '') + ' participants will be removed from the waiting room.'
+          : name + ' will be removed from the waiting room.';
+        var label = isGroup ? 'Remove group' : 'Remove session';
+        openConfirmDialog(title, msg, label, function () {
+          if (groupId) { removeSession(groupId, id); } else { removeSession(id); }
+        });
+      }
 
-    function closeNewSessionModal() {
-      document.getElementById('newSessionModal').classList.remove('open');
-    }
+      // ===== Date Navigation =====
+      var currentDate = new Date('2026-09-30T12:00:00');
 
-    // Close on backdrop click + wire search + close menu on outside click
-    document.addEventListener('DOMContentLoaded', function () {
-      console.log('[DEBUG] DOMContentLoaded fired');
+      function formatDate(d) {
+        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      }
 
-      var modal = document.getElementById('newSessionModal');
-      if (modal) modal.addEventListener('click', function (e) {
-        if (e.target === this) closeNewSessionModal();
-      });
-      var searchEl = document.querySelector('.table-search-input');
-      if (searchEl) searchEl.addEventListener('input', function () {
-        searchQuery = this.value.trim();
+      function updateDateDisplay() {
+        var iso = currentDate.toISOString().slice(0, 10);
+        var picker = document.getElementById('datePicker');
+        var display = document.getElementById('dateDisplay');
+        if (picker) picker.value = iso;
+        if (display) display.textContent = formatDate(currentDate);
+      }
+
+      function openDatePicker() {
+        var picker = document.getElementById('datePicker');
+        if (picker) picker.click();
+      }
+
+      function onDateChange(val) {
+        if (!val) return;
+        currentDate = new Date(val + 'T12:00:00');
+        updateDateDisplay();
+      }
+
+      function goToToday() {
+        var today = new Date();
+        var iso = today.toISOString().slice(0, 10);
+        document.getElementById('dateFrom').value = iso;
+        document.getElementById('dateTo').value = iso;
+        onDateChange(iso);
+      }
+
+      function onDateRangeChange() {
+        var from = document.getElementById('dateFrom').value;
+        var to = document.getElementById('dateTo').value;
+        if (to && to < from) { document.getElementById('dateTo').value = from; }
+        onDateChange(from);
+      }
+
+      var activeFilters = { client: '', clinician: '', status: '' };
+
+      function applyFilters() {
+        activeFilters.client = (document.getElementById('filterClient') || {}).value || '';
+        activeFilters.clinician = (document.getElementById('filterClinician') || {}).value || '';
+        activeFilters.status = (document.getElementById('filterStatus') || {}).value || '';
         currentPage = 1;
         render();
-      });
-      // Outside-click handler
-      document.addEventListener('click', function (e) {
+      }
+
+      function formatDateCell(time) {
+        var from = document.getElementById('dateFrom');
+        var dateStr = from ? from.value : '';
+        if (!dateStr) return time;
+        var d = new Date(dateStr + 'T00:00:00');
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        var yyyy = d.getFullYear();
+        return mm + '/' + dd + '/' + yyyy + ' ' + time;
+      }
+
+      function getSendLinkBtn(sessionId) {
+        return '<button class="btn-send-link-text" onclick="openSendLinkMenu(' + sessionId + ',event)">Send link</button>';
+      }
+
+      var _contextMenuActions = [];
+
+      function openContextMenu(items, btn, event) {
+        _contextMenuActions = items.map(function (item) { return item.fn; });
         var menu = document.getElementById('actionMenu');
-        var noteBtn = e.target.closest('.note-start-btn');
-        if (noteBtn) {
-          e.stopPropagation();
-          var isSameBtn = _menuOpen && _menuOpenBtn === noteBtn;
-          if (isSameBtn) { hideMenu(); return; }
+        if (!menu) return;
+        var isSameBtn = _menuOpen && _menuOpenBtn === btn;
+        if (isSameBtn) { hideMenu(); return; }
+        var html = '';
+        items.forEach(function (item, i) {
+          html += '<button onclick="_contextMenuActions[' + i + ']();hideMenu();">' + item.label + '</button>';
+        });
+        var doOpen = function () {
+          menu.innerHTML = html;
+          positionMenu(menu, btn);
+          menu.style.display = 'block';
+          _menuOpen = true; _menuOpenBtn = btn;
+          requestAnimationFrame(function () { requestAnimationFrame(function () { menu.classList.add('open'); }); });
+        };
+        if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
+      }
 
-          var doOpenNote = function () {
-            var menu2 = document.getElementById('actionMenu');
-            if (!menu2) return;
-            var nid = parseInt(noteBtn.dataset.sessionId);
-            menu2.innerHTML = noteTypes.map(function (t) {
-              return '<button onclick="createNote(' + nid + ',\'' + t + '\');hideMenu();">' + t + '</button>';
-            }).join('');
-            positionMenu(menu2, noteBtn);
-            menu2.style.display = 'block';
-            _menuOpen = true;
-            _menuOpenBtn = noteBtn;
-            requestAnimationFrame(function () {
-              requestAnimationFrame(function () { menu2.classList.add('open'); });
-            });
-          };
+      function openSendLinkMenu(sessionId, event) {
+        event.stopPropagation();
+        var items = [
+          { label: 'Email', fn: function () { showToast('Link sent via email'); } },
+          { label: 'SMS', fn: function () { showToast('Link sent via SMS'); } },
+          { label: 'Email & SMS', fn: function () { showToast('Link sent via email and SMS'); } },
+          {
+            label: 'Copy link', fn: function () {
+              if (navigator.clipboard) navigator.clipboard.writeText('https://ica.app/tele/' + sessionId);
+              showToast('Link copied to clipboard');
+            }
+          }
+        ];
+        openContextMenu(items, event.currentTarget, event);
+      }
 
-          if (_menuOpen) { hideMenu(doOpenNote); } else { doOpenNote(); }
+      function showToast(msg) {
+        var t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
+          + 'background:var(--neutral-15);color:#fff;padding:8px 16px;border-radius:6px;'
+          + 'font-size:13px;z-index:9999;pointer-events:none;white-space:nowrap;';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(function () { t.remove(); }, 2500);
+      }
+
+      function navigateDay(delta) {
+        currentDate = new Date(currentDate.getTime() + delta * 86400000);
+        updateDateDisplay();
+      }
+
+      // ===== New Session Modal =====
+      var patientType = 'existing';
+
+      function getPatientPanelHTML(type) {
+        if (type === 'existing') {
+          return '<div class="modal-field"><label class="modal-field-label" for="ns-search">Search by name or chart ID</label><input id="ns-search" type="search" class="modal-field-input" placeholder="e.g. Rivera, Alex or #12345"></div>' +
+            '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label><select id="ns-send" class="modal-field-select"><option value="email">Email</option><option value="sms">SMS</option></select></div>';
+        } else {
+          return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
+            '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
+            '<div class="modal-field"><label class="modal-field-label" for="ns-email">Email</label><input id="ns-email" type="email" class="modal-field-input" placeholder="patient@email.com"></div>' +
+            '<div class="modal-field"><label class="modal-field-label" for="ns-send-ext">Send link via</label><select id="ns-send-ext" class="modal-field-select"><option value="email">Email</option></select></div>';
+        }
+      }
+
+      function setPatientType(type) {
+        patientType = type;
+        document.querySelectorAll('.patient-type-toggle button').forEach(function (btn) {
+          btn.classList.toggle('active', btn.dataset.type === type);
+        });
+
+        var panel = document.getElementById('patientPanel');
+        if (!panel) return;
+        var modal = panel.closest('.modal');
+        var backdrop = document.getElementById('newSessionModal');
+        var isOpen = backdrop && backdrop.classList.contains('open');
+
+        // If modal isn't open yet, just swap — no animation needed
+        if (!isOpen || !modal) {
+          panel.innerHTML = getPatientPanelHTML(type);
+          panel.className = 'modal-patient-panel';
           return;
         }
-        if (!menu || !_menuOpen) return;
-        if (!menu.contains(e.target) && !e.target.closest('.split-toggle')) hideMenu();
-      });
 
-      // Intercept Esc on confirm dialog to animate it out
-      var confirmDlg = document.getElementById('confirmDialog');
-      if (confirmDlg) confirmDlg.addEventListener('cancel', function (e) {
-        e.preventDefault();
-        closeConfirmDialog();
-      });
+        // 1. Measure current height
+        var startH = modal.getBoundingClientRect().height;
 
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-          hideMenu();
-          var backdrop = document.getElementById('newSessionModal');
-          if (backdrop && backdrop.classList.contains('open')) closeNewSessionModal();
-        }
+        // 2. Lock modal height
+        modal.style.height = startH + 'px';
+        modal.style.overflow = 'hidden';
+        modal.style.transition = 'none';
+
+        // 3. Swap content
+        panel.innerHTML = getPatientPanelHTML(type);
+        panel.className = 'modal-patient-panel';
+
+        // 4. Measure new height
+        modal.style.height = 'auto';
+        var endH = modal.getBoundingClientRect().height;
+
+        // 5. Animate from start to end
+        modal.style.height = startH + 'px';
+
+        requestAnimationFrame(function () {
+          modal.style.transition = 'height 220ms cubic-bezier(.165, .84, .44, 1)';
+          modal.style.height = endH + 'px';
+          modal.addEventListener('transitionend', function () {
+            modal.style.height = '';
+            modal.style.overflow = '';
+            modal.style.transition = '';
+          }, { once: true });
+        });
+      }
+
+      function openNewSessionModal() {
+        patientType = 'existing';
+        // Set content first (no animation since backdrop not open yet)
+        setPatientType('existing');
+        // Pre-fill Start time with current time
+        document.getElementById('ns-time').value = new Date().toTimeString().slice(0, 5);
+        // Then open
+        document.getElementById('newSessionModal').classList.add('open');
+      }
+
+      function closeNewSessionModal() {
+        document.getElementById('newSessionModal').classList.remove('open');
+      }
+
+      // Close on backdrop click + wire search + close menu on outside click
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('[DEBUG] DOMContentLoaded fired');
+
+        var modal = document.getElementById('newSessionModal');
+        if (modal) modal.addEventListener('click', function (e) {
+          if (e.target === this) closeNewSessionModal();
+        });
+        var searchEl = document.querySelector('.table-search-input');
+        if (searchEl) searchEl.addEventListener('input', function () {
+          searchQuery = this.value.trim();
+          currentPage = 1;
+          render();
+        });
+        // Outside-click handler
+        document.addEventListener('click', function (e) {
+          var menu = document.getElementById('actionMenu');
+          var noteBtn = e.target.closest('.note-start-btn');
+          if (noteBtn) {
+            e.stopPropagation();
+            var isSameBtn = _menuOpen && _menuOpenBtn === noteBtn;
+            if (isSameBtn) { hideMenu(); return; }
+
+            var doOpenNote = function () {
+              var menu2 = document.getElementById('actionMenu');
+              if (!menu2) return;
+              var nid = parseInt(noteBtn.dataset.sessionId);
+              menu2.innerHTML = noteTypes.map(function (t) {
+                return '<button onclick="createNote(' + nid + ',\'' + t + '\');hideMenu();">' + t + '</button>';
+              }).join('');
+              positionMenu(menu2, noteBtn);
+              menu2.style.display = 'block';
+              _menuOpen = true;
+              _menuOpenBtn = noteBtn;
+              requestAnimationFrame(function () {
+                requestAnimationFrame(function () { menu2.classList.add('open'); });
+              });
+            };
+
+            if (_menuOpen) { hideMenu(doOpenNote); } else { doOpenNote(); }
+            return;
+          }
+          if (!menu || !_menuOpen) return;
+          if (!menu.contains(e.target) && !e.target.closest('.split-toggle')) hideMenu();
+        });
+
+        // Intercept Esc on confirm dialog to animate it out
+        var confirmDlg = document.getElementById('confirmDialog');
+        if (confirmDlg) confirmDlg.addEventListener('cancel', function (e) {
+          e.preventDefault();
+          closeConfirmDialog();
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            hideMenu();
+            var backdrop = document.getElementById('newSessionModal');
+            if (backdrop && backdrop.classList.contains('open')) closeNewSessionModal();
+          }
+        });
       });
-    });
   </script>
 
   <!-- New Session Modal -->
