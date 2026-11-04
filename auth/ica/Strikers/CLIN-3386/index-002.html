@@ -2750,10 +2750,10 @@
       var id = String(sessionId);
       var doOpen = function () {
         menu.innerHTML =
-          '<button onclick="sendLink(' + id + ",\'email\'); hideMenu();">Email</button>" +
-          '<button onclick="sendLink(' + id + ",\'sms\'); hideMenu();">SMS</button>" +
-          '<button onclick="sendLink(' + id + ",\'both\'); hideMenu();">Email &amp; SMS</button>" +
-          '<button onclick="sendLink(' + id + ",\'copy\'); hideMenu();">Copy link</button>";
+          '<button onclick="sendLink(' + id + ',\'email\'); hideMenu();">Email</button>' +
+          '<button onclick="sendLink(' + id + ',\'sms\'); hideMenu();">SMS</button>' +
+          '<button onclick="sendLink(' + id + ',\'both\'); hideMenu();">Email &amp; SMS</button>' +
+          '<button onclick="sendLink(' + id + ',\'copy\'); hideMenu();">Copy link</button>';
         positionMenu(menu, btn);
         menu.style.display = 'block';
         _menuOpen = true;
