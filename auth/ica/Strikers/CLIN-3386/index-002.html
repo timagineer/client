@@ -942,6 +942,33 @@
       flex-shrink: 0;
     }
 
+    .btn-send-link {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid var(--border-btn);
+      border-radius: var(--rad);
+      background: #fff;
+      color: var(--neutral-40);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn-send-link:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+      color: var(--neutral-20);
+    }
+
+    .btn-send-link svg {
+      width: 14px;
+      height: 14px;
+    }
+
     /* Split buttons */
     .split-btn {
       display: inline-flex;
@@ -1709,17 +1736,21 @@
         </div>
 
         <!-- Page Toolbar -->
-                <div class="page-toolbar">
+        <div class="page-toolbar">
           <!-- Row 1: temporal nav + create session -->
           <div class="toolbar-row">
             <div class="date-nav-cluster">
               <button class="btn btn-outline btn-today" onclick="goToToday()">Today</button>
               <div class="nav-group">
                 <button class="btn btn-outline btn-icon" title="Previous" onclick="navigateDay(-1)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
                 </button>
                 <button class="btn btn-outline btn-icon" title="Next" onclick="navigateDay(1)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
                 </button>
               </div>
               <div class="date-range-wrap">
@@ -1768,14 +1799,17 @@
             <div class="header-spacer"></div>
             <div class="table-search">
               <span class="table-search-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.34-4.34" />
+                </svg>
               </span>
               <input type="search" class="table-search-input" id="searchInput" placeholder="Search patients or groups...">
             </div>
           </div>
         </div>
 
-          <!-- Table -->
+        <!-- Table -->
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
