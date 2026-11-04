@@ -930,6 +930,17 @@
       width: 130px;
     }
 
+    .date-range-input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary-30);
+    }
+
     .date-range-sep {
       font-size: 13px;
       color: var(--neutral-50);
@@ -979,7 +990,8 @@
 
     .filter-select:focus {
       outline: none;
-      border-color: var(--primary-50);
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
     }
 
     .send-link-btn {
@@ -2949,7 +2961,7 @@
     }
 
     function updateAcHighlight(items) {
-      items.forEach(function(el, i) {
+      items.forEach(function (el, i) {
         el.classList.toggle('ns-ac-active', i === _acIndex);
       });
       if (items[_acIndex]) items[_acIndex].scrollIntoView({ block: 'nearest' });
