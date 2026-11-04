@@ -1617,27 +1617,66 @@
     }
 
     /* ── Patient search autocomplete ── */
-    .modal-field--search { position: relative; }
+    .modal-field--search {
+      position: relative;
+    }
+
     .ns-autocomplete {
-      position: absolute; top: 100%; left: 0; right: 0;
-      background: #fff; border: 1px solid var(--border-btn);
-      border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-height: 180px; overflow-y: auto; z-index: 10;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border-btn);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 10;
       margin-top: 2px;
     }
+
     .ns-autocomplete-item {
-      padding: 8px 10px; font-size: 13px; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .ns-autocomplete-item:hover { background: var(--neutral-95); }
-    .ns-autocomplete-item .ns-chart { font-size: 11px; color: var(--neutral-50); }
+
+    .ns-autocomplete-item:hover {
+      background: var(--neutral-95);
+    }
+
+    .ns-autocomplete-item .ns-chart {
+      font-size: 11px;
+      color: var(--neutral-50);
+    }
+
     .ns-contact-panel {
-      background: var(--neutral-95); border-radius: 4px;
-      padding: 8px 10px; gap: 4px !important;
+      background: var(--neutral-95);
+      border-radius: 4px;
+      padding: 8px 10px;
+      gap: 4px !important;
     }
-    .ns-contact-row { display: flex; gap: 8px; align-items: center; font-size: 12px; }
-    .ns-contact-label { color: var(--neutral-50); min-width: 36px; }
-    .ns-contact-val { color: var(--neutral-25); font-weight: 500; }
+
+    .ns-contact-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .ns-contact-label {
+      color: var(--neutral-30);
+      min-width: 36px;
+    }
+
+    .ns-contact-val {
+      color: var(--neutral-25);
+      font-weight: 500;
+    }
 
     .modal-footer {
       display: flex;
@@ -2816,7 +2855,7 @@
 
     function getPatientPanelHTML(type) {
       if (type === 'existing') {
-        return '<div class="modal-field modal-field--search">'+'<label class="modal-field-label" for="ns-search">Patient name or chart ID</label>'+'<input id="ns-search" type="search" class="modal-field-input" autocomplete="off" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSearch(this.value)">'+'<div id="ns-autocomplete" class="ns-autocomplete" style="display:none;"></div>'+'</div>'+'<div id="ns-contact-panel" class="modal-field ns-contact-panel" style="display:none;">'+'<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>'+'<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>'+'</div>'+'<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>'+'<select id="ns-send" class="modal-field-select">'+'<option value="email">Email</option>'+'<option value="sms">SMS</option>'+'<option value="both">Both</option>'+'</select></div>';
+        return '<div class="modal-field modal-field--search">' + '<label class="modal-field-label" for="ns-search">Patient name or chart ID</label>' + '<input id="ns-search" type="search" class="modal-field-input" autocomplete="off" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSearch(this.value)">' + '<div id="ns-autocomplete" class="ns-autocomplete" style="display:none;"></div>' + '</div>' + '<div id="ns-contact-panel" class="modal-field ns-contact-panel" style="display:none;">' + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>' + '<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>' + '</div>' + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>' + '<select id="ns-send" class="modal-field-select">' + '<option value="email">Email</option>' + '<option value="sms">SMS</option>' + '<option value="both">Both</option>' + '</select></div>';
       } else {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
           '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
@@ -2874,30 +2913,30 @@
     }
 
     var mockPatients = [
-      { id:101, name:'Alex Rivera',   chart:'#10234', email:'alex.r@email.com',    phone:'(401) 555-1234' },
-      { id:102, name:'Harley David',  chart:'#10235', email:'h.david@email.com',   phone:'(401) 555-5678' },
-      { id:103, name:'Maria Chen',    chart:'#10236', email:'m.chen@email.com',    phone:'(401) 555-9012' },
-      { id:104, name:'Devon Brooks',  chart:'#10237', email:'d.brooks@email.com',  phone:'(401) 555-3456' },
-      { id:105, name:'Dana Pierce',   chart:'#10238', email:'dana.p@email.com',    phone:'(401) 555-7890' },
-      { id:106, name:'Jordan Ellis',  chart:'#10239', email:'j.ellis@email.com',   phone:'(401) 555-2345' },
-      { id:107, name:'Sam Torres',    chart:'#10240', email:'s.torres@email.com',  phone:'(401) 555-6789' }
+      { id: 101, name: 'Alex Rivera', chart: '#10234', email: 'alex.r@email.com', phone: '(401) 555-1234' },
+      { id: 102, name: 'Harley David', chart: '#10235', email: 'h.david@email.com', phone: '(401) 555-5678' },
+      { id: 103, name: 'Maria Chen', chart: '#10236', email: 'm.chen@email.com', phone: '(401) 555-9012' },
+      { id: 104, name: 'Devon Brooks', chart: '#10237', email: 'd.brooks@email.com', phone: '(401) 555-3456' },
+      { id: 105, name: 'Dana Pierce', chart: '#10238', email: 'dana.p@email.com', phone: '(401) 555-7890' },
+      { id: 106, name: 'Jordan Ellis', chart: '#10239', email: 'j.ellis@email.com', phone: '(401) 555-2345' },
+      { id: 107, name: 'Sam Torres', chart: '#10240', email: 's.torres@email.com', phone: '(401) 555-6789' }
     ];
 
     var _selectedPatient = null;
 
     function onPatientSearch(val) {
-      var box   = document.getElementById('ns-autocomplete');
+      var box = document.getElementById('ns-autocomplete');
       var panel = document.getElementById('ns-contact-panel');
       _selectedPatient = null;
       if (panel) panel.style.display = 'none';
       if (!val || val.length < 1) { if (box) box.style.display = 'none'; return; }
       var q = val.toLowerCase();
-      var matches = mockPatients.filter(function(p) {
+      var matches = mockPatients.filter(function (p) {
         return p.name.toLowerCase().includes(q) || p.chart.toLowerCase().includes(q);
       });
       if (!box) return;
       if (!matches.length) { box.style.display = 'none'; return; }
-      box.innerHTML = matches.map(function(p) {
+      box.innerHTML = matches.map(function (p) {
         return '<div class="ns-autocomplete-item" onclick="selectPatient(' + p.id + ')">'
           + '<span>' + p.name + '</span>'
           + '<span class="ns-chart">' + p.chart + '</span>'
@@ -2907,24 +2946,24 @@
     }
 
     function selectPatient(id) {
-      var p = mockPatients.find(function(x) { return x.id === id; });
+      var p = mockPatients.find(function (x) { return x.id === id; });
       if (!p) return;
       _selectedPatient = p;
-      var search  = document.getElementById('ns-search');
-      var box     = document.getElementById('ns-autocomplete');
-      var panel   = document.getElementById('ns-contact-panel');
+      var search = document.getElementById('ns-search');
+      var box = document.getElementById('ns-autocomplete');
+      var panel = document.getElementById('ns-contact-panel');
       var emailEl = document.getElementById('ns-contact-email');
       var phoneEl = document.getElementById('ns-contact-phone');
-      if (search)  search.value = p.name;
-      if (box)     box.style.display = 'none';
+      if (search) search.value = p.name;
+      if (box) box.style.display = 'none';
       if (emailEl) emailEl.textContent = p.email || '—';
       if (phoneEl) phoneEl.textContent = p.phone || '—';
-      if (panel)   panel.style.display = '';
+      if (panel) panel.style.display = '';
     }
 
     function submitNewSession() {
       var timeEl = document.getElementById('ns-time');
-      var time   = timeEl ? timeEl.value : '';
+      var time = timeEl ? timeEl.value : '';
       if (!time) { showToast('Start time required', 'error'); return; }
 
       var name;
@@ -2934,7 +2973,7 @@
         if (!name) { showToast('Select a patient', 'error'); return; }
       } else {
         var first = (document.getElementById('ns-first') || {}).value || '';
-        var last  = (document.getElementById('ns-last')  || {}).value || '';
+        var last = (document.getElementById('ns-last') || {}).value || '';
         var email = (document.getElementById('ns-email') || {}).value || '';
         first = first.trim(); last = last.trim(); email = email.trim();
         if (!first || !last || !email) { showToast('First name, last name and email required', 'error'); return; }
@@ -2945,21 +2984,21 @@
       var parts = time.split(':').map(Number);
       var hh = parts[0], mm = parts[1];
       var ampm = hh >= 12 ? 'PM' : 'AM';
-      var disp = (hh % 12 || 12) + ':' + String(mm).padStart(2,'0') + ' ' + ampm;
+      var disp = (hh % 12 || 12) + ':' + String(mm).padStart(2, '0') + ' ' + ampm;
 
       // Build new session
-      var maxId = sessions.reduce(function(a,s) { return Math.max(a, s.id||0); }, 0);
+      var maxId = sessions.reduce(function (a, s) { return Math.max(a, s.id || 0); }, 0);
       var newSession = {
-        id:       maxId + 1,
-        time:     disp,
-        name:     name,
-        clinician:'Sarah Rogers, LCSW',
-        copay:    false,
-        status:   'scheduled',
-        waiting:  null,
-        session:  null,
-        note:     null,
-        adHoc:    true
+        id: maxId + 1,
+        time: disp,
+        name: name,
+        clinician: 'Sarah Rogers, LCSW',
+        copay: false,
+        status: 'scheduled',
+        waiting: null,
+        session: null,
+        note: null,
+        adHoc: true
       };
 
       sessions.unshift(newSession);
