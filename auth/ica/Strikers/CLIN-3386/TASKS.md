@@ -81,6 +81,3 @@ Button label: **Create session**
 
 - [ ] **5.1** Telehealth Waiting Room as a Dashboard tab (provisional)
 - [ ] **5.2** Note in prototype: temporary placement pending sidebar IA redesign
-
----
-
