@@ -2782,14 +2782,7 @@
       if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
     }
 
-    function showToast(msg) {
-      var t = document.createElement('div');
-      t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
-        + 'background:var(--neutral-15);color:#fff;padding:8px 16px;border-radius:6px;'
-        + 'font-size:13px;z-index:9999;pointer-events:none;white-space:nowrap;';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(function () { t.remove(); }, 2500);
+, 2500);
     }
 
     function navigateDay(delta) {
