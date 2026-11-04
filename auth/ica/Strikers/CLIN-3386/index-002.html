@@ -2855,7 +2855,7 @@
 
     function getPatientPanelHTML(type) {
       if (type === 'existing') {
-        return '<div class="modal-field modal-field--search">' + '<label class="modal-field-label" for="ns-search">Patient name or chart ID</label>' + '<input id="ns-search" type="search" class="modal-field-input" autocomplete="off" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSearch(this.value)">' + '<div id="ns-autocomplete" class="ns-autocomplete" style="display:none;"></div>' + '</div>' + '<div id="ns-contact-panel" class="modal-field ns-contact-panel" style="display:none;">' + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>' + '<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>' + '</div>' + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>' + '<select id="ns-send" class="modal-field-select">' + '<option value="email">Email</option>' + '<option value="sms">SMS</option>' + '<option value="both">Both</option>' + '</select></div>';
+        return '<div class="modal-field modal-field--search">' + '<label class="modal-field-label" for="ns-search">Patient name or chart ID</label>' + '<input id="ns-search" type="search" class="modal-field-input" autocomplete="off" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSearch(this.value)" onkeydown="onPatientSearchKey(event)">' + '<div id="ns-autocomplete" class="ns-autocomplete" style="display:none;"></div>' + '</div>' + '<div id="ns-contact-panel" class="modal-field ns-contact-panel" style="display:none;">' + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>' + '<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>' + '</div>' + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>' + '<select id="ns-send" class="modal-field-select">' + '<option value="email">Email</option>' + '<option value="sms">SMS</option>' + '<option value="both">Both</option>' + '</select></div>';
       } else {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
           '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
@@ -2924,7 +2924,39 @@
 
     var _selectedPatient = null;
 
+    var _acIndex = -1;
+
+    function onPatientSearchKey(e) {
+      var box = document.getElementById('ns-autocomplete');
+      if (!box || box.style.display === 'none') return;
+      var items = box.querySelectorAll('.ns-autocomplete-item');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        _acIndex = Math.min(_acIndex + 1, items.length - 1);
+        updateAcHighlight(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        _acIndex = Math.max(_acIndex - 1, 0);
+        updateAcHighlight(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (_acIndex >= 0 && items[_acIndex]) items[_acIndex].click();
+      } else if (e.key === 'Escape') {
+        box.style.display = 'none';
+        _acIndex = -1;
+      }
+    }
+
+    function updateAcHighlight(items) {
+      items.forEach(function(el, i) {
+        el.classList.toggle('ns-ac-active', i === _acIndex);
+      });
+      if (items[_acIndex]) items[_acIndex].scrollIntoView({ block: 'nearest' });
+    }
+
     function onPatientSearch(val) {
+      _acIndex = -1;
       var box = document.getElementById('ns-autocomplete');
       var panel = document.getElementById('ns-contact-panel');
       _selectedPatient = null;
