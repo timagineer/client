@@ -2743,18 +2743,26 @@
 
     function openSendLinkMenu(sessionId, event, btn) {
       event.stopPropagation();
-      var items = [
-        { label: 'Email', fn: function () { showToast('Link sent via email'); } },
-        { label: 'SMS', fn: function () { showToast('Link sent via SMS'); } },
-        { label: 'Email & SMS', fn: function () { showToast('Link sent via email and SMS'); } },
-        {
-          label: 'Copy link', fn: function () {
-            if (navigator.clipboard) navigator.clipboard.writeText('https://ica.app/tele/' + sessionId);
-            showToast('Link copied to clipboard');
-          }
-        }
-      ];
-      openContextMenu(items, btn, event);
+      var menu = document.getElementById('actionMenu');
+      if (!menu) return;
+      var isSameBtn = _menuOpen && _menuOpenBtn === btn;
+      if (isSameBtn) { hideMenu(); return; }
+      var id = String(sessionId);
+      var doOpen = function () {
+        menu.innerHTML =
+          '<button onclick="sendLink(' + id + ",\'email\'); hideMenu();">Email</button>" +
+          '<button onclick="sendLink(' + id + ",\'sms\'); hideMenu();">SMS</button>" +
+          '<button onclick="sendLink(' + id + ",\'both\'); hideMenu();">Email &amp; SMS</button>" +
+          '<button onclick="sendLink(' + id + ",\'copy\'); hideMenu();">Copy link</button>";
+        positionMenu(menu, btn);
+        menu.style.display = 'block';
+        _menuOpen = true;
+        _menuOpenBtn = btn;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { menu.classList.add('open'); });
+        });
+      };
+      if (_menuOpen) { hideMenu(doOpen); } else { doOpen(); }
     }
 
     function showToast(msg) {
@@ -2970,4 +2978,4 @@
 
 </body>
 
-</html>
+</html><!-- DEPLOY_CHECK_1793832993 -->
