@@ -1554,6 +1554,54 @@
       box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
     }
 
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--neutral-30);
+      user-select: none;
+    }
+
+    .radio-option input[type="radio"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--neutral-60);
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: border-color 0.1s;
+    }
+
+    .radio-option input[type="radio"]:checked {
+      border-color: var(--secondary-60);
+      background: var(--secondary-60);
+    }
+
+    .radio-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
     .modal-form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2893,12 +2941,12 @@
           + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>'
           + '<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>'
           + '</div>'
-          + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>'
-          + '<select id="ns-send" class="modal-field-select">'
-          + '<option value="sms">Text</option>'
-          + '<option value="email">Email</option>'
-          + '<option value="both">Text &amp; Email</option>'
-          + '</select></div>';
+          + '<div class="modal-field"><span class="modal-field-label">Send link via</span>'
+          + '<div class="radio-group">'
+          + '<label class="radio-option"><input type="radio" name="ns-send" value="sms" checked><span>Text</span></label>'
+          + '<label class="radio-option"><input type="radio" name="ns-send" value="email"><span>Email</span></label>'
+          + '<label class="radio-option"><input type="radio" name="ns-send" value="both"><span>Text &amp; Email</span></label>'
+          + '</div></div>';
       } else {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
           '<div class="modal-field"><label class="modal-field-label" for="ns-last">Last name</label><input id="ns-last" type="text" class="modal-field-input" placeholder="Last name"></div>' +
