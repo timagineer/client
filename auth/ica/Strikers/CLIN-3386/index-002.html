@@ -1784,11 +1784,16 @@
 
     .modal-footer {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       gap: 10px;
       padding: 16px 20px;
       border-top: 1px solid var(--neutral-85);
+    }
+
+    .modal-footer-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
     }
 
     .modal-footer .btn {
@@ -3326,7 +3331,7 @@
             <path d="M10 14 21 3" />
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
           </svg></button>
-        <div style="display:flex;gap:10px;">
+        <div class="modal-footer-actions">
           <button class="btn btn-ghost" onclick="closeNewSessionModal()">Cancel</button>
           <button class="btn btn-primary" onclick="submitNewSession()">Create session</button>
         </div>
