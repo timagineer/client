@@ -3068,6 +3068,13 @@
 
     // Close on backdrop click + wire search + close menu on outside click
     document.addEventListener('DOMContentLoaded', function () {
+      // Delegate patient search keyboard nav on persistent panel
+      var _pPanel = document.getElementById('patientPanel');
+      if (_pPanel) {
+        _pPanel.addEventListener('keydown', function(e) {
+          if (e.target && e.target.id === 'ns-search') onPatientSearchKey(e);
+        });
+      }
       console.log('[DEBUG] DOMContentLoaded fired');
 
       var modal = document.getElementById('newSessionModal');
