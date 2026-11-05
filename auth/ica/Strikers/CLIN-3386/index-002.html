@@ -2867,12 +2867,10 @@
 
     function getPatientPanelHTML(type) {
       if (type === 'existing') {
-        return '<div class="modal-field">'
+        return '<div class="modal-field modal-field--search">'
           + '<label class="modal-field-label" for="ns-search">Patient name or chart ID</label>'
-          + '<input id="ns-search" type="text" class="modal-field-input" autocomplete="off" list="ns-patient-list" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSelect(this.value)">'
-          + '<datalist id="ns-patient-list">'
-          + mockPatients.map(function(p) { return '<option value="' + p.name + '" data-id="' + p.id + '">' + p.chart + '</option>'; }).join('')
-          + '</datalist>'
+          + '<input id="ns-search" type="text" class="modal-field-input" autocomplete="off" placeholder="e.g. Rivera, Alex or #12345" oninput="onPatientSearch(this.value)">'
+          + '<div id="ns-autocomplete" class="ns-autocomplete" style="display:none;"></div>'
           + '</div>'
           + '<div id="ns-contact-panel" class="modal-field ns-contact-panel" style="display:none;">'
           + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>'
@@ -3109,12 +3107,14 @@
     // Close on backdrop click + wire search + close menu on outside click
     document.addEventListener('DOMContentLoaded', function () {
       // Delegate patient search keyboard nav on persistent panel
-      var _pPanel = document.getElementById('patientPanel');
-      if (_pPanel) {
-        _pPanel.addEventListener('keydown', function(e) {
-          if (e.target && e.target.id === 'ns-search') onPatientSearchKey(e);
-        });
-      }
+          // Capture-phase global listener — fires before anything can swallow the event
+      document.addEventListener('keydown', function(e) {
+        if (document.activeElement && document.activeElement.id === 'ns-search') {
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape') {
+            onPatientSearchKey(e);
+          }
+        }
+      }, true);
       console.log('[DEBUG] DOMContentLoaded fired');
 
       var modal = document.getElementById('newSessionModal');
