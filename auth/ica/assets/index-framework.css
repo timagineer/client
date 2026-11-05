@@ -229,12 +229,15 @@ td a:hover {
   margin-top: var(--space-xs);
 }
 
+.total-row::before {
+  content: '';
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
 .total-label {
   flex: 1;
-  font-family: var(--font-mono);
-  font-size: var(--font-size);
-  font-weight: 500;
-  color: var(--color-text-muted);
 }
 
 .total-count {
