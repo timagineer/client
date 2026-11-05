@@ -227,7 +227,7 @@ td a:hover {
   gap: var(--space-xs);
   padding: var(--space-s);
   margin-top: var(--space-xs);
-  opacity: 0.45;
+  filter: invert(1) opacity(0.45);
 }
 
 .total-row::before {
