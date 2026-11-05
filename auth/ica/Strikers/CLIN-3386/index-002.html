@@ -2962,10 +2962,9 @@
     }
 
     function updateAcHighlight(items) {
-      items.forEach(function (el, i) {
+      items.forEach(function(el, i) {
         el.classList.toggle('ns-ac-active', i === _acIndex);
       });
-      if (items[_acIndex]) items[_acIndex].scrollIntoView({ block: 'nearest' });
     }
 
     function onPatientSearch(val) {
