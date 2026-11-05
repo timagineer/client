@@ -2939,24 +2939,25 @@
     var _acIndex = -1;
 
     function onPatientSearchKey(e) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter' && e.key !== 'Escape') return;
       var box = document.getElementById('ns-autocomplete');
-      if (!box || box.style.display === 'none') return;
-      var items = box.querySelectorAll('.ns-autocomplete-item');
+      var items = box ? box.querySelectorAll('.ns-autocomplete-item') : [];
+      if (e.key === 'Escape') {
+        if (box) box.style.display = 'none';
+        _acIndex = -1;
+        e.preventDefault(); return;
+      }
       if (!items.length) return;
+      e.preventDefault();
+      e.stopPropagation();
       if (e.key === 'ArrowDown') {
-        e.preventDefault();
         _acIndex = Math.min(_acIndex + 1, items.length - 1);
         updateAcHighlight(items);
       } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
         _acIndex = Math.max(_acIndex - 1, 0);
         updateAcHighlight(items);
       } else if (e.key === 'Enter') {
-        e.preventDefault();
         if (_acIndex >= 0 && items[_acIndex]) items[_acIndex].click();
-      } else if (e.key === 'Escape') {
-        box.style.display = 'none';
-        _acIndex = -1;
       }
     }
 
