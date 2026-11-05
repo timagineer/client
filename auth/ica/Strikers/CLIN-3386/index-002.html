@@ -1660,6 +1660,7 @@
     .ns-autocomplete-item:hover {
       background: var(--neutral-95);
     }
+
     .ns-autocomplete-item.ns-ac-active {
       background: var(--neutral-85);
     }
@@ -2623,9 +2624,9 @@
           showToast('Could not copy — paste manually: ' + url, 'error');
         }
       } else if (method === 'sms') {
-        showToast('SMS could not be delivered — check number and try again', 'error');
+        showToast('Text could not be sent — check number and try again', 'error');
       } else {
-        var msgs = { email: 'Link sent via email' };
+        var msgs = { email: 'Link sent via email', sms: 'Link sent via text', both: 'Link sent via text & email' };
         showToast(msgs[method] || 'Link sent');
       }
     }
@@ -2845,8 +2846,8 @@
       var doOpen = function () {
         menu.innerHTML =
           '<button onclick="sendLink(' + id + ',\'email\'); hideMenu();">Email</button>' +
-          '<button onclick="sendLink(' + id + ',\'sms\'); hideMenu();">SMS</button>' +
-          '<button onclick="sendLink(' + id + ',\'both\'); hideMenu();">Email &amp; SMS</button>' +
+          '<button onclick="sendLink(' + id + ',\'sms\'); hideMenu();">Text</button>' +
+          '<button onclick="sendLink(' + id + ',\'both\'); hideMenu();">Text &amp; Email</button>' +
           '<button onclick="sendLink(' + id + ',\'copy\'); hideMenu();">Copy link</button>';
         positionMenu(menu, btn);
         menu.style.display = 'block';
@@ -2882,8 +2883,8 @@
           + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>'
           + '<select id="ns-send" class="modal-field-select">'
           + '<option value="email">Email</option>'
-          + '<option value="sms">SMS</option>'
-          + '<option value="both">Email &amp; SMS</option>'
+          + '<option value="sms">Text</option>'
+          + '<option value="both">Text &amp; Email</option>'
           + '</select></div>';
       } else {
         return '<div class="modal-field"><label class="modal-field-label" for="ns-first">First name</label><input id="ns-first" type="text" class="modal-field-input" placeholder="First name"></div>' +
@@ -2988,14 +2989,14 @@
     }
 
     function updateAcHighlight(items) {
-      items.forEach(function(el, i) {
+      items.forEach(function (el, i) {
         el.classList.toggle('ns-ac-active', i === _acIndex);
       });
     }
 
     function onPatientSelect(val) {
-      var p = mockPatients.find(function(x) { return x.name === val; });
-      var panel   = document.getElementById('ns-contact-panel');
+      var p = mockPatients.find(function (x) { return x.name === val; });
+      var panel = document.getElementById('ns-contact-panel');
       var emailEl = document.getElementById('ns-contact-email');
       var phoneEl = document.getElementById('ns-contact-phone');
       if (p) {
@@ -3110,8 +3111,8 @@
     // Close on backdrop click + wire search + close menu on outside click
     document.addEventListener('DOMContentLoaded', function () {
       // Delegate patient search keyboard nav on persistent panel
-          // Capture-phase global listener — fires before anything can swallow the event
-      document.addEventListener('keydown', function(e) {
+      // Capture-phase global listener — fires before anything can swallow the event
+      document.addEventListener('keydown', function (e) {
         if (document.activeElement && document.activeElement.id === 'ns-search') {
           if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape') {
             onPatientSearchKey(e);
@@ -3183,7 +3184,7 @@
   <div class="modal-backdrop" id="newSessionModal">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">New session</h2>
+        <h2 class="modal-title">Create session</h2>
         <button class="modal-close" onclick="closeNewSessionModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
