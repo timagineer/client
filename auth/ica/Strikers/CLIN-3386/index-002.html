@@ -1556,9 +1556,10 @@
 
     .radio-group {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-top: 2px;
+      flex-direction: row;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .radio-option {
@@ -1739,12 +1740,52 @@
       font-weight: 500;
     }
 
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--neutral-85);
+    .modal-field--inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-field--inline .modal-field-label {
+      white-space: nowrap;
+      margin: 0;
+    }
+
+    /* Tertiary text link button (Edit contacts) */
+    .btn-tertiary {
+      background: none;
+      border: none;
+      color: var(--primary-30);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 3px;
+      font-family: inherit;
+    }
+
+    .btn-tertiary:hover {
+      text-decoration: underline;
+    }
+
+    .btn-tertiary:focus-visible {
+      outline: 2px solid var(--primary-50);
+      outline-offset: 2px;
+    }
+
+    .btn-tertiary svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--neutral-85);
     }
 
     .modal-footer .btn {
@@ -2941,7 +2982,7 @@
           + '<div class="ns-contact-row"><span class="ns-contact-label">Email</span><span id="ns-contact-email" class="ns-contact-val">—</span></div>'
           + '<div class="ns-contact-row"><span class="ns-contact-label">Phone</span><span id="ns-contact-phone" class="ns-contact-val">—</span></div>'
           + '</div>'
-          + '<div class="modal-field"><span class="modal-field-label">Send link via</span>'
+          + '<div class="modal-field modal-field--inline"><span class="modal-field-label">Send link via</span>'
           + '<div class="radio-group">'
           + '<label class="radio-option"><input type="radio" name="ns-send" value="sms" checked><span>Text</span></label>'
           + '<label class="radio-option"><input type="radio" name="ns-send" value="email"><span>Email</span></label>'
@@ -2967,6 +3008,8 @@
       document.querySelectorAll('.patient-type-toggle button').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.type === type);
       });
+      var editBtn = document.getElementById('btnEditContacts');
+      if (editBtn) editBtn.style.display = type === 'existing' ? '' : 'none';
 
       var panel = document.getElementById('patientPanel');
       if (!panel) return;
@@ -3169,6 +3212,10 @@
       document.getElementById('newSessionModal').classList.remove('open');
     }
 
+    function editContacts() {
+      showToast('Opening patient contacts…', 'info');
+    }
+
     // Close on backdrop click + wire search + close menu on outside click
     document.addEventListener('DOMContentLoaded', function () {
       // Delegate patient search keyboard nav on persistent panel
@@ -3271,8 +3318,15 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-ghost" onclick="closeNewSessionModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="submitNewSession()">Create session</button>
+        <button class="btn-tertiary" id="btnEditContacts" style="display:none;" onclick="editContacts()" aria-label="Edit contacts (opens in new tab)">Edit contacts <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 3h6v6" />
+            <path d="M10 14 21 3" />
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          </svg></button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost" onclick="closeNewSessionModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="submitNewSession()">Create session</button>
+        </div>
       </div>
     </div>
   </div>
