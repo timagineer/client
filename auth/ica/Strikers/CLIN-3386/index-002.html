@@ -3110,6 +3110,9 @@
           // Capture-phase global listener — fires before anything can swallow the event
       document.addEventListener('keydown', function(e) {
         if (document.activeElement && document.activeElement.id === 'ns-search') {
+          // DEBUG: flash border to confirm handler fires
+          var _dbg = document.getElementById('ns-search');
+          if (_dbg) _dbg.style.outline = '2px solid red';
           if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape') {
             onPatientSearchKey(e);
           }
