@@ -240,6 +240,16 @@ td a:hover {
   flex: 1;
 }
 
+.total-count {
+  font-family: var(--font-mono);
+  font-size: var(--font-size);
+  font-weight: 500;
+  color: var(--color-surface);
+  background: var(--color-text);
+  padding: 0 0.5em;
+  border-radius: 1em;
+}
+
 /* Empty state */
 .no-results {
   display: none;
