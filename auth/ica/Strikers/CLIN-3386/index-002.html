@@ -2845,8 +2845,8 @@
       var id = String(sessionId);
       var doOpen = function () {
         menu.innerHTML =
-          '<button onclick="sendLink(' + id + ',\'email\'); hideMenu();">Email</button>' +
           '<button onclick="sendLink(' + id + ',\'sms\'); hideMenu();">Text</button>' +
+          '<button onclick="sendLink(' + id + ',\'email\'); hideMenu();">Email</button>' +
           '<button onclick="sendLink(' + id + ',\'both\'); hideMenu();">Text &amp; Email</button>' +
           '<button onclick="sendLink(' + id + ',\'copy\'); hideMenu();">Copy link</button>';
         positionMenu(menu, btn);
@@ -2882,8 +2882,8 @@
           + '</div>'
           + '<div class="modal-field"><label class="modal-field-label" for="ns-send">Send link via</label>'
           + '<select id="ns-send" class="modal-field-select">'
-          + '<option value="email">Email</option>'
           + '<option value="sms">Text</option>'
+          + '<option value="email">Email</option>'
           + '<option value="both">Text &amp; Email</option>'
           + '</select></div>';
       } else {
