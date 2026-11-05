@@ -966,6 +966,155 @@
       background: var(--neutral-80);
       border-radius: 2px;
     }
+
+    /* ========== Transaction Details Modal ========== */
+    .modal-header--primary {
+      background: var(--primary-35);
+    }
+
+    .modal-header--primary .modal-title {
+      color: #fff;
+    }
+
+    .modal-header--primary .modal-close {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .modal-header--primary .modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .td-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .td-card {
+      border: 1px solid var(--neutral-75);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .td-card--ro {
+      background: var(--neutral-95);
+    }
+
+    .td-card--full {
+      grid-column: 1 / -1;
+    }
+
+    .td-card:has(.td-card-input:focus),
+    .td-card:has(.td-card-select:focus) {
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .td-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--neutral-50);
+      letter-spacing: 0.01em;
+    }
+
+    .td-card-value {
+      font-size: 14px;
+      color: var(--neutral-25);
+      font-weight: 500;
+    }
+
+    .td-card-input {
+      font-size: 14px;
+      color: var(--neutral-20);
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0;
+      font-family: inherit;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .td-card-select {
+      font-size: 14px;
+      color: var(--neutral-20);
+      border: none;
+      outline: none;
+      background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0 center;
+      padding-right: 16px;
+      font-family: inherit;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .td-card-amount {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .td-card-amount-sym {
+      font-size: 14px;
+      color: var(--neutral-40);
+    }
+
+    .td-section-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neutral-50);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .td-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border: 1px solid var(--neutral-80);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .td-table thead {
+      background: var(--neutral-95);
+    }
+
+    .td-table th {
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--neutral-40);
+      border-bottom: 1px solid var(--neutral-80);
+      white-space: nowrap;
+    }
+
+    .td-table td {
+      padding: 10px 10px;
+      color: var(--neutral-30);
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .td-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .td-table .numeric {
+      text-align: right;
+    }
+
+    .td-table .value-green {
+      color: var(--status-green);
+      font-weight: 500;
+    }
   </style>
 </head>
 
@@ -1190,7 +1339,7 @@
                       <td class="numeric unapplied-value">$289.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn">Details</button>
+                          <button class="btn" onclick="openModal()">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1205,7 +1354,7 @@
                       <td class="numeric unapplied-value">$10.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn">Details</button>
+                          <button class="btn" onclick="openModal()">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1220,7 +1369,7 @@
                       <td class="numeric unapplied-value">$30.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn">Details</button>
+                          <button class="btn" onclick="openModal()">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1255,10 +1404,10 @@
   <!-- Modal Backdrop -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
 
-  <!-- New Payment Modal — Form State -->
+  <!-- Transaction Details Modal -->
   <div class="modal" id="newPaymentModal">
-    <div class="modal-header">
-      <h2 class="modal-title">Client Payment for Johnny Doe</h2>
+    <div class="modal-header modal-header--primary">
+      <h2 class="modal-title">Transaction Details</h2>
       <button class="modal-close" onclick="closeModal()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 6 6 18" />
@@ -1268,195 +1417,101 @@
     </div>
     <div class="modal-body">
 
-      <!-- Notice Banner -->
-      <div class="modal-notice">
-        <div class="modal-notice-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-            <path d="M12 18V6" />
-          </svg>
-        </div>
-        <div class="modal-notice-content">
-          <div class="modal-notice-title">Unapplied Client Payment</div>
-          <div class="modal-notice-text">
-            This payment will be held as unapplied. Use Distribute to apply to service lines. Insurance payments post from the service line.
-          </div>
-        </div>
-      </div>
+      <div class="td-card-grid">
 
-      <!-- Form Fields — hybrid layout -->
-      <div class="modal-form">
+        <div class="td-card">
+          <div class="td-card-label">Payment Date</div>
+          <input type="date" class="td-card-input" id="tdPaymentDate" value="2026-05-06">
+        </div>
 
-        <div class="modal-form-row">
-          <div class="modal-field">
-            <label class="modal-field-label" for="amountInput">Amount <span class="required">*</span></label>
-            <div class="modal-field-amount">
-              <input type="text" class="modal-field-input" id="amountInput" placeholder="0.00" value="125.00">
-            </div>
-          </div>
-          <div class="modal-field">
-            <label class="modal-field-label" for="refNumberInput">Reference Number</label>
-            <input type="text" class="modal-field-input" id="refNumberInput" placeholder="Check #, EFT #, etc.">
+        <div class="td-card td-card--ro">
+          <div class="td-card-label">Transaction Type</div>
+          <div class="td-card-value">Insurance Payment</div>
+        </div>
+
+        <div class="td-card">
+          <div class="td-card-label">Posted Date</div>
+          <input type="date" class="td-card-input" id="tdPostedDate" value="2026-05-06">
+        </div>
+
+        <div class="td-card td-card--ro">
+          <div class="td-card-label">Transaction Code</div>
+          <div class="td-card-value">Account Payment</div>
+        </div>
+
+        <div class="td-card">
+          <div class="td-card-label">Amount</div>
+          <div class="td-card-amount">
+            <span class="td-card-amount-sym">$</span>
+            <input type="text" class="td-card-input" id="tdAmount" value="1.00">
           </div>
         </div>
 
-        <div class="modal-form-row">
-          <div class="modal-field">
-            <label class="modal-field-label" for="dateInput">Date <span class="required">*</span></label>
-            <input type="date" class="modal-field-input" id="dateInput">
-          </div>
-          <div class="modal-field">
-            <label class="modal-field-label" for="postedInput">Posted <span class="required">*</span></label>
-            <input type="date" class="modal-field-input" id="postedInput">
-          </div>
-        </div>
-
-        <div class="modal-form-row">
-          <div class="modal-field">
-            <label class="modal-field-label" for="transactionCodeSelect">Transaction Code <span class="required">*</span></label>
-            <select class="modal-field-select" id="transactionCodeSelect">
-              <option value="">Select code...</option>
-              <option value="account" selected>Account Payment</option>
-              <option value="coinsurance">Coinsurance</option>
-              <option value="copay">Copay</option>
-              <option value="deductible">Deductible</option>
-            </select>
-          </div>
-          <div class="modal-field">
-            <label class="modal-field-label" for="sourceSelect">Source <span class="required">*</span></label>
-            <select class="modal-field-select" id="sourceSelect" onchange="handleSourceChange()">
-              <option value="" selected>Select source...</option>
-              <option value="cash">Cash</option>
-              <option value="check">Check</option>
-              <option value="credit-card">Credit Card</option>
-              <option value="credit-card-terminal">Credit Card – Terminal</option>
-              <option value="denial">Denial</option>
-              <option value="eft">EFT</option>
-              <option value="money-order">Money Order</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="modal-field terminal-field hidden" id="terminalField">
-          <label class="modal-field-label" for="terminalSelect">Terminal <span class="required">*</span></label>
-          <select class="modal-field-select" id="terminalSelect">
-            <option value="">Select terminal...</option>
-            <option value="front-desk">Front Desk — SN70783856</option>
-            <option value="reception-2">Reception 2 — SN79682249</option>
-            <option value="dr-chen">Dr. Chen's Office — SN80766711</option>
-            <option value="dr-martinez">Dr. Martinez's Office — SN89387248</option>
-            <option value="billing">Billing Office — SN91245673</option>
-            <option value="telehealth" disabled>Telehealth Room — SN84826340 — Offline</option>
-            <option value="conf-room" disabled>Conference Room — SN59542913 — Offline</option>
+        <div class="td-card">
+          <div class="td-card-label">Insurance</div>
+          <select class="td-card-select" id="tdInsurance">
+            <option value="aetna" selected>Aetna (Primary)</option>
+            <option value="bcbs">Blue Cross (Secondary)</option>
           </select>
         </div>
 
-        <div class="modal-field">
-          <label class="modal-field-label" for="notesTextarea">Notes</label>
-          <textarea class="modal-field-textarea" id="notesTextarea" placeholder="Notes"></textarea>
+        <div class="td-card">
+          <div class="td-card-label">Source</div>
+          <select class="td-card-select" id="tdSource">
+            <option value="cash" selected>Cash</option>
+            <option value="check">Check</option>
+            <option value="credit-card">Credit Card</option>
+            <option value="eft">EFT</option>
+            <option value="denial">Denial</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="td-card">
+          <div class="td-card-label">Reference №</div>
+          <input type="text" class="td-card-input" id="tdRefNum" value="PAY-5590">
+        </div>
+
+        <div class="td-card td-card--full">
+          <div class="td-card-label">Description</div>
+          <input type="text" class="td-card-input" id="tdDescription" placeholder="Add a description…">
         </div>
 
       </div>
 
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" id="submitBtn" onclick="showWaiting()">Add Payment</button>
-    </div>
-  </div>
+      <div class="td-section-header">Application History</div>
+      <table class="td-table">
+        <thead>
+          <tr>
+            <th>Encounter Date</th>
+            <th>Service Code</th>
+            <th class="numeric">Charge</th>
+            <th class="numeric">Applied</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>03/18/2025</td>
+            <td>90791 – Psychiatric Eval.</td>
+            <td class="numeric">$10.00</td>
+            <td class="numeric value-green">$1.00</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- Waiting State Modal -->
-  <div class="modal modal-status" id="waitingModal">
-    <div class="modal-header">
-      <h2 class="modal-title">Processing Payment</h2>
-    </div>
-    <div class="modal-body">
-      <div class="spinner">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-        </svg>
-      </div>
-      <div class="status-title">Waiting for card…</div>
-      <div class="status-message">Follow the prompts on <strong id="waitingTerminalName">Front Desk — SN70783856</strong></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger" onclick="showError(true)">Cancel Transaction</button>
-    </div>
-  </div>
-
-  <!-- Success State Modal -->
-  <div class="modal modal-status" id="successModal">
-    <div class="modal-header">
-      <h2 class="modal-title">Payment Complete</h2>
-    </div>
-    <div class="modal-body">
-      <div class="status-icon success">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="m9 12 2 2 4-4" />
-        </svg>
-      </div>
-      <div class="status-title">Payment processed</div>
-      <div class="status-message">$125.00 received. You'll be notified when it posts to the Account Ledger.</div>
-      <dl class="status-details">
-        <dt>Payment Method</dt>
-        <dd>Visa ····1234</dd>
-        <dt>Reference</dt>
-        <dd>H6M0NUD9</dd>
-      </dl>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeAllModals()">Close</button>
-      <button class="btn btn-primary">Print Receipt</button>
-    </div>
-  </div>
-
-  <!-- Error State Modal -->
-  <div class="modal modal-status" id="errorModal">
-    <div class="modal-header">
-      <h2 class="modal-title">Payment Failed</h2>
-    </div>
-    <div class="modal-body">
-      <div class="status-icon error">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="m15 9-6 6" />
-          <path d="m9 9 6 6" />
-        </svg>
-      </div>
-      <div class="status-title" id="errorTitle">Transaction declined</div>
-      <div class="status-message" id="errorMessage">Card declined — invalid card.<br>No charges were applied.</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeAllModals()">Close</button>
-      <button class="btn btn-primary" onclick="showForm()">Try Again</button>
+      <button class="btn" onclick="closeModal()">Close</button>
     </div>
   </div>
 
   <script>
     const modalBackdrop = document.getElementById('modalBackdrop');
     const modal = document.getElementById('newPaymentModal');
-    const waitingModal = document.getElementById('waitingModal');
-    const successModal = document.getElementById('successModal');
-    const errorModal = document.getElementById('errorModal');
-    const sourceSelect = document.getElementById('sourceSelect');
-    const terminalField = document.getElementById('terminalField');
-    const terminalSelect = document.getElementById('terminalSelect');
-    const submitBtn = document.getElementById('submitBtn');
-    const waitingTerminalName = document.getElementById('waitingTerminalName');
-
-    const errorTitle = document.getElementById('errorTitle');
-    const errorMessage = document.getElementById('errorMessage');
-
-    const allModals = [modal, waitingModal, successModal, errorModal];
-    let processingTimeout = null;
 
     function openModal() {
       modalBackdrop.classList.add('open');
       modal.classList.add('open');
-      setTimeout(() => document.getElementById('amountInput').focus(), 50);
     }
 
     function closeModal() {
@@ -1464,106 +1519,10 @@
       modal.classList.remove('open');
     }
 
-    function closeAllModals() {
-      if (processingTimeout) {
-        clearTimeout(processingTimeout);
-        processingTimeout = null;
-      }
-      modalBackdrop.classList.remove('open');
-      allModals.forEach(m => m.classList.remove('open', 'transitioning'));
-    }
-
-    function transitionTo(fromModal, toModal, delay = 150) {
-      fromModal.classList.add('transitioning');
-      setTimeout(() => {
-        fromModal.classList.remove('open', 'transitioning');
-        toModal.classList.add('open');
-      }, delay);
-    }
-
-    function showWaiting() {
-      // Get selected terminal name
-      const selectedOption = terminalSelect.options[terminalSelect.selectedIndex];
-      const terminalName = selectedOption ? selectedOption.text : 'terminal';
-      waitingTerminalName.textContent = terminalName;
-
-      transitionTo(modal, waitingModal);
-
-      // Check if billing office (triggers error) or others (success)
-      const willError = terminalSelect.value === 'billing';
-
-      processingTimeout = setTimeout(() => {
-        processingTimeout = null;
-        if (willError) {
-          transitionTo(waitingModal, errorModal);
-        } else {
-          transitionTo(waitingModal, successModal);
-        }
-      }, 4500);
-    }
-
-    function showSuccess() {
-      if (processingTimeout) {
-        clearTimeout(processingTimeout);
-        processingTimeout = null;
-      }
-      transitionTo(waitingModal, successModal);
-    }
-
-    function showError(cancelled = false) {
-      if (processingTimeout) {
-        clearTimeout(processingTimeout);
-        processingTimeout = null;
-      }
-
-      if (cancelled) {
-        errorTitle.textContent = 'Transaction cancelled';
-        errorMessage.innerHTML = 'The payment was cancelled before completion.<br>No charges were applied.';
-      } else {
-        errorTitle.textContent = 'Transaction declined';
-        errorMessage.innerHTML = 'Card declined — invalid card.<br>No charges were applied.';
-      }
-
-      transitionTo(waitingModal, errorModal);
-    }
-
-    function showForm() {
-      transitionTo(errorModal, modal);
-      setTimeout(() => document.getElementById('amountInput').focus(), 200);
-    }
-
-    function handleSourceChange() {
-      const isTerminal = sourceSelect.value === 'credit-card-terminal';
-
-      if (isTerminal) {
-        terminalField.classList.remove('hidden');
-        submitBtn.textContent = 'Process Payment';
-      } else {
-        terminalField.classList.add('hidden');
-        terminalSelect.value = '';
-        submitBtn.textContent = 'Add Payment';
-      }
-    }
-
-    // Set today's date for Date and Posted fields
-    function setTodayDates() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('dateInput').value = today;
-      document.getElementById('postedInput').value = today;
-    }
-
-    // Initialize on load
-    setTodayDates();
-    handleSourceChange();
-
-    // Close on Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeAllModals();
-      }
+      if (e.key === 'Escape') closeModal();
     });
   </script>
 
 </body>
-
 </html>
