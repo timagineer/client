@@ -220,6 +220,33 @@ td a:hover {
   color: var(--color-link-hover);
 }
 
+/* Total row */
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s);
+  margin-top: var(--space-xs);
+}
+
+.total-label {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: var(--font-size);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.total-count {
+  font-family: var(--font-mono);
+  font-size: var(--font-size);
+  font-weight: 500;
+  color: var(--color-surface);
+  background: var(--color-text);
+  padding: 0 0.5em;
+  border-radius: 1em;
+}
+
 /* Empty state */
 .no-results {
   display: none;

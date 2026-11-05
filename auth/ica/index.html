@@ -261,6 +261,11 @@
       </details>
     </main>
 
+    <footer class="total-row">
+      <span class="total-label">ALL</span>
+      <span class="total-count" id="totalCount"></span>
+    </footer>
+
     <p class="no-results" id="noResults">No prototypes match your search.</p>
   </div>
 
@@ -269,7 +274,17 @@
       const searchInput = document.getElementById('searchInput');
       const teamList = document.getElementById('teamList');
       const noResults = document.getElementById('noResults');
+      const totalCountEl = document.getElementById('totalCount');
       let isFiltering = false; // Flag to disable accordion behavior during filter
+
+      // Initialize total count from team badges already in the DOM
+      (function initTotal() {
+        let sum = 0;
+        document.querySelectorAll('details[data-team] .team-count').forEach(el => {
+          sum += parseInt(el.textContent, 10) || 0;
+        });
+        if (totalCountEl) totalCountEl.textContent = String(sum).padStart(2, '0');
+      })();
 
       function doFilter() {
         const allDetails = document.querySelectorAll('details[data-team]');
@@ -309,6 +324,7 @@
         isFiltering = false; // Re-enable accordion behavior
 
         noResults.classList.toggle('visible', totalVisible === 0 && query);
+        if (totalCountEl) totalCountEl.textContent = String(totalVisible).padStart(2, '0');
       }
 
       searchInput.addEventListener('input', doFilter);
