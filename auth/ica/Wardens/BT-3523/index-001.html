@@ -998,7 +998,9 @@
       overflow: hidden;
     }
 
-    .modal-table thead { background: var(--neutral-95); }
+    .modal-table thead {
+      background: var(--neutral-95);
+    }
 
     .modal-table th {
       padding: 8px 10px;
@@ -1016,10 +1018,18 @@
       border-bottom: 1px solid var(--neutral-85);
     }
 
-    .modal-table tbody tr:last-child td { border-bottom: none; }
-    .modal-table .numeric { text-align: right; }
-    .modal-table .value-green { color: var(--status-green); font-weight: 500; }
+    .modal-table tbody tr:last-child td {
+      border-bottom: none;
+    }
 
+    .modal-table .numeric {
+      text-align: right;
+    }
+
+    .modal-table .value-green {
+      color: var(--status-green);
+      font-weight: 500;
+    }
   </style>
 </head>
 
@@ -1315,7 +1325,8 @@
       <h2 class="modal-title">Transaction Details</h2>
       <button class="modal-close" onclick="closeModal()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
         </svg>
       </button>
     </div>
@@ -1348,7 +1359,7 @@
           <div class="modal-field">
             <label class="modal-field-label">Amount</label>
             <div class="modal-field-amount">
-              <input type="text" class="modal-field-input" id="tdAmount" value="1.00">
+              <input type="number" class="modal-field-input" id="tdAmount" value="1.00" step="0.01" min="0">
             </div>
           </div>
           <div class="modal-field">
@@ -1374,7 +1385,7 @@
           </div>
           <div class="modal-field">
             <label class="modal-field-label">Reference №</label>
-            <input type="text" class="modal-field-input" id="tdRefNum" placeholder="—">
+            <input type="text" class="modal-field-input" id="tdRefNum" value="ERA-20260506-4471">
           </div>
         </div>
 
@@ -1431,4 +1442,5 @@
   </script>
 
 </body>
+
 </html>
