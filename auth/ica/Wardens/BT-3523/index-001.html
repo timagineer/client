@@ -1267,7 +1267,7 @@
                       <td class="numeric unapplied-value">$289.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn" onclick="openModal()">Details</button>
+                          <button class="btn" onclick="openModal(1)">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1282,7 +1282,7 @@
                       <td class="numeric unapplied-value">$10.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn" onclick="openModal()">Details</button>
+                          <button class="btn" onclick="openModal(2)">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1297,7 +1297,7 @@
                       <td class="numeric unapplied-value">$30.00</td>
                       <td>
                         <div class="table-actions">
-                          <button class="btn" onclick="openModal()">Details</button>
+                          <button class="btn" onclick="openModal(3)">Details</button>
                           <button class="btn">Refund</button>
                           <button class="btn">Distribute</button>
                         </div>
@@ -1442,7 +1442,61 @@
     const modalBackdrop = document.getElementById('modalBackdrop');
     const modal = document.getElementById('newPaymentModal');
 
-    function openModal() {
+    const transactions = {
+      1: {
+        paymentDate: '2026-05-06', postedDate: '2026-05-06',
+        amount: '187.50', source: 'EFT',
+        insurance: 'Aetna (Primary)', refNum: 'ERA-20260506-4471', description: '',
+        history: [
+          { date: '03/18/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '05/06/2026' }
+        ]
+      },
+      2: {
+        paymentDate: '2026-04-14', postedDate: '2026-04-14',
+        amount: '412.80', source: 'EFT',
+        insurance: 'Aetna (Primary)', refNum: 'ERA-20260412-2209', description: '',
+        history: [
+          { date: '01/08/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' },
+          { date: '01/15/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' },
+          { date: '01/22/2026', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '04/14/2026' }
+        ]
+      },
+      3: {
+        paymentDate: '2026-03-03', postedDate: '2026-03-03',
+        amount: '1243.00', source: 'EFT',
+        insurance: 'Blue Cross (Secondary)', refNum: 'ERA-20260301-8834', description: 'Bulk ERA remittance Q1',
+        history: [
+          { date: '10/05/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '03/03/2026' },
+          { date: '10/12/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+          { date: '10/19/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+          { date: '11/02/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' },
+          { date: '11/09/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+          { date: '11/16/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+          { date: '12/07/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' }
+        ]
+      }
+    };
+
+    function openModal(id) {
+      const tx = transactions[id];
+      if (!tx) return;
+
+      document.getElementById('tdPaymentDate').value = tx.paymentDate;
+      document.getElementById('tdPostedDate').value = tx.postedDate;
+      document.getElementById('tdAmount').value = tx.amount;
+      document.getElementById('tdRefNum').value = tx.refNum;
+      document.getElementById('tdDescription').value = tx.description;
+
+      const sourceEl = document.getElementById('tdSource');
+      Array.from(sourceEl.options).forEach((o, i) => { if (o.text === tx.source) sourceEl.selectedIndex = i; });
+
+      const insEl = document.getElementById('tdInsurance');
+      Array.from(insEl.options).forEach((o, i) => { if (o.text === tx.insurance) insEl.selectedIndex = i; });
+
+      document.getElementById('appHistoryBody').innerHTML = tx.history.map(r =>
+        `<tr><td>${r.date}</td><td>${r.code}</td><td class="numeric">${r.charge}</td><td>${r.posted}</td></tr>`
+      ).join('');
+
       modalBackdrop.classList.add('open');
       modal.classList.add('open');
     }
