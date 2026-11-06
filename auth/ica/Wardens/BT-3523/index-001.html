@@ -967,114 +967,29 @@
       border-radius: 2px;
     }
 
-    /* ========== Transaction Details Modal ========== */
-    .modal-header--primary {
-      background: var(--primary-35);
-    }
-
-    .modal-header--primary .modal-title {
-      color: #fff;
-    }
-
-    .modal-header--primary .modal-close {
-      color: rgba(255, 255, 255, 0.75);
-    }
-
-    .modal-header--primary .modal-close:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    .td-card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .td-card {
-      border: 1px solid var(--neutral-75);
-      border-radius: 6px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .td-card--ro {
-      background: var(--neutral-95);
-    }
-
-    .td-card--full {
-      grid-column: 1 / -1;
-    }
-
-    .td-card:has(.td-card-input:focus),
-    .td-card:has(.td-card-select:focus) {
-      border-color: var(--primary-30);
-      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
-    }
-
-    .td-card-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--neutral-50);
-      letter-spacing: 0.01em;
-    }
-
-    .td-card-value {
+    /* Read-only field value */
+    .modal-field-ro {
       font-size: 14px;
-      color: var(--neutral-25);
+      color: var(--neutral-20);
+      padding: 9px 10px;
+      background: var(--neutral-90);
+      border: 1px solid var(--neutral-80);
+      border-radius: 6px;
       font-weight: 500;
     }
 
-    .td-card-input {
-      font-size: 14px;
-      color: var(--neutral-20);
-      border: none;
-      outline: none;
-      background: transparent;
-      padding: 0;
-      font-family: inherit;
-      width: 100%;
-      min-width: 0;
-    }
-
-    .td-card-select {
-      font-size: 14px;
-      color: var(--neutral-20);
-      border: none;
-      outline: none;
-      background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0 center;
-      padding-right: 16px;
-      font-family: inherit;
-      width: 100%;
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-    }
-
-    .td-card-amount {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .td-card-amount-sym {
-      font-size: 14px;
-      color: var(--neutral-40);
-    }
-
-    .td-section-header {
+    /* Section heading */
+    .modal-section-header {
       font-size: 11px;
       font-weight: 700;
       color: var(--neutral-50);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 10px;
+      margin: 20px 0 10px;
     }
 
-    .td-table {
+    /* Application history table */
+    .modal-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
@@ -1083,11 +998,9 @@
       overflow: hidden;
     }
 
-    .td-table thead {
-      background: var(--neutral-95);
-    }
+    .modal-table thead { background: var(--neutral-95); }
 
-    .td-table th {
+    .modal-table th {
       padding: 8px 10px;
       text-align: left;
       font-size: 12px;
@@ -1097,24 +1010,16 @@
       white-space: nowrap;
     }
 
-    .td-table td {
-      padding: 10px 10px;
+    .modal-table td {
+      padding: 10px;
       color: var(--neutral-30);
       border-bottom: 1px solid var(--neutral-85);
     }
 
-    .td-table tbody tr:last-child td {
-      border-bottom: none;
-    }
+    .modal-table tbody tr:last-child td { border-bottom: none; }
+    .modal-table .numeric { text-align: right; }
+    .modal-table .value-green { color: var(--status-green); font-weight: 500; }
 
-    .td-table .numeric {
-      text-align: right;
-    }
-
-    .td-table .value-green {
-      color: var(--status-green);
-      font-weight: 500;
-    }
   </style>
 </head>
 
@@ -1406,81 +1311,82 @@
 
   <!-- Transaction Details Modal -->
   <div class="modal" id="newPaymentModal">
-    <div class="modal-header modal-header--primary">
+    <div class="modal-header">
       <h2 class="modal-title">Transaction Details</h2>
       <button class="modal-close" onclick="closeModal()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
+          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
         </svg>
       </button>
     </div>
     <div class="modal-body">
+      <div class="modal-form">
 
-      <div class="td-card-grid">
-
-        <div class="td-card">
-          <div class="td-card-label">Payment Date</div>
-          <input type="date" class="td-card-input" id="tdPaymentDate" value="2026-05-06">
-        </div>
-
-        <div class="td-card td-card--ro">
-          <div class="td-card-label">Transaction Type</div>
-          <div class="td-card-value">Insurance Payment</div>
-        </div>
-
-        <div class="td-card">
-          <div class="td-card-label">Posted Date</div>
-          <input type="date" class="td-card-input" id="tdPostedDate" value="2026-05-06">
-        </div>
-
-        <div class="td-card td-card--ro">
-          <div class="td-card-label">Transaction Code</div>
-          <div class="td-card-value">Account Payment</div>
-        </div>
-
-        <div class="td-card">
-          <div class="td-card-label">Amount</div>
-          <div class="td-card-amount">
-            <span class="td-card-amount-sym">$</span>
-            <input type="text" class="td-card-input" id="tdAmount" value="1.00">
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label">Payment Date</label>
+            <input type="date" class="modal-field-input" id="tdPaymentDate" value="2026-05-06">
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label">Posted Date</label>
+            <input type="date" class="modal-field-input" id="tdPostedDate" value="2026-05-06">
           </div>
         </div>
 
-        <div class="td-card">
-          <div class="td-card-label">Insurance</div>
-          <select class="td-card-select" id="tdInsurance">
-            <option value="aetna" selected>Aetna (Primary)</option>
-            <option value="bcbs">Blue Cross (Secondary)</option>
-          </select>
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label">Transaction Type</label>
+            <div class="modal-field-ro">Insurance Payment</div>
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label">Transaction Code</label>
+            <div class="modal-field-ro">Account Payment</div>
+          </div>
         </div>
 
-        <div class="td-card">
-          <div class="td-card-label">Source</div>
-          <select class="td-card-select" id="tdSource">
-            <option value="cash" selected>Cash</option>
-            <option value="check">Check</option>
-            <option value="credit-card">Credit Card</option>
-            <option value="eft">EFT</option>
-            <option value="denial">Denial</option>
-            <option value="other">Other</option>
-          </select>
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label">Amount</label>
+            <div class="modal-field-amount">
+              <input type="text" class="modal-field-input" id="tdAmount" value="1.00">
+            </div>
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label">Source</label>
+            <select class="modal-field-select" id="tdSource">
+              <option value="cash" selected>Cash</option>
+              <option value="check">Check</option>
+              <option value="credit-card">Credit Card</option>
+              <option value="eft">EFT</option>
+              <option value="denial">Denial</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
         </div>
 
-        <div class="td-card">
-          <div class="td-card-label">Reference №</div>
-          <input type="text" class="td-card-input" id="tdRefNum" value="PAY-5590">
+        <div class="modal-form-row">
+          <div class="modal-field">
+            <label class="modal-field-label">Insurance</label>
+            <select class="modal-field-select" id="tdInsurance">
+              <option value="aetna" selected>Aetna (Primary)</option>
+              <option value="bcbs">Blue Cross (Secondary)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label class="modal-field-label">Reference №</label>
+            <input type="text" class="modal-field-input" id="tdRefNum" placeholder="—">
+          </div>
         </div>
 
-        <div class="td-card td-card--full">
-          <div class="td-card-label">Description</div>
-          <input type="text" class="td-card-input" id="tdDescription" placeholder="Add a description…">
+        <div class="modal-field">
+          <label class="modal-field-label">Description</label>
+          <input type="text" class="modal-field-input" id="tdDescription" placeholder="—">
         </div>
 
       </div>
 
-      <div class="td-section-header">Application History</div>
-      <table class="td-table">
+      <div class="modal-section-header">Application History</div>
+      <table class="modal-table">
         <thead>
           <tr>
             <th>Encounter Date</th>
