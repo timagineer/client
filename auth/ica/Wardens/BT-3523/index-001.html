@@ -1467,7 +1467,7 @@
     </div>
   </div>
 
-  <div class="toast-wrap" id="toastWrap"></div>
+  <div class="toast-container" id="toastContainer"></div>
 
   <script>
     const modalBackdrop = document.getElementById('modalBackdrop');
@@ -1537,22 +1537,27 @@
       modal.classList.remove('open');
     }
 
-    function doneModal() {
-      closeModal();
-      showToast('Changes saved');
+    function showToast(type, message) {
+      var container = document.getElementById('toastContainer');
+      if (!container) return;
+      var toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      if (type === 'success') toast.setAttribute('role', 'status');
+      var icons = {
+        success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+        error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      };
+      toast.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
+      container.appendChild(toast);
+      setTimeout(function () {
+        toast.classList.add('leaving');
+        toast.addEventListener('animationend', function () { toast.remove(); }, { once: true });
+      }, 3000);
     }
 
-    function showToast(msg) {
-      const wrap = document.getElementById('toastWrap');
-      const t = document.createElement('div');
-      t.className = 'toast';
-      t.textContent = msg;
-      wrap.appendChild(t);
-      requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
-      setTimeout(() => {
-        t.classList.remove('show');
-        setTimeout(() => t.remove(), 200);
-      }, 2500);
+    function doneModal() {
+      closeModal();
+      showToast('success', 'Changes saved');
     }
 
     document.addEventListener('keydown', (e) => {
