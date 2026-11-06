@@ -922,6 +922,57 @@
       }
     }
 
+    /* Modal application history pager */
+    .modal-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0 2px;
+    }
+
+    .modal-pager-btns {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .modal-page-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--neutral-40);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-family: inherit;
+    }
+
+    .modal-page-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .modal-page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .modal-page-btn.active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-60);
+      color: var(--neutral-20);
+    }
+
+    .modal-pager-count {
+      font-size: 12px;
+      color: var(--neutral-50);
+    }
+
     /* Modal footer */
     .modal-footer {
       display: flex;
@@ -1578,6 +1629,10 @@
       document.getElementById('appHistoryBody').innerHTML = tx.history.map(r =>
         `<tr><td>${r.date}</td><td>${r.code}</td><td class="numeric">${r.charge}</td><td>${r.posted}</td></tr>`
       ).join('');
+
+      var count = tx.history.length;
+      var countEl = document.getElementById('modalPagerCount');
+      if (countEl) countEl.textContent = '1 \u2013 ' + count + ' of ' + count + ' item' + (count === 1 ? '' : 's');
 
       modalBackdrop.classList.add('open');
       modal.classList.add('open');
