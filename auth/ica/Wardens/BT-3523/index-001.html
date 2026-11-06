@@ -1074,13 +1074,16 @@
     }
 
     /* Application history table */
+    .modal-table-wrap {
+      border: 1px solid var(--neutral-80);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
     .modal-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      border: 1px solid var(--neutral-80);
-      border-radius: 6px;
-      overflow: hidden;
     }
 
     .modal-table thead {
@@ -1485,136 +1488,137 @@
       </div>
 
       <div class="modal-section-header">Application History</div>
-      <table class="modal-table">
-        <thead>
-          <tr>
-            <th>Encounter Date</th>
-            <th>Service Code</th>
-            <th class="numeric">Charge</th>
-            <th>Posted Date</th>
-          </tr>
-        </thead>
-        <tbody id="appHistoryBody">
-          <tr>
-            <td>03/18/2025</td>
-            <td>90791 – Psychiatric Eval.</td>
-            <td class="numeric">$250.00</td>
-            <td>05/06/2026</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>Encounter Date</th>
+              <th>Service Code</th>
+              <th class="numeric">Charge</th>
+              <th>Posted Date</th>
+            </tr>
+          </thead>
+          <tbody id="appHistoryBody">
+            <tr>
+              <td>03/18/2025</td>
+              <td>90791 – Psychiatric Eval.</td>
+              <td class="numeric">$250.00</td>
+              <td>05/06/2026</td>
+            </tr>
+          </tbody>
+        </table>
 
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="doneModal()">Done</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="doneModal()">Done</button>
-    </div>
-  </div>
 
-  <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-  <script>
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const modal = document.getElementById('newPaymentModal');
+    <script>
+      const modalBackdrop = document.getElementById('modalBackdrop');
+      const modal = document.getElementById('newPaymentModal');
 
-    const transactions = {
-      1: {
-        paymentDate: '2026-05-06', postedDate: '2026-05-06',
-        amount: '187.50', source: 'EFT',
-        insurance: 'Aetna (Primary)', refNum: 'ERA-20260506-4471', description: '',
-        history: [
-          { date: '03/18/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '05/06/2026' }
-        ]
-      },
-      2: {
-        paymentDate: '2026-04-14', postedDate: '2026-04-14',
-        amount: '412.80', source: 'EFT',
-        insurance: 'Aetna (Primary)', refNum: 'ERA-20260412-2209', description: '',
-        history: [
-          { date: '01/22/2026', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '04/14/2026' },
-          { date: '01/15/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' },
-          { date: '01/08/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' }
-        ]
-      },
-      3: {
-        paymentDate: '2026-03-03', postedDate: '2026-03-03',
-        amount: '1243.00', source: 'EFT',
-        insurance: 'Blue Cross (Secondary)', refNum: 'ERA-20260301-8834', description: 'Bulk ERA remittance Q1',
-        history: [
-          { date: '12/07/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' },
-          { date: '11/16/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
-          { date: '11/09/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
-          { date: '11/02/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' },
-          { date: '10/19/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
-          { date: '10/12/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
-          { date: '10/05/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '03/03/2026' }
-        ]
-      }
-    };
-
-    var isDirty = false;
-
-    function openModal(id) {
-      isDirty = false;
-      const tx = transactions[id];
-      if (!tx) return;
-
-      document.getElementById('tdPaymentDate').value = tx.paymentDate;
-      document.getElementById('tdPostedDate').value = tx.postedDate;
-      document.getElementById('tdAmount').value = tx.amount;
-      document.getElementById('tdRefNum').value = tx.refNum;
-      document.getElementById('tdDescription').value = tx.description;
-
-      const sourceEl = document.getElementById('tdSource');
-      Array.from(sourceEl.options).forEach((o, i) => { if (o.text === tx.source) sourceEl.selectedIndex = i; });
-
-      const insEl = document.getElementById('tdInsurance');
-      Array.from(insEl.options).forEach((o, i) => { if (o.text === tx.insurance) insEl.selectedIndex = i; });
-
-      document.getElementById('appHistoryBody').innerHTML = tx.history.map(r =>
-        `<tr><td>${r.date}</td><td>${r.code}</td><td class="numeric">${r.charge}</td><td>${r.posted}</td></tr>`
-      ).join('');
-
-      modalBackdrop.classList.add('open');
-      modal.classList.add('open');
-
-      modal.querySelectorAll('input, select, textarea').forEach(function (el) {
-        el.addEventListener('change', function () { isDirty = true; }, { once: false });
-      });
-    }
-
-    function closeModal() {
-      modalBackdrop.classList.remove('open');
-      modal.classList.remove('open');
-    }
-
-    function showToast(type, message) {
-      var container = document.getElementById('toastContainer');
-      if (!container) return;
-      var toast = document.createElement('div');
-      toast.className = 'toast ' + type;
-      if (type === 'success') toast.setAttribute('role', 'status');
-      var icons = {
-        success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
-        error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      const transactions = {
+        1: {
+          paymentDate: '2026-05-06', postedDate: '2026-05-06',
+          amount: '187.50', source: 'EFT',
+          insurance: 'Aetna (Primary)', refNum: 'ERA-20260506-4471', description: '',
+          history: [
+            { date: '03/18/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '05/06/2026' }
+          ]
+        },
+        2: {
+          paymentDate: '2026-04-14', postedDate: '2026-04-14',
+          amount: '412.80', source: 'EFT',
+          insurance: 'Aetna (Primary)', refNum: 'ERA-20260412-2209', description: '',
+          history: [
+            { date: '01/22/2026', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '04/14/2026' },
+            { date: '01/15/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' },
+            { date: '01/08/2026', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '04/14/2026' }
+          ]
+        },
+        3: {
+          paymentDate: '2026-03-03', postedDate: '2026-03-03',
+          amount: '1243.00', source: 'EFT',
+          insurance: 'Blue Cross (Secondary)', refNum: 'ERA-20260301-8834', description: 'Bulk ERA remittance Q1',
+          history: [
+            { date: '12/07/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' },
+            { date: '11/16/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+            { date: '11/09/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+            { date: '11/02/2025', code: '90834 – Psychotherapy 45 min', charge: '$155.00', posted: '03/03/2026' },
+            { date: '10/19/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+            { date: '10/12/2025', code: '90837 – Psychotherapy 60 min', charge: '$195.00', posted: '03/03/2026' },
+            { date: '10/05/2025', code: '90791 – Psychiatric Eval.', charge: '$250.00', posted: '03/03/2026' }
+          ]
+        }
       };
-      toast.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
-      container.appendChild(toast);
-      setTimeout(function () {
-        toast.classList.add('leaving');
-        toast.addEventListener('animationend', function () { toast.remove(); }, { once: true });
-      }, 3000);
-    }
 
-    function doneModal() {
-      var dirty = isDirty;
-      closeModal();
-      if (dirty) showToast('success', 'Changes saved');
-    }
+      var isDirty = false;
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-  </script>
+      function openModal(id) {
+        isDirty = false;
+        const tx = transactions[id];
+        if (!tx) return;
+
+        document.getElementById('tdPaymentDate').value = tx.paymentDate;
+        document.getElementById('tdPostedDate').value = tx.postedDate;
+        document.getElementById('tdAmount').value = tx.amount;
+        document.getElementById('tdRefNum').value = tx.refNum;
+        document.getElementById('tdDescription').value = tx.description;
+
+        const sourceEl = document.getElementById('tdSource');
+        Array.from(sourceEl.options).forEach((o, i) => { if (o.text === tx.source) sourceEl.selectedIndex = i; });
+
+        const insEl = document.getElementById('tdInsurance');
+        Array.from(insEl.options).forEach((o, i) => { if (o.text === tx.insurance) insEl.selectedIndex = i; });
+
+        document.getElementById('appHistoryBody').innerHTML = tx.history.map(r =>
+          `<tr><td>${r.date}</td><td>${r.code}</td><td class="numeric">${r.charge}</td><td>${r.posted}</td></tr>`
+        ).join('');
+
+        modalBackdrop.classList.add('open');
+        modal.classList.add('open');
+
+        modal.querySelectorAll('input, select, textarea').forEach(function (el) {
+          el.addEventListener('change', function () { isDirty = true; }, { once: false });
+        });
+      }
+
+      function closeModal() {
+        modalBackdrop.classList.remove('open');
+        modal.classList.remove('open');
+      }
+
+      function showToast(type, message) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        if (type === 'success') toast.setAttribute('role', 'status');
+        var icons = {
+          success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+          error: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+        };
+        toast.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
+        container.appendChild(toast);
+        setTimeout(function () {
+          toast.classList.add('leaving');
+          toast.addEventListener('animationend', function () { toast.remove(); }, { once: true });
+        }, 3000);
+      }
+
+      function doneModal() {
+        var dirty = isDirty;
+        closeModal();
+        if (dirty) showToast('success', 'Changes saved');
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+    </script>
 
 </body>
 
