@@ -875,20 +875,51 @@
       animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
     }
 
-    .toast.leaving { animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both; }
-    .toast.success { background: hsl(140, 65%, 15%); color: hsl(140, 60%, 94%); }
-    .toast.success svg { color: hsl(140, 65%, 55%); }
-    .toast.error { background: hsl(352, 92%, 18%); color: hsl(11, 100%, 97%); }
-    .toast.error svg { color: hsl(352, 92%, 62%); }
-    .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast.error svg {
+      color: hsl(352, 92%, 62%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
 
     @keyframes toastIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: none; }
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
     }
 
     @keyframes toastOut {
-      to { opacity: 0; transform: translateY(8px); }
+      to {
+        opacity: 0;
+        transform: translateY(8px);
+      }
     }
 
     /* Modal footer */
@@ -1520,7 +1551,10 @@
       }
     };
 
+    var isDirty = false;
+
     function openModal(id) {
+      isDirty = false;
       const tx = transactions[id];
       if (!tx) return;
 
@@ -1542,6 +1576,10 @@
 
       modalBackdrop.classList.add('open');
       modal.classList.add('open');
+
+      modal.querySelectorAll('input, select, textarea').forEach(function (el) {
+        el.addEventListener('change', function () { isDirty = true; }, { once: false });
+      });
     }
 
     function closeModal() {
@@ -1568,8 +1606,9 @@
     }
 
     function doneModal() {
+      var dirty = isDirty;
       closeModal();
-      showToast('success', 'Changes saved');
+      if (dirty) showToast('success', 'Changes saved');
     }
 
     document.addEventListener('keydown', (e) => {
