@@ -233,7 +233,7 @@
       white-space: nowrap;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 120ms, visibility 120ms;
+      transition: opacity 100ms, visibility 100ms;
       pointer-events: none;
       z-index: 100;
     }
@@ -241,6 +241,7 @@
     [data-tooltip]:hover::after {
       opacity: 1;
       visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
     }
 
     /* ── Wire table / toolbar ── */
@@ -346,7 +347,15 @@
       border-color: var(--neutral-55);
     }
 
-    .btn-icon { padding: 0; width: 32px; height: 32px; min-width: 32px; min-height: 32px; flex-shrink: 0; align-self: center; }
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      flex-shrink: 0;
+      align-self: center;
+    }
 
     .btn-icon svg {
       width: 18px;
