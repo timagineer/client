@@ -221,7 +221,7 @@
     [data-tooltip]::after {
       content: attr(data-tooltip);
       position: absolute;
-      bottom: calc(100% + 6px);
+      top: calc(100% + 6px);
       left: 50%;
       transform: translateX(-50%);
       padding: 4px 8px;
@@ -346,12 +346,7 @@
       border-color: var(--neutral-55);
     }
 
-    .btn-icon {
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      flex-shrink: 0;
-    }
+    .btn-icon { padding: 0; width: 32px; height: 32px; min-width: 32px; min-height: 32px; flex-shrink: 0; align-self: center; }
 
     .btn-icon svg {
       width: 18px;
