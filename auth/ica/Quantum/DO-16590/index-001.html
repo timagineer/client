@@ -622,7 +622,6 @@
     }
 
     .form-section+.form-section {
-      border-top: 1px solid var(--neutral-90);
       margin-top: 4px;
     }
 
@@ -825,13 +824,28 @@
 
     /* Progressive disclosure — add line 2 */
     .addr-toggle {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 12px; font-weight: 500; color: var(--primary-30);
-      background: none; border: none; cursor: pointer;
-      padding: 0; font-family: inherit; margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary-30);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      margin-top: 2px;
     }
-    .addr-toggle:hover { text-decoration: underline; }
-    .addr-toggle svg { width: 13px; height: 13px; }
+
+    .addr-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .addr-toggle svg {
+      width: 13px;
+      height: 13px;
+    }
 
     /* Toast */
     .toast-container {
@@ -1212,7 +1226,9 @@
             </div>
           </div>
           <button class="addr-toggle" onclick="toggleAddr2()" id="addr2Toggle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             Add line 2
           </button>
           <div id="addr2Wrap" style="display:none;" class="form-row">
