@@ -1575,6 +1575,104 @@
                 <input type="date" class="form-input" id="f_insDob">
               </div>
             </div>
+            <button class="addr-toggle" onclick="toggleInsAddr()" id="insAddrToggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add different address
+            </button>
+            <div id="insAddrWrap" style="display:none;">
+              <div class="form-row">
+                <div class="form-field">
+                  <label class="form-label">Street address 1</label>
+                  <input type="text" class="form-input" id="f_insAddr1" placeholder="123 Main St">
+                </div>
+              </div>
+              <button class="addr-toggle" onclick="toggleInsAddr2()" id="insAddr2Toggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Add line 2
+              </button>
+              <div id="insAddr2Wrap" style="display:none;" class="form-row">
+                <div class="form-field">
+                  <div class="form-label-row">
+                    <label class="form-label" for="f_insAddr2">Street address 2</label>
+                    <button class="form-label-action" onclick="toggleInsAddr2()">Remove</button>
+                  </div>
+                  <input type="text" class="form-input" id="f_insAddr2" placeholder="Apt, suite, floor...">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="flex:2;">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-input" id="f_insCity">
+                </div>
+                <div class="form-field" style="flex:1;">
+                  <label class="form-label">State</label>
+                  <select class="form-select" id="f_insState">
+                    <option value="">—</option>
+                    <option>Alabama</option>
+                    <option>Alaska</option>
+                    <option>Arizona</option>
+                    <option>Arkansas</option>
+                    <option>California</option>
+                    <option>Colorado</option>
+                    <option>Connecticut</option>
+                    <option>Delaware</option>
+                    <option>District of Columbia</option>
+                    <option>Florida</option>
+                    <option>Georgia</option>
+                    <option>Hawaii</option>
+                    <option>Idaho</option>
+                    <option>Illinois</option>
+                    <option>Indiana</option>
+                    <option>Iowa</option>
+                    <option>Kansas</option>
+                    <option>Kentucky</option>
+                    <option>Louisiana</option>
+                    <option>Maine</option>
+                    <option>Maryland</option>
+                    <option>Massachusetts</option>
+                    <option>Michigan</option>
+                    <option>Minnesota</option>
+                    <option>Mississippi</option>
+                    <option>Missouri</option>
+                    <option>Montana</option>
+                    <option>Nebraska</option>
+                    <option>Nevada</option>
+                    <option>New Hampshire</option>
+                    <option>New Jersey</option>
+                    <option>New Mexico</option>
+                    <option>New York</option>
+                    <option>North Carolina</option>
+                    <option>North Dakota</option>
+                    <option>Ohio</option>
+                    <option>Oklahoma</option>
+                    <option>Oregon</option>
+                    <option>Pennsylvania</option>
+                    <option>Puerto Rico</option>
+                    <option>Rhode Island</option>
+                    <option>South Carolina</option>
+                    <option>South Dakota</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>U.S. Virgin Islands</option>
+                    <option>Utah</option>
+                    <option>Vermont</option>
+                    <option>Virginia</option>
+                    <option>Washington</option>
+                    <option>West Virginia</option>
+                    <option>Wisconsin</option>
+                    <option>Wyoming</option>
+                  </select>
+                </div>
+                <div class="form-field" style="flex:1;">
+                  <label class="form-label">Zip code</label>
+                  <input type="text" class="form-input" id="f_insZip" placeholder="00000" maxlength="10">
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1775,7 +1873,7 @@
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
       document.getElementById('chartSubtitle').style.display = 'none';
-      ['newContactFields', 'formPkgWrap', 'addr2Wrap'].forEach(function (id) {
+      ['newContactFields', 'formPkgWrap', 'addr2Wrap', 'insAddrWrap', 'insAddr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
@@ -1845,6 +1943,20 @@
       toggle.style.display = open ? '' : 'none';
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
+    function toggleInsAddr() {
+      var wrap = document.getElementById('insAddrWrap');
+      var toggle = document.getElementById('insAddrToggle');
+      var open = wrap.style.display !== 'none';
+      wrap.style.display = open ? 'none' : '';
+      toggle.style.display = open ? '' : 'none';
+    }
+    function toggleInsAddr2() {
+      var wrap = document.getElementById('insAddr2Wrap');
+      var toggle = document.getElementById('insAddr2Toggle');
+      var open = wrap.style.display !== 'none';
+      wrap.style.display = open ? 'none' : '';
+      toggle.style.display = open ? '' : 'none';
+    }
     function onInsuredChange(val) { toggleEl('newContactFields', val === 'new'); }
     function onRelChange(val) {
       var isOther = val === 'Other (please specify)';
