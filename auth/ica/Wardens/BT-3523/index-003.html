@@ -1152,11 +1152,27 @@
       background: hsl(45, 100%, 93%);
       border: 1px solid hsl(45, 65%, 78%);
       border-radius: 6px;
-      margin: 14px 0 2px;
+      margin: 10px 0 12px;
     }
-    .modal-impact-banner.visible { display: flex; }
-    .modal-impact-banner svg { width: 16px; height: 16px; flex-shrink: 0; color: hsl(38, 85%, 35%); margin-top: 1px; }
-    .modal-impact-banner-text { font-size: 13px; color: hsl(38, 85%, 28%); line-height: 1.4; }
+
+    .modal-impact-banner.visible {
+      display: flex;
+    }
+
+    .modal-impact-banner svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: hsl(38, 85%, 35%);
+      margin-top: 1px;
+    }
+
+    .modal-impact-banner-text {
+      font-size: 13px;
+      color: hsl(38, 85%, 28%);
+      line-height: 1.4;
+    }
+
     /* Section heading */
     .modal-section-header {
       font-size: 11px;
@@ -1519,8 +1535,9 @@
 
       <div class="modal-impact-banner" id="impactBanner" role="alert">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
-          <path d="M12 9v4"/><path d="M12 17h.01"/>
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
         </svg>
         <span class="modal-impact-banner-text" id="impactBannerText"></span>
       </div>
@@ -1701,13 +1718,13 @@
     var _origValues = {};
     var IMPACT_MSGS = {
       tdPostedDate: 'Updating the posted date will apply to all charges in this payment.',
-      tdAmount:     'Updating the amount will adjust the insurance balance.',
-      tdInsurance:  'Changing the payer will move this payment\u2019s balance in the aging report.'
+      tdAmount: 'Updating the amount will adjust the insurance balance.',
+      tdInsurance: 'Changing the payer will move this payment\u2019s balance in the aging report.'
     };
     var IMPACT_FIELDS = ['tdPostedDate', 'tdAmount', 'tdInsurance'];
 
     function storeOriginals() {
-      IMPACT_FIELDS.forEach(function(id) {
+      IMPACT_FIELDS.forEach(function (id) {
         var el = document.getElementById(id);
         if (el) _origValues[id] = el.value;
       });
@@ -1715,7 +1732,7 @@
 
     function checkImpact() {
       var msgs = [];
-      IMPACT_FIELDS.forEach(function(id) {
+      IMPACT_FIELDS.forEach(function (id) {
         var el = document.getElementById(id);
         if (el && el.value !== _origValues[id]) msgs.push(IMPACT_MSGS[id]);
       });
@@ -1730,7 +1747,7 @@
     }
 
     function wireImpactFields() {
-      IMPACT_FIELDS.forEach(function(id) {
+      IMPACT_FIELDS.forEach(function (id) {
         var el = document.getElementById(id);
         if (el) el.addEventListener('change', checkImpact);
       });
