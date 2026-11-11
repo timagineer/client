@@ -831,6 +831,13 @@
     }
     .form-label-action:hover { text-decoration: underline; }
 
+    /* Section header with action */
+    .form-section-action-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+    }
+    .form-section-action-row .form-section-title { margin: 0; }
+    .form-section-action-right { display: flex; align-items: center; gap: 8px; }
+
     /* Progressive disclosure — add line 2 */
     .addr-toggle {
       display: inline-flex;
@@ -1175,7 +1182,7 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Legal first name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="f_first" placeholder="First" oninput="syncSubtitle()">
+              <input type="text" class="form-input" id="f_first" placeholder="First" oninput="syncSubtitle(); updateSelfOption();">
             </div>
             <div class="form-field" style="flex:0.65;">
               <label class="form-label">Middle name</label>
@@ -1183,7 +1190,7 @@
             </div>
             <div class="form-field">
               <label class="form-label">Legal last name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="f_last" placeholder="Last" oninput="syncSubtitle()">
+              <input type="text" class="form-input" id="f_last" placeholder="Last" oninput="syncSubtitle(); updateSelfOption();">
             </div>
           </div>
           <div class="form-row">
@@ -1400,7 +1407,13 @@
       <!-- ── STEP 2 — Insurance ── -->
       <div class="modal-body" id="s2body" style="display:none;">
         <div class="form-section">
-          <h3 class="form-section-title">Primary Insurance</h3>
+          <div class="form-section-action-row">
+            <h3 class="form-section-title">Primary Insurance</h3>
+            <div class="form-section-action-right">
+              <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
+              <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn">Check eligibility</button>
+            </div>
+          </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Insurance company <span class="req">*</span></label>
@@ -1409,8 +1422,6 @@
                 <div class="combobox-list" id="insCboList" style="display:none;"></div>
               </div>
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-field">
               <label class="form-label">Insurance type <span class="req">*</span></label>
               <select class="form-select" id="f_insType">
@@ -1432,21 +1443,18 @@
                 <option>Workers Compensation</option>
               </select>
             </div>
-            <div class="form-field">
-              <label class="form-label">Start date</label>
-              <input type="date" class="form-input" id="f_insStart">
-            </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Member ID / Policy number <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_memberId" placeholder="Member ID">
             </div>
+            <div class="form-field">
+              <label class="form-label">Start date</label>
+              <input type="date" class="form-input" id="f_insStart">
+            </div>
           </div>
-          <div class="eligibility-row">
-            <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn">Check eligibility</button>
-            <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
-          </div>
+
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Primary insured <span class="req">*</span></label>
@@ -1800,6 +1808,13 @@
       document.getElementById('selfOption').textContent = 'Self — ' + name;
       var sub = document.getElementById('chartSubtitle');
       if (name !== 'Client') { sub.textContent = name; sub.style.display = ''; }
+    }
+    function updateSelfOption() {
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var name = [first, last].filter(Boolean).join(' ');
+      var opt = document.getElementById('selfOption');
+      if (opt) opt.textContent = name ? 'Self — ' + name : 'Self';
     }
     function syncSubtitle() {
       var first = document.getElementById('f_first').value.trim();
