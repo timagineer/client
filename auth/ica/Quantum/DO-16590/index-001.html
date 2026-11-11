@@ -823,6 +823,16 @@
       color: hsl(0, 70%, 34%);
     }
 
+    /* Progressive disclosure — add line 2 */
+    .addr-toggle {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 500; color: var(--primary-30);
+      background: none; border: none; cursor: pointer;
+      padding: 0; font-family: inherit; margin-top: 2px;
+    }
+    .addr-toggle:hover { text-decoration: underline; }
+    .addr-toggle svg { width: 13px; height: 13px; }
+
     /* Toast */
     .toast-container {
       position: fixed;
@@ -1201,7 +1211,11 @@
               <input type="text" class="form-input" id="f_addr1" placeholder="123 Main St">
             </div>
           </div>
-          <div class="form-row">
+          <button class="addr-toggle" onclick="toggleAddr2()" id="addr2Toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add line 2
+          </button>
+          <div id="addr2Wrap" style="display:none;" class="form-row">
             <div class="form-field">
               <label class="form-label">Street address 2</label>
               <input type="text" class="form-input" id="f_addr2" placeholder="Apt, suite, floor...">
@@ -1712,7 +1726,7 @@
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
       document.getElementById('chartSubtitle').style.display = 'none';
-      ['newContactFields', 'relFieldWrap', 'relSpecifyWrap', 'formPkgWrap'].forEach(function (id) {
+      ['newContactFields', 'relFieldWrap', 'relSpecifyWrap', 'formPkgWrap', 'addr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
@@ -1766,6 +1780,15 @@
       var name = [first, last].filter(Boolean).join(' ');
       if (name) { sub.textContent = name; sub.style.display = ''; }
       else { sub.style.display = 'none'; }
+    }
+    function toggleAddr2() {
+      var wrap = document.getElementById('addr2Wrap');
+      var btn = document.getElementById('addr2Toggle');
+      var open = wrap.style.display !== 'none';
+      wrap.style.display = open ? 'none' : '';
+      btn.innerHTML = open
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add line 2'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Remove line 2';
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function onInsuredChange(val) { toggleEl('newContactFields', val === 'new'); }
