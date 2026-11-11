@@ -823,13 +823,44 @@
     }
 
     .form-label-row {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
     }
+
     .form-label-action {
-      font-size: 11px; font-weight: 500; color: var(--primary-30);
-      background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--primary-30);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
     }
-    .form-label-action:hover { text-decoration: underline; }
+
+    .form-label-action:hover {
+      text-decoration: underline;
+    }
+
+    /* Section header with action */
+    .form-section-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .form-section-action-row .form-section-title {
+      margin: 0;
+    }
+
+    .form-section-action-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     /* Progressive disclosure — add line 2 */
     .addr-toggle {
@@ -1175,7 +1206,7 @@
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Legal first name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="f_first" placeholder="First" oninput="syncSubtitle()">
+              <input type="text" class="form-input" id="f_first" placeholder="First" oninput="syncSubtitle(); updateSelfOption();">
             </div>
             <div class="form-field" style="flex:0.65;">
               <label class="form-label">Middle name</label>
@@ -1183,7 +1214,7 @@
             </div>
             <div class="form-field">
               <label class="form-label">Legal last name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="f_last" placeholder="Last" oninput="syncSubtitle()">
+              <input type="text" class="form-input" id="f_last" placeholder="Last" oninput="syncSubtitle(); updateSelfOption();">
             </div>
           </div>
           <div class="form-row">
@@ -1400,7 +1431,13 @@
       <!-- ── STEP 2 — Insurance ── -->
       <div class="modal-body" id="s2body" style="display:none;">
         <div class="form-section">
-          <h3 class="form-section-title">Primary Insurance</h3>
+          <div class="form-section-action-row">
+            <h3 class="form-section-title">Primary Insurance</h3>
+            <div class="form-section-action-right">
+              <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
+              <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn">Check eligibility</button>
+            </div>
+          </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Insurance company <span class="req">*</span></label>
@@ -1409,8 +1446,6 @@
                 <div class="combobox-list" id="insCboList" style="display:none;"></div>
               </div>
             </div>
-          </div>
-          <div class="form-row">
             <div class="form-field">
               <label class="form-label">Insurance type <span class="req">*</span></label>
               <select class="form-select" id="f_insType">
@@ -1432,20 +1467,16 @@
                 <option>Workers Compensation</option>
               </select>
             </div>
-            <div class="form-field">
-              <label class="form-label">Start date</label>
-              <input type="date" class="form-input" id="f_insStart">
-            </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label class="form-label">Member ID / Policy number <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_memberId" placeholder="Member ID">
             </div>
-          </div>
-          <div class="eligibility-row">
-            <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn">Check eligibility</button>
-            <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
+            <div class="form-field">
+              <label class="form-label">Start date</label>
+              <input type="date" class="form-input" id="f_insStart">
+            </div>
           </div>
           <div class="form-row">
             <div class="form-field">
@@ -1484,16 +1515,8 @@
             </div>
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label">Type <span class="req">*</span></label>
-                <select class="form-select" id="f_insRelType" onchange="onRelTypeChange(this.value)">
-                  <option value="">Select...</option>
-                  <option value="family">Family</option>
-                  <option value="custom">Custom</option>
-                </select>
-              </div>
-              <div class="form-field" id="relFieldWrap" style="display:none;">
-                <label class="form-label">Relationship <span class="req">*</span></label>
-                <select class="form-select" id="f_insRel" onchange="toggleEl('relSpecifyWrap',this.value==='Other (please specify)')">
+                <label class="form-label" id="relLabel">Relationship <span class="req">*</span></label>
+                <select class="form-select" id="f_insRel" onchange="onRelChange(this.value)">
                   <option value="">Select...</option>
                   <optgroup label="Immediate Family">
                     <option>Spouse</option>
@@ -1547,11 +1570,9 @@
                   </optgroup>
                 </select>
               </div>
-            </div>
-            <div class="form-row" id="relSpecifyWrap" style="display:none;">
               <div class="form-field">
-                <label class="form-label">Specify relationship <span class="req">*</span></label>
-                <input type="text" class="form-input" id="f_insRelOther" placeholder="Describe relationship">
+                <label class="form-label" id="specifyRelLabel">Specify relationship</label>
+                <input type="text" class="form-input" id="f_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
               </div>
             </div>
           </div>
@@ -1754,7 +1775,7 @@
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
       document.getElementById('chartSubtitle').style.display = 'none';
-      ['newContactFields', 'relFieldWrap', 'relSpecifyWrap', 'formPkgWrap', 'addr2Wrap'].forEach(function (id) {
+      ['newContactFields', 'formPkgWrap', 'addr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
@@ -1801,6 +1822,13 @@
       var sub = document.getElementById('chartSubtitle');
       if (name !== 'Client') { sub.textContent = name; sub.style.display = ''; }
     }
+    function updateSelfOption() {
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var name = [first, last].filter(Boolean).join(' ');
+      var opt = document.getElementById('selfOption');
+      if (opt) opt.textContent = name ? 'Self — ' + name : 'Self';
+    }
     function syncSubtitle() {
       var first = document.getElementById('f_first').value.trim();
       var last = document.getElementById('f_last').value.trim();
@@ -1818,10 +1846,19 @@
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function onInsuredChange(val) { toggleEl('newContactFields', val === 'new'); }
-    function onRelTypeChange(val) {
-      toggleEl('relFieldWrap', val === 'custom');
-      toggleEl('relSpecifyWrap', false);
-      if (val !== 'custom') document.getElementById('f_insRel').value = '';
+    function onRelChange(val) {
+      var isOther = val === 'Other (please specify)';
+      var specInput = document.getElementById('f_insRelOther');
+      var specLabel = document.getElementById('specifyRelLabel');
+      if (specInput) {
+        specInput.disabled = !isOther;
+        specInput.style.background = isOther ? '' : 'var(--neutral-95)';
+        specInput.style.color = isOther ? '' : 'var(--neutral-50)';
+        if (!isOther) specInput.value = '';
+      }
+      if (specLabel) specLabel.innerHTML = isOther
+        ? 'Specify relationship <span class="req">*</span>'
+        : 'Specify relationship';
     }
 
     // Eligibility
