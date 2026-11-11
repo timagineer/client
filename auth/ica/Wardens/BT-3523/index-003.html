@@ -1739,7 +1739,7 @@
       var banner = document.getElementById('impactBanner');
       var text = document.getElementById('impactBannerText');
       if (msgs.length > 0) {
-        text.textContent = msgs[0]; // show first changed field's message
+        text.innerHTML = msgs.map(function(m) { return '<div>' + m + '</div>'; }).join('');
         banner.classList.add('visible');
       } else {
         banner.classList.remove('visible');
@@ -1786,6 +1786,7 @@
     }
 
     function closeModal() {
+      document.getElementById('impactBanner').classList.remove('visible');
       modalBackdrop.classList.remove('open');
       modal.classList.remove('open');
     }
