@@ -822,6 +822,15 @@
       color: hsl(0, 70%, 34%);
     }
 
+    .form-label-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;
+    }
+    .form-label-action {
+      font-size: 11px; font-weight: 500; color: var(--primary-30);
+      background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;
+    }
+    .form-label-action:hover { text-decoration: underline; }
+
     /* Progressive disclosure — add line 2 */
     .addr-toggle {
       display: inline-flex;
@@ -1233,7 +1242,10 @@
           </button>
           <div id="addr2Wrap" style="display:none;" class="form-row">
             <div class="form-field">
-              <label class="form-label">Street address 2</label>
+              <div class="form-label-row">
+                <label class="form-label" for="f_addr2">Street address 2</label>
+                <button class="form-label-action" onclick="toggleAddr2()">Remove</button>
+              </div>
               <input type="text" class="form-input" id="f_addr2" placeholder="Apt, suite, floor...">
             </div>
           </div>
@@ -1799,12 +1811,10 @@
     }
     function toggleAddr2() {
       var wrap = document.getElementById('addr2Wrap');
-      var btn = document.getElementById('addr2Toggle');
+      var toggle = document.getElementById('addr2Toggle');
       var open = wrap.style.display !== 'none';
       wrap.style.display = open ? 'none' : '';
-      btn.innerHTML = open
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add line 2'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Remove line 2';
+      toggle.style.display = open ? '' : 'none';
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function onInsuredChange(val) { toggleEl('newContactFields', val === 'new'); }
