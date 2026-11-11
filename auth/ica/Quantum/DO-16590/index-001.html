@@ -963,8 +963,14 @@
         list.innerHTML = '<div class="combobox-empty">No matches</div>';
       } else {
         list.innerHTML = matches.slice(0,30).map(function(c) {
-          return '<div class="combobox-item" onmousedown="selectCombobox('' + c.replace(/'/g,"\'") + '','f_insCompany','insCboList')">' + c + '</div>';
+          return '<div class="combobox-item" data-val="' + c.replace(/"/g,'&quot;') + '">' + c + '</div>';
         }).join('');
+        list.querySelectorAll('.combobox-item').forEach(function(item) {
+          item.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            selectCombobox(item.dataset.val, 'f_insCompany', listId);
+          });
+        });
       }
       list.style.display = '';
     }
