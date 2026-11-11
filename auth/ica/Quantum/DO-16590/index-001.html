@@ -1500,21 +1500,6 @@
             </div>
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label">Legal sex <span class="req">*</span></label>
-                <select class="form-select" id="f_insSex">
-                  <option value="">Select...</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Unknown</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label class="form-label">Date of birth <span class="req">*</span></label>
-                <input type="date" class="form-input" id="f_insDob">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-field">
                 <label class="form-label" id="relLabel">Relationship <span class="req">*</span></label>
                 <select class="form-select" id="f_insRel" onchange="onRelChange(this.value)">
                   <option value="">Select...</option>
@@ -1574,6 +1559,21 @@
                 <label class="form-label" id="specifyRelLabel">Specify relationship</label>
                 <input type="text" class="form-input" id="f_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
               </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">Legal sex <span class="req">*</span></label>
+                <select class="form-select" id="f_insSex">
+                  <option value="">Select...</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Unknown</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Date of birth <span class="req">*</span></label>
+                <input type="date" class="form-input" id="f_insDob">
+              </div>
+            </div>
             </div>
           </div>
         </div>
