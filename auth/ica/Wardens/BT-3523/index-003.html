@@ -1725,39 +1725,39 @@
     var _origValues = {};
     var IMPACT_MSGS = {
       tdPostedDate: 'Updating the posted date will apply to all charges in this payment.',
-      td t: 'Updating the amount will adjust the insurance balance.',
-      tdInsuran : 'Changing the payer will move this payment\u2019s balance in the aging report.'
+      tdAmount: 'Updating the amount will adjust the insurance balance.',
+      tdInsuran: 'Changing the payer will move this payment\u2019s balance in the aging report.'
     };
     var IMPACT_FIELDS = ['tdPostedDate', 'tdAmount', 'tdInsurance'];
 
     function storeOriginals() {
-      IMPACT_FIELDS.forEach(functi on (id) {
+      IMPACT_FIELDS.forEach(functi on(id) {
         var el = document.getElementById(id);
-        if (el) _origValues[id] = el.value;
+        if(el) _origValues[id] = el.value;
       });
     }
 
     function checkImpact() {
       var msgs = [];
-      IMPACT_FIELDS.forEach(funct ion (id) {
+      IMPACT_FIELDS.forEach(funct ion(id) {
         var el = document.getElementById(id);
-        if (el && el.value !== _origValues[id]) msgs.push(IMPACT_MSGS[id]);
-      });
-      var banner = document.getElementById('impactBanner');
-      var text = document.getElementById('impactBannerText');
-      if (msgs.length > 0) {
-        text.innerHTML = msgs.map(function(m) { return '<div>' + m + '</div>'; }).join('');
-        banner.classList.add('visible');
-      } else {
-        banner.classList.remove('visible');
-      }
+        if(el && el.value !== _origValues[id]) msgs.push(IMPACT_MSGS[id]);
+    });
+    var banner = document.getElementById('impactBanner');
+    var text = document.getElementById('impactBannerText');
+    if (msgs.length > 0) {
+      text.innerHTML = msgs.map(function (m) { return '<div>' + m + '</div>'; }).join('');
+      banner.classList.add('visible');
+    } else {
+      banner.classList.remove('visible');
+    }
     }
 
     function wireImpactFields() {
       IMPACT_F IELDS.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('change', checkImpact);
-      });
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', checkImpact);
+    });
     }
 
     function openModal(id) {
