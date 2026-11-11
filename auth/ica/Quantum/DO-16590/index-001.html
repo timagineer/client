@@ -1876,6 +1876,9 @@
       ['newContactFields', 'formPkgWrap', 'addr2Wrap', 'insAddrWrap', 'insAddr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
+      ['insAddrToggle', 'insAddr2Toggle', 'addr2Toggle'].forEach(function (id) {
+        var el = document.getElementById(id); if (el) el.style.display = '';
+      });
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
       document.getElementById('f_setDefault').checked = true;
       var eb = document.getElementById('eligBadge');
