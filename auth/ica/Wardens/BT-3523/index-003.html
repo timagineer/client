@@ -1731,7 +1731,7 @@
     var IMPACT_FIELDS = ['tdPostedDate', 'tdAmount', 'tdInsurance'];
 
     function storeOriginals() {
-      IMPACT_FIELDS.forEach(functi on(id) {
+      IMPACT_FIELDS.forEach(function(id) {
         var el = document.getElementById(id);
         if(el) _origValues[id] = el.value;
       });
@@ -1739,7 +1739,7 @@
 
     function checkImpact() {
       var msgs = [];
-      IMPACT_FIELDS.forEach(funct ion(id) {
+      IMPACT_FIELDS.forEach(function(id) {
         var el = document.getElementById(id);
         if(el && el.value !== _origValues[id]) msgs.push(IMPACT_MSGS[id]);
     });
@@ -1754,7 +1754,7 @@
     }
 
     function wireImpactFields() {
-      IMPACT_F IELDS.forEach(function (id) {
+      IMPACT_FIELDS.forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('change', checkImpact);
     });
