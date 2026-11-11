@@ -1578,177 +1578,176 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="modal-footer" id="s2footer" style="display:none;">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <div class="modal-footer-actions">
-        <button class="btn btn-ghost" onclick="goTo(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg> Back</button>
-        <button class="btn btn-outline" onclick="createChart()">Create chart</button>
-        <button class="btn btn-primary" onclick="goTo(3)">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg></button>
-      </div>
-    </div>
-
-    <!-- ── STEP 3 — Payment ── -->
-    <div class="modal-body" id="s3body" style="display:none;">
-      <div class="form-section">
-        <h3 class="form-section-title">Card Information</h3>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="form-label">Name on card</label>
-            <input type="text" class="form-input" id="f_cardName" placeholder="As it appears on card">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label class="form-label">Card number</label>
-            <input type="text" class="form-input" id="f_cardNum" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" maxlength="19" oninput="formatCardNum(this)">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field" style="flex:1.5;">
-            <label class="form-label">Expiration month</label>
-            <select class="form-select" id="f_cardMon">
-              <option value="">MM</option>
-              <option value="01">01</option>
-              <option value="02">02</option>
-              <option value="03">03</option>
-              <option value="04">04</option>
-              <option value="05">05</option>
-              <option value="06">06</option>
-              <option value="07">07</option>
-              <option value="08">08</option>
-              <option value="09">09</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-            </select>
-          </div>
-          <div class="form-field" style="flex:1.5;">
-            <label class="form-label">Expiration year</label>
-            <select class="form-select" id="f_cardYr">
-              <option value="">YYYY</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-              <option value="2029">2029</option>
-              <option value="2030">2030</option>
-              <option value="2031">2031</option>
-              <option value="2032">2032</option>
-              <option value="2033">2033</option>
-            </select>
-          </div>
-          <div class="form-field" style="flex:1;">
-            <label class="form-label">Security code (CVV)</label>
-            <input type="text" class="form-input" id="f_cvv" placeholder="&bull;&bull;&bull;" maxlength="4">
-          </div>
+      <div class="modal-footer" id="s2footer" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <div class="modal-footer-actions">
+          <button class="btn btn-ghost" onclick="goTo(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg> Back</button>
+          <button class="btn btn-outline" onclick="createChart()">Create chart</button>
+          <button class="btn btn-primary" onclick="goTo(3)">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg></button>
         </div>
       </div>
-      <div class="form-section">
-        <h3 class="form-section-title">Billing Address</h3>
-        <div class="form-row">
-          <div class="form-field" style="max-width:200px;">
-            <label class="form-label">Country</label>
-            <select class="form-select" id="f_billCountry">
-              <option value="US">United States</option>
-              <option>Canada</option>
-              <option>Other</option>
-            </select>
+
+      <!-- ── STEP 3 — Payment ── -->
+      <div class="modal-body" id="s3body" style="display:none;">
+        <div class="form-section">
+          <h3 class="form-section-title">Card Information</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Name on card</label>
+              <input type="text" class="form-input" id="f_cardName" placeholder="As it appears on card">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Card number</label>
+              <input type="text" class="form-input" id="f_cardNum" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" maxlength="19" oninput="formatCardNum(this)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field" style="flex:1.5;">
+              <label class="form-label">Expiration month</label>
+              <select class="form-select" id="f_cardMon">
+                <option value="">MM</option>
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </div>
+            <div class="form-field" style="flex:1.5;">
+              <label class="form-label">Expiration year</label>
+              <select class="form-select" id="f_cardYr">
+                <option value="">YYYY</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+                <option value="2032">2032</option>
+                <option value="2033">2033</option>
+              </select>
+            </div>
+            <div class="form-field" style="flex:1;">
+              <label class="form-label">Security code (CVV)</label>
+              <input type="text" class="form-input" id="f_cvv" placeholder="&bull;&bull;&bull;" maxlength="4">
+            </div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-field"><label class="form-label">Address 1</label><input type="text" class="form-input" id="f_billAddr1"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-field"><label class="form-label">Address 2</label><input type="text" class="form-input" id="f_billAddr2" placeholder="Optional"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-field" style="flex:2;"><label class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
-          <div class="form-field" style="flex:1;"><label class="form-label">State</label>
-            <select class="form-select" id="f_billState">
-              <option value="">—</option>
-              <option>Alabama</option>
-              <option>Alaska</option>
-              <option>Arizona</option>
-              <option>Arkansas</option>
-              <option>California</option>
-              <option>Colorado</option>
-              <option>Connecticut</option>
-              <option>Delaware</option>
-              <option>District of Columbia</option>
-              <option>Florida</option>
-              <option>Georgia</option>
-              <option>Hawaii</option>
-              <option>Idaho</option>
-              <option>Illinois</option>
-              <option>Indiana</option>
-              <option>Iowa</option>
-              <option>Kansas</option>
-              <option>Kentucky</option>
-              <option>Louisiana</option>
-              <option>Maine</option>
-              <option>Maryland</option>
-              <option>Massachusetts</option>
-              <option>Michigan</option>
-              <option>Minnesota</option>
-              <option>Mississippi</option>
-              <option>Missouri</option>
-              <option>Montana</option>
-              <option>Nebraska</option>
-              <option>Nevada</option>
-              <option>New Hampshire</option>
-              <option>New Jersey</option>
-              <option>New Mexico</option>
-              <option>New York</option>
-              <option>North Carolina</option>
-              <option>North Dakota</option>
-              <option>Ohio</option>
-              <option>Oklahoma</option>
-              <option>Oregon</option>
-              <option>Pennsylvania</option>
-              <option>Puerto Rico</option>
-              <option>Rhode Island</option>
-              <option>South Carolina</option>
-              <option>South Dakota</option>
-              <option>Tennessee</option>
-              <option>Texas</option>
-              <option>Utah</option>
-              <option>U.S. Virgin Islands</option>
-              <option>Vermont</option>
-              <option>Virginia</option>
-              <option>Washington</option>
-              <option>West Virginia</option>
-              <option>Wisconsin</option>
-              <option>Wyoming</option>
-            </select>
+        <div class="form-section">
+          <h3 class="form-section-title">Billing Address</h3>
+          <div class="form-row">
+            <div class="form-field" style="max-width:200px;">
+              <label class="form-label">Country</label>
+              <select class="form-select" id="f_billCountry">
+                <option value="US">United States</option>
+                <option>Canada</option>
+                <option>Other</option>
+              </select>
+            </div>
           </div>
-          <div class="form-field" style="flex:1;"><label class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
-        </div>
-        <div class="form-checkbox-row" style="margin-top:4px;">
-          <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
-          <label class="form-checkbox-label" for="f_setDefault">Set as default payment method</label>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Address 1</label><input type="text" class="form-input" id="f_billAddr1"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Address 2</label><input type="text" class="form-input" id="f_billAddr2" placeholder="Optional"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field" style="flex:2;"><label class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
+            <div class="form-field" style="flex:1;"><label class="form-label">State</label>
+              <select class="form-select" id="f_billState">
+                <option value="">—</option>
+                <option>Alabama</option>
+                <option>Alaska</option>
+                <option>Arizona</option>
+                <option>Arkansas</option>
+                <option>California</option>
+                <option>Colorado</option>
+                <option>Connecticut</option>
+                <option>Delaware</option>
+                <option>District of Columbia</option>
+                <option>Florida</option>
+                <option>Georgia</option>
+                <option>Hawaii</option>
+                <option>Idaho</option>
+                <option>Illinois</option>
+                <option>Indiana</option>
+                <option>Iowa</option>
+                <option>Kansas</option>
+                <option>Kentucky</option>
+                <option>Louisiana</option>
+                <option>Maine</option>
+                <option>Maryland</option>
+                <option>Massachusetts</option>
+                <option>Michigan</option>
+                <option>Minnesota</option>
+                <option>Mississippi</option>
+                <option>Missouri</option>
+                <option>Montana</option>
+                <option>Nebraska</option>
+                <option>Nevada</option>
+                <option>New Hampshire</option>
+                <option>New Jersey</option>
+                <option>New Mexico</option>
+                <option>New York</option>
+                <option>North Carolina</option>
+                <option>North Dakota</option>
+                <option>Ohio</option>
+                <option>Oklahoma</option>
+                <option>Oregon</option>
+                <option>Pennsylvania</option>
+                <option>Puerto Rico</option>
+                <option>Rhode Island</option>
+                <option>South Carolina</option>
+                <option>South Dakota</option>
+                <option>Tennessee</option>
+                <option>Texas</option>
+                <option>Utah</option>
+                <option>U.S. Virgin Islands</option>
+                <option>Vermont</option>
+                <option>Virginia</option>
+                <option>Washington</option>
+                <option>West Virginia</option>
+                <option>Wisconsin</option>
+                <option>Wyoming</option>
+              </select>
+            </div>
+            <div class="form-field" style="flex:1;"><label class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
+          </div>
+          <div class="form-checkbox-row" style="margin-top:4px;">
+            <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
+            <label class="form-checkbox-label" for="f_setDefault">Set as default payment method</label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="modal-footer" id="s3footer" style="display:none;">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <div class="modal-footer-actions">
-        <button class="btn btn-ghost" onclick="goTo(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg> Back</button>
-        <button class="btn btn-primary" onclick="createChart()">Create chart</button>
+      <div class="modal-footer" id="s3footer" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <div class="modal-footer-actions">
+          <button class="btn btn-ghost" onclick="goTo(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg> Back</button>
+          <button class="btn btn-primary" onclick="createChart()">Create chart</button>
+        </div>
       </div>
-    </div>
 
-  </div>
+    </div>
   </div>
 
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
