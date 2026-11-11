@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,156 +32,906 @@
       --status-red: oklch(0.5141 0.2047 23.40);
       --status-green: oklch(0.5005 0.1631 143.29);
       --status-amber: oklch(0.5566 0.1386 53.96);
-      --rad: 6px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
     }
-    *, *::before, *::after { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; line-height: 1.5; color: var(--neutral-20); background: oklch(0.965 0.006 234); }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
 
     /* Shell */
-    .app-shell { display: flex; flex-direction: column; height: 100vh; }
-    .shell-header { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-2) var(--sp-4); background: #fff; border-bottom: 1px solid var(--border-light); height: 48px; flex-shrink: 0; }
-    .shell-body { display: flex; flex: 1; overflow: hidden; }
-    .shell-sidebar { width: 80px; background: #fff; border-right: 1px solid var(--border-light); padding: var(--sp-3) var(--sp-2); display: flex; flex-direction: column; gap: var(--sp-3); flex-shrink: 0; }
-    .shell-main { flex: 1; display: flex; flex-direction: column; background: #fff; overflow: hidden; }
-    .tab-bar { display: flex; gap: 2px; padding: var(--sp-2) var(--sp-4) 0; background: oklch(0.965 0.006 234); border-bottom: 1px solid var(--border-light); }
-    .page-content { flex: 1; display: flex; flex-direction: column; overflow-x: auto; overflow-y: auto; padding: 18px; }
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-4) 0;
+      background: oklch(0.965 0.006 234);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .page-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 18px;
+    }
 
     /* Wire */
-    .wire-logo { display: flex; gap: 2px; }
-    .wire-logo-mark { width: 32px; height: 18px; background: var(--primary-50); border-radius: var(--rad); }
-    .wire-logo-text { width: 48px; height: 18px; background: var(--secondary-60); border-radius: var(--rad); }
-    .wire-search { width: 320px; height: 28px; background: var(--neutral-90); border-radius: var(--rad); }
-    .wire-header-right { display: flex; gap: var(--sp-3); align-items: center; }
-    .wire-icon { width: 24px; height: 24px; background: var(--neutral-80); border-radius: var(--rad); }
-    .wire-avatar { width: 26px; height: 26px; background: var(--neutral-80); border-radius: 50%; }
-    .wire-nav-item { width: 100%; height: 56px; background: var(--neutral-85); border-radius: var(--rad); flex-shrink: 0; }
-    .wire-nav-item.active { background: var(--neutral-75); }
-    .sidebar-spacer { flex: 1; }
-    .wire-tab { height: 32px; padding: 0 16px; background: var(--neutral-85); border-radius: var(--rad) var(--rad) 0 0; display: flex; align-items: center; }
-    .wire-tab .wire-text { height: 10px; background: var(--neutral-70); border-radius: 2px; }
-    .wire-tab.active { background: #fff; position: relative; z-index: 1; margin-bottom: -1px; border: 1px solid var(--border-light); border-bottom: none; font-size: 14px; font-weight: 600; color: var(--neutral-20); box-shadow: 0 1px 0 0 #fff; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .wire-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: 14px 0; border-bottom: 1px solid var(--border-light); flex-shrink: 0; }
-    .wire-toolbar-left { display: flex; gap: var(--sp-2); align-items: center; }
-    .wire-select { height: 28px; border-radius: 4px; background: var(--neutral-90); }
-    .wire-search-bar { width: 220px; height: 28px; border-radius: 4px; background: var(--neutral-90); }
-    .wire-table { width: 100%; border-collapse: collapse; }
-    .wire-table thead tr { border-bottom: 2px solid var(--neutral-80); }
-    .wire-table th, .wire-table td { padding: 10px 8px; }
-    .wire-table td { border-bottom: 1px solid var(--neutral-85); }
-    .wire-cell { height: 12px; border-radius: 3px; background: var(--neutral-85); }
-    .wire-cell-dark { height: 12px; border-radius: 3px; background: var(--neutral-80); }
-    .wire-pill { height: 20px; border-radius: 10px; background: var(--neutral-85); }
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-85);
+      border-radius: var(--rad) var(--rad) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      box-shadow: 0 1px 0 0 #fff;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .wire-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .wire-toolbar-left {
+      display: flex;
+      gap: var(--sp-2);
+      align-items: center;
+    }
+
+    .wire-select {
+      height: 28px;
+      border-radius: 4px;
+      background: var(--neutral-90);
+    }
+
+    .wire-search-bar {
+      width: 220px;
+      height: 28px;
+      border-radius: 4px;
+      background: var(--neutral-90);
+    }
+
+    .wire-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .wire-table thead tr {
+      border-bottom: 2px solid var(--neutral-80);
+    }
+
+    .wire-table th,
+    .wire-table td {
+      padding: 10px 8px;
+    }
+
+    .wire-table td {
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .wire-cell {
+      height: 12px;
+      border-radius: 3px;
+      background: var(--neutral-85);
+    }
+
+    .wire-cell-dark {
+      height: 12px;
+      border-radius: 3px;
+      background: var(--neutral-80);
+    }
+
+    .wire-pill {
+      height: 20px;
+      border-radius: 10px;
+      background: var(--neutral-85);
+    }
 
     /* Buttons */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-family: inherit; font-size: 13px; height: 32px; padding: 0 12px; border: 1px solid var(--border-btn); border-radius: 4px; background: #fff; color: var(--neutral-45); cursor: pointer; transition: background 0.1s, border-color 0.1s, color 0.1s; }
-    .btn:hover { background: var(--neutral-95); border-color: var(--neutral-55); color: var(--neutral-15); }
-    .btn-sm { height: 28px; font-size: 12px; padding: 0 10px; }
-    .btn-outline { background: #fff; border-color: var(--border-btn); color: var(--neutral-20); box-shadow: rgba(12,12,12,0.09) 0px 1px 3px 0px; }
-    .btn-outline:hover { background: var(--neutral-95); border-color: var(--neutral-55); }
-    .btn-icon { padding: 0; width: 32px; height: 32px; min-width: 32px; min-height: 32px; flex-shrink: 0; align-self: center; }
-    .btn-icon svg { width: 18px; height: 18px; }
-    .btn-primary { background: var(--primary-50); border-color: var(--primary-50); color: #fff; }
-    .btn-primary:hover { background: var(--primary-30); border-color: var(--primary-30); color: #fff; }
-    .btn-ghost { background: transparent; border-color: transparent; box-shadow: none; color: var(--neutral-20); }
-    .btn-ghost:hover { background: var(--neutral-90); border-color: transparent; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: inherit;
+      font-size: 13px;
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--border-btn);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--neutral-45);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+      color: var(--neutral-15);
+    }
+
+    .btn-sm {
+      height: 28px;
+      font-size: 12px;
+      padding: 0 10px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border-color: var(--border-btn);
+      color: var(--neutral-20);
+      box-shadow: rgba(12, 12, 12, 0.09) 0px 1px 3px 0px;
+    }
+
+    .btn-outline:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-primary {
+      background: var(--primary-50);
+      border-color: var(--primary-50);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--neutral-20);
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      border-color: transparent;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     /* Tooltip */
-    [data-tooltip] { position: relative; }
-    [data-tooltip]::after { content: attr(data-tooltip); position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); padding: 4px 8px; background: var(--neutral-25); color: #fff; font-size: 11px; font-weight: 500; border-radius: 4px; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity 100ms, visibility 100ms; pointer-events: none; z-index: 200; }
-    [data-tooltip]:hover::after { opacity: 1; visibility: visible; transition: opacity 120ms 240ms, visibility 120ms 240ms; }
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
+    }
 
     /* Modal base */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 200ms cubic-bezier(.165,.84,.44,1), visibility 200ms; }
-    .modal-backdrop.open { opacity: 1; visibility: visible; }
-    .modal { width: 560px; max-width: calc(100vw - 48px); max-height: calc(100vh - 48px); background: #fff; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; opacity: 0; visibility: hidden; transform: scale(0.97) translateY(8px); transition: opacity 180ms cubic-bezier(.165,.84,.44,1), transform 220ms cubic-bezier(.165,.84,.44,1), visibility 180ms; }
-    .modal-backdrop.open .modal { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-    @media (prefers-reduced-motion: reduce) { .modal-backdrop, .modal { transition: none; } }
-    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px 12px; border-bottom: 1px solid var(--neutral-85); flex-shrink: 0; }
-    .modal-header-text { display: flex; flex-direction: column; gap: 3px; }
-    .modal-title { font-size: 16px; font-weight: 600; color: hsl(218,60%,45%); margin: 0; }
-    .modal-subtitle { font-size: 12px; color: var(--neutral-50); margin: 0; }
-    .modal-close-btn { border: none; background: transparent; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--neutral-40); padding: 0; width: 28px; height: 28px; flex-shrink: 0; }
-    .modal-close-btn svg { width: 18px; height: 18px; }
-    .modal-close-btn:hover { background: var(--neutral-90); color: var(--neutral-20); }
-    .modal-body { padding: 0 20px 16px; overflow-y: auto; flex: 1; }
-    .modal-footer { display: flex; align-items: center; padding: 12px 20px; border-top: 1px solid var(--neutral-85); flex-shrink: 0; gap: 8px; }
-    .modal-footer-actions { margin-left: auto; display: flex; gap: 8px; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms cubic-bezier(.165, .84, .44, 1), visibility 200ms;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      width: 560px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.97) translateY(8px);
+      transition: opacity 180ms cubic-bezier(.165, .84, .44, 1), transform 220ms cubic-bezier(.165, .84, .44, 1), visibility 180ms;
+    }
+
+    .modal-backdrop.open .modal {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .modal-backdrop,
+      .modal {
+        transition: none;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+
+    .modal-header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin: 0;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-40);
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .modal-close-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-20);
+    }
+
+    .modal-body {
+      padding: 0 20px 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+      gap: 8px;
+    }
+
+    .modal-footer-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
 
     /* Stepper */
-    .modal-stepper-wrap { padding: 10px 20px 0; border-bottom: 1px solid var(--neutral-85); flex-shrink: 0; display: none; }
-    .modal-stepper-wrap.visible { display: block; }
-    .stepper-nodes { display: flex; align-items: center; padding-bottom: 6px; }
-    .step-bubble { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; transition: background 220ms, color 220ms; }
-    .step-bubble.done, .step-bubble.active { background: var(--primary-50); color: #fff; }
-    .step-bubble.pending { background: var(--neutral-85); color: var(--neutral-50); }
-    .step-connector { flex: 1; height: 2px; background: var(--neutral-80); margin: 0 6px; transition: background 220ms; }
-    .step-connector.done { background: var(--primary-50); }
-    .stepper-labels { display: flex; justify-content: space-between; padding-bottom: 8px; }
-    .step-label-text { font-size: 11px; font-weight: 500; color: var(--neutral-50); }
-    .step-label-text.active { color: var(--primary-30); font-weight: 600; }
+    .modal-stepper-wrap {
+      padding: 10px 20px 0;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+      display: none;
+    }
+
+    .modal-stepper-wrap.visible {
+      display: block;
+    }
+
+    .stepper-nodes {
+      display: flex;
+      align-items: center;
+      padding-bottom: 6px;
+    }
+
+    .step-bubble {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: background 220ms, color 220ms;
+    }
+
+    .step-bubble.done,
+    .step-bubble.active {
+      background: var(--primary-50);
+      color: #fff;
+    }
+
+    .step-bubble.pending {
+      background: var(--neutral-85);
+      color: var(--neutral-50);
+    }
+
+    .step-connector {
+      flex: 1;
+      height: 2px;
+      background: var(--neutral-80);
+      margin: 0 6px;
+      transition: background 220ms;
+    }
+
+    .step-connector.done {
+      background: var(--primary-50);
+    }
+
+    .stepper-labels {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 8px;
+    }
+
+    .step-label-text {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--neutral-50);
+    }
+
+    .step-label-text.active {
+      color: var(--primary-30);
+      font-weight: 600;
+    }
 
     /* Step animation */
-    @keyframes stepFwd { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
-    @keyframes stepBack { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
-    .step-enter-fwd { animation: stepFwd 200ms cubic-bezier(.165,.84,.44,1) both; }
-    .step-enter-back { animation: stepBack 200ms cubic-bezier(.165,.84,.44,1) both; }
+    @keyframes stepFwd {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes stepBack {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .step-enter-fwd {
+      animation: stepFwd 200ms cubic-bezier(.165, .84, .44, 1) both;
+    }
+
+    .step-enter-back {
+      animation: stepBack 200ms cubic-bezier(.165, .84, .44, 1) both;
+    }
 
     /* Form */
-    .form-required-note { font-size: 11px; color: var(--neutral-50); padding: 10px 0 2px; }
-    .form-section { padding-top: 14px; }
-    .form-section + .form-section { border-top: 1px solid var(--neutral-90); margin-top: 4px; }
-    .form-section-title { font-size: 11px; font-weight: 700; color: var(--neutral-40); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 10px; }
-    .form-subsection-title { font-size: 12px; font-weight: 600; color: var(--neutral-40); margin: 12px 0 8px; }
-    .form-row { display: flex; gap: 10px; margin-bottom: 10px; }
-    .form-row:last-child { margin-bottom: 0; }
-    .form-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
-    .form-label { font-size: 12px; font-weight: 500; color: var(--neutral-40); white-space: nowrap; }
-    .form-label .req { color: var(--status-red); margin-left: 1px; }
-    .form-input, .form-select { height: 32px; padding: 0 8px; border: 1px solid var(--neutral-70); border-radius: 4px; font-size: 13px; font-family: inherit; color: var(--neutral-20); background: #fff; width: 100%; }
-    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-30); box-shadow: 0 0 0 2px hsla(218,50%,50%,0.15); }
-    .form-input::placeholder { color: var(--neutral-60); }
-    .form-input[readonly] { background: var(--neutral-95); color: var(--neutral-40); cursor: default; }
-    .form-select { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; padding-right: 24px; appearance: none; -webkit-appearance: none; }
-    .form-chart-id { font-family: ui-monospace, monospace; letter-spacing: 0.03em; }
-    .form-checkbox-row { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; }
-    .form-checkbox { width: 15px; height: 15px; margin: 0; cursor: pointer; border: 1px solid var(--neutral-60); border-radius: 3px; background: #fff; -webkit-appearance: none; appearance: none; position: relative; flex-shrink: 0; margin-top: 1px; }
-    .form-checkbox:checked { background: var(--secondary-60); border-color: var(--secondary-60); }
-    .form-checkbox:checked::after { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); background-size: 10px 10px; background-repeat: no-repeat; background-position: center; }
-    .form-checkbox-label { font-size: 13px; color: var(--neutral-30); cursor: pointer; line-height: 1.4; }
+    .form-required-note {
+      font-size: 11px;
+      color: var(--neutral-50);
+      padding: 10px 0 2px;
+    }
+
+    .form-section {
+      padding-top: 14px;
+    }
+
+    .form-section+.form-section {
+      border-top: 1px solid var(--neutral-90);
+      margin-top: 4px;
+    }
+
+    .form-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neutral-40);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 10px;
+    }
+
+    .form-subsection-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--neutral-40);
+      margin: 12px 0 8px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      white-space: nowrap;
+    }
+
+    .form-label .req {
+      color: var(--status-red);
+      margin-left: 1px;
+    }
+
+    .form-input,
+    .form-select {
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--neutral-20);
+      background: #fff;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .form-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .form-input[readonly] {
+      background: var(--neutral-95);
+      color: var(--neutral-40);
+      cursor: default;
+    }
+
+    .form-select {
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;
+      padding-right: 24px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-chart-id {
+      font-family: ui-monospace, monospace;
+      letter-spacing: 0.03em;
+    }
+
+    .form-checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .form-checkbox {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      cursor: pointer;
+      border: 1px solid var(--neutral-60);
+      border-radius: 3px;
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .form-checkbox:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .form-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+      background-size: 10px 10px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .form-checkbox-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+      cursor: pointer;
+      line-height: 1.4;
+    }
 
     /* Section toggles */
-    .toggle-section { border-top: 1px solid var(--neutral-85); padding-top: 12px; margin-top: 6px; }
-    .toggle-section-header { display: flex; align-items: center; gap: 8px; }
-    .toggle-label { font-size: 13px; font-weight: 600; color: var(--neutral-20); cursor: pointer; }
-    .toggle-body { padding-top: 12px; }
+    .toggle-section {
+      border-top: 1px solid var(--neutral-85);
+      padding-top: 12px;
+      margin-top: 6px;
+    }
+
+    .toggle-section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .toggle-body {
+      padding-top: 12px;
+    }
 
     /* Combobox */
-    .combobox-wrap { position: relative; }
-    .combobox-list { position: absolute; top: calc(100% + 2px); left: 0; right: 0; background: #fff; border: 1px solid var(--neutral-70); border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 300; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-    .combobox-item { padding: 7px 10px; font-size: 13px; color: var(--neutral-20); cursor: pointer; }
-    .combobox-item:hover, .combobox-item.active { background: var(--neutral-95); }
-    .combobox-empty { padding: 10px; font-size: 12px; color: var(--neutral-50); text-align: center; }
+    .combobox-wrap {
+      position: relative;
+    }
+
+    .combobox-list {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 300;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .combobox-item {
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .combobox-item:hover,
+    .combobox-item.active {
+      background: var(--neutral-95);
+    }
+
+    .combobox-empty {
+      padding: 10px;
+      font-size: 12px;
+      color: var(--neutral-50);
+      text-align: center;
+    }
 
     /* Eligibility */
-    .eligibility-row { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
-    .eligibility-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 4px; }
-    .eligibility-badge.pending { background: hsl(45,100%,92%); color: hsl(40,90%,25%); }
-    .eligibility-badge.eligible { background: hsl(134,41%,88%); color: hsl(134,55%,21%); }
-    .eligibility-badge.failed { background: hsl(0,80%,94%); color: hsl(0,70%,34%); }
+    .eligibility-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0 10px;
+    }
+
+    .eligibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .eligibility-badge.pending {
+      background: hsl(45, 100%, 92%);
+      color: hsl(40, 90%, 25%);
+    }
+
+    .eligibility-badge.eligible {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+    }
+
+    .eligibility-badge.failed {
+      background: hsl(0, 80%, 94%);
+      color: hsl(0, 70%, 34%);
+    }
 
     /* Toast */
-    .toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; align-items: center; }
-    .toast { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--rad); font-size: 13px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-width: 380px; pointer-events: auto; animation: toastIn 300ms cubic-bezier(0.33,1,0.68,1) both; }
-    .toast.leaving { animation: toastOut 180ms cubic-bezier(0.33,1,0.68,1) both; }
-    .toast.success { background: hsl(140,65%,15%); color: hsl(140,60%,94%); }
-    .toast.success svg { color: hsl(140,65%,55%); }
-    .toast.error { background: hsl(352,92%,18%); color: hsl(11,100%,97%); }
-    .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    @keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      align-items: center;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--rad);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      max-width: 380px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="app-shell">
     <header class="shell-header">
@@ -192,9 +943,10 @@
       <div class="wire-header-right">
         <button class="btn btn-outline btn-icon" onclick="openModal()" data-tooltip="Create chart" aria-label="Create chart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 5v14M5 12h14"/>
+            <path d="M12 5v14M5 12h14" />
           </svg>
         </button>
+        <div class="wire-icon"></div>
         <div class="wire-icon"></div>
         <div class="wire-icon"></div>
         <div class="wire-icon"></div>
@@ -214,10 +966,18 @@
       </nav>
       <main class="shell-main">
         <div class="tab-bar">
-          <div class="wire-tab"><div class="wire-text" style="width:60px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:90px;"></div></div>
-          <div class="wire-tab active"><div class="wire-text" style="width:90px;"></div></div>
-          <div class="wire-tab"><div class="wire-text" style="width:80px;"></div></div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width:60px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width:90px;"></div>
+          </div>
+          <div class="wire-tab active">
+            <div class="wire-text" style="width:90px;"></div>
+          </div>
+          <div class="wire-tab">
+            <div class="wire-text" style="width:80px;"></div>
+          </div>
         </div>
         <div class="page-content">
           <div class="wire-toolbar">
@@ -231,62 +991,146 @@
           <table class="wire-table">
             <thead>
               <tr>
-                <th style="width:22%;"><div class="wire-cell-dark" style="width:80px;"></div></th>
-                <th style="width:14%;"><div class="wire-cell-dark" style="width:55px;"></div></th>
-                <th style="width:20%;"><div class="wire-cell-dark" style="width:70px;"></div></th>
-                <th style="width:12%;"><div class="wire-cell-dark" style="width:50px;"></div></th>
-                <th style="width:16%;"><div class="wire-cell-dark" style="width:65px;"></div></th>
-                <th style="width:16%;"><div class="wire-cell-dark" style="width:55px;"></div></th>
+                <th style="width:22%;">
+                  <div class="wire-cell-dark" style="width:80px;"></div>
+                </th>
+                <th style="width:14%;">
+                  <div class="wire-cell-dark" style="width:55px;"></div>
+                </th>
+                <th style="width:20%;">
+                  <div class="wire-cell-dark" style="width:70px;"></div>
+                </th>
+                <th style="width:12%;">
+                  <div class="wire-cell-dark" style="width:50px;"></div>
+                </th>
+                <th style="width:16%;">
+                  <div class="wire-cell-dark" style="width:65px;"></div>
+                </th>
+                <th style="width:16%;">
+                  <div class="wire-cell-dark" style="width:55px;"></div>
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><div class="wire-cell" style="width:75%;"></div></td>
-                <td><div class="wire-cell" style="width:65%;"></div></td>
-                <td><div class="wire-cell" style="width:80%;"></div></td>
-                <td><div class="wire-pill" style="width:70px;"></div></td>
-                <td><div class="wire-cell" style="width:70%;"></div></td>
-                <td><div class="wire-cell" style="width:50%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:75%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:65%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:80%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:70px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:70%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:50%;"></div>
+                </td>
               </tr>
               <tr>
-                <td><div class="wire-cell" style="width:60%;"></div></td>
-                <td><div class="wire-cell" style="width:55%;"></div></td>
-                <td><div class="wire-cell" style="width:75%;"></div></td>
-                <td><div class="wire-pill" style="width:80px;"></div></td>
-                <td><div class="wire-cell" style="width:65%;"></div></td>
-                <td><div class="wire-cell" style="width:45%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:60%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:55%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:75%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:80px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:65%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:45%;"></div>
+                </td>
               </tr>
               <tr>
-                <td><div class="wire-cell" style="width:80%;"></div></td>
-                <td><div class="wire-cell" style="width:70%;"></div></td>
-                <td><div class="wire-cell" style="width:60%;"></div></td>
-                <td><div class="wire-pill" style="width:60px;"></div></td>
-                <td><div class="wire-cell" style="width:75%;"></div></td>
-                <td><div class="wire-cell" style="width:55%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:80%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:70%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:60%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:60px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:75%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:55%;"></div>
+                </td>
               </tr>
               <tr>
-                <td><div class="wire-cell" style="width:55%;"></div></td>
-                <td><div class="wire-cell" style="width:60%;"></div></td>
-                <td><div class="wire-cell" style="width:85%;"></div></td>
-                <td><div class="wire-pill" style="width:75px;"></div></td>
-                <td><div class="wire-cell" style="width:60%;"></div></td>
-                <td><div class="wire-cell" style="width:40%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:55%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:60%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:85%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:75px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:60%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:40%;"></div>
+                </td>
               </tr>
               <tr>
-                <td><div class="wire-cell" style="width:70%;"></div></td>
-                <td><div class="wire-cell" style="width:65%;"></div></td>
-                <td><div class="wire-cell" style="width:70%;"></div></td>
-                <td><div class="wire-pill" style="width:65px;"></div></td>
-                <td><div class="wire-cell" style="width:80%;"></div></td>
-                <td><div class="wire-cell" style="width:50%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:70%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:65%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:70%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:65px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:80%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:50%;"></div>
+                </td>
               </tr>
               <tr>
-                <td><div class="wire-cell" style="width:65%;"></div></td>
-                <td><div class="wire-cell" style="width:50%;"></div></td>
-                <td><div class="wire-cell" style="width:75%;"></div></td>
-                <td><div class="wire-pill" style="width:80px;"></div></td>
-                <td><div class="wire-cell" style="width:70%;"></div></td>
-                <td><div class="wire-cell" style="width:45%;"></div></td>
+                <td>
+                  <div class="wire-cell" style="width:65%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:50%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:75%;"></div>
+                </td>
+                <td>
+                  <div class="wire-pill" style="width:80px;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:70%;"></div>
+                </td>
+                <td>
+                  <div class="wire-cell" style="width:45%;"></div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -305,7 +1149,8 @@
         </div>
         <button class="modal-close-btn" onclick="closeModal()" aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
           </svg>
         </button>
       </div>
@@ -554,10 +1399,7 @@
               <div class="form-field">
                 <label class="form-label" for="f_insCompany">Insurance company <span class="req">*</span></label>
                 <div class="combobox-wrap">
-                  <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off"
-                    oninput="filterCombobox(this.value,'insCboList')"
-                    onfocus="filterCombobox(this.value,'insCboList')"
-                    onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
+                  <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'insCboList')" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
                   <div class="combobox-list" id="insCboList" style="display:none;"></div>
                 </div>
               </div>
@@ -567,21 +1409,21 @@
                 <label class="form-label" for="f_insType">Insurance type <span class="req">*</span></label>
                 <select class="form-select" id="f_insType">
                   <option value="">Select...</option>
-                <option>Black Lung</option>
-                <option>Blue Cross/Blue Shield</option>
-                <option>CHAMPVA</option>
-                <option>FECA</option>
-                <option>Federal Employees Program</option>
-                <option>Group Health Plan</option>
-                <option>HMO Medicare Risk</option>
-                <option>Health Maintenance Organization (HMO)</option>
-                <option>Medicaid</option>
-                <option>Medicare A</option>
-                <option>Medicare B</option>
-                <option>No Insurance</option>
-                <option>Other</option>
-                <option>TRICARE</option>
-                <option>Workers Compensation</option>
+                  <option>Black Lung</option>
+                  <option>Blue Cross/Blue Shield</option>
+                  <option>CHAMPVA</option>
+                  <option>FECA</option>
+                  <option>Federal Employees Program</option>
+                  <option>Group Health Plan</option>
+                  <option>HMO Medicare Risk</option>
+                  <option>Health Maintenance Organization (HMO)</option>
+                  <option>Medicaid</option>
+                  <option>Medicare A</option>
+                  <option>Medicare B</option>
+                  <option>No Insurance</option>
+                  <option>Other</option>
+                  <option>TRICARE</option>
+                  <option>Workers Compensation</option>
                 </select>
               </div>
               <div class="form-field">
@@ -624,7 +1466,9 @@
                   <label class="form-label" for="f_insSex">Legal sex <span class="req">*</span></label>
                   <select class="form-select" id="f_insSex">
                     <option value="">Select...</option>
-                    <option>Male</option><option>Female</option><option>Unknown</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Unknown</option>
                   </select>
                 </div>
                 <div class="form-field">
@@ -646,30 +1490,53 @@
                   <select class="form-select" id="f_insRel" onchange="onRelChange(this.value)">
                     <option value="">Select...</option>
                     <optgroup label="Immediate Family">
-                      <option>Spouse</option><option>Domestic Partner</option><option>Significant Other</option>
-                      <option>Mother</option><option>Father</option><option>Adoptive Parent</option>
-                      <option>Foster Parent</option><option>Stepparent</option>
-                      <option>Son</option><option>Daughter</option><option>Child</option><option>Stepchild</option>
-                      <option>Brother</option><option>Sister</option><option>Stepsibling</option>
+                      <option>Spouse</option>
+                      <option>Domestic Partner</option>
+                      <option>Significant Other</option>
+                      <option>Mother</option>
+                      <option>Father</option>
+                      <option>Adoptive Parent</option>
+                      <option>Foster Parent</option>
+                      <option>Stepparent</option>
+                      <option>Son</option>
+                      <option>Daughter</option>
+                      <option>Child</option>
+                      <option>Stepchild</option>
+                      <option>Brother</option>
+                      <option>Sister</option>
+                      <option>Stepsibling</option>
                     </optgroup>
                     <optgroup label="Extended Family">
-                      <option>Grandparent</option><option>Grandchild</option>
-                      <option>Aunt</option><option>Uncle</option><option>Niece</option><option>Nephew</option>
-                      <option>Cousin</option><option>In-law (Parent/Child/Sibling)</option>
+                      <option>Grandparent</option>
+                      <option>Grandchild</option>
+                      <option>Aunt</option>
+                      <option>Uncle</option>
+                      <option>Niece</option>
+                      <option>Nephew</option>
+                      <option>Cousin</option>
+                      <option>In-law (Parent/Child/Sibling)</option>
                     </optgroup>
                     <optgroup label="Legal / Authorized">
-                      <option>Legal Guardian</option><option>Power of Attorney</option>
-                      <option>Healthcare Proxy/Agent</option><option>Conservator</option>
-                      <option>Court-Appointed Representative</option><option>Responsible Party</option>
-                      <option>Emergency Contact</option><option>Next of Kin</option>
+                      <option>Legal Guardian</option>
+                      <option>Power of Attorney</option>
+                      <option>Healthcare Proxy/Agent</option>
+                      <option>Conservator</option>
+                      <option>Court-Appointed Representative</option>
+                      <option>Responsible Party</option>
+                      <option>Emergency Contact</option>
+                      <option>Next of Kin</option>
                     </optgroup>
                     <optgroup label="Care Network">
-                      <option>Friend</option><option>Neighbor</option>
-                      <option>Caregiver (Paid)</option><option>Caregiver (Unpaid)</option>
-                      <option>Clergy/Spiritual Advisor</option><option>Case Manager/Social Worker</option>
+                      <option>Friend</option>
+                      <option>Neighbor</option>
+                      <option>Caregiver (Paid)</option>
+                      <option>Caregiver (Unpaid)</option>
+                      <option>Clergy/Spiritual Advisor</option>
+                      <option>Case Manager/Social Worker</option>
                     </optgroup>
                     <optgroup label="Other">
-                      <option>Employer</option><option>Self</option>
+                      <option>Employer</option>
+                      <option>Self</option>
                       <option>Other (please specify)</option>
                     </optgroup>
                   </select>
@@ -709,32 +1576,32 @@
                 <label class="form-label" for="f_cardMon">Expiration month</label>
                 <select class="form-select" id="f_cardMon">
                   <option value="">MM</option>
-                <option value="01">01</option>
-                <option value="02">02</option>
-                <option value="03">03</option>
-                <option value="04">04</option>
-                <option value="05">05</option>
-                <option value="06">06</option>
-                <option value="07">07</option>
-                <option value="08">08</option>
-                <option value="09">09</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
                 </select>
               </div>
               <div class="form-field" style="flex:1.5;">
                 <label class="form-label" for="f_cardYr">Expiration year</label>
                 <select class="form-select" id="f_cardYr">
                   <option value="">YYYY</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-                <option value="2031">2031</option>
-                <option value="2032">2032</option>
-                <option value="2033">2033</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                  <option value="2030">2030</option>
+                  <option value="2031">2031</option>
+                  <option value="2032">2032</option>
+                  <option value="2033">2033</option>
                 </select>
               </div>
               <div class="form-field" style="flex:1;">
@@ -748,7 +1615,8 @@
                 <label class="form-label" for="f_billCountry">Country</label>
                 <select class="form-select" id="f_billCountry">
                   <option value="US">United States</option>
-                  <option>Canada</option><option>Other</option>
+                  <option>Canada</option>
+                  <option>Other</option>
                 </select>
               </div>
             </div>
@@ -773,57 +1641,57 @@
                 <label class="form-label" for="f_billState">State</label>
                 <select class="form-select" id="f_billState">
                   <option value="">—</option>
-                <option>AL</option>
-                <option>AK</option>
-                <option>AZ</option>
-                <option>AR</option>
-                <option>CA</option>
-                <option>CO</option>
-                <option>CT</option>
-                <option>DC</option>
-                <option>DE</option>
-                <option>FL</option>
-                <option>GA</option>
-                <option>HI</option>
-                <option>ID</option>
-                <option>IL</option>
-                <option>IN</option>
-                <option>IA</option>
-                <option>KS</option>
-                <option>KY</option>
-                <option>LA</option>
-                <option>ME</option>
-                <option>MD</option>
-                <option>MA</option>
-                <option>MI</option>
-                <option>MN</option>
-                <option>MS</option>
-                <option>MO</option>
-                <option>MT</option>
-                <option>NE</option>
-                <option>NV</option>
-                <option>NH</option>
-                <option>NJ</option>
-                <option>NM</option>
-                <option>NY</option>
-                <option>NC</option>
-                <option>ND</option>
-                <option>OH</option>
-                <option>OK</option>
-                <option>OR</option>
-                <option>PA</option>
-                <option>RI</option>
-                <option>SC</option>
-                <option>SD</option>
-                <option>TN</option>
-                <option>TX</option>
-                <option>UT</option>
-                <option>VT</option>
-                <option>VA</option>
-                <option>WA</option>
-                <option>WV</option>
-                <option>WI</option>
-                <option>WY</option>
+                  <option>AL</option>
+                  <option>AK</option>
+                  <option>AZ</option>
+                  <option>AR</option>
+                  <option>CA</option>
+                  <option>CO</option>
+                  <option>CT</option>
+                  <option>DC</option>
+                  <option>DE</option>
+                  <option>FL</option>
+                  <option>GA</option>
+                  <option>HI</option>
+                  <option>ID</option>
+                  <option>IL</option>
+                  <option>IN</option>
+                  <option>IA</option>
+                  <option>KS</option>
+                  <option>KY</option>
+                  <option>LA</option>
+                  <option>ME</option>
+                  <option>MD</option>
+                  <option>MA</option>
+                  <option>MI</option>
+                  <option>MN</option>
+                  <option>MS</option>
+                  <option>MO</option>
+                  <option>MT</option>
+                  <option>NE</option>
+                  <option>NV</option>
+                  <option>NH</option>
+                  <option>NJ</option>
+                  <option>NM</option>
+                  <option>NY</option>
+                  <option>NC</option>
+                  <option>ND</option>
+                  <option>OH</option>
+                  <option>OK</option>
+                  <option>OR</option>
+                  <option>PA</option>
+                  <option>RI</option>
+                  <option>SC</option>
+                  <option>SD</option>
+                  <option>TN</option>
+                  <option>TX</option>
+                  <option>UT</option>
+                  <option>VT</option>
+                  <option>VA</option>
+                  <option>WA</option>
+                  <option>WV</option>
+                  <option>WI</option>
+                  <option>WY</option>
                 </select>
               </div>
               <div class="form-field" style="flex:1;">
@@ -857,7 +1725,7 @@
 
     function openModal() {
       document.getElementById('newChartModal').classList.add('open');
-      setTimeout(function() { document.getElementById('f_first').focus(); }, 220);
+      setTimeout(function () { document.getElementById('f_first').focus(); }, 220);
     }
     function closeModal() {
       document.getElementById('newChartModal').classList.remove('open');
@@ -866,16 +1734,16 @@
     function resetModal() {
       currentStep = 1; _eligCycle = 0;
       showStep(1, false);
-      document.querySelectorAll('#newChartModal input[type=text], #newChartModal input[type=email], #newChartModal input[type=tel], #newChartModal input[type=date]').forEach(function(el) {
+      document.querySelectorAll('#newChartModal input[type=text], #newChartModal input[type=email], #newChartModal input[type=tel], #newChartModal input[type=date]').forEach(function (el) {
         if (el.id !== 'f_chartId') el.value = '';
       });
-      document.querySelectorAll('#newChartModal select').forEach(function(el) { el.selectedIndex = 0; });
+      document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
       document.getElementById('chartSubtitle').style.display = 'none';
-      ['insFields','payFields','newContactFields','relFieldWrap','relSpecifyWrap','formPackageWrap'].forEach(function(id) {
+      ['insFields', 'payFields', 'newContactFields', 'relFieldWrap', 'relSpecifyWrap', 'formPackageWrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
-      ['toggleIns','togglePay','f_portalEmail','f_sms'].forEach(function(id) {
+      ['toggleIns', 'togglePay', 'f_portalEmail', 'f_sms'].forEach(function (id) {
         document.getElementById(id).checked = false;
       });
       document.getElementById('f_setDefault').checked = true;
@@ -885,7 +1753,7 @@
       document.getElementById('f_insCompany').value = '';
       document.getElementById('eligBtn').disabled = false;
     }
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
     function showStep(n, animate) {
       var step1b = document.getElementById('step1Body');
@@ -929,7 +1797,7 @@
     function toggleSection(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function togglePortalEmail(show) { document.getElementById('formPackageWrap').style.display = show ? '' : 'none'; }
 
-    var ELIG_CYCLE = ['eligible','failed','pending'];
+    var ELIG_CYCLE = ['eligible', 'failed', 'pending'];
     var ELIG_LABELS = { eligible: '✓ Eligible', failed: '✗ Not eligible', pending: '⧖ Pending' };
     function checkEligibility() {
       var badge = document.getElementById('eligBadge');
@@ -938,7 +1806,7 @@
       badge.style.display = 'inline-flex';
       badge.className = 'eligibility-badge pending';
       badge.textContent = '⧖ Checking...';
-      setTimeout(function() {
+      setTimeout(function () {
         var state = ELIG_CYCLE[_eligCycle % ELIG_CYCLE.length];
         _eligCycle++;
         badge.className = 'eligibility-badge ' + state;
@@ -958,15 +1826,15 @@
     function filterCombobox(query, listId) {
       var list = document.getElementById(listId);
       var q = query.toLowerCase();
-      var matches = q ? INS_COS.filter(function(c) { return c.toLowerCase().indexOf(q) !== -1; }) : INS_COS.slice(0,20);
+      var matches = q ? INS_COS.filter(function (c) { return c.toLowerCase().indexOf(q) !== -1; }) : INS_COS.slice(0, 20);
       if (matches.length === 0) {
         list.innerHTML = '<div class="combobox-empty">No matches</div>';
       } else {
-        list.innerHTML = matches.slice(0,30).map(function(c) {
-          return '<div class="combobox-item" data-val="' + c.replace(/"/g,'&quot;') + '">' + c + '</div>';
+        list.innerHTML = matches.slice(0, 30).map(function (c) {
+          return '<div class="combobox-item" data-val="' + c.replace(/"/g, '&quot;') + '">' + c + '</div>';
         }).join('');
-        list.querySelectorAll('.combobox-item').forEach(function(item) {
-          item.addEventListener('mousedown', function(e) {
+        list.querySelectorAll('.combobox-item').forEach(function (item) {
+          item.addEventListener('mousedown', function (e) {
             e.preventDefault();
             selectCombobox(item.dataset.val, 'f_insCompany', listId);
           });
@@ -983,23 +1851,23 @@
       var items = list.querySelectorAll('.combobox-item');
       var active = list.querySelector('.combobox-item.active');
       var idx = active ? Array.prototype.indexOf.call(items, active) : -1;
-      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx+1, items.length-1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx-1, 0); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
       else if (e.key === 'Enter' && active) { e.preventDefault(); selectCombobox(active.textContent, inputId, listId); return; }
       else if (e.key === 'Escape') { list.style.display = 'none'; return; }
       else { return; }
-      items.forEach(function(it, i) { it.classList.toggle('active', i === idx); });
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
       if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
     }
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       if (!e.target.closest('.combobox-wrap')) {
-        document.querySelectorAll('.combobox-list').forEach(function(l) { l.style.display = 'none'; });
+        document.querySelectorAll('.combobox-list').forEach(function (l) { l.style.display = 'none'; });
       }
     });
 
     function formatCardNum(input) {
-      var val = input.value.replace(/\D/g,'').substring(0,16);
-      input.value = val.replace(/(\d{4})/g,'$1 ').trim();
+      var val = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = val.replace(/(\d{4})/g, '$1 ').trim();
     }
 
     function createChart() {
@@ -1021,11 +1889,12 @@
       };
       t.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
       container.appendChild(t);
-      setTimeout(function() {
+      setTimeout(function () {
         t.classList.add('leaving');
-        t.addEventListener('animationend', function() { t.remove(); }, { once: true });
+        t.addEventListener('animationend', function () { t.remove(); }, { once: true });
       }, 3500);
     }
   </script>
 </body>
+
 </html>
