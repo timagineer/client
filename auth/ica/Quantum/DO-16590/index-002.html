@@ -834,10 +834,7 @@
     }
 
     .combobox-list {
-      position: absolute;
-      top: calc(100% + 2px);
-      left: 0;
-      right: 0;
+      position: fixed;
       background: #fff;
       border: 1px solid var(--neutral-70);
       border-radius: 4px;
@@ -1531,7 +1528,6 @@
                   <label for="f_insCompany" class="form-label">Insurance company <span class="req">*</span></label>
                   <div class="combobox-wrap">
                     <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'insCboList'); checkEligibilityReady();" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
-                    <div class="combobox-list" id="insCboList" style="display:none;"></div>
                   </div>
                 </div>
                 <div class="form-field" style="grid-column: span 6;">
@@ -1951,6 +1947,7 @@
   </div>
 
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+  <div class="combobox-list" id="insCboList" style="display:none;"></div>
 
   <script>
     const INS_COS = ["AARP", "AARP Supplement", "Administrative Concepts Inc", "Aetna", "Aetna Medicare", "Aetna Medicare Supplemental", "Aetna Ohio RISE Ohio Medicaid", "Aither", "All Savers", "Allegiance Benefit Plan", "Allied Benefit System", "Ambetter Buckeye Marketplace", "Ameriben", "AmeriHealth Caritas Ohio Medicaid", "AmFirst", "Anthem BC/BS", "Anthem Medicare", "Anthem Ohio Medicaid", "ASA GEHA", "ASR Health Benefits", "Ault Care", "Bay Bridge Administrators Supplement", "BBG Secondary Payer", "Beacon Health Option Values", "Buckeye Medicare Cenpatico", "Buckeye Ohio Medicaid", "Carelon Behavioral Health", "CareSource", "CareSource Dual", "CareSource Market Place", "CareSource Ohio Medicaid", "Catilize Health", "CGS Medicare Part B", "CHAMP VA", "Change Healthcare / AmFirst Insurance", "Cigna", "Cigna Medicare", "Cigna Medicare Supplement / Healthspring", "Cigna/Evernorth Behavioral Health", "Claritev MBA", "Clarity Health/ Enterprise Group Planning", "Consociate Group", "Continental Life", "Devoted Health Plan", "Enterprise Group Planning", "Erie Family Supplement", "First Health", "GEHA", "Gravie Administrative Services", "Group and Pension Administrators", "Health Comp", "Health Partners", "Healthscope", "HealthSmart/Accel", "Highmark", "HSA Payments", "Humana Health Plan", "Humana Medicare", "Humana Ohio Medicaid", "Imagine 360", "Independence Administrators", "Insurance TPA", "International Benefit Administration", "Lucent Health", "Luminare Health", "Magellan", "Marpai", "Martin Point US Family Health Plan", "Medical Mutual / UPMC", "Medical Mutual Medicare", "Medical Mutual of Ohio", "Medical Mutual Supplement", "Meritain Health", "Military Officers of America", "Molina Market Place", "Molina MCD", "Molina Medicare", "Molina Ohio Medicaid", "Mutual Health Services", "Mutual of Omaha", "MyCare Aetna Better Health", "MyCare Anthem", "MyCare Molina Medicaid", "MyCare OH Aetna Better Health Medicare", "MyCare OH CareSource Medicaid", "MyCare OH CareSource Medicare", "Ohio Medicaid", "Omaha Supplemental Insurance", "Optum Behavioral Health Benefits", "PAI", "Paramount Adv Medicaid", "Paramount Healthcare", "Peak Health", "Personify Health", "Physicians Mutual", "Priority Health", "Railroad Medicare", "Redirect Health Administration", "Sana Benefits", "Self Pay", "Sidecare Health, Attn Claims", "SS Healthcare", "Summa Care", "Summa Care Medicare", "The Hartford", "The Health Plan", "The Health Plan Medicare", "Total Plan Concepts", "Tricare for Life", "Tricare Humana East Region", "Trustmark Health Benefits", "UHC GEHA", "UHC Medicare Complete", "UHC Shared Services", "UMWA", "Unicare", "United Healthcare Commercial", "United Healthcare Dual Complete", "United Healthcare Medicare", "United Healthcare of Ohio", "United Healthcare Ohio Medicaid", "VA CCN Optum", "Wellcare Dual Liberty"];
@@ -2225,6 +2222,10 @@
         });
       }
       list.style.display = '';
+      var r = list.closest('.combobox-wrap') ? list.closest('.combobox-wrap').querySelector('input').getBoundingClientRect() : document.getElementById('f_insCompany').getBoundingClientRect();
+      list.style.top = (r.bottom + 2) + 'px';
+      list.style.left = r.left + 'px';
+      list.style.width = r.width + 'px';
     }
     function comboboxKey(e, listId, inputId) {
       var list = document.getElementById(listId);
