@@ -1428,14 +1428,14 @@
             <h3 class="form-section-title">Primary Insurance</h3>
             <div class="form-section-action-right">
               <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
-              <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn">Check eligibility</button>
+              <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn" disabled>Check eligibility</button>
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
               <label for="f_insCompany" class="form-label">Insurance company <span class="req">*</span></label>
               <div class="combobox-wrap">
-                <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'insCboList')" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
+                <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="checkEligibilityReady()" oninput="filterCombobox(this.value,'insCboList')" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
                 <div class="combobox-list" id="insCboList" style="display:none;"></div>
               </div>
             </div>
@@ -1464,7 +1464,7 @@
           <div class="form-row">
             <div class="form-field">
               <label for="f_memberId" class="form-label">Member ID / Policy number <span class="req">*</span></label>
-              <input type="text" class="form-input" id="f_memberId" placeholder="">
+              <input type="text" class="form-input" id="f_memberId" placeholder="" oninput="checkEligibilityReady()">
             </div>
             <div class="form-field">
               <label for="f_insStart" class="form-label">Start date</label>
@@ -1889,7 +1889,7 @@
       eb.style.display = 'none'; eb.className = 'eligibility-badge';
       document.getElementById('insCboList').style.display = 'none';
       document.getElementById('f_insCompany').value = '';
-      document.getElementById('eligBtn').disabled = false;
+      document.getElementById('eligBtn').disabled = true;
     }
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
@@ -1997,6 +1997,12 @@
     // Eligibility
     var ELIG_CYCLE = ['eligible', 'failed', 'pending'];
     var ELIG_LABELS = { eligible: '✓ Eligible', failed: '✗ Not eligible', pending: '⧖ Pending' };
+    function checkEligibilityReady() {
+      var company = (document.getElementById('f_insCompany') || {}).value || '';
+      var memberId = (document.getElementById('f_memberId') || {}).value || '';
+      var btn = document.getElementById('eligBtn');
+      if (btn) btn.disabled = !(company.trim() && memberId.trim());
+    }
     function checkEligibility() {
       var badge = document.getElementById('eligBadge');
       var btn = document.getElementById('eligBtn');
