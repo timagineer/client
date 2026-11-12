@@ -1748,27 +1748,37 @@
           </div>
         </div>
         <div class="form-section">
-          <h3 class="form-section-title">Billing Address</h3>
-          <div class="form-row">
-            <div class="form-field" style="max-width:200px;">
-              <label class="form-label">Country</label>
-              <select class="form-select" id="f_billCountry">
-                <option value="US">United States</option>
-                <option>Canada</option>
-                <option>Other</option>
-              </select>
+          <div class="form-section-action-row">
+            <h3 class="form-section-title">Billing Address</h3>
+            <div class="form-section-action-right">
+              <input type="checkbox" class="form-checkbox" id="f_billSameAsClient" checked onchange="toggleBillAddr(!this.checked)">
+              <label class="form-checkbox-label" for="f_billSameAsClient" style="font-size:12px; color:var(--neutral-40);">Same as client</label>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-field"><label class="form-label">Address 1</label><input type="text" class="form-input" id="f_billAddr1"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-field"><label class="form-label">Address 2</label><input type="text" class="form-input" id="f_billAddr2" placeholder="Optional"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-field" style="flex:2;"><label class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
-            <div class="form-field" style="flex:1;"><label class="form-label">State</label>
-              <select class="form-select" id="f_billState">
+          <div id="billAddrWrap" style="display:none;">
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">Address 1</label>
+                <input type="text" class="form-input" id="f_billAddr1">
+              </div>
+            </div>
+            <button class="addr-toggle" onclick="toggleBillAddr2()" id="billAddr2Toggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add line 2
+            </button>
+            <div id="billAddr2Wrap" style="display:none;" class="form-row">
+              <div class="form-field">
+                <div class="form-label-row">
+                  <label class="form-label" for="f_billAddr2">Street address 2</label>
+                  <button class="form-label-action" onclick="toggleBillAddr2()">Remove</button>
+                </div>
+                <input type="text" class="form-input" id="f_billAddr2" placeholder="Apt, suite, floor...">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field" style="flex:2;"><label class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
+              <div class="form-field" style="flex:1;"><label class="form-label">State</label>
+                <select class="form-select" id="f_billState">
                 <option value="">—</option>
                 <option>Alabama</option>
                 <option>Alaska</option>
@@ -1824,8 +1834,9 @@
                 <option>Wisconsin</option>
                 <option>Wyoming</option>
               </select>
+              </div>
+              <div class="form-field" style="flex:1;"><label class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
             </div>
-            <div class="form-field" style="flex:1;"><label class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
           </div>
           <div class="form-checkbox-row" style="margin-top:4px;">
             <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
@@ -1881,6 +1892,10 @@
       });
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
       document.getElementById('f_setDefault').checked = true;
+      document.getElementById('f_billSameAsClient').checked = true;
+      document.getElementById('billAddrWrap').style.display = 'none';
+      document.getElementById('billAddr2Wrap').style.display = 'none';
+      var bt2 = document.getElementById('billAddr2Toggle'); if (bt2) bt2.style.display = '';
       var eb = document.getElementById('eligBadge');
       eb.style.display = 'none'; eb.className = 'eligibility-badge';
       document.getElementById('insCboList').style.display = 'none';
@@ -1946,6 +1961,16 @@
       toggle.style.display = open ? '' : 'none';
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
+    function toggleBillAddr(show) {
+      document.getElementById('billAddrWrap').style.display = show ? '' : 'none';
+    }
+    function toggleBillAddr2() {
+      var wrap = document.getElementById('billAddr2Wrap');
+      var toggle = document.getElementById('billAddr2Toggle');
+      var open = wrap.style.display !== 'none';
+      wrap.style.display = open ? 'none' : '';
+      toggle.style.display = open ? '' : 'none';
+    }
     function toggleInsAddr() {
       var wrap = document.getElementById('insAddrWrap');
       var toggle = document.getElementById('insAddrToggle');
