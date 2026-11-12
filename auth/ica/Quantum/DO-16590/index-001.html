@@ -1261,16 +1261,13 @@
           <h3 class="form-section-title">Contact</h3>
           <div class="form-row">
             <div class="form-field">
-              <label for="f_addr1" class="form-label">Street address 1</label>
+              <div class="form-label-row">
+                <label for="f_addr1" class="form-label">Street address 1</label>
+                <button class="form-label-action" onclick="toggleAddr2()" id="addr2Toggle">+ Add line 2</button>
+              </div>
               <input type="text" class="form-input" id="f_addr1" placeholder="123 Main St">
             </div>
           </div>
-          <button class="addr-toggle" onclick="toggleAddr2()" id="addr2Toggle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Add line 2
-          </button>
           <div id="addr2Wrap" style="display:none;" class="form-row">
             <div class="form-field">
               <div class="form-label-row">
@@ -1588,12 +1585,6 @@
                   <input type="text" class="form-input" id="f_insAddr1" placeholder="123 Main St">
                 </div>
               </div>
-              <button class="addr-toggle" onclick="toggleInsAddr2()" id="insAddr2Toggle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Add line 2
-              </button>
               <div id="insAddr2Wrap" style="display:none;" class="form-row">
                 <div class="form-field">
                   <div class="form-label-row">
@@ -1758,14 +1749,13 @@
           <div id="billAddrWrap" style="display:none;">
             <div class="form-row">
               <div class="form-field">
-                <label for="f_billAddr1" class="form-label">Address 1</label>
+                <div class="form-label-row">
+                  <label for="f_billAddr1" class="form-label">Address 1</label>
+                  <button class="form-label-action" onclick="toggleBillAddr2()" id="billAddr2Toggle">+ Add line 2</button>
+                </div>
                 <input type="text" class="form-input" id="f_billAddr1">
               </div>
             </div>
-            <button class="addr-toggle" onclick="toggleBillAddr2()" id="billAddr2Toggle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-              Add line 2
-            </button>
             <div id="billAddr2Wrap" style="display:none;" class="form-row">
               <div class="form-field">
                 <div class="form-label-row">
