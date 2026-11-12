@@ -1346,36 +1346,32 @@
               <input type="text" class="form-input" id="f_zip" placeholder="00000" maxlength="10">
             </div>
           </div>
-          <div class="form-row" style="align-items:flex-end; gap:12px;">
+          <div class="form-row">
             <div class="form-field">
               <label for="f_phone" class="form-label">Phone</label>
               <input type="tel" class="form-input" id="f_phone" placeholder="(000) 000-0000">
+              <div class="form-checkbox-row" style="margin:6px 0 0;">
+                <input type="checkbox" class="form-checkbox" id="f_sms">
+                <label class="form-checkbox-label" for="f_sms">Text appointment reminders</label>
+              </div>
             </div>
-            <div class="form-checkbox-row" style="margin:0 0 6px; flex-shrink:0; white-space:nowrap; width:200px;">
-              <input type="checkbox" class="form-checkbox" id="f_sms">
-              <label class="form-checkbox-label" for="f_sms">Text appointment reminders</label>
-            </div>
-          </div>
-          <div class="form-row" style="align-items:flex-end; gap:12px;">
             <div class="form-field">
               <label for="f_email" class="form-label">Email address</label>
               <input type="email" class="form-input" id="f_email" placeholder="patient@email.com">
-            </div>
-            <div class="form-checkbox-row" style="margin:0 0 6px; flex-shrink:0; white-space:nowrap; width:200px;">
-              <input type="checkbox" class="form-checkbox" id="f_portalEmail" onchange="toggleEl('formPkgWrap',this.checked)">
-              <label class="form-checkbox-label" for="f_portalEmail">Email portal invite</label>
-            </div>
-          </div>
-          <div id="formPkgWrap" style="display:none;" class="form-row">
-            <div class="form-field">
-              <label for="f_formPkg" class="form-label">Form &amp; assessment package</label>
-              <select class="form-select" id="f_formPkg">
-                <option value="">Select…</option>
-                <option>Adult Intake</option>
-                <option>Child &amp; Adolescent Intake</option>
-                <option>Substance Use Intake</option>
-                <option>Geriatric Intake</option>
-              </select>
+              <div class="form-checkbox-row" style="margin:6px 0 0;">
+                <input type="checkbox" class="form-checkbox" id="f_portalEmail" onchange="toggleEl('formPkgWrap',this.checked)">
+                <label class="form-checkbox-label" for="f_portalEmail">Email portal invite</label>
+              </div>
+              <div id="formPkgWrap" style="display:none; margin-top:8px;">
+                <label for="f_formPkg" class="form-label">Form &amp; assessment package</label>
+                <select class="form-select" id="f_formPkg">
+                  <option value="">Select…</option>
+                  <option>Adult Intake</option>
+                  <option>Child &amp; Adolescent Intake</option>
+                  <option>Substance Use Intake</option>
+                  <option>Geriatric Intake</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
