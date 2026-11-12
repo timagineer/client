@@ -1479,7 +1479,7 @@
       <div class="modal-footer" id="s1footer">
         <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
         <div class="modal-footer-actions">
-          <button class="btn btn-outline" onclick="createChart()">Create chart</button>
+          <button class="btn btn-outline" onclick="createChartFromStep1()">Create chart</button>
           <button class="btn btn-primary" onclick="advanceFromStep1()">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14" />
               <path d="m12 5 7 7-7 7" />
@@ -1978,6 +1978,10 @@
 
     function advanceFromStep1() {
       if (validateStep('s1body')) goTo(2);
+    }
+
+    function createChartFromStep1() {
+      if (validateStep('s1body')) createChart();
     }
 
     /* clear error as soon as the field has a value */
