@@ -1685,7 +1685,13 @@
       <!-- ── STEP 3 — Payment ── -->
       <div class="modal-body" id="s3body" style="display:none;">
         <div class="form-section">
-          <h3 class="form-section-title">Card Information</h3>
+          <div class="form-section-action-row">
+            <h3 class="form-section-title">Card Information</h3>
+            <div class="form-section-action-right">
+              <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
+              <label class="form-checkbox-label" for="f_setDefault" style="font-size:12px; color:var(--neutral-40);">Save as default</label>
+            </div>
+          </div>
           <div class="form-row">
             <div class="form-field">
               <label for="f_cardName" class="form-label">Name on card</label>
@@ -1827,10 +1833,7 @@
               <div class="form-field" style="flex:1;"><label for="f_billZip" class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
             </div>
           </div>
-          <div class="form-checkbox-row" style="margin-top:4px;">
-            <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
-            <label class="form-checkbox-label" for="f_setDefault">Set as default payment method</label>
-          </div>
+
         </div>
       </div>
 
