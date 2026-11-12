@@ -576,8 +576,8 @@
     }
 
     .stepper-labels {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       padding-bottom: 8px;
     }
 
@@ -585,6 +585,18 @@
       font-size: 11px;
       font-weight: 500;
       color: var(--neutral-50);
+    }
+
+    .step-label-text:first-child {
+      text-align: left;
+    }
+
+    .step-label-text:nth-child(2) {
+      text-align: center;
+    }
+
+    .step-label-text:last-child {
+      text-align: right;
     }
 
     .step-label-text.active {
