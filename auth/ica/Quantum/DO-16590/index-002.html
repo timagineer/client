@@ -2024,7 +2024,16 @@
       wrap.style.display = open ? 'none' : '';
       toggle.style.display = open ? '' : 'none';
     }
-    function onInsuredChange(val) { toggleEl('newContactFields', val === 'new'); }
+    function onInsuredChange(val) {
+      toggleEl('newContactFields', val === 'new');
+      if (val !== 'new') {
+        // reset new contact sub-state when leaving that path
+        document.getElementById('insAddrWrap').style.display = 'none';
+        document.getElementById('insAddr2Wrap').style.display = 'none';
+        var t1 = document.getElementById('insAddrToggle'); if (t1) t1.style.display = '';
+        var t2 = document.getElementById('insAddr2Toggle'); if (t2) t2.style.display = '';
+      }
+    }
     function onRelChange(val) {
       var isOther = val === 'Other (please specify)';
       var specInput = document.getElementById('f_insRelOther');
