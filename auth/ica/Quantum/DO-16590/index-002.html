@@ -444,15 +444,17 @@
     }
 
     .modal-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 16px 20px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      padding: 16px 12px 12px 20px;
       border-bottom: 1px solid var(--neutral-85);
       flex-shrink: 0;
     }
 
     .modal-header-text {
+      grid-column: 1;
+      grid-row: 1 / -1;
       display: flex;
       flex-direction: column;
       gap: 3px;
@@ -484,6 +486,9 @@
       width: 28px;
       height: 28px;
       flex-shrink: 0;
+      grid-column: 2;
+      grid-row: 1;
+      align-self: center;
     }
 
     .modal-close-btn svg {
@@ -1203,7 +1208,7 @@
       <div class="modal-header">
         <div class="modal-header-text">
           <h2 class="modal-title">New Chart</h2>
-          <p class="modal-subtitle" id="chartSubtitle" style="display:none;"></p>
+          <p class="modal-subtitle" id="chartSubtitle">First name Last name</p>
         </div>
         <button class="modal-close-btn" onclick="closeModal()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18" />
@@ -1901,7 +1906,7 @@
       });
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
-      document.getElementById('chartSubtitle').style.display = 'none';
+      document.getElementById('chartSubtitle').textContent = 'First name Last name';
       ['newContactFields', 'formPkgWrap', 'addr2Wrap', 'insAddrWrap', 'insAddr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
@@ -1954,7 +1959,7 @@
       var name = [first, last].filter(Boolean).join(' ') || 'Client';
       document.getElementById('selfOption').textContent = 'Self — ' + name;
       var sub = document.getElementById('chartSubtitle');
-      if (name !== 'Client') { sub.textContent = name; sub.style.display = ''; }
+      if (name !== 'Client') { sub.textContent = name; } else { sub.textContent = 'First name Last name'; }
       if (n === 3) {
         var cardName = document.getElementById('f_cardName');
         if (cardName && !cardName.value && first) cardName.value = [first, last].filter(Boolean).join(' ');
@@ -1972,8 +1977,8 @@
       var last = document.getElementById('f_last').value.trim();
       var sub = document.getElementById('chartSubtitle');
       var name = [first, last].filter(Boolean).join(' ');
-      if (name) { sub.textContent = name; sub.style.display = ''; }
-      else { sub.style.display = 'none'; }
+      if (name) { sub.textContent = name; }
+      else { sub.textContent = 'First name Last name'; }
     }
     function toggleAddr2() {
       var wrap = document.getElementById('addr2Wrap');
