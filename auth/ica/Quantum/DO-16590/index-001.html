@@ -1205,35 +1205,35 @@
           <h3 class="form-section-title">Client Details</h3>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Legal first name <span class="req">*</span></label>
+              <label for="f_first" class="form-label">Legal first name <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_first" placeholder="First" oninput="syncSubtitle(); updateSelfOption();">
             </div>
             <div class="form-field" style="flex:0.65;">
-              <label class="form-label">Middle name</label>
+              <label for="f_middle" class="form-label">Middle name</label>
               <input type="text" class="form-input" id="f_middle" placeholder="Middle">
             </div>
             <div class="form-field">
-              <label class="form-label">Legal last name <span class="req">*</span></label>
+              <label for="f_last" class="form-label">Legal last name <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_last" placeholder="Last" oninput="syncSubtitle(); updateSelfOption();">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Preferred name <span class="req">*</span></label>
+              <label for="f_preferred" class="form-label">Preferred name <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_preferred" placeholder="Name the client goes by">
             </div>
             <div class="form-field" style="max-width:180px;">
-              <label class="form-label">SSN</label>
+              <label for="f_ssn" class="form-label">SSN</label>
               <input type="text" class="form-input" id="f_ssn" placeholder="XXX-XX-XXXX" maxlength="11">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Date of birth <span class="req">*</span></label>
+              <label for="f_dob" class="form-label">Date of birth <span class="req">*</span></label>
               <input type="date" class="form-input" id="f_dob">
             </div>
             <div class="form-field">
-              <label class="form-label">Legal sex <span class="req">*</span></label>
+              <label for="f_sex" class="form-label">Legal sex <span class="req">*</span></label>
               <select class="form-select" id="f_sex">
                 <option value="">Select...</option>
                 <option>Male</option>
@@ -1242,7 +1242,7 @@
               </select>
             </div>
             <div class="form-field">
-              <label class="form-label">Gender <span class="req">*</span></label>
+              <label for="f_gender" class="form-label">Gender <span class="req">*</span></label>
               <select class="form-select" id="f_gender">
                 <option value="">Select...</option>
                 <option>Male</option>
@@ -1261,7 +1261,7 @@
           <h3 class="form-section-title">Contact</h3>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Street address 1</label>
+              <label for="f_addr1" class="form-label">Street address 1</label>
               <input type="text" class="form-input" id="f_addr1" placeholder="123 Main St">
             </div>
           </div>
@@ -1282,11 +1282,11 @@
           </div>
           <div class="form-row">
             <div class="form-field" style="flex:2;">
-              <label class="form-label">City</label>
+              <label for="f_city" class="form-label">City</label>
               <input type="text" class="form-input" id="f_city">
             </div>
             <div class="form-field" style="flex:1;">
-              <label class="form-label">State</label>
+              <label for="f_state" class="form-label">State</label>
               <select class="form-select" id="f_state">
                 <option value="">—</option>
                 <option>Alabama</option>
@@ -1345,13 +1345,13 @@
               </select>
             </div>
             <div class="form-field" style="flex:1;">
-              <label class="form-label">Zip code</label>
+              <label for="f_zip" class="form-label">Zip code</label>
               <input type="text" class="form-input" id="f_zip" placeholder="00000" maxlength="10">
             </div>
           </div>
           <div class="form-row" style="align-items:flex-end; gap:12px;">
             <div class="form-field">
-              <label class="form-label">Phone</label>
+              <label for="f_phone" class="form-label">Phone</label>
               <input type="tel" class="form-input" id="f_phone" placeholder="(000) 000-0000">
             </div>
             <div class="form-checkbox-row" style="margin:0 0 6px; flex-shrink:0; white-space:nowrap; width:200px;">
@@ -1361,7 +1361,7 @@
           </div>
           <div class="form-row" style="align-items:flex-end; gap:12px;">
             <div class="form-field">
-              <label class="form-label">Email address</label>
+              <label for="f_email" class="form-label">Email address</label>
               <input type="email" class="form-input" id="f_email" placeholder="patient@email.com">
             </div>
             <div class="form-checkbox-row" style="margin:0 0 6px; flex-shrink:0; white-space:nowrap; width:200px;">
@@ -1371,7 +1371,7 @@
           </div>
           <div id="formPkgWrap" style="display:none;" class="form-row">
             <div class="form-field">
-              <label class="form-label">Form &amp; assessment package</label>
+              <label for="f_formPkg" class="form-label">Form &amp; assessment package</label>
               <select class="form-select" id="f_formPkg">
                 <option value="">Select…</option>
                 <option>Adult Intake</option>
@@ -1387,7 +1387,7 @@
           <h3 class="form-section-title">Chart Details</h3>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Principal clinician <span class="req">*</span></label>
+              <label for="f_clinician" class="form-label">Principal clinician <span class="req">*</span></label>
               <select class="form-select" id="f_clinician">
                 <option value="unassigned">Intake (Unassigned)</option>
                 <option>Dr. Sarah Johnson, MD</option>
@@ -1399,7 +1399,7 @@
               </select>
             </div>
             <div class="form-field">
-              <label class="form-label">Clinical team</label>
+              <label for="f_team" class="form-label">Clinical team</label>
               <select class="form-select" id="f_team">
                 <option value="">None</option>
                 <option>Adult Outpatient</option>
@@ -1410,7 +1410,7 @@
               </select>
             </div>
             <div class="form-field" style="max-width:160px;">
-              <label class="form-label">Chart ID <span class="req">*</span></label>
+              <label for="f_chartId" class="form-label">Chart ID <span class="req">*</span></label>
               <input type="text" class="form-input form-chart-id" id="f_chartId" value="1004010739451">
             </div>
           </div>
@@ -1440,14 +1440,14 @@
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Insurance company <span class="req">*</span></label>
+              <label for="f_insCompany" class="form-label">Insurance company <span class="req">*</span></label>
               <div class="combobox-wrap">
                 <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'insCboList')" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
                 <div class="combobox-list" id="insCboList" style="display:none;"></div>
               </div>
             </div>
             <div class="form-field">
-              <label class="form-label">Insurance type <span class="req">*</span></label>
+              <label for="f_insType" class="form-label">Insurance type <span class="req">*</span></label>
               <select class="form-select" id="f_insType">
                 <option value="">Select...</option>
                 <option>Black Lung</option>
@@ -1470,17 +1470,17 @@
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Member ID / Policy number <span class="req">*</span></label>
+              <label for="f_memberId" class="form-label">Member ID / Policy number <span class="req">*</span></label>
               <input type="text" class="form-input" id="f_memberId" placeholder="Member ID">
             </div>
             <div class="form-field">
-              <label class="form-label">Start date</label>
+              <label for="f_insStart" class="form-label">Start date</label>
               <input type="date" class="form-input" id="f_insStart">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Primary insured <span class="req">*</span></label>
+              <label for="f_primaryInsured" class="form-label">Primary insured <span class="req">*</span></label>
               <select class="form-select" id="f_primaryInsured" onchange="onInsuredChange(this.value)">
                 <option value="self" id="selfOption">Self</option>
                 <option value="new">New contact...</option>
@@ -1490,17 +1490,17 @@
           <div id="newContactFields" style="display:none;">
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label">Legal first name <span class="req">*</span></label>
+                <label for="f_insFirst" class="form-label">Legal first name <span class="req">*</span></label>
                 <input type="text" class="form-input" id="f_insFirst">
               </div>
               <div class="form-field">
-                <label class="form-label">Legal last name <span class="req">*</span></label>
+                <label for="f_insLast" class="form-label">Legal last name <span class="req">*</span></label>
                 <input type="text" class="form-input" id="f_insLast">
               </div>
             </div>
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label" id="relLabel">Relationship <span class="req">*</span></label>
+                <label for="f_insRel" class="form-label" id="relLabel">Relationship <span class="req">*</span></label>
                 <select class="form-select" id="f_insRel" onchange="onRelChange(this.value)">
                   <option value="">Select...</option>
                   <optgroup label="Immediate Family">
@@ -1556,13 +1556,13 @@
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label" id="specifyRelLabel">Specify relationship</label>
+                <label for="f_insRelOther" class="form-label" id="specifyRelLabel">Specify relationship</label>
                 <input type="text" class="form-input" id="f_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
               </div>
             </div>
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label">Legal sex <span class="req">*</span></label>
+                <label for="f_insSex" class="form-label">Legal sex <span class="req">*</span></label>
                 <select class="form-select" id="f_insSex">
                   <option value="">Select...</option>
                   <option>Male</option>
@@ -1571,7 +1571,7 @@
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Date of birth <span class="req">*</span></label>
+                <label for="f_insDob" class="form-label">Date of birth <span class="req">*</span></label>
                 <input type="date" class="form-input" id="f_insDob">
               </div>
             </div>
@@ -1584,7 +1584,7 @@
             <div id="insAddrWrap" style="display:none;">
               <div class="form-row">
                 <div class="form-field">
-                  <label class="form-label">Street address 1</label>
+                  <label for="f_insAddr1" class="form-label">Street address 1</label>
                   <input type="text" class="form-input" id="f_insAddr1" placeholder="123 Main St">
                 </div>
               </div>
@@ -1605,11 +1605,11 @@
               </div>
               <div class="form-row">
                 <div class="form-field" style="flex:2;">
-                  <label class="form-label">City</label>
+                  <label for="f_insCity" class="form-label">City</label>
                   <input type="text" class="form-input" id="f_insCity">
                 </div>
                 <div class="form-field" style="flex:1;">
-                  <label class="form-label">State</label>
+                  <label for="f_insState" class="form-label">State</label>
                   <select class="form-select" id="f_insState">
                     <option value="">—</option>
                     <option>Alabama</option>
@@ -1668,7 +1668,7 @@
                   </select>
                 </div>
                 <div class="form-field" style="flex:1;">
-                  <label class="form-label">Zip code</label>
+                  <label for="f_insZip" class="form-label">Zip code</label>
                   <input type="text" class="form-input" id="f_insZip" placeholder="00000" maxlength="10">
                 </div>
               </div>
@@ -1698,19 +1698,19 @@
           <h3 class="form-section-title">Card Information</h3>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Name on card</label>
+              <label for="f_cardName" class="form-label">Name on card</label>
               <input type="text" class="form-input" id="f_cardName" placeholder="As it appears on card">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-label">Card number</label>
+              <label for="f_cardNum" class="form-label">Card number</label>
               <input type="text" class="form-input" id="f_cardNum" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" maxlength="19" oninput="formatCardNum(this)">
             </div>
           </div>
           <div class="form-row">
             <div class="form-field" style="flex:1.5;">
-              <label class="form-label">Expiration month</label>
+              <label for="f_cardMon" class="form-label">Expiration month</label>
               <select class="form-select" id="f_cardMon">
                 <option value="">MM</option>
                 <option value="01">01</option>
@@ -1728,7 +1728,7 @@
               </select>
             </div>
             <div class="form-field" style="flex:1.5;">
-              <label class="form-label">Expiration year</label>
+              <label for="f_cardYr" class="form-label">Expiration year</label>
               <select class="form-select" id="f_cardYr">
                 <option value="">YYYY</option>
                 <option value="2026">2026</option>
@@ -1742,7 +1742,7 @@
               </select>
             </div>
             <div class="form-field" style="flex:1;">
-              <label class="form-label">Security code (CVV)</label>
+              <label for="f_cvv" class="form-label">Security code (CVV)</label>
               <input type="text" class="form-input" id="f_cvv" placeholder="&bull;&bull;&bull;" maxlength="4">
             </div>
           </div>
@@ -1758,7 +1758,7 @@
           <div id="billAddrWrap" style="display:none;">
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label">Address 1</label>
+                <label for="f_billAddr1" class="form-label">Address 1</label>
                 <input type="text" class="form-input" id="f_billAddr1">
               </div>
             </div>
@@ -1776,8 +1776,8 @@
               </div>
             </div>
             <div class="form-row">
-              <div class="form-field" style="flex:2;"><label class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
-              <div class="form-field" style="flex:1;"><label class="form-label">State</label>
+              <div class="form-field" style="flex:2;"><label for="f_billCity" class="form-label">City</label><input type="text" class="form-input" id="f_billCity"></div>
+              <div class="form-field" style="flex:1;"><label for="f_billState" class="form-label">State</label>
                 <select class="form-select" id="f_billState">
                 <option value="">—</option>
                 <option>Alabama</option>
@@ -1835,7 +1835,7 @@
                 <option>Wyoming</option>
               </select>
               </div>
-              <div class="form-field" style="flex:1;"><label class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
+              <div class="form-field" style="flex:1;"><label for="f_billZip" class="form-label">Zip code</label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
             </div>
           </div>
           <div class="form-checkbox-row" style="margin-top:4px;">
