@@ -720,6 +720,27 @@
       box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
     }
 
+    /* Error state */
+    .form-input.error,
+    .form-select.error {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.12);
+    }
+
+    .form-input.error {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15' fill='none'%3E%3Ccircle cx='7.5' cy='7.5' r='6.5' stroke='%23C0392B' stroke-width='1.5'/%3E%3Cpath d='M7.5 4.5v4.5' stroke='%23C0392B' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='7.5' cy='11.5' r='1' fill='%23C0392B'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 15px 15px;
+      padding-right: 30px;
+    }
+
+    .form-input.error:focus,
+    .form-select.error:focus {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.18);
+    }
+
     .form-input::placeholder {
       color: var(--neutral-60);
     }
@@ -1459,7 +1480,7 @@
         <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
         <div class="modal-footer-actions">
           <button class="btn btn-outline" onclick="createChart()">Create chart</button>
-          <button class="btn btn-primary" onclick="goTo(2)">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button class="btn btn-primary" onclick="advanceFromStep1()">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14" />
               <path d="m12 5 7 7-7 7" />
             </svg></button>
@@ -1919,6 +1940,7 @@
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
       document.getElementById('chartSubtitle').textContent = 'First name Last name';
+      document.querySelectorAll('#newChartModal .error').forEach(function (el) { el.classList.remove('error'); });
       ['newContactFields', 'formPkgWrap', 'addr2Wrap', 'insAddrWrap', 'insAddr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
@@ -1938,6 +1960,35 @@
       document.getElementById('eligBtn').disabled = true;
     }
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+    /* ── Validation ───────────────────────────────────────────────────── */
+    function validateStep(bodyId) {
+      var body = document.getElementById(bodyId);
+      var valid = true;
+      body.querySelectorAll('.form-field').forEach(function (field) {
+        if (!field.querySelector('.req')) return;
+        var input = field.querySelector('input, select');
+        if (!input) return;
+        var empty = !input.value || !input.value.trim();
+        input.classList.toggle('error', empty);
+        if (empty) valid = false;
+      });
+      return valid;
+    }
+
+    function advanceFromStep1() {
+      if (validateStep('s1body')) goTo(2);
+    }
+
+    /* clear error as soon as the field has a value */
+    document.addEventListener('input', function (e) {
+      var el = e.target;
+      if (el.classList.contains('error') && el.value && el.value.trim()) el.classList.remove('error');
+    });
+    document.addEventListener('change', function (e) {
+      var el = e.target;
+      if (el.classList.contains('error') && el.value) el.classList.remove('error');
+    });
 
     function showStep(n, animate) {
       [1, 2, 3].forEach(function (i) {
