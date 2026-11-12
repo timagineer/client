@@ -1937,6 +1937,10 @@
       document.getElementById('selfOption').textContent = 'Self — ' + name;
       var sub = document.getElementById('chartSubtitle');
       if (name !== 'Client') { sub.textContent = name; sub.style.display = ''; }
+      if (n === 3) {
+        var cardName = document.getElementById('f_cardName');
+        if (cardName && !cardName.value && first) cardName.value = [first, last].filter(Boolean).join(' ');
+      }
     }
     function updateSelfOption() {
       var first = document.getElementById('f_first').value.trim();
