@@ -945,6 +945,14 @@
       grid-template-columns: subgrid;
       grid-column: 1 / -1;
       row-gap: 10px;
+      overflow: hidden;
+      height: 0;
+      transition: height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
+    }
+    #newContactFields.open,
+    #insAddrWrap.open,
+    #billAddrWrap.open {
+      height: auto;
     }
 
     /* Progressive disclosure — add line 2 */
@@ -1571,7 +1579,7 @@
                   </select>
                 </div>
               </div>
-              <div id="newContactFields" style="display:none;">
+              <div id="newContactFields">
                 <div class="form-row">
                   <div class="form-field" style="grid-column: span 6;">
                     <label for="f_insFirst" class="form-label">Legal first name <span class="req">*</span></label>
@@ -1665,7 +1673,7 @@
                   </svg>
                   Add different address
                 </button>
-                <div id="insAddrWrap" style="display:none;">
+                <div id="insAddrWrap">
                   <div class="form-row">
                     <div class="form-field">
                       <div class="form-label-row">
@@ -1844,7 +1852,7 @@
                   <label class="form-checkbox-label" for="f_billSameAsClient" style="font-size:12px; color:var(--neutral-40);">Same as client</label>
                 </div>
               </div>
-              <div id="billAddrWrap" style="display:none;">
+              <div id="billAddrWrap">
                 <div class="form-row">
                   <div class="form-field">
                     <div class="form-label-row">
@@ -1974,7 +1982,10 @@
       document.getElementById('chartSubtitle').textContent = 'First name Last name';
       document.getElementById('f_preferred')._edited = false;
       document.querySelectorAll('#newChartModal .error').forEach(function (el) { el.classList.remove('error'); });
-      ['newContactFields', 'formPkgWrap', 'addr2Wrap', 'insAddrWrap', 'insAddr2Wrap'].forEach(function (id) {
+      ['newContactFields', 'insAddrWrap', 'billAddrWrap'].forEach(function (id) {
+        document.getElementById(id).classList.remove('open');
+      });
+      ['formPkgWrap', 'addr2Wrap', 'insAddr2Wrap'].forEach(function (id) {
         document.getElementById(id).style.display = 'none';
       });
       ['insAddrToggle', 'insAddr2Toggle', 'addr2Toggle'].forEach(function (id) {
@@ -1983,7 +1994,7 @@
       ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
       document.getElementById('f_setDefault').checked = true;
       document.getElementById('f_billSameAsClient').checked = true;
-      document.getElementById('billAddrWrap').style.display = 'none';
+      /* billAddrWrap reset handled above */
       document.getElementById('billAddr2Wrap').style.display = 'none';
       var bt2 = document.getElementById('billAddr2Toggle'); if (bt2) bt2.style.display = '';
       var eb = document.getElementById('eligBadge');
@@ -2106,7 +2117,7 @@
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function toggleBillAddr(show) {
-      document.getElementById('billAddrWrap').style.display = show ? '' : 'none';
+      document.getElementById('billAddrWrap').classList.toggle('open', show);
     }
     function toggleBillAddr2() {
       var wrap = document.getElementById('billAddr2Wrap');
@@ -2118,8 +2129,8 @@
     function toggleInsAddr() {
       var wrap = document.getElementById('insAddrWrap');
       var toggle = document.getElementById('insAddrToggle');
-      var open = wrap.style.display !== 'none';
-      wrap.style.display = open ? 'none' : '';
+      var open = wrap.classList.contains('open');
+      wrap.classList.toggle('open', !open);
       toggle.style.display = open ? '' : 'none';
     }
     function toggleInsAddr2() {
@@ -2152,10 +2163,9 @@
       checkEligibilityReady();
     }
     function onInsuredChange(val) {
-      toggleEl('newContactFields', val === 'new');
+      document.getElementById('newContactFields').classList.toggle('open', val === 'new');
       if (val !== 'new') {
-        // reset new contact sub-state when leaving that path
-        document.getElementById('insAddrWrap').style.display = 'none';
+        document.getElementById('insAddrWrap').classList.remove('open');
         document.getElementById('insAddr2Wrap').style.display = 'none';
         var t1 = document.getElementById('insAddrToggle'); if (t1) t1.style.display = '';
         var t2 = document.getElementById('insAddr2Toggle'); if (t2) t2.style.display = '';
