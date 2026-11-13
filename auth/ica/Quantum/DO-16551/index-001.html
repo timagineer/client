@@ -1345,6 +1345,55 @@
       color: var(--title)
     }
 
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-sep {
+      color: var(--n60);
+      font-size: 14px;
+    }
+
+    .view-toggle {
+      all: unset;
+      font-size: 12px;
+      color: var(--n50);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: var(--n75);
+    }
+
+    .view-toggle:hover {
+      color: var(--n30);
+    }
+
+    .classic-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #fff;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .classic-overlay.active {
+      display: block;
+    }
+
+    .classic-overlay img {
+      width: 100%;
+      display: block;
+    }
+
+    .classic-back {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+    }
+
     .head-sub {
       color: var(--muted);
       font-size: 13px;
@@ -1831,7 +1880,11 @@
           <div class="card">
             <div class="head">
               <div>
-                <h1>Chart Room</h1>
+                <div class="page-title-row">
+                  <h1>Chart Room</h1>
+                  <span class="title-sep">·</span>
+                  <button class="view-toggle" onclick="showClassic()">Classic view</button>
+                </div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
                 <button class="btn btn-ghost" id="last"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3068,6 +3121,13 @@
     }
   </script>
   <script>
+    function showClassic() {
+      document.getElementById('classicOverlay').classList.add('active');
+    }
+    function showRedesigned() {
+      document.getElementById('classicOverlay').classList.remove('active');
+    }
+
     const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
     const D = [
       ['Penelope', 'Portal', 'Active', '10234', '48201', 'penelope.portal@email.com', '(401) 555-1234', '1999-11-11', '2026-11-06', '2026-11-20', 1, 'Sarah Johnson', 'East Liverpool', 1, '$20', '$0'],
@@ -3162,6 +3222,17 @@
     $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) toast('Opening chart for ' + tr.dataset.n + '…') };
     render();
   </script>
+
+  <div class="classic-overlay" id="classicOverlay">
+    <img src="prod.png" alt="Classic Chart Room view">
+    <button class="btn btn-primary classic-back" onclick="showRedesigned()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5" />
+        <path d="m12 19-7-7 7-7" />
+      </svg>
+      Back to redesigned
+    </button>
+  </div>
 </body>
 
 </html>
