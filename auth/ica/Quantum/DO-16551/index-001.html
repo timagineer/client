@@ -1677,41 +1677,54 @@
     .pager {
       display: flex;
       gap: 4px;
-      align-items: center
+      align-items: center;
     }
 
-    .pager button {
+    .page-btn {
       width: 32px;
       height: 32px;
       padding: 0;
-      border: 1px solid var(--n75);
+      border: 1px solid var(--neutral-75);
       border-radius: 4px;
-      background: var(--surface);
-      color: var(--n40);
+      background: #fff;
+      font-size: 13px;
+      color: var(--neutral-40);
       cursor: pointer;
-      font: inherit
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .pager button:hover:not(:disabled) {
-      background: var(--hover)
+    .page-btn svg { width: 16px; height: 16px; }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--neutral-95);
+      border-color: var(--neutral-60);
+      color: var(--neutral-20);
     }
 
-    .pager button:disabled {
-      opacity: .4;
-      cursor: not-allowed
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .page-btn.active {
+      background: var(--neutral-90);
+      border-color: var(--neutral-60);
+      color: var(--neutral-25);
     }
 
-    .pager button[aria-current="page"] {
-      background: var(--n90);
-      border-color: var(--n60);
-      color: var(--text)
-    }
-
-    .pager .sel {
+    .page-size-select {
       height: 28px;
+      padding: 0 24px 0 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--neutral-30);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center;
+      appearance: none;
+      cursor: pointer;
       margin-left: 8px;
-      font-size: 12px
     }
+
+    .page-size-label { font-size: 12px; color: var(--neutral-50); margin-left: 6px; }
   </style>
 </head>
 
@@ -1758,9 +1771,7 @@
                     <path d="M9 14 4 9l5-5" />
                     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
                   </svg>Last chart</button>
-                <button class="btn btn-primary" id="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>New chart</button>
+                <button class="btn btn-primary" id="new">New chart</button>
               </div>
             </div>
 
@@ -3062,9 +3073,16 @@
   <td>${fmt(c.lastAppt) || dash}</td><td>${fmt(c.nextAppt) || dash}</td></tr>`).join('');
       $('empty').hidden = all.length > 0;
       $('count').textContent = all.length ? `${s + 1}–${s + page.length} of ${all.length} charts` : 'No charts';
-      let h = `<button type="button" data-p="${S.page - 1}" ${S.page < 2 ? 'disabled' : ''} aria-label="Previous page">‹</button>`;
-      for (let i = 1; i <= pages; i++)h += `<button type="button" data-p="${i}" ${i === S.page ? 'aria-current="page"' : ''}>${i}</button>`;
-      h += `<button type="button" data-p="${S.page + 1}" ${S.page >= pages ? 'disabled' : ''} aria-label="Next page">›</button><select class="sel" id="size" aria-label="Rows per page">${[10, 25, 50].map(n => `<option ${n === S.size ? 'selected' : ''}>${n}</option>`).join('')}</select><span style="margin-left:6px">per page</span>`;
+      const pDbl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>`;
+      const pSgl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+      const nSgl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+      const nDbl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="m6 17 5-5-5-5"/></svg>`;
+      let h = `<button class="page-btn" data-p="1" ${S.page < 2 ? 'disabled' : ''} title="First page">${pDbl}</button>`;
+      h += `<button class="page-btn" data-p="${S.page - 1}" ${S.page < 2 ? 'disabled' : ''} title="Previous page">${pSgl}</button>`;
+      for (let i = 1; i <= pages; i++) h += `<button class="page-btn${i === S.page ? ' active' : ''}" data-p="${i}">${i}</button>`;
+      h += `<button class="page-btn" data-p="${S.page + 1}" ${S.page >= pages ? 'disabled' : ''} title="Next page">${nSgl}</button>`;
+      h += `<button class="page-btn" data-p="${pages}" ${S.page >= pages ? 'disabled' : ''} title="Last page">${nDbl}</button>`;
+      h += `<select class="page-size-select" id="size" aria-label="Rows per page">${[10, 25, 50].map(n => `<option ${n === S.size ? 'selected' : ''}>${n}</option>`).join('')}</select><span class="page-size-label">per page</span>`;
       $('pager').innerHTML = h;
     }
     $('pager').onclick = e => { const b = e.target.closest('button[data-p]'); if (b && !b.disabled) { S.page = +b.dataset.p; render() } };
