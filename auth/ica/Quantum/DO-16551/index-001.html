@@ -108,6 +108,7 @@
       background: oklch(0.965 0.006 234);
       overflow-x: hidden;
       overflow-y: auto;
+      position: relative;
     }
 
     .tab-bar {
@@ -1371,7 +1372,7 @@
     }
 
     .classic-overlay {
-      position: fixed;
+      position: absolute;
       inset: 0;
       z-index: 200;
       background: #fff;
@@ -1389,9 +1390,15 @@
     }
 
     .classic-back {
-      position: fixed;
+      position: sticky;
       bottom: 24px;
-      right: 24px;
+      left: calc(100% - 220px);
+      display: block;
+      width: fit-content;
+      margin: -52px 24px 24px auto;
+    }
+
+    right: 24px;
     }
 
     .head-sub {
@@ -1876,6 +1883,16 @@
         <div class="wire-nav-item"></div>
       </nav>
       <main class="shell-main">
+        <div class="classic-overlay" id="classicOverlay">
+          <img src="prod.png" alt="Plus v1 Chart Room view">
+          <button class="btn btn-primary classic-back" onclick="showRedesigned()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Back to Plus v2
+          </button>
+        </div>
         <div class="shell">
           <div class="card">
             <div class="head">
@@ -3222,17 +3239,6 @@
     $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) toast('Opening chart for ' + tr.dataset.n + '…') };
     render();
   </script>
-
-  <div class="classic-overlay" id="classicOverlay">
-    <img src="prod.png" alt="Classic Chart Room view">
-    <button class="btn btn-primary classic-back" onclick="showRedesigned()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 12H5" />
-        <path d="m12 19-7-7 7-7" />
-      </svg>
-      Back to Plus v2
-    </button>
-  </div>
 </body>
 
 </html>
