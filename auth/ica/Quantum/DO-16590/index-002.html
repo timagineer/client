@@ -1014,6 +1014,119 @@
       height: 13px;
     }
 
+    /* Staff combobox & team multi-select */
+    #f_clinician {
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;
+      padding-right: 24px;
+      cursor: pointer;
+    }
+
+    .staff-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary-30);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .staff-avatar.unassigned {
+      background: var(--neutral-75);
+    }
+
+    .staff-cbo .combobox-item,
+    .staff-cbo-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .staff-cbo-option:hover,
+    .staff-cbo .combobox-item:hover {
+      background: var(--neutral-95);
+    }
+
+    .staff-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .staff-trigger span {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .staff-dropdown {
+      position: fixed;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      z-index: 300;
+      flex-direction: column;
+      max-height: 240px;
+    }
+
+    .staff-dd-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+
+    .staff-dd-search input {
+      width: 100%;
+      height: 28px;
+      padding: 0 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--neutral-20);
+    }
+
+    .staff-dd-search input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .staff-dd-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .staff-team-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--neutral-20);
+    }
+
+    .staff-team-option:hover {
+      background: var(--neutral-95);
+    }
+
     /* Toast */
     .toast-container {
       position: fixed;
@@ -1510,26 +1623,16 @@
               <div class="form-row">
                 <div class="form-field" style="grid-column: span 4;">
                   <label for="f_clinician" class="form-label">Principal clinician <span class="req">*</span></label>
-                  <select class="form-select" id="f_clinician">
-                    <option value="unassigned">Intake (Unassigned)</option>
-                    <option>Dr. Sarah Johnson, MD</option>
-                    <option>Dr. Michael Torres, MD</option>
-                    <option>Lisa Park, LMFT</option>
-                    <option>James Okafor, LPC</option>
-                    <option>Sarah Rogers, LCSW</option>
-                    <option>Marcus Webb, MD</option>
-                  </select>
+                  <div class="combobox-wrap">
+                    <input type="text" class="form-input" id="f_clinician" placeholder="Select clinician..." autocomplete="off" oninput="filterStaffCbo(this.value)" onfocus="filterStaffCbo(this.value)" onkeydown="staffCboKey(event)">
+                  </div>
                 </div>
                 <div class="form-field" style="grid-column: span 4;">
-                  <label for="f_team" class="form-label">Clinical team</label>
-                  <select class="form-select" id="f_team">
-                    <option value="">None</option>
-                    <option>Adult Outpatient</option>
-                    <option>Child &amp; Adolescent</option>
-                    <option>Substance Use</option>
-                    <option>Crisis Services</option>
-                    <option>Geriatric Care</option>
-                  </select>
+                  <label class="form-label">Clinical team</label>
+                  <button type="button" class="form-select staff-trigger" id="f_teamTrigger" onclick="toggleTeamDropdown()">
+                    <span id="f_teamText" style="color:var(--neutral-60);">Select members...</span>
+
+                  </button>
                 </div>
                 <div class="form-field" style="grid-column: span 4;">
                   <label for="f_chartId" class="form-label">Chart ID <span class="req">*</span></label>
@@ -1989,8 +2092,119 @@
 
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
   <div class="combobox-list" id="insCboList" style="display:none;"></div>
+  <div class="combobox-list staff-cbo" id="staffCboList" style="display:none;"></div>
+  <div class="staff-dropdown" id="teamDropdown" style="display:none;">
+    <div class="staff-dd-search">
+      <input type="text" id="teamSearch" placeholder="Search members...">
+    </div>
+    <div class="staff-dd-options" id="teamOptions"></div>
+  </div>
 
   <script>
+    const STAFF = [
+      { name: 'Intake (Unassigned)', initials: '', cls: 'unassigned' },
+      { name: 'Sarah Johnson', initials: 'SJ' },
+      { name: 'Michael Torres', initials: 'MT' },
+      { name: 'Lisa Park', initials: 'LP' },
+      { name: 'James Okafor', initials: 'JO' },
+      { name: 'Sarah Rogers', initials: 'SR' },
+      { name: 'Marcus Webb', initials: 'MW' },
+    ];
+
+    let teamSelected = [];
+
+    function staffAvatar(s) {
+      return '<div class="staff-avatar' + (s.cls ? ' ' + s.cls : '') + '">' + s.initials + '</div>';
+    }
+
+    /* ── Principal clinician combobox ──────────────────────────────── */
+    function filterStaffCbo(query) {
+      var list = document.getElementById('staffCboList');
+      var q = (query || '').toLowerCase();
+      var matches = q ? STAFF.filter(function (s) { return s.name.toLowerCase().includes(q); }) : STAFF;
+      list.innerHTML = matches.map(function (s) {
+        return '<div class="staff-cbo-option" data-val="' + s.name + '">' + s.name + '</div>';
+      }).join('');
+      list.querySelectorAll('.staff-cbo-option').forEach(function (item) {
+        item.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          document.getElementById('f_clinician').value = item.dataset.val;
+          list.style.display = 'none';
+        });
+      });
+      list.style.display = '';
+      var r = document.getElementById('f_clinician').getBoundingClientRect();
+      list.style.left = r.left + 'px';
+      list.style.width = r.width + 'px';
+      var spBelow = window.innerHeight - r.bottom;
+      list.style.top = spBelow < 220 ? (r.top - Math.min(list.scrollHeight, 220) - 2) + 'px' : (r.bottom + 2) + 'px';
+    }
+
+    function staffCboKey(e) {
+      var list = document.getElementById('staffCboList');
+      var items = list.querySelectorAll('.staff-cbo-option');
+      var active = list.querySelector('.staff-cbo-option.active');
+      var idx = active ? Array.prototype.indexOf.call(items, active) : -1;
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
+      else if (e.key === 'Enter' && active) {
+        e.preventDefault();
+        document.getElementById('f_clinician').value = active.dataset.val;
+        list.style.display = 'none'; return;
+      }
+      else if (e.key === 'Escape') { list.style.display = 'none'; return; }
+      else { return; }
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
+      if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
+    }
+
+    /* ── Clinical team multi-select ───────────────────────────────── */
+    function toggleTeamDropdown() {
+      var dd = document.getElementById('teamDropdown');
+      if (dd.style.display !== 'none') { dd.style.display = 'none'; return; }
+      renderTeamOptions('');
+      var r = document.getElementById('f_teamTrigger').getBoundingClientRect();
+      dd.style.left = r.left + 'px';
+      dd.style.width = r.width + 'px';
+      dd.style.display = 'flex';
+      var spBelow = window.innerHeight - r.bottom;
+      dd.style.top = spBelow < 220 ? (r.top - Math.min(dd.scrollHeight, 220) - 2) + 'px' : (r.bottom + 2) + 'px';
+      var si = document.getElementById('teamSearch');
+      si.value = '';
+      si.oninput = function () { renderTeamOptions(this.value); };
+      setTimeout(function () { si.focus(); }, 40);
+    }
+
+    function renderTeamOptions(query) {
+      var q = query.toLowerCase();
+      var members = STAFF.filter(function (s) { return s.initials; }); // skip Unassigned
+      var filtered = q ? members.filter(function (s) { return s.name.toLowerCase().includes(q); }) : members;
+      document.getElementById('teamOptions').innerHTML = filtered.map(function (s) {
+        var chk = teamSelected.includes(s.name) ? ' checked' : '';
+        return '<label class="staff-team-option">' +
+          '<input type="checkbox" class="form-checkbox" value="' + s.name + '"' + chk + '>' +
+          s.name + '</label>';
+      }).join('');
+      document.querySelectorAll('#teamOptions .form-checkbox').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          if (cb.checked) { if (!teamSelected.includes(cb.value)) teamSelected.push(cb.value); }
+          else { teamSelected = teamSelected.filter(function (v) { return v !== cb.value; }); }
+          updateTeamTrigger();
+        });
+      });
+    }
+
+    function updateTeamTrigger() {
+      var el = document.getElementById('f_teamText');
+      if (!teamSelected.length) {
+        el.textContent = 'Select members...';
+        el.style.color = 'var(--neutral-60)';
+      } else {
+        el.textContent = teamSelected.length === 1 ? teamSelected[0] : teamSelected.length + ' members selected';
+        el.style.color = '';
+      }
+    }
+
     const INS_COS = ["AARP", "AARP Supplement", "Administrative Concepts Inc", "Aetna", "Aetna Medicare", "Aetna Medicare Supplemental", "Aetna Ohio RISE Ohio Medicaid", "Aither", "All Savers", "Allegiance Benefit Plan", "Allied Benefit System", "Ambetter Buckeye Marketplace", "Ameriben", "AmeriHealth Caritas Ohio Medicaid", "AmFirst", "Anthem BC/BS", "Anthem Medicare", "Anthem Ohio Medicaid", "ASA GEHA", "ASR Health Benefits", "Ault Care", "Bay Bridge Administrators Supplement", "BBG Secondary Payer", "Beacon Health Option Values", "Buckeye Medicare Cenpatico", "Buckeye Ohio Medicaid", "Carelon Behavioral Health", "CareSource", "CareSource Dual", "CareSource Market Place", "CareSource Ohio Medicaid", "Catilize Health", "CGS Medicare Part B", "CHAMP VA", "Change Healthcare / AmFirst Insurance", "Cigna", "Cigna Medicare", "Cigna Medicare Supplement / Healthspring", "Cigna/Evernorth Behavioral Health", "Claritev MBA", "Clarity Health/ Enterprise Group Planning", "Consociate Group", "Continental Life", "Devoted Health Plan", "Enterprise Group Planning", "Erie Family Supplement", "First Health", "GEHA", "Gravie Administrative Services", "Group and Pension Administrators", "Health Comp", "Health Partners", "Healthscope", "HealthSmart/Accel", "Highmark", "HSA Payments", "Humana Health Plan", "Humana Medicare", "Humana Ohio Medicaid", "Imagine 360", "Independence Administrators", "Insurance TPA", "International Benefit Administration", "Lucent Health", "Luminare Health", "Magellan", "Marpai", "Martin Point US Family Health Plan", "Medical Mutual / UPMC", "Medical Mutual Medicare", "Medical Mutual of Ohio", "Medical Mutual Supplement", "Meritain Health", "Military Officers of America", "Molina Market Place", "Molina MCD", "Molina Medicare", "Molina Ohio Medicaid", "Mutual Health Services", "Mutual of Omaha", "MyCare Aetna Better Health", "MyCare Anthem", "MyCare Molina Medicaid", "MyCare OH Aetna Better Health Medicare", "MyCare OH CareSource Medicaid", "MyCare OH CareSource Medicare", "Ohio Medicaid", "Omaha Supplemental Insurance", "Optum Behavioral Health Benefits", "PAI", "Paramount Adv Medicaid", "Paramount Healthcare", "Peak Health", "Personify Health", "Physicians Mutual", "Priority Health", "Railroad Medicare", "Redirect Health Administration", "Sana Benefits", "Self Pay", "Sidecare Health, Attn Claims", "SS Healthcare", "Summa Care", "Summa Care Medicare", "The Hartford", "The Health Plan", "The Health Plan Medicare", "Total Plan Concepts", "Tricare for Life", "Tricare Humana East Region", "Trustmark Health Benefits", "UHC GEHA", "UHC Medicare Complete", "UHC Shared Services", "UMWA", "Unicare", "United Healthcare Commercial", "United Healthcare Dual Complete", "United Healthcare Medicare", "United Healthcare of Ohio", "United Healthcare Ohio Medicaid", "VA CCN Optum", "Wellcare Dual Liberty"];
     let currentStep = 1;
     let _eligCycle = 0;
@@ -1998,6 +2212,9 @@
     function openModal() {
       document.getElementById('newChartModal').classList.add('open');
       updateStepper(1);
+      document.getElementById('f_state').value = 'Ohio';
+      document.getElementById('f_insState').value = 'Ohio';
+      document.getElementById('f_billState').value = 'Ohio';
       setTimeout(function () { document.getElementById('f_first').focus(); }, 220);
     }
     function closeModal() {
@@ -2012,6 +2229,13 @@
       });
       document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
       document.getElementById('f_chartId').value = '1004010739451';
+      document.getElementById('f_state').value = 'Ohio';
+      document.getElementById('f_insState').value = 'Ohio';
+      document.getElementById('f_billState').value = 'Ohio';
+      document.getElementById('f_clinician').value = 'Intake (Unassigned)';
+      teamSelected = []; updateTeamTrigger();
+      document.getElementById('teamDropdown').style.display = 'none';
+      document.getElementById('staffCboList').style.display = 'none';
       document.getElementById('chartSubtitle').textContent = 'First name Last name';
       document.getElementById('f_preferred')._edited = false;
       document.querySelectorAll('#newChartModal .error').forEach(function (el) { el.classList.remove('error'); });
@@ -2314,6 +2538,9 @@
     document.addEventListener('click', function (e) {
       if (!e.target.closest('.combobox-wrap')) {
         document.querySelectorAll('.combobox-list').forEach(function (l) { l.style.display = 'none'; });
+      }
+      if (!e.target.closest('#f_teamTrigger') && !e.target.closest('#teamDropdown')) {
+        document.getElementById('teamDropdown').style.display = 'none';
       }
     });
 
