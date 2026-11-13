@@ -735,6 +735,12 @@
       color: var(--neutral-20);
       background: #fff;
       width: 100%;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .form-input {
+      background-size: 0 0; /* icon scales in on error */
+      transition: border-color 120ms ease, box-shadow 120ms ease, background-size 120ms ease;
     }
 
     .form-input:focus,
