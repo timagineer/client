@@ -1299,19 +1299,7 @@
       font-variant-numeric: tabular-nums lining-nums
     }
 
-
-    th[data-k="flag"] {
-      width: 36px;
-      max-width: 36px;
-      text-align: center;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    td.td-flag {
-      text-align: center;
-      padding: 4px 0;
-    }
+    td
 
     .shell {
       flex: 1;
@@ -1563,6 +1551,9 @@
       min-width: 130px;
     }
 
+    td:nth-child(2) { border-right: 2px solid rgba(0,0,0,0.06); }
+    thead th:nth-child(2) { box-shadow: inset 0 -1.5px 0 var(--n75); border-right: 2px solid rgba(0,0,0,0.06); }
+
     th:nth-child(3),
     td:nth-child(3) {
       position: sticky;
@@ -1572,32 +1563,18 @@
       min-width: 36px;
     }
 
-    /* Right border on last sticky column — no vertical bleed */
-    td:nth-child(3) {
-      border-right: 2px solid rgba(0, 0, 0, 0.06);
-    }
-
-    /* Restore inset bottom border on sticky th + right border */
-    thead th:nth-child(3) {
-      box-shadow: inset 0 -1.5px 0 var(--n75);
-      border-right: 2px solid rgba(0, 0, 0, 0.06);
-    }
-
     thead th:nth-child(1),
-    thead th:nth-child(2),
-    thead th:nth-child(3) {
+    thead th:nth-child(2) {
       z-index: 2;
     }
 
     td:nth-child(1),
-    td:nth-child(2),
-    td:nth-child(3) {
+    td:nth-child(2) {
       background: var(--surface);
     }
 
     tbody tr:hover td:nth-child(1),
-    tbody tr:hover td:nth-child(2),
-    tbody tr:hover td:nth-child(3) {
+    tbody tr:hover td:nth-child(2) {
       background: var(--hover);
     }
 
@@ -3075,7 +3052,7 @@
     }
   </script>
   <script>
-    const COLS = [['first', 'First name'], ['last', 'Last name'], ['flag', ''], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment']];
+    const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment']];
     const D = [
       ['Penelope', 'Portal', 'Active', '10234', '48201', 'penelope.portal@email.com', '(401) 555-1234', '1999-11-11', '2026-11-06', '2026-11-20', 1, 'Sarah Johnson', 'East Liverpool', 1],
       ['Pam', 'Portal', 'Active', '10235', '48202', 'pam.portal@email.com', '(401) 555-5678', '1990-01-01', '2026-10-30', '2026-11-17', 1, 'Sarah Johnson', 'East Liverpool', null],
@@ -3122,8 +3099,8 @@
     const toast = m => showToast('info', m);
 
     const FLAG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg>';
-    $('cols').innerHTML = COLS.map(([k, l]) => k === 'flag' ? `<th scope="col" data-k="flag"></th>` : `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
-    $('cols').onclick = e => { const th = e.target.closest('th'); if (!th || th.dataset.k === 'flag') return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
+    $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
+    $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
     $('last').onclick = () => toast('Opening last chart…');
     $('new').onclick = () => toast('Starting a new chart…');
     $('letters') && 0;
@@ -3146,7 +3123,7 @@
       const all = rows(), pages = Math.max(1, Math.ceil(all.length / S.size)); S.page = Math.min(S.page, pages);
       const s = (S.page - 1) * S.size, page = all.slice(s, s + S.size);
       document.querySelectorAll('#cols th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === S.sort ? (S.dir > 0 ? 'ascending' : 'descending') : 'none'));
-      $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td><a href="#">${c.last}</a></td><td class="td-flag">${c.flag ? FLAG_SVG : ''}</td>
+      $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td><a href="#">${c.last}</a>${c.flag ? ' ' + FLAG_SVG : ''}</td>
   <td>${fmt(c.dob)}</td><td class="num">${c.id}</td><td class="num">${c.mrn}</td><td><span class="chip chip-${c.status.toLowerCase()}">${c.status}</span></td><td>${c.clinician}</td><td>${c.site}</td><td>${c.phone}</td><td>${c.email}</td>
   <td>${fmt(c.lastAppt) || dash}</td><td>${fmt(c.nextAppt) || dash}</td></tr>`).join('');
       $('empty').hidden = all.length > 0;
