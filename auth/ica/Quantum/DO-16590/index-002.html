@@ -426,7 +426,7 @@
       opacity: 0;
       visibility: hidden;
       transform: scale(0.97) translateY(8px);
-      transition: opacity 180ms cubic-bezier(.165, .84, .44, 1), transform 220ms cubic-bezier(.165, .84, .44, 1), visibility 180ms;
+      transition: opacity 180ms cubic-bezier(.165, .84, .44, 1), transform 220ms cubic-bezier(.165, .84, .44, 1), visibility 180ms, height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
     }
 
     .modal-backdrop.open .modal {
@@ -504,6 +504,7 @@
     .modal-body {
       padding: 12px 20px 28px;
       overflow-y: auto;
+      scrollbar-gutter: stable;
       flex: 1;
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -949,6 +950,7 @@
       height: 0;
       transition: height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
     }
+
     #newContactFields.open,
     #insAddrWrap.open,
     #billAddrWrap.open {
@@ -2112,33 +2114,39 @@
       var wrap = document.getElementById('addr2Wrap');
       var toggle = document.getElementById('addr2Toggle');
       var open = wrap.style.display !== 'none';
-      wrap.style.display = open ? 'none' : '';
-      toggle.style.display = open ? '' : 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
     }
     function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
     function toggleBillAddr(show) {
-      document.getElementById('billAddrWrap').classList.toggle('open', show);
+      animateModalHeight(document.getElementById('billAddrWrap'), show);
     }
     function toggleBillAddr2() {
       var wrap = document.getElementById('billAddr2Wrap');
       var toggle = document.getElementById('billAddr2Toggle');
       var open = wrap.style.display !== 'none';
-      wrap.style.display = open ? 'none' : '';
-      toggle.style.display = open ? '' : 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
     }
     function toggleInsAddr() {
       var wrap = document.getElementById('insAddrWrap');
       var toggle = document.getElementById('insAddrToggle');
       var open = wrap.classList.contains('open');
-      wrap.classList.toggle('open', !open);
+      animateModalHeight(wrap, !open);
       toggle.style.display = open ? '' : 'none';
     }
     function toggleInsAddr2() {
       var wrap = document.getElementById('insAddr2Wrap');
       var toggle = document.getElementById('insAddr2Toggle');
       var open = wrap.style.display !== 'none';
-      wrap.style.display = open ? 'none' : '';
-      toggle.style.display = open ? '' : 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
     }
     function autoFillInsType(co) {
       var t = document.getElementById('f_insType');
@@ -2162,8 +2170,30 @@
       t.value = type;
       checkEligibilityReady();
     }
+    /* Animate modal height when a disclosure panel opens/closes */
+    function animateHeight(fn) {
+      var modal = document.querySelector('.modal');
+      var oldH = modal.offsetHeight;
+      modal.style.height = oldH + 'px';
+      fn();
+      modal.style.height = '';
+      var newH = modal.offsetHeight;
+      modal.style.height = oldH + 'px';
+      void modal.offsetWidth;
+      requestAnimationFrame(function () {
+        modal.style.height = newH + 'px';
+        var cleanup = function (e) {
+          if (e.propertyName === 'height') { modal.style.height = ''; modal.removeEventListener('transitionend', cleanup); }
+        };
+        modal.addEventListener('transitionend', cleanup);
+      });
+    }
+    function animateModalHeight(el, open) {
+      animateHeight(function () { el.classList.toggle('open', open); });
+    }
     function onInsuredChange(val) {
-      document.getElementById('newContactFields').classList.toggle('open', val === 'new');
+      var el = document.getElementById('newContactFields');
+      animateModalHeight(el, val === 'new');
       if (val !== 'new') {
         document.getElementById('insAddrWrap').classList.remove('open');
         document.getElementById('insAddr2Wrap').style.display = 'none';
