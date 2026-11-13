@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Patient Portal Messaging [DO-17044]</title>
+  <style>
+    :root {
+      --primary-20: oklch(33.5% .077 258.7);
+      --primary-30: oklch(43.3% .104 258.4);
+      --primary-50: oklch(49.2% .12 258.2);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-55: oklch(0.653 0.017 233.85);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --border-btn: var(--neutral-70);
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
+
+    /* Shell */
+    .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .shell-header-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .shell-header .wire-search { flex-shrink: 0; }
+
+    .wire-header-right {
+      flex: 1;
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .shell-body { display: flex; flex: 1; overflow: hidden; }
+
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: oklch(0.965 0.006 234);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* Wire elements */
+    .wire-logo { display: flex; gap: 2px; }
+    .wire-logo-mark { width: 32px; height: 18px; background: var(--primary-50); border-radius: var(--rad); }
+    .wire-logo-text { width: 48px; height: 18px; background: var(--secondary-60); border-radius: var(--rad); }
+    .wire-search { width: 320px; height: 28px; background: var(--neutral-90); border-radius: var(--rad); }
+    .wire-icon { width: 24px; height: 24px; background: var(--neutral-80); border-radius: var(--rad); }
+    .wire-avatar { width: 26px; height: 26px; background: var(--neutral-80); border-radius: 50%; }
+    .wire-nav-item { width: 100%; height: 56px; background: var(--neutral-85); border-radius: var(--rad); flex-shrink: 0; }
+    .wire-nav-item.active { background: var(--neutral-75); }
+
+    .wire-topbar-meta { display: flex; gap: 20px; align-items: center; }
+    .wire-meta-block { height: 12px; background: var(--neutral-80); border-radius: 3px; }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="shell-header">
+      <div class="shell-header-left">
+        <div class="wire-logo">
+          <div class="wire-logo-mark"></div>
+          <div class="wire-logo-text"></div>
+        </div>
+        <div class="wire-topbar-meta">
+          <div class="wire-meta-block" style="width:124px"></div>
+          <div class="wire-meta-block" style="width:92px"></div>
+        </div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+    <div class="shell-body">
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+      <main class="shell-main">
+        <!-- content goes here -->
+      </main>
+    </div>
+  </div>
+</body>
+
+</html>
