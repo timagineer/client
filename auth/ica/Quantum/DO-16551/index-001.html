@@ -1295,16 +1295,22 @@
 
 
     th[data-k="flag"] {
-      background: var(--n15);
-      color: #fff;
       width: 36px;
       text-align: center;
       padding: 0;
     }
-    th[data-k="flag"] button { pointer-events: none; cursor: default; }
-    td.td-flag { text-align: center; padding: 4px 0; }
+
+    th[data-k="flag"] button {
+      pointer-events: none;
+      cursor: default;
+    }
+
+    td.td-flag {
+      text-align: center;
+      padding: 4px 0;
+    }
+
     .shell {
-      max-width: 1280px;
       margin: 0 auto;
       padding: 20px
     }
@@ -3007,7 +3013,7 @@
     const dash = '<span class="mute">—</span>';
     const toast = m => showToast('info', m);
 
-    const FLAG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg>';
+    const FLAG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg>';
     $('cols').innerHTML = COLS.map(([k, l]) => k === 'flag' ? `<th scope="col" data-k="flag"><button type="button"> </button></th>` : `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
     $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
     $('last').onclick = () => toast('Opening last chart…');
