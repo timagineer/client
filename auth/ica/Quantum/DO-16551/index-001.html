@@ -1227,13 +1227,16 @@
       display: none;
     }
 
-    .cr-topbar-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--neutral-40);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      white-space: nowrap;
+    .wire-topbar-meta {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .wire-meta-block {
+      height: 12px;
+      background: var(--neutral-80);
+      border-radius: 3px;
     }
 
     /* ── Chart Room table (from temp/chart-room.html) ── */
@@ -1787,8 +1790,10 @@
         <div class="wire-logo-mark"></div>
         <div class="wire-logo-text"></div>
       </div>
-      <div class="topbar-divider"></div>
-      <span class="cr-topbar-title">Chart Room</span>
+      <div class="wire-topbar-meta">
+        <div class="wire-meta-block" style="width:124px"></div>
+        <div class="wire-meta-block" style="width:92px"></div>
+      </div>
       <div class="wire-search"></div>
       <div class="wire-header-right">
         <div class="wire-icon"></div>
@@ -1815,8 +1820,7 @@
           <div class="card">
             <div class="head">
               <div>
-                <h1>Find a chart</h1>
-                <div class="head-sub">Welcome, James Morningstar · Therhappy Associates</div>
+                <h1>Chart Room</h1>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
                 <button class="btn btn-ghost" id="last"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
