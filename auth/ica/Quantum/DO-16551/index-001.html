@@ -1198,37 +1198,21 @@
       }
     }
 
-    /* Chart Room page header (from CLN-4002 topbar-context) */
-    .cr-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-light);
+    .topbar-divider {
+      width: 1px;
+      height: 1.25rem;
+      background: var(--border-light);
       flex-shrink: 0;
+      margin: 0 16px;
     }
 
-    .cr-title {
+    .cr-topbar-title {
       font-size: 1rem;
       font-weight: 600;
       color: var(--neutral-40);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-    }
-
-    .cr-welcome {
-      font-size: 13px;
-      color: var(--neutral-45);
-    }
-
-    .cr-welcome-sep {
-      margin: 0 5px;
-      color: var(--neutral-65);
-    }
-
-    .cr-practice {
-      color: var(--neutral-30);
-      font-weight: 500;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -1240,6 +1224,8 @@
         <div class="wire-logo-mark"></div>
         <div class="wire-logo-text"></div>
       </div>
+      <div class="topbar-divider"></div>
+      <span class="cr-topbar-title">Chart Room</span>
       <div class="wire-search"></div>
       <div class="wire-header-right">
         <div class="wire-icon"></div>
@@ -1262,10 +1248,10 @@
         <div class="wire-nav-item"></div>
       </nav>
       <main class="shell-main">
-        <div class="cr-header">
-          <span class="cr-title">Chart Room</span>
-          <span class="cr-welcome">Welcome, James Morningstar<span class="cr-welcome-sep">·</span><span class="cr-practice">Therhappy Associates</span></span>
-        </div>
+        <!-- TABLE DROP ZONE
+             Practice: Therhappy Associates
+             Welcome, James Morningstar · Therhappy Associates
+        -->
       </main>
     </div>
   </div>
