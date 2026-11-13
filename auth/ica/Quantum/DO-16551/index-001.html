@@ -1223,6 +1223,487 @@
       letter-spacing: 0.05em;
       white-space: nowrap;
     }
+    /* ── Chart Room table (from temp/chart-room.html) ── */
+
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      --primary-20: oklch(33.5% .077 258.7);
+      --primary-30: oklch(43.3% .104 258.4);
+      --primary-50: oklch(49.2% .12 258.2);
+      --accent: oklch(.7169 .2209 128.71);
+      --n15: oklch(.245 .009 234.74);
+      --n20: oklch(.3008 .0116 234.63);
+      --n30: oklch(.4089 .0157 234.4);
+      --n40: oklch(.5192 .0178 234.18);
+      --n50: oklch(.6068 .0178 233.96);
+      --n60: oklch(.6996 .016 233.74);
+      --n70: oklch(.7974 .0127 233.51);
+      --n75: oklch(.8373 .0106 233.4);
+      --n85: oklch(.9234 .0059 233.18);
+      --n90: oklch(.9542 .0034 233.07);
+      --n95: oklch(.9772 .0008 232.96);
+      --page: oklch(.965 .006 234);
+      --surface: #fff;
+      --text: var(--n20);
+      --muted: var(--n40);
+      --line: var(--n85);
+      --hover: var(--n95);
+      --title: hsl(218, 60%, 45%);
+      --active-bg: hsl(134, 41%, 88%);
+      --active-fg: hsl(134, 55%, 21%);
+      --active-bd: hsl(134, 35%, 78%);
+      --active-dot: hsl(134, 55%, 38%);
+      --inactive-bg: hsl(0, 80%, 94%);
+      --inactive-fg: hsl(0, 70%, 34%);
+      --inactive-bd: hsl(0, 50%, 85%);
+      --inactive-dot: hsl(0, 70%, 48%);
+      --pending-bg: hsl(46, 100%, 90%);
+      --pending-fg: hsl(40, 90%, 22%);
+      --pending-bd: hsl(46, 70%, 78%);
+      --pending-dot: hsl(40, 90%, 45%);
+      --test-bg: hsl(209, 100%, 92%);
+      --test-fg: hsl(209, 85%, 29%);
+      --test-bd: hsl(209, 60%, 82%);
+      --test-dot: hsl(209, 85%, 48%);
+      --rad: 6px;
+      color-scheme: light;
+    }
+
+    
+
+    
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-variant-numeric: tabular-nums lining-nums
+    }
+
+    .shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 18px
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px
+    }
+
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--title)
+    }
+
+    .head-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px
+    }
+
+    .btn,
+    .sel,
+    .search input {
+      font: inherit;
+      height: 32px;
+      border: 1px solid var(--n70);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      cursor: pointer;
+      box-shadow: rgba(12, 12, 12, .09) 0 1px 3px
+    }
+
+    .btn:hover {
+      background: var(--hover)
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .btn-primary {
+      background: var(--primary-50);
+      border-color: var(--primary-50);
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30)
+    }
+
+    .btn-ghost {
+      box-shadow: none;
+      border-color: transparent;
+      background: transparent
+    }
+
+    .btn:focus-visible,
+    .seg button:focus-visible,
+    .letters button:focus-visible,
+    th button:focus-visible,
+    .sel:focus-visible,
+    .search input:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary-30)
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .toolbar .grow {
+      flex: 1;
+      min-width: 220px
+    }
+
+    .search {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 32px
+    }
+
+    .search svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      color: var(--n50);
+      pointer-events: none
+    }
+
+    .search input {
+      width: 100%;
+      padding: 0 10px 0 32px
+    }
+
+    .search input::placeholder {
+      color: var(--n60)
+    }
+
+    .sel {
+      padding: 0 26px 0 8px;
+      appearance: none;
+      cursor: pointer;
+      background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center
+    }
+
+    .seg {
+      display: inline-flex;
+      background: var(--n90);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px
+    }
+
+    .seg button {
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      padding: 4px 12px;
+      font: inherit;
+      color: var(--n30);
+      cursor: pointer
+    }
+
+    .seg button[aria-pressed="true"] {
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1)
+    }
+
+    .letters {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      align-items: center
+    }
+
+    .letters span {
+      color: var(--muted);
+      margin-right: 4px
+    }
+
+    .letters button {
+      height: 26px;
+      min-width: 44px;
+      padding: 0 8px;
+      border: 1px solid var(--n75);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--n30);
+      font: inherit;
+      cursor: pointer
+    }
+
+    .letters button:hover {
+      background: var(--hover)
+    }
+
+    .letters button[aria-pressed="true"] {
+      background: var(--n90);
+      border-color: var(--n60);
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .scroll {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      height: 44px;
+      text-align: left;
+      padding: 0 8px;
+      font-weight: 500;
+      color: var(--n40);
+      white-space: nowrap;
+      box-shadow: inset 0 -1.5px 0 var(--n75)
+    }
+
+    th button {
+      all: unset;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 3px
+    }
+
+    th button:hover {
+      color: var(--n30)
+    }
+
+    th[aria-sort="ascending"],
+    th[aria-sort="descending"] {
+      color: var(--text)
+    }
+
+    th svg {
+      width: 14px;
+      height: 14px;
+      color: var(--n50)
+    }
+
+    th:first-child,
+    td:first-child {
+      padding-left: 16px
+    }
+
+    th:last-child,
+    td:last-child {
+      padding-right: 16px
+    }
+
+    td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--line);
+      color: var(--n30);
+      white-space: nowrap
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none
+    }
+
+    tbody tr {
+      cursor: pointer
+    }
+
+    tbody tr:hover td {
+      background: var(--hover)
+    }
+
+    td a {
+      color: var(--primary-30);
+      text-decoration: none
+    }
+
+    td a:hover {
+      text-decoration: underline
+    }
+
+    .mute {
+      color: var(--n60)
+    }
+
+    .num {
+      text-align: right
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid
+    }
+
+    .chip-active {
+      background: var(--active-bg);
+      color: var(--active-fg);
+      border-color: var(--active-bd)
+    }
+
+    .chip-inactive {
+      background: var(--inactive-bg);
+      color: var(--inactive-fg);
+      border-color: var(--inactive-bd)
+    }
+
+    .chip-pending {
+      background: var(--pending-bg);
+      color: var(--pending-fg);
+      border-color: var(--pending-bd)
+    }
+
+    .chip-test {
+      background: var(--test-bg);
+      color: var(--test-fg);
+      border-color: var(--test-bd)
+    }
+
+    .empty {
+      padding: 48px 16px;
+      text-align: center;
+      color: var(--muted)
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .pager {
+      display: flex;
+      gap: 4px;
+      align-items: center
+    }
+
+    .pager button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid var(--n75);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--n40);
+      cursor: pointer;
+      font: inherit
+    }
+
+    .pager button:hover:not(:disabled) {
+      background: var(--hover)
+    }
+
+    .pager button:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .pager button[aria-current="page"] {
+      background: var(--n90);
+      border-color: var(--n60);
+      color: var(--text)
+    }
+
+    .pager .sel {
+      height: 28px;
+      margin-left: 8px;
+      font-size: 12px
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      transform: translateX(-50%);
+      background: hsl(205, 100%, 18%);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s
+    }
+
+    .toast.show {
+      opacity: 1
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      .toast {
+        transition: none
+      }
+    }
+  
   </style>
 </head>
 
@@ -1257,10 +1738,63 @@
         <div class="wire-nav-item"></div>
       </nav>
       <main class="shell-main">
-        <!-- TABLE DROP ZONE
-             Practice: Therhappy Associates
-             Welcome, James Morningstar · Therhappy Associates
-        -->
+        <div class="shell">
+    <div class="card">
+      <div class="head">
+        <div>
+          <h1>Find a chart</h1>
+          <div class="head-sub">Welcome, James Morningstar · Therhappy Associates</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-ghost" id="last"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 14 4 9l5-5" />
+              <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+            </svg>Last chart</button>
+          <button class="btn btn-primary" id="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>New chart</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <select class="sel" id="site" aria-label="Working at site">
+          <option>Therhappy Associates</option>
+          <option>Therhappy Telehealth</option>
+        </select>
+        <div class="seg" role="group" aria-label="Show charts from"><button aria-pressed="true" data-site="all">All sites</button><button aria-pressed="false" data-site="one">This site only</button></div>
+        <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Assigned to me</button></div>
+        <select class="sel" id="status" aria-label="Chart status">
+          <option value="">All statuses</option>
+          <option>Active</option>
+          <option>Inactive</option>
+          <option>Pending</option>
+          <option>Test</option>
+        </select>
+        <div class="grow"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.34-4.34" />
+            </svg>
+            <input type="search" id="q" placeholder="Search name, DOB, chart ID, MRN, phone, email, SSN, etc" aria-label="Search charts"></label></div>
+      </div>
+
+      <div class="letters" role="group" aria-label="Filter by last name"><span>Last name</span></div>
+
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr id="cols"></tr>
+          </thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="empty" hidden>No charts match. Clear a filter or search a different name.</div>
+
+      <div class="foot">
+        <div class="pager" id="pager"></div>
+        <div id="count"></div>
+      </div>
+    </div>
+  </div>
       </main>
     </div>
   </div>
@@ -2443,6 +2977,74 @@
       }, 3500);
     }
   </script>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment']];
+    const D = [
+      ['Penelope', 'Portal', 'Active', '10234', '48201', 'penelope.portal@email.com', '(401) 555-1234', '1999-11-11', '2026-11-06', '2026-11-20', 1],
+      ['Pam', 'Portal', 'Active', '10235', '48202', 'pam.portal@email.com', '(401) 555-5678', '1990-01-01', '2026-10-30', '2026-11-17', 1],
+      ['Alex', 'Rivera', 'Active', '10236', '48210', 'alex.r@email.com', '(401) 555-9012', '1984-03-22', '2026-11-13', '2026-11-27', 1],
+      ['Harley', 'David', 'Pending', '10237', '48215', 'h.david@email.com', '(401) 555-3456', '1992-07-09', null, '2026-11-18', 0],
+      ['Maria', 'Chen', 'Active', '10238', '48220', 'm.chen@email.com', '(401) 555-7890', '1978-12-02', '2026-11-10', null, 1],
+      ['Devon', 'Brooks', 'Inactive', '10239', '48231', 'd.brooks@email.com', '(401) 555-2345', '1995-05-30', '2025-08-14', null, 1],
+      ['Dana', 'Pierce', 'Active', '10240', '48244', 'dana.p@email.com', '(401) 555-6789', '1988-09-17', '2026-11-12', '2026-11-19', 1],
+      ['Jordan', 'Ellis', 'Test', '10241', '00001', 'test.ellis@email.com', '(401) 555-0001', '2000-01-01', null, null, 1],
+      ['Sam', 'Torres', 'Active', '10242', '48257', 's.torres@email.com', '(401) 555-4410', '1971-04-25', '2026-11-05', '2026-11-12', 1],
+      ['Kim', 'Wexler', 'Pending', '10243', '48260', 'k.wexler@email.com', '(401) 555-8821', '1983-02-14', null, null, 1],
+      ['Nacho', 'Varga', 'Inactive', '10244', '48268', 'n.varga@email.com', '(401) 555-3307', '1990-10-08', '2025-12-02', null, 0],
+      ['Lalo', 'Salamanca', 'Active', '10245', '48273', 'l.salamanca@email.com', '(401) 555-6612', '1986-06-19', '2026-10-28', '2026-11-25', 1],
+      ['Mike', 'Ehrmantraut', 'Active', '10246', '48279', 'm.ehrmantraut@email.com', '(401) 555-9034', '1957-08-01', '2026-11-11', '2026-11-18', 1],
+      ['Chris', 'Taylor', 'Test', '10247', '00002', 'test.taylor@email.com', '(401) 555-0002', '2001-02-02', null, null, 1],
+      ['Riley', 'Parker', 'Active', '10248', '48290', 'r.parker@email.com', '(401) 555-1187', '1999-09-09', '2026-11-04', '2026-11-14', 1],
+      ['Casey', 'Morgan', 'Pending', '10249', '48295', 'c.morgan@email.com', '(401) 555-7743', '1994-11-23', null, '2026-11-16', 1],
+    ].map(r => Object.fromEntries([...['first', 'last', 'status', 'id', 'mrn', 'email', 'phone', 'dob', 'lastAppt', 'nextAppt'], 'mine'].map((k, i) => [k, r[i]])));
+    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';
+    const LET = [['All', ''], ['A–C', 'ABC'], ['D–F', 'DEF'], ['G–J', 'GHIJ'], ['K–M', 'KLM'], ['N–Q', 'NOPQ'], ['R–T', 'RST'], ['U–Z', 'UVWXYZ']];
+    const S = { sort: 'last', dir: 1, page: 1, size: 10, q: '', status: '', own: 'mine', letters: '' };
+    const $ = id => document.getElementById(id);
+    const fmt = d => d ? d.slice(5, 7) + '/' + d.slice(8) + '/' + d.slice(0, 4) : null;
+    const dash = '<span class="mute">—</span>';
+    const toast = m => { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2200) };
+
+    $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
+    $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
+    $('last').onclick = () => toast('Opening last chart…');
+    $('new').onclick = () => toast('Starting a new chart…');
+    $('letters') && 0;
+    const lw = document.querySelector('.letters');
+    LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
+    lw.onclick = e => { const b = e.target.closest('button'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
+    document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
+    document.querySelectorAll('[data-site]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-site]').forEach(x => x.setAttribute('aria-pressed', x === b)); toast(b.dataset.site === 'one' ? 'Showing this site only' : 'Showing all sites') });
+    $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
+    $('q').oninput = e => { S.q = e.target.value.trim().toLowerCase(); S.page = 1; render() };
+
+    function rows() {
+      const q = S.q, digits = q.replace(/\D/g, '');
+      let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())));
+      if (q) r = r.filter(c => [c.first, c.last, c.id, c.mrn, c.email, c.status].some(v => v.toLowerCase().includes(q)) || fmt(c.dob).includes(q) || (digits.length > 2 && c.phone.replace(/\D/g, '').includes(digits)));
+      const k = S.sort;
+      return r.sort((a, b) => { const x = a[k], y = b[k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * S.dir });
+    }
+    function render() {
+      const all = rows(), pages = Math.max(1, Math.ceil(all.length / S.size)); S.page = Math.min(S.page, pages);
+      const s = (S.page - 1) * S.size, page = all.slice(s, s + S.size);
+      document.querySelectorAll('#cols th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === S.sort ? (S.dir > 0 ? 'ascending' : 'descending') : 'none'));
+      $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td><a href="#">${c.last}</a></td>
+  <td>${fmt(c.dob)}</td><td class="num">${c.id}</td><td class="num">${c.mrn}</td><td><span class="chip chip-${c.status.toLowerCase()}">${c.status}</span></td><td>${c.phone}</td><td>${c.email}</td>
+  <td>${fmt(c.lastAppt) || dash}</td><td>${fmt(c.nextAppt) || dash}</td></tr>`).join('');
+      $('empty').hidden = all.length > 0;
+      $('count').textContent = all.length ? `${s + 1}–${s + page.length} of ${all.length} charts` : 'No charts';
+      let h = `<button type="button" data-p="${S.page - 1}" ${S.page < 2 ? 'disabled' : ''} aria-label="Previous page">‹</button>`;
+      for (let i = 1; i <= pages; i++)h += `<button type="button" data-p="${i}" ${i === S.page ? 'aria-current="page"' : ''}>${i}</button>`;
+      h += `<button type="button" data-p="${S.page + 1}" ${S.page >= pages ? 'disabled' : ''} aria-label="Next page">›</button><select class="sel" id="size" aria-label="Rows per page">${[10, 25, 50].map(n => `<option ${n === S.size ? 'selected' : ''}>${n}</option>`).join('')}</select><span style="margin-left:6px">per page</span>`;
+      $('pager').innerHTML = h;
+    }
+    $('pager').onclick = e => { const b = e.target.closest('button[data-p]'); if (b && !b.disabled) { S.page = +b.dataset.p; render() } };
+    $('pager').onchange = e => { if (e.target.id === 'size') { S.size = +e.target.value; S.page = 1; render() } };
+    $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) toast('Opening chart for ' + tr.dataset.n + '…') };
+    render();
+    </script>
 </body>
 
 </html>
