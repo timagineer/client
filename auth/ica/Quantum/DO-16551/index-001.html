@@ -1828,11 +1828,15 @@
             </div>
 
             <div class="toolbar">
-              <select class="sel" id="site" aria-label="Working at site">
-                <option>Therhappy Associates</option>
-                <option>Therhappy Telehealth</option>
-              </select>
               <div class="seg" role="group" aria-label="Show charts from"><button aria-pressed="true" data-site="all">All sites</button><button aria-pressed="false" data-site="one">Working at</button></div>
+              <select class="sel" id="site" aria-label="Working at site">
+                <option>East Liverpool</option>
+                <option>Youngstown</option>
+                <option>Boardman</option>
+                <option>Salem</option>
+                <option>Steubenville</option>
+                <option>Telehealth</option>
+              </select>
               <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Assigned to me</button></div>
               <select class="sel" id="status" aria-label="Chart status">
                 <option value="">All statuses</option>
@@ -3089,7 +3093,7 @@
     ].map(r => Object.fromEntries([...['first', 'last', 'status', 'id', 'mrn', 'email', 'phone', 'dob', 'lastAppt', 'nextAppt', 'mine', 'clinician', 'site', 'flag', 'copay', 'balance']].map((k, i) => [k, r[i]])));
     const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';
     const LET = [['All', ''], ['A–C', 'ABC'], ['D–F', 'DEF'], ['G–J', 'GHIJ'], ['K–M', 'KLM'], ['N–Q', 'NOPQ'], ['R–T', 'RST'], ['U–Z', 'UVWXYZ']];
-    const S = { sort: 'last', dir: 1, page: 1, size: 25, q: '', status: '', own: 'mine', letters: '' };
+    const S = { sort: 'last', dir: 1, page: 1, size: 25, q: '', status: '', own: 'mine', letters: '', siteScope: 'all', site: 'East Liverpool' };
     const $ = id => document.getElementById(id);
     const fmt = d => d ? d.slice(5, 7) + '/' + d.slice(8) + '/' + d.slice(0, 4) : null;
     const dash = '<span class="mute">—</span>';
@@ -3105,13 +3109,14 @@
     LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
     lw.onclick = e => { const b = e.target.closest('button'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
     document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
-    document.querySelectorAll('[data-site]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-site]').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+    document.querySelectorAll('[data-site]').forEach(b => b.onclick = () => { S.siteScope = b.dataset.site; S.page = 1; document.querySelectorAll('[data-site]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
     $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
+    $('site').onchange = e => { S.site = e.target.value; S.page = 1; render() };
     $('q').oninput = e => { S.q = e.target.value.trim().toLowerCase(); S.page = 1; render() };
 
     function rows() {
       const q = S.q, digits = q.replace(/\D/g, '');
-      let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())));
+      let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())) && (S.siteScope === 'all' || c.site === S.site));
       if (q) r = r.filter(c => [c.first, c.last, c.id, c.mrn, c.email, c.status, c.clinician, c.site].some(v => v && v.toLowerCase().includes(q)) || fmt(c.dob).includes(q) || (digits.length > 2 && c.phone.replace(/\D/g, '').includes(digits)));
       const k = S.sort;
       return r.sort((a, b) => { const x = a[k], y = b[k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * S.dir });
