@@ -1197,6 +1197,24 @@
         transform: translateY(8px);
       }
     }
+
+    /* Chart Room page header (from CLN-4002 topbar-context) */
+    .cr-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .cr-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--neutral-40);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
   </style>
 </head>
 
@@ -1229,6 +1247,9 @@
         <div class="wire-nav-item"></div>
       </nav>
       <main class="shell-main">
+        <div class="cr-header">
+          <span class="cr-title">Chart Room</span>
+        </div>
       </main>
     </div>
   </div>
