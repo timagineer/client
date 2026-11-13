@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: [DO-16551]</title>
+  <style>
+    :root {
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-45: oklch(0.563 0.018 234.07);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-55: oklch(0.653 0.017 233.85);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --primary-20: oklch(33.5% 0.077 258.7);
+      --border-btn: var(--neutral-70);
+      --border-light: var(--neutral-75);
+      --status-red: oklch(0.5141 0.2047 23.40);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
+
+    /* Shell */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      padding: var(--sp-2) var(--sp-4) 0;
+      background: oklch(0.965 0.006 234);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .page-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    /* Wire */
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+    }
+
+    .wire-header-right {
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .wire-tab {
+      height: 32px;
+      padding: 0 16px;
+      background: var(--neutral-85);
+      border-radius: var(--rad) var(--rad) 0 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-tab .wire-text {
+      height: 10px;
+      background: var(--neutral-70);
+      border-radius: 2px;
+    }
+
+    .wire-tab.active {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      margin-bottom: -1px;
+      border: 1px solid var(--border-light);
+      border-bottom: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      box-shadow: 0 1px 0 0 #fff;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .wire-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-2);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .wire-toolbar-left {
+      display: flex;
+      gap: var(--sp-2);
+      align-items: center;
+    }
+
+    .wire-select {
+      height: 28px;
+      border-radius: 4px;
+      background: var(--neutral-90);
+    }
+
+    .wire-search-bar {
+      width: 220px;
+      height: 28px;
+      border-radius: 4px;
+      background: var(--neutral-90);
+    }
+
+    .wire-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .wire-table thead tr {
+      border-bottom: 2px solid var(--neutral-80);
+    }
+
+    .wire-table th,
+    .wire-table td {
+      padding: 10px 8px;
+    }
+
+    .wire-table td {
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .wire-cell {
+      height: 12px;
+      border-radius: 3px;
+      background: var(--neutral-85);
+    }
+
+    .wire-cell-dark {
+      height: 12px;
+      border-radius: 3px;
+      background: var(--neutral-80);
+    }
+
+    .wire-pill {
+      height: 20px;
+      border-radius: 10px;
+      background: var(--neutral-85);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--border-btn);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--neutral-45);
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+      color: var(--neutral-15);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .btn-sm {
+      height: 28px;
+      font-size: 12px;
+      padding: 0 10px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border-color: var(--border-btn);
+      color: var(--neutral-20);
+      box-shadow: rgba(12, 12, 12, 0.09) 0px 1px 3px 0px;
+    }
+
+    .btn-outline:hover {
+      background: var(--neutral-95);
+      border-color: var(--neutral-55);
+    }
+
+    .btn-icon {
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-primary {
+      background: var(--primary-50);
+      border-color: var(--primary-50);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-30);
+      border-color: var(--primary-30);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--neutral-20);
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      border-color: transparent;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms cubic-bezier(.165, .84, .44, 1), visibility 200ms;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      width: 560px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.97) translateY(8px);
+      transition: opacity 180ms cubic-bezier(.165, .84, .44, 1), transform 220ms cubic-bezier(.165, .84, .44, 1), visibility 180ms, height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
+    }
+
+    .modal-backdrop.open .modal {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .modal-backdrop,
+      .modal {
+        transition: none;
+      }
+    }
+
+    .modal-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      padding: 16px 12px 12px 20px;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+
+    .modal-header-text {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: hsl(218, 60%, 45%);
+      margin: 0;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin: 0;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neutral-40);
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      grid-column: 2;
+      grid-row: 1;
+      align-self: center;
+    }
+
+    .modal-close-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-20);
+    }
+
+    .modal-body {
+      padding: 12px 20px 28px;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: 10px;
+      align-content: start;
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+      gap: 8px;
+    }
+
+    .modal-footer-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Step panels — grid-template-rows animation (DO-9187 pattern) */
+    .step-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 300ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
+      min-height: 0;
+    }
+
+    .step-wrap.active {
+      grid-template-rows: 1fr;
+    }
+
+    .step-wrap.no-anim {
+      transition: none;
+    }
+
+    .step-wrap-inner {
+      overflow: hidden;
+      min-block-size: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Stepper */
+    .modal-stepper-wrap {
+      padding: 10px 20px 0;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+
+    .stepper-nodes {
+      display: flex;
+      align-items: center;
+      padding-bottom: 6px;
+    }
+
+    .step-bubble {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: background 220ms, color 220ms;
+    }
+
+    .step-bubble.done,
+    .step-bubble.active {
+      background: var(--primary-50);
+      color: #fff;
+    }
+
+    .step-bubble.pending {
+      background: var(--neutral-85);
+      color: var(--neutral-50);
+    }
+
+    .step-connector {
+      flex: 1;
+      height: 2px;
+      background: var(--neutral-80);
+      margin: 0 6px;
+      transition: background 220ms;
+    }
+
+    .step-connector.done {
+      background: var(--primary-50);
+    }
+
+    .stepper-labels {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding-bottom: 8px;
+    }
+
+    .step-label-text {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--neutral-50);
+    }
+
+    .step-label-text:first-child {
+      text-align: left;
+    }
+
+    .step-label-text:nth-child(2) {
+      text-align: center;
+    }
+
+    .step-label-text:last-child {
+      text-align: right;
+    }
+
+    .step-label-text.active {
+      color: var(--primary-30);
+      font-weight: 600;
+    }
+
+    /* Step animations */
+    @keyframes stepFwd {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes stepBack {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .step-enter-fwd {
+      animation: stepFwd 200ms cubic-bezier(.165, .84, .44, 1) both;
+    }
+
+    .step-enter-back {
+      animation: stepBack 200ms cubic-bezier(.165, .84, .44, 1) both;
+    }
+
+    /* Form */
+    .form-section {
+      padding-top: 14px;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+      row-gap: 10px;
+    }
+
+    .form-section+.form-section {
+      margin-top: 4px;
+    }
+
+    .form-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--neutral-40);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+      grid-column: 1 / -1;
+    }
+
+    .form-subsection-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--neutral-40);
+      margin: 2px 0 0;
+      grid-column: 1 / -1;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      margin-bottom: 0;
+      align-items: start;
+    }
+
+    .form-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      grid-column: span 12;
+      position: relative;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      white-space: nowrap;
+    }
+
+    .form-label .req {
+      color: var(--status-red);
+      margin-left: 1px;
+    }
+
+    .form-input,
+    .form-select {
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--neutral-20);
+      background: #fff;
+      width: 100%;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .form-input {
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    /* Error state */
+    .form-input.error,
+    .form-select.error {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.12);
+    }
+
+    .form-input.error {
+      background-image: none;
+      padding-right: 32px;
+    }
+
+    .form-field:has(.form-input.error)::after {
+      content: '';
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      /* centers on the 32px input */
+      width: 16px;
+      height: 16px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C0392B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' x2='12' y1='8' y2='12'/%3E%3Cline x1='12' x2='12.01' y1='16' y2='16'/%3E%3C/svg%3E");
+      background-size: 16px 16px;
+      background-repeat: no-repeat;
+      transform-origin: center;
+      animation: errIconIn 120ms ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes errIconIn {
+      from {
+        transform: scale(0.75);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .form-input.error:focus,
+    .form-select.error:focus {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.18);
+    }
+
+    .form-input::placeholder {
+      color: var(--neutral-60);
+    }
+
+    .form-select:has(option[value=""]:checked) {
+      color: var(--neutral-60);
+    }
+
+    .form-select {
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;
+      padding-right: 24px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-chart-id {
+      font-family: ui-monospace, monospace;
+      letter-spacing: 0.03em;
+    }
+
+    .form-checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .form-checkbox {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      cursor: pointer;
+      border: 1px solid var(--neutral-60);
+      border-radius: 3px;
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .form-checkbox:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .form-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+      background-size: 11px 11px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .form-checkbox-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    /* Combobox */
+    .combobox-wrap {
+      position: relative;
+    }
+
+    .combobox-list {
+      position: fixed;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 300;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .combobox-item {
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .combobox-item:hover,
+    .combobox-item.active {
+      background: var(--neutral-95);
+    }
+
+    .combobox-empty {
+      padding: 10px;
+      font-size: 12px;
+      color: var(--neutral-50);
+      text-align: center;
+    }
+
+    /* Eligibility */
+    .eligibility-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0 10px;
+    }
+
+    .eligibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .eligibility-badge.pending {
+      background: hsl(45, 100%, 92%);
+      color: hsl(40, 90%, 25%);
+    }
+
+    .eligibility-badge.eligible {
+      background: hsl(134, 41%, 88%);
+      color: hsl(134, 55%, 21%);
+    }
+
+    .eligibility-badge.failed {
+      background: hsl(0, 80%, 94%);
+      color: hsl(0, 70%, 34%);
+    }
+
+    .form-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
+    }
+
+    .form-label-action {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--primary-30);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .form-label-action:hover {
+      text-decoration: underline;
+    }
+
+    /* Section header with action */
+    .form-section-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
+      grid-column: 1 / -1;
+    }
+
+    .form-section-action-row .form-section-title {
+      margin: 0;
+    }
+
+    .form-section-action-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Conditional content wrappers — subgrid pass-through */
+    #newContactFields,
+    #insAddrWrap,
+    #billAddrWrap {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      row-gap: 10px;
+      overflow: hidden;
+      height: 0;
+      transition: height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
+    }
+
+    #newContactFields.open,
+    #insAddrWrap.open,
+    #billAddrWrap.open {
+      height: auto;
+    }
+
+    /* Progressive disclosure — add line 2 */
+    .addr-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary-30);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      margin-top: 2px;
+      grid-column: 1 / -1;
+    }
+
+    .addr-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .addr-toggle svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* Staff combobox & team multi-select */
+    #f_clinician {
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;
+      padding-right: 24px;
+      cursor: pointer;
+    }
+
+    .staff-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary-30);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .staff-avatar.unassigned {
+      background: var(--neutral-75);
+    }
+
+    .staff-cbo .combobox-item,
+    .staff-cbo-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--neutral-20);
+      cursor: pointer;
+    }
+
+    .staff-cbo-option:hover,
+    .staff-cbo .combobox-item:hover {
+      background: var(--neutral-95);
+    }
+
+    .staff-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .staff-trigger span {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .staff-dropdown {
+      position: fixed;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      z-index: 300;
+      flex-direction: column;
+      max-height: 240px;
+    }
+
+    .staff-dd-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--neutral-85);
+      flex-shrink: 0;
+    }
+
+    .staff-dd-search input {
+      width: 100%;
+      height: 28px;
+      padding: 0 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--neutral-20);
+    }
+
+    .staff-dd-search input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .staff-dd-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .staff-team-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--neutral-20);
+    }
+
+    .staff-team-option:hover {
+      background: var(--neutral-95);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      align-items: center;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--rad);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      max-width: 380px;
+      pointer-events: auto;
+      animation: toastIn 300ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.leaving {
+      animation: toastOut 180ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    .toast.success {
+      background: hsl(140, 65%, 15%);
+      color: hsl(140, 60%, 94%);
+    }
+
+    .toast.success svg {
+      color: hsl(140, 65%, 55%);
+    }
+
+    .toast.error {
+      background: hsl(352, 92%, 18%);
+      color: hsl(11, 100%, 97%);
+    }
+
+    .toast svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="shell-header">
+      <div class="wire-logo">
+        <div class="wire-logo-mark"></div>
+        <div class="wire-logo-text"></div>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+    <div class="shell-body">
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+      <main class="shell-main">
+      </main>
+    </div>
+  </div>
+
+  <!-- New Chart Modal -->
+  <div class="modal-backdrop" id="newChartModal">
+    <div class="modal">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <h2 class="modal-title">New Chart</h2>
+          <p class="modal-subtitle" id="chartSubtitle">First name Last name</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg></button>
+      </div>
+
+      <!-- Stepper -->
+      <div class="modal-stepper-wrap" id="stepperWrap">
+        <div class="stepper-nodes">
+          <div class="step-bubble" id="b1">1</div>
+          <div class="step-connector" id="c1"></div>
+          <div class="step-bubble" id="b2">2</div>
+          <div class="step-connector" id="c2"></div>
+          <div class="step-bubble" id="b3">3</div>
+        </div>
+        <div class="stepper-labels">
+          <span class="step-label-text" id="l1">Client</span>
+          <span class="step-label-text" id="l2">Insurance</span>
+          <span class="step-label-text" id="l3">Payment</span>
+        </div>
+      </div>
+
+      <!-- ── STEP 1 — Patient ── -->
+      <div class="step-wrap active" id="p1">
+        <div class="step-wrap-inner">
+          <div class="modal-body" id="s1body">
+            <div class="form-section">
+              <h3 class="form-section-title">Client Details</h3>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_first" class="form-label">Legal first name <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_first" placeholder="" oninput="syncSubtitle(); updateSelfOption(); syncPreferred();">
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_middle" class="form-label">Middle name</label>
+                  <input type="text" class="form-input" id="f_middle" placeholder="">
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_last" class="form-label">Legal last name <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_last" placeholder="" oninput="syncSubtitle(); updateSelfOption();">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 8;">
+                  <label for="f_preferred" class="form-label">Preferred name <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_preferred" placeholder="Name the client goes by" oninput="this._edited = true;">
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_ssn" class="form-label">SSN</label>
+                  <input type="text" class="form-input" id="f_ssn" placeholder="XXX-XX-XXXX" maxlength="11">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_dob" class="form-label">Date of birth <span class="req">*</span></label>
+                  <input type="date" class="form-input" id="f_dob">
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_sex" class="form-label">Legal sex <span class="req">*</span></label>
+                  <select class="form-select" id="f_sex">
+                    <option value="">Select...</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Unknown</option>
+                  </select>
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_gender" class="form-label">Gender <span class="req">*</span></label>
+                  <select class="form-select" id="f_gender">
+                    <option value="">Select...</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Female-to-Male (FTM) / Transgender Male / Trans Man</option>
+                    <option>Male-to-Female (MTF) / Transgender Female / Trans Woman</option>
+                    <option>Identifies as non-conforming gender</option>
+                    <option>Additional gender category or other, please specify</option>
+                    <option>Choose not to disclose</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="form-section-title">Contact</h3>
+              <div class="form-row">
+                <div class="form-field">
+                  <div class="form-label-row">
+                    <label for="f_addr1" class="form-label">Street address 1</label>
+                    <button class="form-label-action" onclick="toggleAddr2()" id="addr2Toggle">+ Add line 2</button>
+                  </div>
+                  <input type="text" class="form-input" id="f_addr1" placeholder="123 Main St">
+                </div>
+              </div>
+              <div id="addr2Wrap" style="display:none;" class="form-row">
+                <div class="form-field">
+                  <div class="form-label-row">
+                    <label class="form-label" for="f_addr2">Street address 2</label>
+                    <button class="form-label-action" onclick="toggleAddr2()">- Remove</button>
+                  </div>
+                  <input type="text" class="form-input" id="f_addr2" placeholder="Apt, suite, floor...">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_city" class="form-label">City</label>
+                  <input type="text" class="form-input" id="f_city">
+                </div>
+                <div class="form-field" style="grid-column: span 3;">
+                  <label for="f_state" class="form-label">State</label>
+                  <select class="form-select" id="f_state">
+                    <option value="">–</option>
+                    <option>Alabama</option>
+                    <option>Alaska</option>
+                    <option>Arizona</option>
+                    <option>Arkansas</option>
+                    <option>California</option>
+                    <option>Colorado</option>
+                    <option>Connecticut</option>
+                    <option>Delaware</option>
+                    <option>District of Columbia</option>
+                    <option>Florida</option>
+                    <option>Georgia</option>
+                    <option>Hawaii</option>
+                    <option>Idaho</option>
+                    <option>Illinois</option>
+                    <option>Indiana</option>
+                    <option>Iowa</option>
+                    <option>Kansas</option>
+                    <option>Kentucky</option>
+                    <option>Louisiana</option>
+                    <option>Maine</option>
+                    <option>Maryland</option>
+                    <option>Massachusetts</option>
+                    <option>Michigan</option>
+                    <option>Minnesota</option>
+                    <option>Mississippi</option>
+                    <option>Missouri</option>
+                    <option>Montana</option>
+                    <option>Nebraska</option>
+                    <option>Nevada</option>
+                    <option>New Hampshire</option>
+                    <option>New Jersey</option>
+                    <option>New Mexico</option>
+                    <option>New York</option>
+                    <option>North Carolina</option>
+                    <option>North Dakota</option>
+                    <option>Ohio</option>
+                    <option>Oklahoma</option>
+                    <option>Oregon</option>
+                    <option>Pennsylvania</option>
+                    <option>Puerto Rico</option>
+                    <option>Rhode Island</option>
+                    <option>South Carolina</option>
+                    <option>South Dakota</option>
+                    <option>Tennessee</option>
+                    <option>Texas</option>
+                    <option>Utah</option>
+                    <option>U.S. Virgin Islands</option>
+                    <option>Vermont</option>
+                    <option>Virginia</option>
+                    <option>Washington</option>
+                    <option>West Virginia</option>
+                    <option>Wisconsin</option>
+                    <option>Wyoming</option>
+                  </select>
+                </div>
+                <div class="form-field" style="grid-column: span 3;">
+                  <label for="f_zip" class="form-label">Zip code</label>
+                  <input type="text" class="form-input" id="f_zip" placeholder="00000" maxlength="10">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_phone" class="form-label">Phone</label>
+                  <input type="tel" class="form-input" id="f_phone" placeholder="(000) 000-0000">
+                  <div class="form-checkbox-row" style="margin:6px 0 0;">
+                    <input type="checkbox" class="form-checkbox" id="f_sms">
+                    <label class="form-checkbox-label" for="f_sms">Text appointment reminders</label>
+                  </div>
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_email" class="form-label">Email address</label>
+                  <input type="email" class="form-input" id="f_email" placeholder="patient@email.com">
+                  <div class="form-checkbox-row" style="margin:6px 0 0;">
+                    <input type="checkbox" class="form-checkbox" id="f_portalEmail" onchange="toggleEl('formPkgWrap',this.checked)">
+                    <label class="form-checkbox-label" for="f_portalEmail">Email portal invite</label>
+                  </div>
+                  <div id="formPkgWrap" style="display:none; margin-top:8px;">
+                    <label for="f_formPkg" class="form-label">Intake package</label>
+                    <select class="form-select" id="f_formPkg">
+                      <option value="">Select…</option>
+                      <option>Adult Intake</option>
+                      <option>Child &amp; Adolescent Intake</option>
+                      <option>Substance Use Intake</option>
+                      <option>Geriatric Intake</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="form-section-title">Chart Details</h3>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_chartId" class="form-label">Chart ID <span class="req">*</span></label>
+                  <input type="text" class="form-input form-chart-id" id="f_chartId" value="1004010739451">
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_chartStatus" class="form-label">Chart status</label>
+                  <select class="form-select" id="f_chartStatus">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>Pending</option>
+                    <option>Test</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_clinician" class="form-label">Principal clinician <span class="req">*</span></label>
+                  <div class="combobox-wrap">
+                    <input type="text" class="form-input" id="f_clinician" placeholder="Select clinician..." autocomplete="off" oninput="filterStaffCbo(this.value)" onfocus="filterStaffCbo(this.value)" onkeydown="staffCboKey(event)">
+                  </div>
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label class="form-label">Clinical team</label>
+                  <button type="button" class="form-select staff-trigger" id="f_teamTrigger" onclick="toggleTeamDropdown()">
+                    <span id="f_teamText" style="color:var(--neutral-60);">Select members...</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /p1 body -->
+      <div class="modal-footer" id="s1footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <div class="modal-footer-actions">
+          <button class="btn btn-outline" onclick="createChartFromStep1()">Create chart</button>
+          <button class="btn btn-primary" onclick="advanceFromStep1()">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg></button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2 — Insurance ── -->
+      <div class="step-wrap" id="p2">
+        <div class="step-wrap-inner">
+          <div class="modal-body" id="s2body">
+            <div class="form-section">
+              <div class="form-section-action-row">
+                <h3 class="form-section-title">Primary Insurance</h3>
+                <div class="form-section-action-right">
+                  <span class="eligibility-badge" id="eligBadge" style="display:none;"></span>
+                  <button class="btn btn-outline btn-sm" onclick="checkEligibility()" id="eligBtn" disabled>Check eligibility</button>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_insCompany" class="form-label">Insurance company <span class="req">*</span></label>
+                  <div class="combobox-wrap">
+                    <input type="text" class="form-input" id="f_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'insCboList'); checkEligibilityReady();" onfocus="filterCombobox(this.value,'insCboList')" onkeydown="comboboxKey(event,'insCboList','f_insCompany')">
+                  </div>
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_insType" class="form-label">Insurance type <span class="req">*</span></label>
+                  <select class="form-select" id="f_insType">
+                    <option value="">Select...</option>
+                    <option>Black Lung</option>
+                    <option>Blue Cross/Blue Shield</option>
+                    <option>CHAMPVA</option>
+                    <option>FECA</option>
+                    <option>Federal Employees Program</option>
+                    <option>Group Health Plan</option>
+                    <option>HMO Medicare Risk</option>
+                    <option>Health Maintenance Organization (HMO)</option>
+                    <option>Medicaid</option>
+                    <option>Medicare A</option>
+                    <option>Medicare B</option>
+                    <option>No Insurance</option>
+                    <option>Other</option>
+                    <option>TRICARE</option>
+                    <option>Workers Compensation</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_memberId" class="form-label">Member ID / Policy number <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_memberId" placeholder="" oninput="checkEligibilityReady()">
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_insStart" class="form-label">Start date</label>
+                  <input type="date" class="form-input" id="f_insStart">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="f_primaryInsured" class="form-label">Primary insured <span class="req">*</span></label>
+                  <select class="form-select" id="f_primaryInsured" onchange="onInsuredChange(this.value)">
+                    <option value="self" id="selfOption">Self</option>
+                    <option value="new">New contact...</option>
+                  </select>
+                </div>
+              </div>
+              <div id="newContactFields">
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insFirst" class="form-label">Legal first name <span class="req">*</span></label>
+                    <input type="text" class="form-input" id="f_insFirst">
+                  </div>
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insLast" class="form-label">Legal last name <span class="req">*</span></label>
+                    <input type="text" class="form-input" id="f_insLast">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insRel" class="form-label" id="relLabel">Relationship <span class="req">*</span></label>
+                    <select class="form-select" id="f_insRel" onchange="onRelChange(this.value)">
+                      <option value="">Select...</option>
+                      <optgroup label="Immediate Family">
+                        <option>Spouse</option>
+                        <option>Domestic Partner</option>
+                        <option>Significant Other</option>
+                        <option>Mother</option>
+                        <option>Father</option>
+                        <option>Adoptive Parent</option>
+                        <option>Foster Parent</option>
+                        <option>Stepparent</option>
+                        <option>Son</option>
+                        <option>Daughter</option>
+                        <option>Child</option>
+                        <option>Stepchild</option>
+                        <option>Brother</option>
+                        <option>Sister</option>
+                        <option>Stepsibling</option>
+                      </optgroup>
+                      <optgroup label="Extended Family">
+                        <option>Grandparent</option>
+                        <option>Grandchild</option>
+                        <option>Aunt</option>
+                        <option>Uncle</option>
+                        <option>Niece</option>
+                        <option>Nephew</option>
+                        <option>Cousin</option>
+                        <option>In-law (Parent/Child/Sibling)</option>
+                      </optgroup>
+                      <optgroup label="Legal / Authorized">
+                        <option>Legal Guardian</option>
+                        <option>Power of Attorney</option>
+                        <option>Healthcare Proxy/Agent</option>
+                        <option>Conservator</option>
+                        <option>Court-Appointed Representative</option>
+                        <option>Responsible Party</option>
+                        <option>Emergency Contact</option>
+                        <option>Next of Kin</option>
+                      </optgroup>
+                      <optgroup label="Care Network">
+                        <option>Friend</option>
+                        <option>Neighbor</option>
+                        <option>Caregiver (Paid)</option>
+                        <option>Caregiver (Unpaid)</option>
+                        <option>Clergy/Spiritual Advisor</option>
+                        <option>Case Manager/Social Worker</option>
+                      </optgroup>
+                      <optgroup label="Other">
+                        <option>Employer</option>
+                        <option>Self</option>
+                        <option>Other (please specify)</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insRelOther" class="form-label" id="specifyRelLabel">Specify relationship</label>
+                    <input type="text" class="form-input" id="f_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insSex" class="form-label">Legal sex <span class="req">*</span></label>
+                    <select class="form-select" id="f_insSex">
+                      <option value="">Select...</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Unknown</option>
+                    </select>
+                  </div>
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="f_insDob" class="form-label">Date of birth <span class="req">*</span></label>
+                    <input type="date" class="form-input" id="f_insDob">
+                  </div>
+                </div>
+                <button class="addr-toggle" onclick="toggleInsAddr()" id="insAddrToggle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  Add different address
+                </button>
+                <div id="insAddrWrap">
+                  <div class="form-row">
+                    <div class="form-field">
+                      <div class="form-label-row">
+                        <label for="f_insAddr1" class="form-label">Street address 1</label>
+                        <button class="form-label-action" onclick="toggleInsAddr2()" id="insAddr2Toggle">+ Add line 2</button>
+                      </div>
+                      <input type="text" class="form-input" id="f_insAddr1" placeholder="123 Main St">
+                    </div>
+                  </div>
+                  <div id="insAddr2Wrap" style="display:none;" class="form-row">
+                    <div class="form-field">
+                      <div class="form-label-row">
+                        <label class="form-label" for="f_insAddr2">Street address 2</label>
+                        <button class="form-label-action" onclick="toggleInsAddr2()">- Remove</button>
+                      </div>
+                      <input type="text" class="form-input" id="f_insAddr2" placeholder="Apt, suite, floor...">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="f_insCity" class="form-label">City</label>
+                      <input type="text" class="form-input" id="f_insCity">
+                    </div>
+                    <div class="form-field" style="grid-column: span 3;">
+                      <label for="f_insState" class="form-label">State</label>
+                      <select class="form-select" id="f_insState">
+                        <option value="">–</option>
+                        <option>Alabama</option>
+                        <option>Alaska</option>
+                        <option>Arizona</option>
+                        <option>Arkansas</option>
+                        <option>California</option>
+                        <option>Colorado</option>
+                        <option>Connecticut</option>
+                        <option>Delaware</option>
+                        <option>District of Columbia</option>
+                        <option>Florida</option>
+                        <option>Georgia</option>
+                        <option>Hawaii</option>
+                        <option>Idaho</option>
+                        <option>Illinois</option>
+                        <option>Indiana</option>
+                        <option>Iowa</option>
+                        <option>Kansas</option>
+                        <option>Kentucky</option>
+                        <option>Louisiana</option>
+                        <option>Maine</option>
+                        <option>Maryland</option>
+                        <option>Massachusetts</option>
+                        <option>Michigan</option>
+                        <option>Minnesota</option>
+                        <option>Mississippi</option>
+                        <option>Missouri</option>
+                        <option>Montana</option>
+                        <option>Nebraska</option>
+                        <option>Nevada</option>
+                        <option>New Hampshire</option>
+                        <option>New Jersey</option>
+                        <option>New Mexico</option>
+                        <option>New York</option>
+                        <option>North Carolina</option>
+                        <option>North Dakota</option>
+                        <option>Ohio</option>
+                        <option>Oklahoma</option>
+                        <option>Oregon</option>
+                        <option>Pennsylvania</option>
+                        <option>Puerto Rico</option>
+                        <option>Rhode Island</option>
+                        <option>South Carolina</option>
+                        <option>South Dakota</option>
+                        <option>Tennessee</option>
+                        <option>Texas</option>
+                        <option>U.S. Virgin Islands</option>
+                        <option>Utah</option>
+                        <option>Vermont</option>
+                        <option>Virginia</option>
+                        <option>Washington</option>
+                        <option>West Virginia</option>
+                        <option>Wisconsin</option>
+                        <option>Wyoming</option>
+                      </select>
+                    </div>
+                    <div class="form-field" style="grid-column: span 3;">
+                      <label for="f_insZip" class="form-label">Zip code</label>
+                      <input type="text" class="form-input" id="f_insZip" placeholder="00000" maxlength="10">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /p2 body -->
+      <div class="modal-footer" id="s2footer" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <div class="modal-footer-actions">
+          <button class="btn btn-ghost" onclick="goTo(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg> Back</button>
+          <button class="btn btn-outline" onclick="createChart()">Create chart</button>
+          <button class="btn btn-primary" onclick="goTo(3)">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg></button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3 — Payment ── -->
+      <div class="step-wrap" id="p3">
+        <div class="step-wrap-inner">
+          <div class="modal-body" id="s3body">
+            <div class="form-section">
+              <div class="form-section-action-row">
+                <h3 class="form-section-title">Card Information</h3>
+                <div class="form-section-action-right">
+                  <input type="checkbox" class="form-checkbox" id="f_setDefault" checked>
+                  <label class="form-checkbox-label" for="f_setDefault" style="font-size:12px; color:var(--neutral-40);">Save as default</label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_cardName" class="form-label">Name on card <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_cardName" placeholder="As it appears on card">
+                </div>
+                <div class="form-field" style="grid-column: span 6;">
+                  <label for="f_cardNum" class="form-label">Card number <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_cardNum" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" maxlength="19" oninput="formatCardNum(this)">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_cardMon" class="form-label">Expiration month <span class="req">*</span></label>
+                  <select class="form-select" id="f_cardMon">
+                    <option value="">–</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                  </select>
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_cardYr" class="form-label">Expiration year <span class="req">*</span></label>
+                  <select class="form-select" id="f_cardYr">
+                    <option value="">–</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                    <option value="2033">2033</option>
+                  </select>
+                </div>
+                <div class="form-field" style="grid-column: span 4;">
+                  <label for="f_cvv" class="form-label">Security code <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="f_cvv" placeholder="&bull;&bull;&bull;" maxlength="4">
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <div class="form-section-action-row">
+                <h3 class="form-section-title">Billing Address</h3>
+                <div class="form-section-action-right">
+                  <input type="checkbox" class="form-checkbox" id="f_billSameAsClient" checked onchange="toggleBillAddr(!this.checked)">
+                  <label class="form-checkbox-label" for="f_billSameAsClient" style="font-size:12px; color:var(--neutral-40);">Same as client</label>
+                </div>
+              </div>
+              <div id="billAddrWrap">
+                <div class="form-row">
+                  <div class="form-field">
+                    <div class="form-label-row">
+                      <label for="f_billAddr1" class="form-label">Address 1 <span class="req">*</span></label>
+                      <button class="form-label-action" onclick="toggleBillAddr2()" id="billAddr2Toggle">+ Add line 2</button>
+                    </div>
+                    <input type="text" class="form-input" id="f_billAddr1">
+                  </div>
+                </div>
+                <div id="billAddr2Wrap" style="display:none;" class="form-row">
+                  <div class="form-field">
+                    <div class="form-label-row">
+                      <label class="form-label" for="f_billAddr2">Street address 2</label>
+                      <button class="form-label-action" onclick="toggleBillAddr2()">- Remove</button>
+                    </div>
+                    <input type="text" class="form-input" id="f_billAddr2" placeholder="Apt, suite, floor...">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: span 6;"><label for="f_billCity" class="form-label">City <span class="req">*</span></label><input type="text" class="form-input" id="f_billCity"></div>
+                  <div class="form-field" style="grid-column: span 3;"><label for="f_billState" class="form-label">State <span class="req">*</span></label>
+                    <select class="form-select" id="f_billState">
+                      <option value="">–</option>
+                      <option>Alabama</option>
+                      <option>Alaska</option>
+                      <option>Arizona</option>
+                      <option>Arkansas</option>
+                      <option>California</option>
+                      <option>Colorado</option>
+                      <option>Connecticut</option>
+                      <option>Delaware</option>
+                      <option>District of Columbia</option>
+                      <option>Florida</option>
+                      <option>Georgia</option>
+                      <option>Hawaii</option>
+                      <option>Idaho</option>
+                      <option>Illinois</option>
+                      <option>Indiana</option>
+                      <option>Iowa</option>
+                      <option>Kansas</option>
+                      <option>Kentucky</option>
+                      <option>Louisiana</option>
+                      <option>Maine</option>
+                      <option>Maryland</option>
+                      <option>Massachusetts</option>
+                      <option>Michigan</option>
+                      <option>Minnesota</option>
+                      <option>Mississippi</option>
+                      <option>Missouri</option>
+                      <option>Montana</option>
+                      <option>Nebraska</option>
+                      <option>Nevada</option>
+                      <option>New Hampshire</option>
+                      <option>New Jersey</option>
+                      <option>New Mexico</option>
+                      <option>New York</option>
+                      <option>North Carolina</option>
+                      <option>North Dakota</option>
+                      <option>Ohio</option>
+                      <option>Oklahoma</option>
+                      <option>Oregon</option>
+                      <option>Pennsylvania</option>
+                      <option>Puerto Rico</option>
+                      <option>Rhode Island</option>
+                      <option>South Carolina</option>
+                      <option>South Dakota</option>
+                      <option>Tennessee</option>
+                      <option>Texas</option>
+                      <option>Utah</option>
+                      <option>U.S. Virgin Islands</option>
+                      <option>Vermont</option>
+                      <option>Virginia</option>
+                      <option>Washington</option>
+                      <option>West Virginia</option>
+                      <option>Wisconsin</option>
+                      <option>Wyoming</option>
+                    </select>
+                  </div>
+                  <div class="form-field" style="grid-column: span 3;"><label for="f_billZip" class="form-label">Zip code <span class="req">*</span></label><input type="text" class="form-input" id="f_billZip" placeholder="00000" maxlength="10"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /p3 body -->
+      <div class="modal-footer" id="s3footer" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <div class="modal-footer-actions">
+          <button class="btn btn-ghost" onclick="goTo(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg> Back</button>
+          <button class="btn btn-primary" onclick="createChart()">Create chart</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+  <div class="combobox-list" id="insCboList" style="display:none;"></div>
+  <div class="combobox-list staff-cbo" id="staffCboList" style="display:none;"></div>
+  <div class="staff-dropdown" id="teamDropdown" style="display:none;">
+    <div class="staff-dd-search">
+      <input type="text" id="teamSearch" placeholder="Search members...">
+    </div>
+    <div class="staff-dd-options" id="teamOptions"></div>
+  </div>
+
+  <script>
+    const STAFF = [
+      { name: 'Intake (Unassigned)', initials: '', cls: 'unassigned' },
+      { name: 'Sarah Johnson', initials: 'SJ' },
+      { name: 'Michael Torres', initials: 'MT' },
+      { name: 'Lisa Park', initials: 'LP' },
+      { name: 'James Okafor', initials: 'JO' },
+      { name: 'Sarah Rogers', initials: 'SR' },
+      { name: 'Marcus Webb', initials: 'MW' },
+    ];
+
+    let teamSelected = [];
+
+    function staffAvatar(s) {
+      return '<div class="staff-avatar' + (s.cls ? ' ' + s.cls : '') + '">' + s.initials + '</div>';
+    }
+
+    /* ── Principal clinician combobox ──────────────────────────────── */
+    function filterStaffCbo(query) {
+      var list = document.getElementById('staffCboList');
+      var q = (query || '').toLowerCase();
+      var matches = q ? STAFF.filter(function (s) { return s.name.toLowerCase().includes(q); }) : STAFF;
+      list.innerHTML = matches.map(function (s) {
+        return '<div class="staff-cbo-option" data-val="' + s.name + '">' + s.name + '</div>';
+      }).join('');
+      list.querySelectorAll('.staff-cbo-option').forEach(function (item) {
+        item.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          document.getElementById('f_clinician').value = item.dataset.val;
+          list.style.display = 'none';
+        });
+      });
+      list.style.display = '';
+      var r = document.getElementById('f_clinician').getBoundingClientRect();
+      list.style.left = r.left + 'px';
+      list.style.width = r.width + 'px';
+      var spBelow = window.innerHeight - r.bottom;
+      list.style.top = spBelow < 220 ? (r.top - Math.min(list.scrollHeight, 220) - 2) + 'px' : (r.bottom + 2) + 'px';
+    }
+
+    function staffCboKey(e) {
+      var list = document.getElementById('staffCboList');
+      var items = list.querySelectorAll('.staff-cbo-option');
+      var active = list.querySelector('.staff-cbo-option.active');
+      var idx = active ? Array.prototype.indexOf.call(items, active) : -1;
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
+      else if (e.key === 'Enter' && active) {
+        e.preventDefault();
+        document.getElementById('f_clinician').value = active.dataset.val;
+        list.style.display = 'none'; return;
+      }
+      else if (e.key === 'Escape') { list.style.display = 'none'; return; }
+      else { return; }
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
+      if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
+    }
+
+    /* ── Clinical team multi-select ───────────────────────────────── */
+    function toggleTeamDropdown() {
+      var dd = document.getElementById('teamDropdown');
+      if (dd.style.display !== 'none') { dd.style.display = 'none'; return; }
+      renderTeamOptions('');
+      var r = document.getElementById('f_teamTrigger').getBoundingClientRect();
+      dd.style.left = r.left + 'px';
+      dd.style.width = r.width + 'px';
+      dd.style.display = 'flex';
+      var spBelow = window.innerHeight - r.bottom;
+      dd.style.top = spBelow < 220 ? (r.top - Math.min(dd.scrollHeight, 220) - 2) + 'px' : (r.bottom + 2) + 'px';
+      var si = document.getElementById('teamSearch');
+      si.value = '';
+      si.oninput = function () { renderTeamOptions(this.value); };
+      setTimeout(function () { si.focus(); }, 40);
+    }
+
+    function renderTeamOptions(query) {
+      var q = query.toLowerCase();
+      var members = STAFF.filter(function (s) { return s.initials; }); // skip Unassigned
+      var filtered = q ? members.filter(function (s) { return s.name.toLowerCase().includes(q); }) : members;
+      document.getElementById('teamOptions').innerHTML = filtered.map(function (s) {
+        var chk = teamSelected.includes(s.name) ? ' checked' : '';
+        return '<label class="staff-team-option">' +
+          '<input type="checkbox" class="form-checkbox" value="' + s.name + '"' + chk + '>' +
+          s.name + '</label>';
+      }).join('');
+      document.querySelectorAll('#teamOptions .form-checkbox').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          if (cb.checked) { if (!teamSelected.includes(cb.value)) teamSelected.push(cb.value); }
+          else { teamSelected = teamSelected.filter(function (v) { return v !== cb.value; }); }
+          updateTeamTrigger();
+        });
+      });
+    }
+
+    function updateTeamTrigger() {
+      var el = document.getElementById('f_teamText');
+      if (!teamSelected.length) {
+        el.textContent = 'Select members...';
+        el.style.color = 'var(--neutral-60)';
+      } else {
+        el.textContent = teamSelected.length === 1 ? teamSelected[0] : teamSelected.length + ' members selected';
+        el.style.color = '';
+      }
+    }
+
+    const INS_COS = ["AARP", "AARP Supplement", "Administrative Concepts Inc", "Aetna", "Aetna Medicare", "Aetna Medicare Supplemental", "Aetna Ohio RISE Ohio Medicaid", "Aither", "All Savers", "Allegiance Benefit Plan", "Allied Benefit System", "Ambetter Buckeye Marketplace", "Ameriben", "AmeriHealth Caritas Ohio Medicaid", "AmFirst", "Anthem BC/BS", "Anthem Medicare", "Anthem Ohio Medicaid", "ASA GEHA", "ASR Health Benefits", "Ault Care", "Bay Bridge Administrators Supplement", "BBG Secondary Payer", "Beacon Health Option Values", "Buckeye Medicare Cenpatico", "Buckeye Ohio Medicaid", "Carelon Behavioral Health", "CareSource", "CareSource Dual", "CareSource Market Place", "CareSource Ohio Medicaid", "Catilize Health", "CGS Medicare Part B", "CHAMP VA", "Change Healthcare / AmFirst Insurance", "Cigna", "Cigna Medicare", "Cigna Medicare Supplement / Healthspring", "Cigna/Evernorth Behavioral Health", "Claritev MBA", "Clarity Health/ Enterprise Group Planning", "Consociate Group", "Continental Life", "Devoted Health Plan", "Enterprise Group Planning", "Erie Family Supplement", "First Health", "GEHA", "Gravie Administrative Services", "Group and Pension Administrators", "Health Comp", "Health Partners", "Healthscope", "HealthSmart/Accel", "Highmark", "HSA Payments", "Humana Health Plan", "Humana Medicare", "Humana Ohio Medicaid", "Imagine 360", "Independence Administrators", "Insurance TPA", "International Benefit Administration", "Lucent Health", "Luminare Health", "Magellan", "Marpai", "Martin Point US Family Health Plan", "Medical Mutual / UPMC", "Medical Mutual Medicare", "Medical Mutual of Ohio", "Medical Mutual Supplement", "Meritain Health", "Military Officers of America", "Molina Market Place", "Molina MCD", "Molina Medicare", "Molina Ohio Medicaid", "Mutual Health Services", "Mutual of Omaha", "MyCare Aetna Better Health", "MyCare Anthem", "MyCare Molina Medicaid", "MyCare OH Aetna Better Health Medicare", "MyCare OH CareSource Medicaid", "MyCare OH CareSource Medicare", "Ohio Medicaid", "Omaha Supplemental Insurance", "Optum Behavioral Health Benefits", "PAI", "Paramount Adv Medicaid", "Paramount Healthcare", "Peak Health", "Personify Health", "Physicians Mutual", "Priority Health", "Railroad Medicare", "Redirect Health Administration", "Sana Benefits", "Self Pay", "Sidecare Health, Attn Claims", "SS Healthcare", "Summa Care", "Summa Care Medicare", "The Hartford", "The Health Plan", "The Health Plan Medicare", "Total Plan Concepts", "Tricare for Life", "Tricare Humana East Region", "Trustmark Health Benefits", "UHC GEHA", "UHC Medicare Complete", "UHC Shared Services", "UMWA", "Unicare", "United Healthcare Commercial", "United Healthcare Dual Complete", "United Healthcare Medicare", "United Healthcare of Ohio", "United Healthcare Ohio Medicaid", "VA CCN Optum", "Wellcare Dual Liberty"];
+    let currentStep = 1;
+    let _eligCycle = 0;
+
+    function openModal() {
+      document.getElementById('newChartModal').classList.add('open');
+      updateStepper(1);
+      document.getElementById('f_state').value = 'Ohio';
+      document.getElementById('f_insState').value = 'Ohio';
+      document.getElementById('f_billState').value = 'Ohio';
+      document.getElementById('f_clinician').value = 'Intake (Unassigned)';
+      setTimeout(function () { document.getElementById('f_first').focus(); }, 220);
+    }
+    function closeModal() {
+      document.getElementById('newChartModal').classList.remove('open');
+      setTimeout(resetModal, 300);
+    }
+    function resetModal() {
+      currentStep = 1; _eligCycle = 0;
+      showStep(1, false);
+      document.querySelectorAll('#newChartModal input[type=text], #newChartModal input[type=email], #newChartModal input[type=tel], #newChartModal input[type=date]').forEach(function (el) {
+        if (el.id !== 'f_chartId') el.value = '';
+      });
+      document.querySelectorAll('#newChartModal select').forEach(function (el) { el.selectedIndex = 0; });
+      document.getElementById('f_chartId').value = '1004010739451';
+      document.getElementById('f_state').value = 'Ohio';
+      document.getElementById('f_insState').value = 'Ohio';
+      document.getElementById('f_billState').value = 'Ohio';
+      document.getElementById('f_clinician').value = 'Intake (Unassigned)';
+      teamSelected = []; updateTeamTrigger();
+      document.getElementById('teamDropdown').style.display = 'none';
+      document.getElementById('staffCboList').style.display = 'none';
+      document.getElementById('chartSubtitle').textContent = 'First name Last name';
+      document.getElementById('f_preferred')._edited = false;
+      document.querySelectorAll('#newChartModal .error').forEach(function (el) { el.classList.remove('error'); });
+      ['newContactFields', 'insAddrWrap', 'billAddrWrap'].forEach(function (id) {
+        document.getElementById(id).classList.remove('open');
+      });
+      ['formPkgWrap', 'addr2Wrap', 'insAddr2Wrap'].forEach(function (id) {
+        document.getElementById(id).style.display = 'none';
+      });
+      ['insAddrToggle', 'insAddr2Toggle', 'addr2Toggle'].forEach(function (id) {
+        var el = document.getElementById(id); if (el) el.style.display = '';
+      });
+      ['f_portalEmail', 'f_sms'].forEach(function (id) { document.getElementById(id).checked = false; });
+      document.getElementById('f_setDefault').checked = true;
+      document.getElementById('f_billSameAsClient').checked = true;
+      /* billAddrWrap reset handled above */
+      document.getElementById('billAddr2Wrap').style.display = 'none';
+      var bt2 = document.getElementById('billAddr2Toggle'); if (bt2) bt2.style.display = '';
+      var eb = document.getElementById('eligBadge');
+      eb.style.display = 'none'; eb.className = 'eligibility-badge';
+      document.getElementById('insCboList').style.display = 'none';
+      document.getElementById('f_insCompany').value = '';
+      document.getElementById('eligBtn').disabled = true;
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+    /* ── Validation ───────────────────────────────────────────────────── */
+    function validateStep(bodyId) {
+      var body = document.getElementById(bodyId);
+      var valid = true;
+      body.querySelectorAll('.form-field').forEach(function (field) {
+        if (!field.querySelector('.req')) return;
+        var input = field.querySelector('input, select');
+        if (!input) return;
+        var empty = !input.value || !input.value.trim();
+        input.classList.toggle('error', empty);
+        if (empty) valid = false;
+      });
+      return valid;
+    }
+
+    function advanceFromStep1() {
+      if (validateStep('s1body')) goTo(2);
+    }
+
+    function createChartFromStep1() {
+      if (validateStep('s1body')) createChart();
+    }
+
+    /* clear error as soon as the field has a value */
+    document.addEventListener('input', function (e) {
+      var el = e.target;
+      if (el.classList.contains('error') && el.value && el.value.trim()) el.classList.remove('error');
+    });
+    document.addEventListener('change', function (e) {
+      var el = e.target;
+      if (el.classList.contains('error') && el.value) el.classList.remove('error');
+    });
+
+    function showStep(n, animate) {
+      [1, 2, 3].forEach(function (i) {
+        document.getElementById('s' + i + 'footer').style.display = i === n ? '' : 'none';
+      });
+      if (animate) {
+        [1, 2, 3].forEach(function (i) {
+          document.getElementById('p' + i).classList.toggle('active', i === n);
+        });
+        var body = document.getElementById('s' + n + 'body');
+        body.classList.remove('step-enter-fwd', 'step-enter-back');
+        void body.offsetWidth;
+        body.classList.add(n > currentStep ? 'step-enter-fwd' : 'step-enter-back');
+      } else {
+        [1, 2, 3].forEach(function (i) {
+          var panel = document.getElementById('p' + i);
+          panel.classList.add('no-anim');
+          panel.classList.toggle('active', i === n);
+        });
+        requestAnimationFrame(function () {
+          [1, 2, 3].forEach(function (i) {
+            document.getElementById('p' + i).classList.remove('no-anim');
+          });
+        });
+      }
+    }
+    function updateStepper(n) {
+      [1, 2, 3].forEach(function (i) {
+        var b = document.getElementById('b' + i);
+        b.className = 'step-bubble ' + (i < n ? 'done' : i === n ? 'active' : 'pending');
+        document.getElementById('l' + i).className = 'step-label-text' + (i === n ? ' active' : '');
+      });
+      [1, 2].forEach(function (i) {
+        var c = document.getElementById('c' + i);
+        c.className = 'step-connector' + (i < n ? ' done' : '');
+      });
+    }
+    function goTo(n) {
+      showStep(n, true);
+      updateStepper(n);
+      currentStep = n;
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var name = [first, last].filter(Boolean).join(' ') || 'Client';
+      document.getElementById('selfOption').textContent = 'Self — ' + name;
+      var sub = document.getElementById('chartSubtitle');
+      if (name !== 'Client') { sub.textContent = name; } else { sub.textContent = 'First name Last name'; }
+      if (n === 3) {
+        var cardName = document.getElementById('f_cardName');
+        if (cardName && !cardName.value && first) cardName.value = [first, last].filter(Boolean).join(' ');
+      }
+    }
+    function updateSelfOption() {
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var name = [first, last].filter(Boolean).join(' ');
+      var opt = document.getElementById('selfOption');
+      if (opt) opt.textContent = name ? 'Self — ' + name : 'Self';
+    }
+    function syncPreferred() {
+      var pref = document.getElementById('f_preferred');
+      if (pref && !pref._edited) pref.value = document.getElementById('f_first').value;
+    }
+    function syncSubtitle() {
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var sub = document.getElementById('chartSubtitle');
+      var name = [first, last].filter(Boolean).join(' ');
+      if (name) { sub.textContent = name; }
+      else { sub.textContent = 'First name Last name'; }
+    }
+    function toggleAddr2() {
+      var wrap = document.getElementById('addr2Wrap');
+      var toggle = document.getElementById('addr2Toggle');
+      var open = wrap.style.display !== 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
+    }
+    function toggleEl(id, show) { document.getElementById(id).style.display = show ? '' : 'none'; }
+    function toggleBillAddr(show) {
+      animateModalHeight(document.getElementById('billAddrWrap'), show);
+    }
+    function toggleBillAddr2() {
+      var wrap = document.getElementById('billAddr2Wrap');
+      var toggle = document.getElementById('billAddr2Toggle');
+      var open = wrap.style.display !== 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
+    }
+    function toggleInsAddr() {
+      var wrap = document.getElementById('insAddrWrap');
+      var toggle = document.getElementById('insAddrToggle');
+      var open = wrap.classList.contains('open');
+      animateModalHeight(wrap, !open);
+      toggle.style.display = open ? '' : 'none';
+    }
+    function toggleInsAddr2() {
+      var wrap = document.getElementById('insAddr2Wrap');
+      var toggle = document.getElementById('insAddr2Toggle');
+      var open = wrap.style.display !== 'none';
+      animateHeight(function () {
+        wrap.style.display = open ? 'none' : '';
+        toggle.style.display = open ? '' : 'none';
+      });
+    }
+    function autoFillInsType(co) {
+      var t = document.getElementById('f_insType');
+      if (!t || !co) return;
+      var n = co.toLowerCase();
+      var type;
+      if (n === 'self pay') type = 'No Insurance';
+      else if (/tricare/.test(n)) type = 'TRICARE';
+      else if (/champ va|champva/.test(n)) type = 'CHAMPVA';
+      else if (/va ccn/.test(n)) type = 'TRICARE';
+      else if (/workers comp/.test(n)) type = 'Workers Compensation';
+      else if (/federal employees|feca/.test(n)) type = 'Federal Employees Program';
+      else if (/part b|cgs medicare/.test(n)) type = 'Medicare B';
+      else if (/mycare|dual/.test(n)) type = 'Medicare A';
+      else if (/supplement|aarp/.test(n)) type = 'Group Health Plan';
+      else if (/medicare/.test(n)) type = 'Medicare A';
+      else if (/medicaid| mcd |caresource|buckeye ohio|amerihealth|rise ohio|molina ohio|humana ohio|paramount adv/.test(n)) type = 'Medicaid';
+      else if (/blue cross|bc\/bs|bcbs/.test(n)) type = 'Blue Cross/Blue Shield';
+      else if (/hmo/.test(n)) type = 'Health Maintenance Organization (HMO)';
+      else type = 'Group Health Plan';
+      t.value = type;
+      checkEligibilityReady();
+    }
+    /* Animate modal height when a disclosure panel opens/closes */
+    function animateHeight(fn) {
+      var modal = document.querySelector('.modal');
+      var oldH = modal.offsetHeight;
+      modal.style.height = oldH + 'px';
+      fn();
+      modal.style.height = '';
+      var newH = modal.offsetHeight;
+      modal.style.height = oldH + 'px';
+      void modal.offsetWidth;
+      requestAnimationFrame(function () {
+        modal.style.height = newH + 'px';
+        var cleanup = function (e) {
+          if (e.propertyName === 'height') { modal.style.height = ''; modal.removeEventListener('transitionend', cleanup); }
+        };
+        modal.addEventListener('transitionend', cleanup);
+      });
+    }
+    function animateModalHeight(el, open) {
+      animateHeight(function () { el.classList.toggle('open', open); });
+    }
+    function onInsuredChange(val) {
+      var el = document.getElementById('newContactFields');
+      animateModalHeight(el, val === 'new');
+      if (val !== 'new') {
+        document.getElementById('insAddrWrap').classList.remove('open');
+        document.getElementById('insAddr2Wrap').style.display = 'none';
+        var t1 = document.getElementById('insAddrToggle'); if (t1) t1.style.display = '';
+        var t2 = document.getElementById('insAddr2Toggle'); if (t2) t2.style.display = '';
+      }
+    }
+    function onRelChange(val) {
+      var isOther = val === 'Other (please specify)';
+      var specInput = document.getElementById('f_insRelOther');
+      var specLabel = document.getElementById('specifyRelLabel');
+      if (specInput) {
+        specInput.disabled = !isOther;
+        specInput.style.background = isOther ? '' : 'var(--neutral-95)';
+        specInput.style.color = isOther ? '' : 'var(--neutral-50)';
+        if (!isOther) specInput.value = '';
+      }
+      if (specLabel) specLabel.innerHTML = isOther
+        ? 'Specify relationship <span class="req">*</span>'
+        : 'Specify relationship';
+    }
+
+    // Eligibility
+    var ELIG_CYCLE = ['eligible', 'failed', 'pending'];
+    var ELIG_LABELS = { eligible: '✓ Eligible', failed: '✗ Not eligible', pending: '⧖ Pending' };
+    function checkEligibilityReady() {
+      var company = (document.getElementById('f_insCompany') || {}).value || '';
+      var memberId = (document.getElementById('f_memberId') || {}).value || '';
+      var btn = document.getElementById('eligBtn');
+      if (btn) btn.disabled = !(company.trim() && memberId.trim());
+    }
+    function checkEligibility() {
+      var badge = document.getElementById('eligBadge');
+      var btn = document.getElementById('eligBtn');
+      btn.disabled = true;
+      badge.style.display = 'inline-flex';
+      badge.className = 'eligibility-badge pending';
+      badge.textContent = '⧖ Checking...';
+      setTimeout(function () {
+        var state = ELIG_CYCLE[_eligCycle % ELIG_CYCLE.length];
+        _eligCycle++;
+        badge.className = 'eligibility-badge ' + state;
+        badge.textContent = ELIG_LABELS[state];
+        btn.disabled = false;
+      }, 1400);
+    }
+
+    // Combobox
+    function filterCombobox(query, listId) {
+      var list = document.getElementById(listId);
+      var q = query.toLowerCase();
+      var matches = q ? INS_COS.filter(function (c) { return c.toLowerCase().indexOf(q) !== -1; }) : INS_COS.slice(0, 20);
+      if (matches.length === 0) {
+        list.innerHTML = '<div class="combobox-empty">No matches</div>';
+      } else {
+        list.innerHTML = matches.slice(0, 30).map(function (c) {
+          return '<div class="combobox-item" data-val="' + c.replace(/"/g, '&quot;') + '">' + c + '</div>';
+        }).join('');
+        list.querySelectorAll('.combobox-item').forEach(function (item) {
+          item.addEventListener('mousedown', function (e) {
+            e.preventDefault();
+            document.getElementById('f_insCompany').value = item.dataset.val;
+            autoFillInsType(item.dataset.val);
+            list.style.display = 'none';
+          });
+        });
+      }
+      list.style.display = '';
+      var r = list.closest('.combobox-wrap') ? list.closest('.combobox-wrap').querySelector('input').getBoundingClientRect() : document.getElementById('f_insCompany').getBoundingClientRect();
+      list.style.top = (r.bottom + 2) + 'px';
+      list.style.left = r.left + 'px';
+      list.style.width = r.width + 'px';
+    }
+    function comboboxKey(e, listId, inputId) {
+      var list = document.getElementById(listId);
+      var items = list.querySelectorAll('.combobox-item');
+      var active = list.querySelector('.combobox-item.active');
+      var idx = active ? Array.prototype.indexOf.call(items, active) : -1;
+      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, items.length - 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
+      else if (e.key === 'Enter' && active) { e.preventDefault(); document.getElementById(inputId).value = active.textContent; autoFillInsType(active.textContent); list.style.display = 'none'; return; }
+      else if (e.key === 'Escape') { list.style.display = 'none'; return; }
+      else { return; }
+      items.forEach(function (it, i) { it.classList.toggle('active', i === idx); });
+      if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
+    }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.combobox-wrap')) {
+        document.querySelectorAll('.combobox-list').forEach(function (l) { l.style.display = 'none'; });
+      }
+      if (!e.target.closest('#f_teamTrigger') && !e.target.closest('#teamDropdown')) {
+        document.getElementById('teamDropdown').style.display = 'none';
+      }
+    });
+
+    function formatCardNum(input) {
+      var val = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = val.replace(/(\d{4})/g, '$1 ').trim();
+    }
+
+    function createChart() {
+      var first = document.getElementById('f_first').value.trim();
+      var last = document.getElementById('f_last').value.trim();
+      var chartId = document.getElementById('f_chartId').value.trim();
+      var name = [first, last].filter(Boolean).join(' ') || 'New client';
+      closeModal();
+      showToast('success', 'Chart created — ' + name);
+    }
+
+    function showToast(type, message) {
+      var container = document.getElementById('toastContainer');
+      var t = document.createElement('div');
+      t.className = 'toast ' + type;
+      var icons = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+      };
+      t.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
+      container.appendChild(t);
+      setTimeout(function () {
+        t.classList.add('leaving');
+        t.addEventListener('animationend', function () { t.remove(); }, { once: true });
+      }, 3500);
+    }
+  </script>
+</body>
+
+</html>
