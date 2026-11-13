@@ -61,6 +61,8 @@
     .shell-header {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
       justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
       background: #fff;
@@ -129,6 +131,10 @@
       height: 18px;
       background: var(--secondary-60);
       border-radius: var(--rad);
+    }
+
+    .shell-header .wire-search {
+      margin-left: auto;
     }
 
     .wire-search {
@@ -1199,11 +1205,7 @@
     }
 
     .topbar-divider {
-      width: 1px;
-      height: 1.25rem;
-      background: var(--border-light);
-      flex-shrink: 0;
-      margin: 0 16px;
+      display: none;
     }
 
     .cr-topbar-title {
@@ -1224,7 +1226,6 @@
         <div class="wire-logo-mark"></div>
         <div class="wire-logo-text"></div>
       </div>
-      <div class="topbar-divider"></div>
       <span class="cr-topbar-title">Chart Room</span>
       <div class="wire-search"></div>
       <div class="wire-header-right">
