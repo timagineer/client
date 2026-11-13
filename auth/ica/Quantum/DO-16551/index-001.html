@@ -1382,7 +1382,18 @@
     .btn-ghost {
       box-shadow: none;
       border-color: transparent;
-      background: transparent
+      background: transparent;
+      color: var(--neutral-20);
+    }
+
+    .btn-ghost:hover {
+      background: var(--neutral-90);
+      border-color: transparent;
+    }
+
+    .btn-ghost:active {
+      background: var(--neutral-85);
+      border-color: transparent;
     }
 
     .btn:focus-visible,
@@ -1508,7 +1519,6 @@
     .scroll {
       background: var(--surface);
       overflow-x: auto;
-      scrollbar-gutter: stable;
     }
 
     /* Sticky first 3 columns */
