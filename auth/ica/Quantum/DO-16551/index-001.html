@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototype: Chart Room Reloaded [DO-16551]</title>
+  <title>Prototype: Chart room reloaded [DO-16551]</title>
   <style>
     :root {
       --primary-25: oklch(38.052% 0.0888 258.539);
@@ -61,14 +61,20 @@
     .shell-header {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 16px;
       justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
       background: #fff;
       border-bottom: 1px solid var(--border-light);
       height: 48px;
       flex-shrink: 0;
+      position: relative;
+    }
+
+    .shell-header .wire-search {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
     }
 
     .shell-body {
@@ -132,10 +138,6 @@
       height: 18px;
       background: var(--secondary-60);
       border-radius: var(--rad);
-    }
-
-    .shell-header .wire-search {
-      margin-left: auto;
     }
 
     .wire-search {
