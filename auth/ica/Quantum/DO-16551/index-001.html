@@ -93,7 +93,7 @@
       display: flex;
       flex-direction: column;
       background: #fff;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     .tab-bar {
@@ -1223,6 +1223,7 @@
       letter-spacing: 0.05em;
       white-space: nowrap;
     }
+
     /* ── Chart Room table (from temp/chart-room.html) ── */
 
     :root {
@@ -1271,9 +1272,9 @@
       color-scheme: light;
     }
 
-    
 
-    
+
+
 
     html {
       scroll-padding-top: env(safe-area-inset-top, 0px)
@@ -1287,7 +1288,6 @@
 
     body {
       margin: 0;
-      background: var(--page);
       color: var(--text);
       font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-variant-numeric: tabular-nums lining-nums
@@ -1703,7 +1703,6 @@
         transition: none
       }
     }
-  
   </style>
 </head>
 
@@ -1739,62 +1738,62 @@
       </nav>
       <main class="shell-main">
         <div class="shell">
-    <div class="card">
-      <div class="head">
-        <div>
-          <h1>Find a chart</h1>
-          <div class="head-sub">Welcome, James Morningstar · Therhappy Associates</div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <h1>Find a chart</h1>
+                <div class="head-sub">Welcome, James Morningstar · Therhappy Associates</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <button class="btn btn-ghost" id="last"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 14 4 9l5-5" />
+                    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+                  </svg>Last chart</button>
+                <button class="btn btn-primary" id="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>New chart</button>
+              </div>
+            </div>
+
+            <div class="toolbar">
+              <select class="sel" id="site" aria-label="Working at site">
+                <option>Therhappy Associates</option>
+                <option>Therhappy Telehealth</option>
+              </select>
+              <div class="seg" role="group" aria-label="Show charts from"><button aria-pressed="true" data-site="all">All sites</button><button aria-pressed="false" data-site="one">This site only</button></div>
+              <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Assigned to me</button></div>
+              <select class="sel" id="status" aria-label="Chart status">
+                <option value="">All statuses</option>
+                <option>Active</option>
+                <option>Inactive</option>
+                <option>Pending</option>
+                <option>Test</option>
+              </select>
+              <div class="grow"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.34-4.34" />
+                  </svg>
+                  <input type="search" id="q" placeholder="Search name, DOB, chart ID, MRN, phone, email, SSN, etc" aria-label="Search charts"></label></div>
+            </div>
+
+            <div class="letters" role="group" aria-label="Filter by last name"><span>Last name</span></div>
+
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr id="cols"></tr>
+                </thead>
+                <tbody id="body"></tbody>
+              </table>
+            </div>
+            <div class="empty" id="empty" hidden>No charts match. Clear a filter or search a different name.</div>
+
+            <div class="foot">
+              <div class="pager" id="pager"></div>
+              <div id="count"></div>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button class="btn btn-ghost" id="last"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 14 4 9l5-5" />
-              <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
-            </svg>Last chart</button>
-          <button class="btn btn-primary" id="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 5v14M5 12h14" />
-            </svg>New chart</button>
-        </div>
-      </div>
-
-      <div class="toolbar">
-        <select class="sel" id="site" aria-label="Working at site">
-          <option>Therhappy Associates</option>
-          <option>Therhappy Telehealth</option>
-        </select>
-        <div class="seg" role="group" aria-label="Show charts from"><button aria-pressed="true" data-site="all">All sites</button><button aria-pressed="false" data-site="one">This site only</button></div>
-        <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Assigned to me</button></div>
-        <select class="sel" id="status" aria-label="Chart status">
-          <option value="">All statuses</option>
-          <option>Active</option>
-          <option>Inactive</option>
-          <option>Pending</option>
-          <option>Test</option>
-        </select>
-        <div class="grow"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.34-4.34" />
-            </svg>
-            <input type="search" id="q" placeholder="Search name, DOB, chart ID, MRN, phone, email, SSN, etc" aria-label="Search charts"></label></div>
-      </div>
-
-      <div class="letters" role="group" aria-label="Filter by last name"><span>Last name</span></div>
-
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr id="cols"></tr>
-          </thead>
-          <tbody id="body"></tbody>
-        </table>
-      </div>
-      <div class="empty" id="empty" hidden>No charts match. Clear a filter or search a different name.</div>
-
-      <div class="foot">
-        <div class="pager" id="pager"></div>
-        <div id="count"></div>
-      </div>
-    </div>
-  </div>
       </main>
     </div>
   </div>
@@ -3044,7 +3043,7 @@
     $('pager').onchange = e => { if (e.target.id === 'size') { S.size = +e.target.value; S.page = 1; render() } };
     $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) toast('Opening chart for ' + tr.dataset.n + '…') };
     render();
-    </script>
+  </script>
 </body>
 
 </html>
