@@ -1677,32 +1677,6 @@
       margin-left: 8px;
       font-size: 12px
     }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-      transform: translateX(-50%);
-      background: hsl(205, 100%, 18%);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 6px;
-      font-weight: 500;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s
-    }
-
-    .toast.show {
-      opacity: 1
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .toast {
-        transition: none
-      }
-    }
   </style>
 </head>
 
@@ -2976,7 +2950,6 @@
       }, 3500);
     }
   </script>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
     const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment']];
     const D = [
@@ -3003,7 +2976,7 @@
     const $ = id => document.getElementById(id);
     const fmt = d => d ? d.slice(5, 7) + '/' + d.slice(8) + '/' + d.slice(0, 4) : null;
     const dash = '<span class="mute">—</span>';
-    const toast = m => { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2200) };
+    const toast = m => showToast('info', m);
 
     $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
     $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
