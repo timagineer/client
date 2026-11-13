@@ -1202,7 +1202,7 @@
     .cr-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       padding: 14px 20px;
       border-bottom: 1px solid var(--border-light);
       flex-shrink: 0;
@@ -1214,6 +1214,21 @@
       color: var(--neutral-40);
       text-transform: uppercase;
       letter-spacing: 0.05em;
+    }
+
+    .cr-welcome {
+      font-size: 13px;
+      color: var(--neutral-45);
+    }
+
+    .cr-welcome-sep {
+      margin: 0 5px;
+      color: var(--neutral-65);
+    }
+
+    .cr-practice {
+      color: var(--neutral-30);
+      font-weight: 500;
     }
   </style>
 </head>
@@ -1249,6 +1264,7 @@
       <main class="shell-main">
         <div class="cr-header">
           <span class="cr-title">Chart Room</span>
+          <span class="cr-welcome">Welcome, James Morningstar<span class="cr-welcome-sep">·</span><span class="cr-practice">Therhappy Associates</span></span>
         </div>
       </main>
     </div>
