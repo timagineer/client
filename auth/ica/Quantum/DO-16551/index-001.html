@@ -61,20 +61,27 @@
     .shell-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
       background: #fff;
       border-bottom: 1px solid var(--border-light);
       height: 48px;
       flex-shrink: 0;
-      position: relative;
+    }
+
+    .shell-header-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .shell-header .wire-search {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .wire-header-right {
+      flex: 1;
+      justify-content: flex-end;
     }
 
     .shell-body {
@@ -1788,13 +1795,15 @@
 <body>
   <div class="app-shell">
     <header class="shell-header">
-      <div class="wire-logo">
-        <div class="wire-logo-mark"></div>
-        <div class="wire-logo-text"></div>
-      </div>
-      <div class="wire-topbar-meta">
-        <div class="wire-meta-block" style="width:124px"></div>
-        <div class="wire-meta-block" style="width:92px"></div>
+      <div class="shell-header-left">
+        <div class="wire-logo">
+          <div class="wire-logo-mark"></div>
+          <div class="wire-logo-text"></div>
+        </div>
+        <div class="wire-topbar-meta">
+          <div class="wire-meta-block" style="width:124px"></div>
+          <div class="wire-meta-block" style="width:92px"></div>
+        </div>
       </div>
       <div class="wire-search"></div>
       <div class="wire-header-right">
