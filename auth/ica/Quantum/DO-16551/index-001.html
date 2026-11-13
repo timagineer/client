@@ -353,6 +353,12 @@
       color: #fff;
     }
 
+    .btn-primary:active {
+      background: var(--primary-20);
+      border-color: var(--primary-20);
+      color: #fff;
+    }
+
     .btn-ghost {
       background: transparent;
       border-color: transparent;
@@ -1400,6 +1406,11 @@
       border-color: var(--primary-30)
     }
 
+    .btn-primary:active {
+      background: var(--primary-20);
+      border-color: var(--primary-20)
+    }
+
     .btn-ghost {
       box-shadow: none;
       border-color: transparent;
@@ -1695,7 +1706,10 @@
       justify-content: center;
     }
 
-    .page-btn svg { width: 16px; height: 16px; }
+    .page-btn svg {
+      width: 16px;
+      height: 16px;
+    }
 
     .page-btn:hover:not(:disabled) {
       background: var(--neutral-95);
@@ -1703,7 +1717,10 @@
       color: var(--neutral-20);
     }
 
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
 
     .page-btn.active {
       background: var(--neutral-90);
@@ -1724,7 +1741,11 @@
       margin-left: 8px;
     }
 
-    .page-size-label { font-size: 12px; color: var(--neutral-50); margin-left: 6px; }
+    .page-size-label {
+      font-size: 12px;
+      color: var(--neutral-50);
+      margin-left: 6px;
+    }
   </style>
 </head>
 
@@ -3073,10 +3094,10 @@
   <td>${fmt(c.lastAppt) || dash}</td><td>${fmt(c.nextAppt) || dash}</td></tr>`).join('');
       $('empty').hidden = all.length > 0;
       $('count').textContent = all.length ? `${s + 1}–${s + page.length} of ${all.length} charts` : 'No charts';
-      const pDbl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>`;
-      const pSgl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
-      const nSgl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
-      const nDbl  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="m6 17 5-5-5-5"/></svg>`;
+      const pDbl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>`;
+      const pSgl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+      const nSgl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+      const nDbl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="m6 17 5-5-5-5"/></svg>`;
       let h = `<button class="page-btn" data-p="1" ${S.page < 2 ? 'disabled' : ''} title="First page">${pDbl}</button>`;
       h += `<button class="page-btn" data-p="${S.page - 1}" ${S.page < 2 ? 'disabled' : ''} title="Previous page">${pSgl}</button>`;
       for (let i = 1; i <= pages; i++) h += `<button class="page-btn${i === S.page ? ' active' : ''}" data-p="${i}">${i}</button>`;
