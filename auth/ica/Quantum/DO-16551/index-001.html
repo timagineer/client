@@ -3142,6 +3142,9 @@
     function showClassic() {
       document.getElementById('classicOverlay').classList.add('active');
     }
+    function showRedesigned() {
+      document.getElementById('classicOverlay').classList.remove('active');
+    }
 
     const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
     const D = [
