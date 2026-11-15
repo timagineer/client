@@ -1686,6 +1686,15 @@
     .scroll,
     .shell-main {
       scrollbar-width: thin;
+      scrollbar-color: var(--n50) transparent;
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+      .scroll,
+      .shell-main {
+        scrollbar-color: var(--n70) transparent;
+      }
     }
 
     /* Sticky first 3 columns */
