@@ -3297,7 +3297,7 @@
       ['Kai', 'Marsh', 'Active', '10268', '48422', 'k.marsh@email.com', '(401) 555-8822', '1995-09-23', '2026-11-14', '2026-11-28', 1, 'Lisa Park', 'Telehealth', null, '$15', '$0'],
     ].map(r => Object.fromEntries([...['first', 'last', 'status', 'id', 'mrn', 'email', 'phone', 'dob', 'lastAppt', 'nextAppt', 'mine', 'clinician', 'site', 'flag', 'copay', 'balance']].map((k, i) => [k, r[i]])));
     const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';
-    const LET = [['All', ''], ['A–C', 'ABC'], ['D–F', 'DEF'], ['G–J', 'GHIJ'], ['K–M', 'KLM'], ['N–Q', 'NOPQ'], ['R–T', 'RST'], ['U–Z', 'UVWXYZ']];
+    const LET = [['All', ''], ['A-C', 'ABC'], ['D-F', 'DEF'], ['G-J', 'GHIJ'], ['K-M', 'KLM'], ['N-Q', 'NOPQ'], ['R-T', 'RST'], ['U-Z', 'UVWXYZ']];
     const S = { sort: 'last', dir: 1, page: 1, size: 25, q: '', status: '', own: 'mine', letters: '', site: '' };
     const $ = id => document.getElementById(id);
     const fmt = d => d ? d.slice(5, 7) + '/' + d.slice(8) + '/' + d.slice(0, 4) : null;
