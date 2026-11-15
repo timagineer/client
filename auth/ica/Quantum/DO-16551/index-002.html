@@ -1456,63 +1456,36 @@
 
     /* Folder letter buttons */
     .folder-btn {
-      --fbg: var(--surface);
-      --fbd: var(--n75);
-      position: relative;
       display: inline-flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
       height: 32px;
       min-width: 48px;
-      padding: 0 10px;
-      border: 1px solid var(--fbd);
-      border-radius: 0 4px 4px 4px;
-      background: var(--fbg);
+      padding: 0 10px 5px;
+      border: none;
       font: inherit;
       font-size: 12px;
       font-weight: 500;
       color: var(--n30);
       cursor: pointer;
-      transition: background 0.1s, border-color 0.1s, color 0.1s;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 2 22 19' fill='%23ffffff' stroke='%23ced4de' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
     }
 
-    /* Tab portion extending above */
-    .folder-btn::before {
-      content: '';
-      position: absolute;
-      top: -7px;
-      left: -1px;
-      width: 24px;
-      height: 7px;
-      background: var(--fbg);
-      border: 1px solid var(--fbd);
-      border-bottom: none;
-      border-radius: 3px 3px 0 0;
-      transition: background 0.1s, border-color 0.1s;
-    }
-
-    /* Cover top border under tab */
+    .folder-btn::before,
     .folder-btn::after {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: 0;
-      width: 23px;
-      height: 2px;
-      background: var(--fbg);
-      transition: background 0.1s;
+      display: none;
     }
 
     .folder-btn:hover {
-      --fbg: var(--n95);
-      --fbd: var(--n60);
       color: var(--n15);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 2 22 19' fill='%23f5f7fa' stroke='%239ba4b4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
     }
 
     .folder-btn[aria-pressed="true"] {
-      --fbg: var(--primary-50);
-      --fbd: var(--primary-50);
       color: #fff;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 2 22 19' fill='%234c56b5' stroke='%234c56b5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
     }
 
     .btn,
