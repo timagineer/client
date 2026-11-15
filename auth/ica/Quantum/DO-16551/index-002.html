@@ -1997,8 +1997,8 @@
                 <button class="btn btn-ghost" id="last" data-tooltip="Maria Chen · Today 2:30 PM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 14 4 9l5-5" />
                     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
-                  </svg>Last chart</button>
-                <button class="btn btn-ghost" id="next" data-tooltip="Jordan Ellis · Today 3:00 PM">Next chart<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  </svg>Last opened</button>
+                <button class="btn btn-ghost" id="next" data-tooltip="Jordan Ellis · Today 3:00 PM">Next appointment<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 14 20 9l-5-5" />
                     <path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13" />
                   </svg></button>
@@ -2006,32 +2006,24 @@
               </div>
             </div>
 
-            <!-- Filter row 1: Location + Assignment -->
+            <!-- Filter row -->
             <div class="filter-row">
               <div class="filter-section">
-                <span class="eyebrow">Location</span>
-                <div class="filter-controls">
-                  <div class="seg" role="group" aria-label="Show charts from"><button aria-pressed="true" data-site="all">All sites</button><button aria-pressed="false" data-site="one">Working at only</button></div>
-                  <select class="sel" id="site" aria-label="Working at site">
-                    <option>East Liverpool</option>
-                    <option>Youngstown</option>
-                    <option>Boardman</option>
-                    <option>Salem</option>
-                    <option>Steubenville</option>
-                    <option>Telehealth</option>
-                  </select>
-                </div>
+                <span class="eyebrow">Site</span>
+                <select class="sel" id="site" aria-label="Site">
+                  <option value="">All sites</option>
+                  <option>East Liverpool</option>
+                  <option>Youngstown</option>
+                  <option>Boardman</option>
+                  <option>Salem</option>
+                  <option>Steubenville</option>
+                  <option>Telehealth</option>
+                </select>
               </div>
               <div class="filter-section">
-                <span class="eyebrow">Assignment</span>
-                <div class="filter-controls">
-                  <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All charts</button><button aria-pressed="true" data-own="mine">Assigned to me</button></div>
-                </div>
+                <span class="eyebrow">Charts</span>
+                <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Mine</button></div>
               </div>
-            </div>
-
-            <!-- Filter row 2: Last name + Status + Search -->
-            <div class="filter-row">
               <div class="filter-section">
                 <span class="eyebrow">Last name</span>
                 <div class="letters" role="group" aria-label="Filter by last name"></div>
@@ -2054,7 +2046,7 @@
                       <path d="m21 21-4.34-4.34" />
                     </svg>
                     <input type="search" id="q" placeholder="Search name, DOB, chart ID, MRN, phone, email, SSN, etc." aria-label="Search charts"></label>
-                  <button type="submit" class="btn btn-outline">Search</button>
+                  <button type="submit" class="btn btn-outline">Go</button>
                 </form>
               </div>
             </div>
@@ -3305,7 +3297,7 @@
     ].map(r => Object.fromEntries([...['first', 'last', 'status', 'id', 'mrn', 'email', 'phone', 'dob', 'lastAppt', 'nextAppt', 'mine', 'clinician', 'site', 'flag', 'copay', 'balance']].map((k, i) => [k, r[i]])));
     const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';
     const LET = [['All', ''], ['A–C', 'ABC'], ['D–F', 'DEF'], ['G–J', 'GHIJ'], ['K–M', 'KLM'], ['N–Q', 'NOPQ'], ['R–T', 'RST'], ['U–Z', 'UVWXYZ']];
-    const S = { sort: 'last', dir: 1, page: 1, size: 25, q: '', status: '', own: 'mine', letters: '', siteScope: 'all', site: 'East Liverpool' };
+    const S = { sort: 'last', dir: 1, page: 1, size: 25, q: '', status: '', own: 'mine', letters: '', site: '' };
     const $ = id => document.getElementById(id);
     const fmt = d => d ? d.slice(5, 7) + '/' + d.slice(8) + '/' + d.slice(0, 4) : null;
     const dash = '<span class="mute">—</span>';
@@ -3315,14 +3307,13 @@
     const FOLDER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
     $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
     $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
-    $('last').onclick = () => toast('Opening last chart…');
-    $('next').onclick = () => toast('Opening next chart…');
+    $('last').onclick = () => toast('Opening last opened chart…');
+    $('next').onclick = () => toast('Opening next appointment…');
     $('new').onclick = () => toast('Starting a new chart…');
     const lw = document.querySelector('.letters');
     LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'folder-btn'; b.innerHTML = FOLDER_SVG + l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
     lw.onclick = e => { const b = e.target.closest('button'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
     document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
-    document.querySelectorAll('[data-site]').forEach(b => b.onclick = () => { S.siteScope = b.dataset.site; S.page = 1; document.querySelectorAll('[data-site]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
     $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
     $('site').onchange = e => { S.site = e.target.value; S.page = 1; render() };
     $('searchForm').onsubmit = e => { e.preventDefault(); S.q = $('q').value.trim().toLowerCase(); S.page = 1; render() };
@@ -3330,7 +3321,7 @@
 
     function rows() {
       const q = S.q, digits = q.replace(/\D/g, '');
-      let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())) && (S.siteScope === 'all' || c.site === S.site));
+      let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())) && (!S.site || c.site === S.site));
       if (q) r = r.filter(c => [c.first, c.last, c.id, c.mrn, c.email, c.status, c.clinician, c.site].some(v => v && v.toLowerCase().includes(q)) || fmt(c.dob).includes(q) || (digits.length > 2 && c.phone.replace(/\D/g, '').includes(digits)));
       const k = S.sort;
       return r.sort((a, b) => { const x = a[k], y = b[k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * S.dir });
