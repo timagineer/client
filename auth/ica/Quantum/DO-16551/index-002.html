@@ -1683,6 +1683,34 @@
       overflow-x: auto;
     }
 
+    .scroll,
+    .shell-main {
+      scrollbar-width: thin;
+      scrollbar-color: var(--n75) transparent;
+    }
+
+    .scroll::-webkit-scrollbar,
+    .shell-main::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .scroll::-webkit-scrollbar-track,
+    .shell-main::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scroll::-webkit-scrollbar-thumb,
+    .shell-main::-webkit-scrollbar-thumb {
+      background: var(--n75);
+      border-radius: 3px;
+    }
+
+    .scroll::-webkit-scrollbar-thumb:hover,
+    .shell-main::-webkit-scrollbar-thumb:hover {
+      background: var(--n60);
+    }
+
     /* Sticky first 3 columns */
     th:nth-child(1),
     td:nth-child(1) {
@@ -3317,7 +3345,11 @@
 
     const FLAG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg>';
     const FOLDER_SVG = '';
-    $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
+    const NUM_COLS = new Set(['id', 'mrn', 'copay', 'balance']);
+    $('cols').innerHTML = COLS.map(([k, l]) => {
+      const isNum = NUM_COLS.has(k);
+      return `<th scope="col" data-k="${k}"${isNum ? ' class="num"' : ''}><button type="button">${isNum ? ICON + l : l + ICON}</button></th>`;
+    }).join('');
     $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
     $('last').onclick = () => toast('Opening last opened chart…');
     $('next').onclick = () => toast('Opening next appointment…');
