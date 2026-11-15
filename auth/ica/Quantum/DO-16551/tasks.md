@@ -1,23 +1,26 @@
 v002
----phase 1
-Context: compare/analyze prod/v1 prod.png vs with our current version with consideration of the changes for legacy users
-- grouping based off og: All charts Assigned to me with a-z, chart status; search last new; (working at:) sites with dd(show charts:) All sites Working at only
-- a-z filters inside lucide folder icon (nod to classic's iconic filing cabinets)???
-- center search main 'Chart Room' header and bring a-z filters up w/All sites Working at only All charts…???
-- eyebrow labels on filter/control groups row???
-- search btn???
-- last chart next chart new chart?
+---phase 1 ✓
+- Compare/analyze prod (Plus v1) vs redesign — Plus v1 overlay toggle built
+- Grouping redesigned: single filter row Site ▾ · [All][Mine] · folder tabs · Status ▾ · Search [Go]
+- A-Z filters as Lucide folder-shaped SVG tabs (filing cabinet nod)
+- Chart Room as h1, A-Z brought up into filter row
+- Eyebrow labels: LOCATION · CHARTS · LAST NAME · STATUS · SEARCH
+- Search btn + Enter key (Go)
+- Last opened / Next appointment / New chart (with tooltips)
+- Plus v1/v2 toggle
+- v001/v002 version index
 
---- phase 2
-- Chart status --> Status
-- better more realistic mock data/pressure testing
-- next b4 last appt
+---phase 2
+- search internal space/width/placeholder/align
+- well styling
+- last/next — timestamps (yesterday / this AM etc.)
+- Chart status --> Status (col header)
+- phone format
+- better/more realistic mock data + pressure testing
+- next appt before last appt (col order)
 - finer scrollbars?
-- sort icons match col align
+- sort icons match col alignment
 - mock font size tests
 
 --- phase 3
-- indexes v001 v002
 - (uifont mini/card table shows >=n=2 borders, badges, bts, >=2 font weights, surfaces)
-
-
