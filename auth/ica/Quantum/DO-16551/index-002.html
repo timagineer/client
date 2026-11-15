@@ -1456,6 +1456,8 @@
 
     /* Folder letter buttons */
     .folder-btn {
+      -webkit-appearance: none;
+      appearance: none;
       display: inline-flex;
       align-items: flex-end;
       justify-content: center;
@@ -1463,11 +1465,13 @@
       min-width: 48px;
       padding: 0 10px 5px;
       border: none;
+      outline: none;
       font: inherit;
       font-size: 12px;
       font-weight: 500;
       color: var(--n30);
       cursor: pointer;
+      background-color: transparent;
       background-repeat: no-repeat;
       background-size: 100% 100%;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 2 22 19' fill='%23ffffff' stroke='%23ced4de' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
