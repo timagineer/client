@@ -1686,7 +1686,8 @@
     .scroll,
     .shell-main,
     .page-content,
-    html, body {
+    html,
+    body {
       scrollbar-width: thin;
       scrollbar-color: var(--n50) transparent;
     }
@@ -3382,7 +3383,7 @@
     }
     $('pager').onclick = e => { const b = e.target.closest('button[data-p]'); if (b && !b.disabled) { S.page = +b.dataset.p; render() } };
     $('pager').onchange = e => { if (e.target.id === 'size') { S.size = +e.target.value; S.page = 1; render() } };
-    $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) toast('Opening chart for ' + tr.dataset.n + '…') };
+    $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) alert('Opening chart for ' + tr.dataset.n + '…') };
     render();
   </script>
 </body>
