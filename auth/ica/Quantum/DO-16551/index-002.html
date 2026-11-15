@@ -3257,7 +3257,7 @@
       document.getElementById('classicOverlay').classList.remove('active');
     }
 
-    const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Chart status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['lastAppt', 'Last appointment'], ['nextAppt', 'Next appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
+    const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['nextAppt', 'Next appointment'], ['lastAppt', 'Last appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
     const D = [
       ['Penelope', 'Portal', 'Active', '10234', '48201', 'penelope.portal@email.com', '(401) 555-1234', '1999-11-11', '2026-11-06', '2026-11-20', 1, 'Sarah Johnson', 'East Liverpool', 1, '$20', '$0'],
       ['Pam', 'Portal', 'Active', '10235', '48202', 'pam.portal@email.com', '(401) 555-5678', '1990-01-01', '2026-10-30', '2026-11-17', 1, 'Sarah Johnson', 'East Liverpool', null, '$20', '$45'],
@@ -3333,7 +3333,7 @@
       document.querySelectorAll('#cols th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === S.sort ? (S.dir > 0 ? 'ascending' : 'descending') : 'none'));
       $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td class="td-lastname"><div><a href="#">${c.last}</a>${c.flag ? FLAG_SVG : ''}</div></td>
   <td>${fmt(c.dob)}</td><td class="num">${c.id}</td><td class="num">${c.mrn}</td><td><span class="chip chip-${c.status.toLowerCase()}">${c.status}</span></td><td>${c.clinician}</td><td>${c.site}</td><td>${c.phone}</td><td>${c.email}</td>
-  <td>${fmt(c.lastAppt) || dash}</td><td>${fmt(c.nextAppt) || dash}</td><td class="num">${c.copay || dash}</td><td class="num">${c.balance || dash}</td></tr>`).join('');
+  <td>${fmt(c.nextAppt) || dash}</td><td>${fmt(c.lastAppt) || dash}</td><td class="num">${c.copay || dash}</td><td class="num">${c.balance || dash}</td></tr>`).join('');
       $('empty').hidden = all.length > 0;
       $('count').textContent = all.length ? `${s + 1}–${s + page.length} of ${all.length} charts` : 'No charts';
       const pDbl = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>`;
