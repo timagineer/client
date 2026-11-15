@@ -1458,40 +1458,63 @@
     .folder-btn {
       -webkit-appearance: none;
       appearance: none;
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       height: 34px;
-      min-width: 68px;
-      padding: 6px 12px 2px;
+      min-width: 54px;
+      padding: 4px 10px 0;
       border: none;
       outline: none;
-      line-height: 1;
+      background: none;
       font: inherit;
       font-size: 12px;
       font-weight: 500;
       color: var(--n30);
       cursor: pointer;
-      background-color: transparent;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      background-image: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%271.9%201.9%2020.2%2018.5%27%20fill=%27%23ffffff%27%20stroke=%27%23ced4de%27%20stroke-width=%271%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z%27%20vector-effect=%27non-scaling-stroke%27/%3E%3C/svg%3E");
     }
 
     .folder-btn::before,
-    .folder-btn::after {
-      display: none;
+    .folder-btn::after { display: none; }
+
+    .folder-shape {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .folder-shape path {
+      fill: #fff;
+      stroke: #ced4de;
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .folder-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .folder-btn:hover .folder-shape path {
+      fill: #f5f7fa;
+      stroke: #9ba4b4;
     }
 
     .folder-btn:hover {
       color: var(--n15);
-      background-image: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%271.9%201.9%2020.2%2018.5%27%20fill=%27%23f5f7fa%27%20stroke=%27%239ba4b4%27%20stroke-width=%271%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z%27%20vector-effect=%27non-scaling-stroke%27/%3E%3C/svg%3E");
+    }
+
+    .folder-btn[aria-pressed="true"] .folder-shape path {
+      fill: #f0f2f6;
+      stroke: #9ea6b8;
     }
 
     .folder-btn[aria-pressed="true"] {
       color: var(--n20);
       font-weight: 600;
-      background-image: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%271.9%201.9%2020.2%2018.5%27%20fill=%27%23f0f2f6%27%20stroke=%27%239ea6b8%27%20stroke-width=%271%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3E%3Cpath%20d=%27M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z%27%20vector-effect=%27non-scaling-stroke%27/%3E%3C/svg%3E");
     }
 
     .btn,
@@ -3286,7 +3309,7 @@
     $('next').onclick = () => toast('Opening next appointment…');
     $('new').onclick = () => toast('Starting a new chart…');
     const lw = document.querySelector('.letters');
-    LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'folder-btn'; b.textContent = l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
+    const FS = '<svg class="folder-shape" viewBox="1.9 1.9 20.2 18.5" preserveAspectRatio="none"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>';\n    LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'folder-btn'; b.innerHTML = FS + '<span>' + l + '</span>'; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
     lw.onclick = e => { const b = e.target.closest('button'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
     document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
     $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
