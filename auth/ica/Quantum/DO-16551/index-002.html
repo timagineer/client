@@ -7,6 +7,7 @@
   <title>Prototype: Chart room reloaded [DO-16551]</title>
   <style>
     :root {
+      --primary-20: oklch(33.5% 0.077 258.7);
       --primary-25: oklch(38.052% 0.0888 258.539);
       --primary-30: oklch(43.332% 0.10422 258.384);
       --primary-50: oklch(49.153% 0.12057 258.167);
@@ -26,10 +27,9 @@
       --neutral-85: oklch(0.9234 0.0059 233.18);
       --neutral-90: oklch(0.9542 0.0034 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
-      --primary-20: oklch(33.5% 0.077 258.7);
+      --status-red: oklch(0.5141 0.2047 23.40);
       --border-btn: var(--neutral-70);
       --border-light: var(--neutral-75);
-      --status-red: oklch(0.5141 0.2047 23.40);
       --rad: 6px;
       --sp-2: 8px;
       --sp-3: 12px;
@@ -1644,7 +1644,8 @@
       background: var(--n90);
       border-radius: 6px;
       padding: 3px;
-      gap: 2px
+      gap: 2px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .seg button {
