@@ -3322,14 +3322,14 @@
     const toast = m => showToast('info', m);
 
     const FLAG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#dc2626" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg>';
-    const FOLDER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+    const FOLDER_SVG = '';
     $('cols').innerHTML = COLS.map(([k, l]) => `<th scope="col" data-k="${k}"${k === 'id' || k === 'mrn' ? ' class="num"' : ''}><button type="button">${l}${ICON}</button></th>`).join('');
     $('cols').onclick = e => { const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k; S.dir = S.sort === k ? -S.dir : 1; S.sort = k; S.page = 1; render() };
     $('last').onclick = () => toast('Opening last opened chart…');
     $('next').onclick = () => toast('Opening next appointment…');
     $('new').onclick = () => toast('Starting a new chart…');
     const lw = document.querySelector('.letters');
-    LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'folder-btn'; b.innerHTML = FOLDER_SVG + l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
+    LET.forEach(([l, v]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'folder-btn'; b.textContent = l; b.dataset.v = v; b.setAttribute('aria-pressed', v === S.letters); lw.appendChild(b) });
     lw.onclick = e => { const b = e.target.closest('button'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
     document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
     $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
