@@ -3264,9 +3264,9 @@
       const daysBack = dow === 5 ? 7 : (dow + 2) % 7;
       const lastFri = new Date(now);
       lastFri.setDate(now.getDate() - daysBack);
-      const fmt = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      document.getElementById('last').dataset.tooltip = 'Maria Chen \u00b7 ' + fmt(lastFri) + ' \u00b7 3:45 PM';
-      document.getElementById('next').dataset.tooltip = 'Jordan Ellis \u00b7 ' + fmt(now) + ' \u00b7 8:00 AM';
+      const fmtDate = d => (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+      document.getElementById('last').dataset.tooltip = 'Maria Chen \u00b7 ' + fmtDate(lastFri) + ' \u00b7 4:30 PM';
+      document.getElementById('next').dataset.tooltip = 'Jordan Ellis \u00b7 Today \u00b7 8:00 AM';
     })();
 
     const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['nextAppt', 'Next appointment'], ['lastAppt', 'Last appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
