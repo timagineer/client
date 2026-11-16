@@ -1743,12 +1743,24 @@
       box-shadow: inset -3px 0 0 rgba(0, 0, 0, 0.08);
     }
 
+    .td-lastname {
+      max-width: 160px;
+    }
+
     .td-lastname>div {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 4px;
       width: 100%;
+      overflow: hidden;
+    }
+
+    .td-lastname a {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
 
     thead th:nth-child(2) {
@@ -3384,7 +3396,7 @@
       const all = rows(), pages = Math.max(1, Math.ceil(all.length / S.size)); S.page = Math.min(S.page, pages);
       const s = (S.page - 1) * S.size, page = all.slice(s, s + S.size);
       document.querySelectorAll('#cols th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === S.sort ? (S.dir > 0 ? 'ascending' : 'descending') : 'none'));
-      $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td class="td-lastname"><div><a href="#">${c.last}</a>${c.flag ? FLAG_SVG : ''}</div></td>
+      $('body').innerHTML = page.map(c => `<tr data-n="${c.first} ${c.last}"><td><a href="#">${c.first}</a></td><td class="td-lastname"><div><a href="#" title="${c.last}">${c.last}</a>${c.flag ? FLAG_SVG : ''}</div></td>
   <td>${fmt(c.dob)}</td><td class="num">${c.id}</td><td class="num">${c.mrn}</td><td><span class="chip chip-${c.status.toLowerCase()}">${c.status}</span></td><td>${c.clinician}</td><td>${c.site}</td><td>${c.phone}</td><td>${c.email}</td>
   <td>${fmt(c.nextAppt) || dash}</td><td>${fmt(c.lastAppt) || dash}</td><td class="num">${c.copay || dash}</td><td class="num">${c.balance || dash}</td></tr>`).join('');
       $('empty').hidden = all.length > 0;
