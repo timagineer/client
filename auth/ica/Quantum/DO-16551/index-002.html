@@ -1357,18 +1357,22 @@
       font-size: 14px;
     }
 
-    .view-toggle {
+    .v1-sup {
       all: unset;
-      font-size: 12px;
-      color: var(--n50);
+      display: inline;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--n55);
       cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-decoration-color: var(--n75);
+      vertical-align: super;
+      line-height: 0;
+      margin-left: 2px;
+      letter-spacing: 0;
+      transition: color 0.1s;
     }
 
-    .view-toggle:hover {
-      color: var(--n30);
+    .v1-sup:hover {
+      color: var(--primary-30);
     }
 
     .classic-overlay {
@@ -2006,9 +2010,7 @@
             <div class="head">
               <div>
                 <div class="page-title-row">
-                  <h1>Chart Room</h1>
-                  <span class="title-sep">·</span>
-                  <button class="view-toggle" onclick="showClassic()">Plus v1</button>
+                  <h1>Chart Room<button class="v1-sup" onclick="showClassic()">+v1</button></h1>
                 </div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
