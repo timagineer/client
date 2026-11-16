@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype: Chart room reloaded [DO-16551]</title>
   <style>
-    * {
-      outline: .5px deeppink dotted;
-    }
-
     :root {
       --primary-20: oklch(33.5% 0.077 258.7);
       --primary-25: oklch(38.052% 0.0888 258.539);
@@ -65,7 +61,6 @@
     .shell-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
       background: #fff;
       border-bottom: 1px solid var(--border-light);
@@ -74,6 +69,7 @@
     }
 
     .shell-header-left {
+      flex: 1;
       display: flex;
       align-items: center;
       gap: 16px;
@@ -84,9 +80,8 @@
     }
 
     .wire-header-right {
-      display: flex;
-      gap: var(--sp-3);
-      align-items: center;
+      flex: 1;
+      justify-content: flex-end;
     }
 
     .shell-body {
@@ -1248,6 +1243,8 @@
     }
 
     .topbar-meta {
+      flex: 1;
+      text-align: center;
       font-size: 12px;
       color: var(--neutral-40);
       white-space: nowrap;
@@ -2020,7 +2017,7 @@
         </div>
         <span class="topbar-meta" id="topbarMeta"></span>
       </div>
-      <div class="wire-search" style="margin-left:auto"></div>
+      <div class="wire-search"></div>
       <div class="wire-header-right">
         <div class="wire-icon"></div>
         <div class="wire-icon"></div>
