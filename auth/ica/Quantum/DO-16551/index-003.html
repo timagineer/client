@@ -1243,6 +1243,8 @@
     }
 
     .topbar-meta {
+      flex: 1;
+      text-align: center;
       font-size: 12px;
       color: var(--neutral-40);
       white-space: nowrap;
@@ -3400,9 +3402,9 @@
 
     function updateMeta() {
       const now = new Date();
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const h = now.getHours(), m = String(now.getMinutes()).padStart(2, '0');
       const h12 = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
       const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate() + ' ' + h12 + ':' + m + ' ' + ampm;
       const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Good night';
@@ -3413,7 +3415,7 @@
     }
     setInterval(updateMeta, 60000);
 
-        function rows() {
+    function rows() {
       const q = S.q, digits = q.replace(/\D/g, '');
       let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())) && (!S.site || c.site === S.site));
       if (q) r = r.filter(c => [c.first, c.last, c.id, c.mrn, c.email, c.status, c.clinician, c.site].some(v => v && v.toLowerCase().includes(q)) || fmt(c.dob).includes(q) || (digits.length > 2 && c.phone.replace(/\D/g, '').includes(digits)));
