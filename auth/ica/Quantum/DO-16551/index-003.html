@@ -3312,9 +3312,11 @@
   <script>
     function showClassic() {
       document.getElementById('classicOverlay').classList.add('active');
+      document.getElementById('topbarMeta').style.visibility = 'hidden';
     }
     function showRedesigned() {
       document.getElementById('classicOverlay').classList.remove('active');
+      document.getElementById('topbarMeta').style.visibility = 'visible';
     }
 
     // Dynamic Last/Next tooltips
