@@ -1320,6 +1320,10 @@
     .shell {
       min-width: 0;
       /* padding: 8px; */
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
     }
 
     .card {
@@ -3318,48 +3322,48 @@
 
     const COLS = [['first', 'First name'], ['last', 'Last name'], ['dob', 'DOB'], ['id', 'Chart ID'], ['mrn', 'MRN'], ['status', 'Status'], ['clinician', 'Clinician'], ['site', 'Site'], ['phone', 'Phone'], ['email', 'Email'], ['nextAppt', 'Next appointment'], ['lastAppt', 'Last appointment'], ['copay', 'Copay'], ['balance', 'Balance']];
     const D = [
-      ['Maxamillion', 'Esterhuysen', 'Active', '10101', '58301', 'm.esterhuysen@gmail.com', '410-741-8820', '1991-03-14', '2026-11-07', '2026-11-21', '1', 'James Morningstar', 'Towson', '1', '$35', '$0'],
-      ['Samantha', 'Parker-Wilkinson', 'Active', '10102', '58302', 's.parker-wilkinson@outlook.com', '410-854-2191', '1983-09-30', '2026-11-10', '2026-11-28', '1', 'Rachel Boyles', 'Columbia', null, '$20', '$0'],
-      ['Theodore', 'Beauchamp-Worthington', 'Pending', '10103', '58303', 't.beauchamp@yahoo.com', '443-612-9047', '1976-09-30', null, '2026-09-30', '1', 'Priya Patel', 'Catonsville', null, '$0', '$0'],
-      ['Priya', 'Nakamura', 'Active', '10104', '58304', 'p.nakamura@icloud.com', '410-520-3318', '1989-04-30', '2026-11-04', '2026-11-18', '1', 'James Morningstar', 'Towson', null, '$25', '$0'],
-      ['Marcus', 'Okonkwo', 'Active', '10105', '58305', 'm.okonkwo@gmail.com', '667-337-7714', '1994-07-15', '2026-10-28', '2026-11-25', '0', 'Rachel Boyles', 'Annapolis', '1', '$20', '$125'],
-      ['Alejandra', 'Rodriguez', 'Active', '10106', '58306', 'a.rodriguez@gmail.com', '410-981-4452', '1987-01-22', '2026-11-11', '2026-11-19', '1', 'David Crowley', 'Columbia', null, '$50', '$0'],
-      ['Nkechi', 'Washington', 'Inactive', '10107', '58307', 'nkechi.w@outlook.com', '443-740-5563', '1972-11-08', '2025-09-14', null, '1', 'Lisa Barnard', 'Catonsville', '1', '$15', '$340'],
-      ['Fitzgerald', 'Kaminsky', 'Active', '10108', '58308', 'fkaminsky@protonmail.com', '410-623-8809', '1985-06-30', '2026-11-09', '2026-11-23', '1', 'Tom Lindell', 'Timonium', null, '$35', '$0'],
-      ['Wei', 'Chen', 'Active', '10109', '58309', 'wei.chen@gmail.com', '667-215-6671', '1998-02-14', '2026-11-12', '2026-11-20', '1', 'Priya Patel', 'Towson', null, '$20', '$0'],
-      ['Guadalupe', 'Ramirez-Torres', 'Pending', '10110', '58310', 'g.ramirez@yahoo.com', '410-874-1193', '1993-10-03', null, '2026-11-22', '1', 'James Morningstar', 'Telehealth', null, '$0', '$0'],
-      ['Devon', 'O\u0027Brien', 'Active', '10111', '58311', 'd.obrien@icloud.com', '443-509-3347', '1980-08-19', '2026-11-05', '2026-11-26', '1', 'Rachel Boyles', 'Columbia', null, '$25', '$55'],
-      ['Anastasia', 'Vandenberg', 'Active', '10112', '58312', 'a.vandenberg@gmail.com', '667-731-8824', '1996-03-30', '2026-11-13', '2026-11-21', '1', 'David Crowley', 'Towson', '1', '$20', '$0'],
-      ['Raj', 'Patel', 'Active', '10113', '58313', 'raj.patel@outlook.com', '410-442-7736', '1979-05-11', '2026-11-06', '2026-11-24', '0', 'Lisa Barnard', 'Catonsville', null, '$35', '$0'],
-      ['Courtney', 'Hutchinson', 'Inactive', '10114', '58314', 'courtney.h@gmail.com', '443-867-2258', '1991-12-04', '2025-07-30', null, '1', 'Tom Lindell', 'Timonium', '1', '$10', '$85'],
-      ['Isaiah', 'Fernandez', 'Active', '10115', '58315', 'i.fernandez@yahoo.com', '410-513-9940', '1988-09-03', '2026-11-08', '2026-11-19', '1', 'Priya Patel', 'Annapolis', null, '$20', '$0'],
-      ['Valentina', 'Kowalski', 'Active', '10116', '58316', 'v.kowalski@gmail.com', '667-284-5517', '1995-04-30', '2026-11-14', '2026-11-28', '1', 'James Morningstar', 'Telehealth', null, '$15', '$0'],
-      ['Brendan', 'Worthington', 'Pending', '10117', '58317', 'b.worthington@protonmail.com', '410-726-3381', '1984-07-22', null, '2026-11-16', '1', 'Rachel Boyles', 'Columbia', null, '$0', '$0'],
-      ['Fatima', 'Ali', 'Active', '10118', '58318', 'fatima.ali@outlook.com', '443-651-7723', '1990-01-30', '2026-10-30', '2026-11-20', '1', 'David Crowley', 'Towson', null, '$25', '$0'],
-      ['Christopher', 'Esterhuysen', 'Active', '10119', '58319', 'c.esterhuysen@gmail.com', '410-840-6614', '1977-06-15', '2026-11-10', '2026-11-25', '0', 'Lisa Barnard', 'Catonsville', '1', '$50', '$1,250'],
-      ['Mikayla', 'Thompson-Reyes', 'Active', '10120', '58320', 'm.thompson@icloud.com', '667-392-1185', '1999-03-04', '2026-11-03', '2026-11-17', '1', 'Tom Lindell', 'Timonium', null, '$20', '$0'],
-      ['Obafemi', 'Adeyemi', 'Active', '10121', '58321', 'o.adeyemi@gmail.com', '410-574-8832', '1986-09-30', '2026-11-11', '2026-11-22', '1', 'Priya Patel', 'Columbia', null, '$35', '$0'],
-      ['Brittany', 'Kowalczyk', 'Inactive', '10122', '58322', 'b.kowalczyk@yahoo.com', '443-918-4406', '1983-11-16', '2025-10-22', null, '1', 'James Morningstar', 'Towson', '1', '$15', '$225'],
-      ['Hieronymus', 'Burke', 'Active', '10123', '58323', 'h.burke@gmail.com', '410-263-7751', '1975-04-30', '2026-11-07', '2026-11-21', '1', 'Rachel Boyles', 'Annapolis', null, '$20', '$0'],
-      ['Xiomara', 'Delgado', 'Active', '10124', '58324', 'xiomara.d@outlook.com', '667-837-5593', '1992-08-14', '2026-11-12', '2026-11-26', '1', 'David Crowley', 'Telehealth', null, '$25', '$0'],
-      ['Patrick', 'Fitzpatrick', 'Active', '10125', '58325', 'p.fitzpatrick@gmail.com', '410-452-9918', '1988-02-28', null, null, '0', 'Lisa Barnard', 'Catonsville', null, '$0', '$0'],
-      ['Ingrid', 'Halvorsen', 'Pending', '10126', '58326', 'i.halvorsen@protonmail.com', '443-731-6604', '1997-07-04', null, '2026-11-23', '1', 'Tom Lindell', 'Timonium', null, '$0', '$0'],
-      ['Desmond', 'Okafor', 'Active', '10127', '58327', 'd.okafor@gmail.com', '410-614-3347', '1981-10-30', '2026-11-05', '2026-11-19', '1', 'Priya Patel', 'Towson', null, '$35', '$0'],
-      ['Lorraine', 'Beauchamp', 'Active', '10128', '58328', 'l.beauchamp@icloud.com', '667-528-7762', '1973-05-22', '2026-11-08', '2026-11-24', '1', 'James Morningstar', 'Columbia', null, '$20', '$45'],
-      ['Rashida', 'Kamara', 'Active', '10129', '58329', 'r.kamara@gmail.com', '410-847-2219', '1994-03-30', '2026-11-13', '2026-11-27', '1', 'Rachel Boyles', 'Catonsville', '1', '$25', '$0'],
-      ['Spencer', 'Whitfield-Jones', 'Inactive', '10130', '58330', 's.whitfield@yahoo.com', '443-563-8841', '1979-09-03', '2025-08-11', null, '1', 'David Crowley', 'Timonium', '1', '$10', '$175'],
-      ['Nadia', 'Christodoulou', 'Active', '10131', '58331', 'n.christodoulou@outlook.com', '410-721-5536', '1990-11-30', '2026-11-10', '2026-11-21', '1', 'Lisa Barnard', 'Annapolis', null, '$20', '$0'],
-      ['Ezekiel', 'Osei-Mensah', 'Active', '10132', '58332', 'e.osei@gmail.com', '667-346-8873', '1987-06-30', '2026-11-04', '2026-11-18', '1', 'Tom Lindell', 'Telehealth', null, '$35', '$0'],
-      ['Cassandra', 'Papadopoulos', 'Pending', '10133', '58333', 'c.papadopoulos@gmail.com', '410-852-1104', '1995-04-14', null, '2026-11-29', '1', 'Priya Patel', 'Columbia', null, '$0', '$0'],
-      ['Flynn', 'Abernethy', 'Active', '10134', '58334', 'f.abernethy@protonmail.com', '443-479-6625', '1982-01-30', '2026-11-09', '2026-11-22', '0', 'James Morningstar', 'Towson', null, '$50', '$0'],
-      ['Tamsin', 'Worthington', 'Active', '10135', '58335', 't.worthington@gmail.com', '410-634-7748', '1978-08-04', '2026-11-11', '2026-11-25', '1', 'Rachel Boyles', 'Catonsville', null, '$20', '$0'],
-      ['Leandro', 'Vasconcelos', 'Active', '10136', '58336', 'l.vasconcelos@outlook.com', '667-281-3391', '1991-09-30', '2026-11-14', '2026-11-28', '1', 'David Crowley', 'Timonium', null, '$25', '$70'],
-      ['Harriet', 'Cunningham', 'Inactive', '10137', '58337', 'h.cunningham@icloud.com', '410-567-9926', '1969-03-04', '2025-11-07', null, '1', 'Lisa Barnard', 'Columbia', '1', '$15', '$440'],
-      ['Idris', 'Mensah', 'Active', '10138', '58338', 'i.mensah@gmail.com', '443-813-5547', '1986-07-30', '2026-11-06', '2026-11-20', '1', 'Tom Lindell', 'Towson', null, '$35', '$0'],
-      ['Colette', 'Beaumont-Harris', 'Active', '10139', '58339', 'c.beaumont@yahoo.com', '410-742-8813', '1993-11-22', '2026-11-12', '2026-11-26', '1', 'Priya Patel', 'Annapolis', null, '$20', '$0'],
-      ['Alistair', 'MacDougall', 'Active', '10140', '58340', 'a.macdougall@gmail.com', '667-635-2254', '1984-05-30', '2026-10-29', '2026-11-19', '1', 'James Morningstar', 'Telehealth', null, '$25', '$0'],
-      ['Zinnia', 'Park', 'Test', '10141', '00044', 'test.zinnia@email.com', '410-000-0044', '2001-01-01', null, null, '1', 'Unassigned', 'Columbia', null, 'N/A', '$0'],
-      ['Maxamillion', 'Park-Wilkinson', 'Test', '10142', '00045', 'test.max2@email.com', '410-000-0045', '2002-09-30', null, null, '1', 'Unassigned', 'Towson', null, 'N/A', '$0']
+      ['Maxamillion', 'Esterhuysen', 'Active', '10101', '58301', 'm.esterhuysen@gmail.com', '410-741-8820', '1991-03-14', '2026-11-07', '2026-11-21', 1, 'James Morningstar', 'Towson', 1, '$35', '$0'],
+      ['Samantha', 'Parker-Wilkinson', 'Active', '10102', '58302', 's.parker-wilkinson@outlook.com', '410-854-2191', '1983-09-30', '2026-11-10', '2026-11-28', 1, 'Rachel Boyles', 'Columbia', null, '$20', '$0'],
+      ['Theodore', 'Beauchamp-Worthington', 'Pending', '10103', '58303', 't.beauchamp@yahoo.com', '443-612-9047', '1976-09-30', null, '2026-09-30', 1, 'Priya Patel', 'Catonsville', null, '$0', '$0'],
+      ['Priya', 'Nakamura', 'Active', '10104', '58304', 'p.nakamura@icloud.com', '410-520-3318', '1989-04-30', '2026-11-04', '2026-11-18', 1, 'James Morningstar', 'Towson', null, '$25', '$0'],
+      ['Marcus', 'Okonkwo', 'Active', '10105', '58305', 'm.okonkwo@gmail.com', '667-337-7714', '1994-07-15', '2026-10-28', '2026-11-25', 0, 'Rachel Boyles', 'Annapolis', 1, '$20', '$125'],
+      ['Alejandra', 'Rodriguez', 'Active', '10106', '58306', 'a.rodriguez@gmail.com', '410-981-4452', '1987-01-22', '2026-11-11', '2026-11-19', 1, 'David Crowley', 'Columbia', null, '$50', '$0'],
+      ['Nkechi', 'Washington', 'Inactive', '10107', '58307', 'nkechi.w@outlook.com', '443-740-5563', '1972-11-08', '2025-09-14', null, 1, 'Lisa Barnard', 'Catonsville', 1, '$15', '$340'],
+      ['Fitzgerald', 'Kaminsky', 'Active', '10108', '58308', 'fkaminsky@protonmail.com', '410-623-8809', '1985-06-30', '2026-11-09', '2026-11-23', 1, 'Tom Lindell', 'Timonium', null, '$35', '$0'],
+      ['Wei', 'Chen', 'Active', '10109', '58309', 'wei.chen@gmail.com', '667-215-6671', '1998-02-14', '2026-11-12', '2026-11-20', 1, 'Priya Patel', 'Towson', null, '$20', '$0'],
+      ['Guadalupe', 'Ramirez-Torres', 'Pending', '10110', '58310', 'g.ramirez@yahoo.com', '410-874-1193', '1993-10-03', null, '2026-11-22', 1, 'James Morningstar', 'Telehealth', null, '$0', '$0'],
+      ['Devon', 'O\'Brien', 'Active', '10111', '58311', 'd.obrien@icloud.com', '443-509-3347', '1980-08-19', '2026-11-05', '2026-11-26', 1, 'Rachel Boyles', 'Columbia', null, '$25', '$55'],
+      ['Anastasia', 'Vandenberg', 'Active', '10112', '58312', 'a.vandenberg@gmail.com', '667-731-8824', '1996-03-30', '2026-11-13', '2026-11-21', 1, 'David Crowley', 'Towson', 1, '$20', '$0'],
+      ['Raj', 'Patel', 'Active', '10113', '58313', 'raj.patel@outlook.com', '410-442-7736', '1979-05-11', '2026-11-06', '2026-11-24', 0, 'Lisa Barnard', 'Catonsville', null, '$35', '$0'],
+      ['Courtney', 'Hutchinson', 'Inactive', '10114', '58314', 'courtney.h@gmail.com', '443-867-2258', '1991-12-04', '2025-07-30', null, 1, 'Tom Lindell', 'Timonium', 1, '$10', '$85'],
+      ['Isaiah', 'Fernandez', 'Active', '10115', '58315', 'i.fernandez@yahoo.com', '410-513-9940', '1988-09-03', '2026-11-08', '2026-11-19', 1, 'Priya Patel', 'Annapolis', null, '$20', '$0'],
+      ['Valentina', 'Kowalski', 'Active', '10116', '58316', 'v.kowalski@gmail.com', '667-284-5517', '1995-04-30', '2026-11-14', '2026-11-28', 1, 'James Morningstar', 'Telehealth', null, '$15', '$0'],
+      ['Brendan', 'Worthington', 'Pending', '10117', '58317', 'b.worthington@protonmail.com', '410-726-3381', '1984-07-22', null, '2026-11-16', 1, 'Rachel Boyles', 'Columbia', null, '$0', '$0'],
+      ['Fatima', 'Ali', 'Active', '10118', '58318', 'fatima.ali@outlook.com', '443-651-7723', '1990-01-30', '2026-10-30', '2026-11-20', 1, 'David Crowley', 'Towson', null, '$25', '$0'],
+      ['Christopher', 'Esterhuysen', 'Active', '10119', '58319', 'c.esterhuysen@gmail.com', '410-840-6614', '1977-06-15', '2026-11-10', '2026-11-25', 0, 'Lisa Barnard', 'Catonsville', 1, '$50', '$1,250'],
+      ['Mikayla', 'Thompson-Reyes', 'Active', '10120', '58320', 'm.thompson@icloud.com', '667-392-1185', '1999-03-04', '2026-11-03', '2026-11-17', 1, 'Tom Lindell', 'Timonium', null, '$20', '$0'],
+      ['Obafemi', 'Adeyemi', 'Active', '10121', '58321', 'o.adeyemi@gmail.com', '410-574-8832', '1986-09-30', '2026-11-11', '2026-11-22', 1, 'Priya Patel', 'Columbia', null, '$35', '$0'],
+      ['Brittany', 'Kowalczyk', 'Inactive', '10122', '58322', 'b.kowalczyk@yahoo.com', '443-918-4406', '1983-11-16', '2025-10-22', null, 1, 'James Morningstar', 'Towson', 1, '$15', '$225'],
+      ['Hieronymus', 'Burke', 'Active', '10123', '58323', 'h.burke@gmail.com', '410-263-7751', '1975-04-30', '2026-11-07', '2026-11-21', 1, 'Rachel Boyles', 'Annapolis', null, '$20', '$0'],
+      ['Xiomara', 'Delgado', 'Active', '10124', '58324', 'xiomara.d@outlook.com', '667-837-5593', '1992-08-14', '2026-11-12', '2026-11-26', 1, 'David Crowley', 'Telehealth', null, '$25', '$0'],
+      ['Patrick', 'Fitzpatrick', 'Active', '10125', '58325', 'p.fitzpatrick@gmail.com', '410-452-9918', '1988-02-28', null, null, 0, 'Lisa Barnard', 'Catonsville', null, '$0', '$0'],
+      ['Ingrid', 'Halvorsen', 'Pending', '10126', '58326', 'i.halvorsen@protonmail.com', '443-731-6604', '1997-07-04', null, '2026-11-23', 1, 'Tom Lindell', 'Timonium', null, '$0', '$0'],
+      ['Desmond', 'Okafor', 'Active', '10127', '58327', 'd.okafor@gmail.com', '410-614-3347', '1981-10-30', '2026-11-05', '2026-11-19', 1, 'Priya Patel', 'Towson', null, '$35', '$0'],
+      ['Lorraine', 'Beauchamp', 'Active', '10128', '58328', 'l.beauchamp@icloud.com', '667-528-7762', '1973-05-22', '2026-11-08', '2026-11-24', 1, 'James Morningstar', 'Columbia', null, '$20', '$45'],
+      ['Rashida', 'Kamara', 'Active', '10129', '58329', 'r.kamara@gmail.com', '410-847-2219', '1994-03-30', '2026-11-13', '2026-11-27', 1, 'Rachel Boyles', 'Catonsville', 1, '$25', '$0'],
+      ['Spencer', 'Whitfield-Jones', 'Inactive', '10130', '58330', 's.whitfield@yahoo.com', '443-563-8841', '1979-09-03', '2025-08-11', null, 1, 'David Crowley', 'Timonium', 1, '$10', '$175'],
+      ['Nadia', 'Christodoulou', 'Active', '10131', '58331', 'n.christodoulou@outlook.com', '410-721-5536', '1990-11-30', '2026-11-10', '2026-11-21', 1, 'Lisa Barnard', 'Annapolis', null, '$20', '$0'],
+      ['Ezekiel', 'Osei-Mensah', 'Active', '10132', '58332', 'e.osei@gmail.com', '667-346-8873', '1987-06-30', '2026-11-04', '2026-11-18', 1, 'Tom Lindell', 'Telehealth', null, '$35', '$0'],
+      ['Cassandra', 'Papadopoulos', 'Pending', '10133', '58333', 'c.papadopoulos@gmail.com', '410-852-1104', '1995-04-14', null, '2026-11-29', 1, 'Priya Patel', 'Columbia', null, '$0', '$0'],
+      ['Flynn', 'Abernethy', 'Active', '10134', '58334', 'f.abernethy@protonmail.com', '443-479-6625', '1982-01-30', '2026-11-09', '2026-11-22', 0, 'James Morningstar', 'Towson', null, '$50', '$0'],
+      ['Tamsin', 'Worthington', 'Active', '10135', '58335', 't.worthington@gmail.com', '410-634-7748', '1978-08-04', '2026-11-11', '2026-11-25', 1, 'Rachel Boyles', 'Catonsville', null, '$20', '$0'],
+      ['Leandro', 'Vasconcelos', 'Active', '10136', '58336', 'l.vasconcelos@outlook.com', '667-281-3391', '1991-09-30', '2026-11-14', '2026-11-28', 1, 'David Crowley', 'Timonium', null, '$25', '$70'],
+      ['Harriet', 'Cunningham', 'Inactive', '10137', '58337', 'h.cunningham@icloud.com', '410-567-9926', '1969-03-04', '2025-11-07', null, 1, 'Lisa Barnard', 'Columbia', 1, '$15', '$440'],
+      ['Idris', 'Mensah', 'Active', '10138', '58338', 'i.mensah@gmail.com', '443-813-5547', '1986-07-30', '2026-11-06', '2026-11-20', 1, 'Tom Lindell', 'Towson', null, '$35', '$0'],
+      ['Colette', 'Beaumont-Harris', 'Active', '10139', '58339', 'c.beaumont@yahoo.com', '410-742-8813', '1993-11-22', '2026-11-12', '2026-11-26', 1, 'Priya Patel', 'Annapolis', null, '$20', '$0'],
+      ['Alistair', 'MacDougall', 'Active', '10140', '58340', 'a.macdougall@gmail.com', '667-635-2254', '1984-05-30', '2026-10-29', '2026-11-19', 1, 'James Morningstar', 'Telehealth', null, '$25', '$0'],
+      ['Zinnia', 'Park', 'Test', '10141', '00044', 'test.zinnia@email.com', '410-000-0044', '2001-01-01', null, null, 1, 'Unassigned', 'Columbia', null, 'N/A', '$0'],
+      ['Maxamillion', 'Park-Wilkinson', 'Test', '10142', '00045', 'test.max2@email.com', '410-000-0045', '2002-09-30', null, null, 1, 'Unassigned', 'Towson', null, 'N/A', '$0']
     ].map(r => Object.fromEntries([...['first', 'last', 'status', 'id', 'mrn', 'email', 'phone', 'dob', 'lastAppt', 'nextAppt', 'mine', 'clinician', 'site', 'flag', 'copay', 'balance']].map((k, i) => [k, r[i]])));
     const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';
     const LET = [['All', ''], ['A-C', 'ABC'], ['D-F', 'DEF'], ['G-J', 'GHIJ'], ['K-M', 'KLM'], ['N-Q', 'NOPQ'], ['R-T', 'RST'], ['U-Z', 'UVWXYZ']];
