@@ -1256,8 +1256,13 @@
 
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     ::view-transition-old(root),
@@ -1266,7 +1271,9 @@
       animation-timing-function: ease;
     }
 
-    body { animation: var(--voila); }
+    body {
+      animation: var(--voila);
+    }
 
     .wire-meta-block {
       height: 12px;
@@ -2096,51 +2103,50 @@
               </div>
             </div>
 
-            <!-- Filter row -->
-            <div class="filter-row">
-              <div class="filter-section">
-                <span class="eyebrow">Location</span>
-                <select class="sel" id="site" aria-label="Site">
-                  <option value="">All sites</option>
-                  <option>Towson</option>
-                  <option>Columbia</option>
-                  <option>Catonsville</option>
-                  <option>Timonium</option>
-                  <option>Annapolis</option>
-                  <option>Telehealth</option>
-                </select>
-              </div>
-              <div class="filter-section">
-                <span class="eyebrow">Charts</span>
-                <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Mine</button></div>
-              </div>
-              <div class="filter-section">
-                <span class="eyebrow">Last name</span>
-                <div class="letters" role="group" aria-label="Filter by last name"></div>
-              </div>
-              <div class="filter-section">
-                <span class="eyebrow">Status</span>
-                <select class="sel" id="status" aria-label="Chart status">
-                  <option value="">All</option>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                  <option>Pending</option>
-                  <option>Test</option>
-                </select>
-              </div>
-              <div class="filter-section filter-section-search">
-                <span class="eyebrow">Search</span>
-                <form class="search-form" id="searchForm" onsubmit="return false;">
-                  <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="11" cy="11" r="8" />
-                      <path d="m21 21-4.34-4.34" />
-                    </svg>
-                    <input type="search" id="q" placeholder="Search charts…" aria-label="Search charts"></label>
-                </form>
-              </div>
-            </div>
-
             <div class="scroll">
+              <!-- Filter row scrolls with table data -->
+              <div class="filter-row">
+                <div class="filter-section">
+                  <span class="eyebrow">Location</span>
+                  <select class="sel" id="site" aria-label="Site">
+                    <option value="">All sites</option>
+                    <option>Towson</option>
+                    <option>Columbia</option>
+                    <option>Catonsville</option>
+                    <option>Timonium</option>
+                    <option>Annapolis</option>
+                    <option>Telehealth</option>
+                  </select>
+                </div>
+                <div class="filter-section">
+                  <span class="eyebrow">Charts</span>
+                  <div class="seg" role="group" aria-label="Chart ownership"><button aria-pressed="false" data-own="all">All</button><button aria-pressed="true" data-own="mine">Mine</button></div>
+                </div>
+                <div class="filter-section">
+                  <span class="eyebrow">Last name</span>
+                  <div class="letters" role="group" aria-label="Filter by last name"></div>
+                </div>
+                <div class="filter-section">
+                  <span class="eyebrow">Status</span>
+                  <select class="sel" id="status" aria-label="Chart status">
+                    <option value="">All</option>
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>Pending</option>
+                    <option>Test</option>
+                  </select>
+                </div>
+                <div class="filter-section filter-section-search">
+                  <span class="eyebrow">Search</span>
+                  <form class="search-form" id="searchForm" onsubmit="return false;">
+                    <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.34-4.34" />
+                      </svg>
+                      <input type="search" id="q" placeholder="Search charts…" aria-label="Search charts"></label>
+                  </form>
+                </div>
+              </div>
               <table>
                 <thead>
                   <tr id="cols"></tr>
