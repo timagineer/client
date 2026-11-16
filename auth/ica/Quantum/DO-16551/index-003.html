@@ -1254,6 +1254,20 @@
       letter-spacing: 0.01em;
     }
 
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 120ms;
+      animation-timing-function: ease;
+    }
+
+    body { animation: var(--voila); }
+
     .wire-meta-block {
       height: 12px;
       background: var(--neutral-80);
@@ -1282,6 +1296,10 @@
       --n90: oklch(.9542 .0034 233.07);
       --n95: oklch(.9772 .0008 232.96);
       --page: oklch(.965 .006 234);
+      --t: 60ms;
+      --t-4: calc(var(--t) * 4);
+      --t-6: calc(var(--t) * 6);
+      --voila: fadeIn var(--t-4) ease var(--t-6) backwards;
       --surface: #fff;
       --text: var(--n20);
       --muted: var(--n40);
@@ -3322,12 +3340,12 @@
   </script>
   <script>
     function showClassic() {
-      document.getElementById('classicOverlay').classList.add('active');
-      document.getElementById('topbarMeta').style.visibility = 'hidden';
+      const fn = () => { document.getElementById('classicOverlay').classList.add('active'); document.getElementById('topbarMeta').style.visibility = 'hidden'; };
+      document.startViewTransition ? document.startViewTransition(fn) : fn();
     }
     function showRedesigned() {
-      document.getElementById('classicOverlay').classList.remove('active');
-      document.getElementById('topbarMeta').style.visibility = 'visible';
+      const fn = () => { document.getElementById('classicOverlay').classList.remove('active'); document.getElementById('topbarMeta').style.visibility = 'visible'; };
+      document.startViewTransition ? document.startViewTransition(fn) : fn();
     }
 
     // Dynamic Last/Next tooltips
@@ -3442,6 +3460,14 @@
       return r.sort((a, b) => { const x = a[k], y = b[k]; if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * S.dir });
     }
     function render() {
+      if (document.startViewTransition) {
+        document.startViewTransition(doRender);
+      } else {
+        doRender();
+      }
+    }
+
+    function doRender() {
       const all = rows(), pages = Math.max(1, Math.ceil(all.length / S.size)); S.page = Math.min(S.page, pages);
       const s = (S.page - 1) * S.size, page = all.slice(s, s + S.size);
       document.querySelectorAll('#cols th').forEach(th => th.setAttribute('aria-sort', th.dataset.k === S.sort ? (S.dir > 0 ? 'ascending' : 'descending') : 'none'));
