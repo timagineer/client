@@ -1388,6 +1388,23 @@
       display: block;
     }
 
+    .classic-v2-sup {
+      all: unset;
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--n50);
+      cursor: pointer;
+      transition: color 0.1s;
+      z-index: 1;
+    }
+
+    .classic-v2-sup:hover {
+      color: var(--primary-30);
+    }
+
     .classic-overlay img {
       width: 100%;
       display: block;
@@ -1997,13 +2014,7 @@
       <main class="shell-main">
         <div class="classic-overlay" id="classicOverlay">
           <img src="prod.png" alt="Plus v1 Chart Room view">
-          <button class="btn btn-primary classic-back" onclick="showRedesigned()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5" />
-              <path d="m12 19-7-7 7-7" />
-            </svg>
-            Back to Plus v2
-          </button>
+          <button class="classic-v2-sup" onclick="showRedesigned()">+v2</button>
         </div>
         <div class="shell">
           <div class="card">
