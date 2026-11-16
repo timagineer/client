@@ -3406,17 +3406,20 @@
     $('q').oninput = e => { S.q = e.target.value.trim().toLowerCase(); S.page = 1; render() };
 
     function updateMeta() {
+      const PRACTICE = 'Therhappy';
       const now = new Date();
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const h = now.getHours(), m = String(now.getMinutes()).padStart(2, '0');
       const h12 = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
-      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate() + ' ' + h12 + ':' + m + ' ' + ampm;
-      const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
+      const timeStr = h12 + ':' + m + ' ' + ampm;
+      const off = now.getTimezoneOffset();
+      const tz = off === 300 ? ' EST' : off === 240 ? ' EDT' : '';
       const site = $('site') ? $('site').value : '';
-      const loc = site ? 'Therhappy at ' + site : 'Therhappy Associates';
+      const loc = site ? PRACTICE + ' at ' + site : PRACTICE + ' Associates';
       const el = $('topbarMeta');
-      if (el) el.textContent = dateStr + ' · ' + greeting + ', James · ' + loc;
+      if (el) el.textContent = loc + ' · ' + dateStr + ' · ' + timeStr + tz;
     }
     setInterval(updateMeta, 60000);
 
