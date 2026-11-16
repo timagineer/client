@@ -19,7 +19,7 @@
 - [x] folder texts baseline align rest (or closer/shim up)
 - [x] Chart Room <sup>+v1 ᐧ +v2,</sup> - Plus v1/v2 toggle
 - [x] better/more realistic mock data + pressure testing https://anthonyhobday.com/blog/20260112
-- [ ] discuss stick table header
+- [x] sticky table header
+---
 - [ ] mock font size tests
-
 - [ ] (uifont app (separate project) mini/card table shows >=n=2 borders, badges, bts, >=2 font weights, surfaces)
