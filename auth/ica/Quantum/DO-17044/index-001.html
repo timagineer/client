@@ -1300,6 +1300,63 @@
       font-size: 13px;
       color: var(--neutral-50);
     }
+
+    /* ── Message Topics ── */
+    .topics-header {
+      display: grid;
+      grid-template-columns: 44px 110px 1fr 200px;
+      gap: 12px;
+      padding: 6px 0 8px;
+      border-bottom: 2px solid var(--neutral-85);
+      align-items: end;
+    }
+    .col-label { font-size: 11px; font-weight: 600; color: var(--neutral-50); text-transform: uppercase; letter-spacing: 0.05em; }
+    .col-hint { font-size: 10px; font-weight: 400; color: var(--neutral-60); text-transform: none; letter-spacing: 0; display: block; margin-top: 2px; }
+
+    .topics-list { display: flex; flex-direction: column; }
+    .topic-row {
+      display: grid;
+      grid-template-columns: 44px 110px 1fr 200px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--neutral-90);
+      transition: opacity 0.15s;
+    }
+    .topic-row:last-child { border-bottom: none; }
+    .topic-row.disabled { opacity: 0.55; }
+    .topic-name { font-size: 13px; font-weight: 500; color: var(--neutral-20); }
+
+    /* Toggle */
+    .toggle-label { position: relative; display: inline-flex; cursor: pointer; user-select: none; }
+    .topic-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      width: 36px; height: 20px; background: var(--neutral-75); border-radius: 10px;
+      transition: background 0.15s; position: relative; flex-shrink: 0;
+    }
+    .toggle-track::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; background: #fff; border-radius: 50%;
+      transition: transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .topic-toggle:checked + .toggle-track { background: hsl(130,55%,42%); }
+    .topic-toggle:checked + .toggle-track::after { transform: translateX(16px); }
+
+    .topic-display-name input { width: 100%; }
+    .staff-role { font-size: 10px; color: var(--neutral-50); margin-left: 4px; }
+
+    /* Fallback */
+    .fallback-section {
+      margin-top: 16px; padding: 12px 14px; background: var(--neutral-95);
+      border: 1px solid var(--neutral-85); border-radius: 6px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .fallback-label { font-size: 12px; color: var(--neutral-30); white-space: nowrap; }
+    .fallback-select { width: auto; }
+    .fallback-hint { font-size: 11px; color: var(--neutral-55); }
+
+    .form-actions { margin-top: 20px; display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--neutral-90); }
+    .req { color: hsl(0,65%,50%); margin-left: 2px; }
   </style>
 </head>
 
@@ -1385,104 +1442,197 @@
           <div class="settings-main">
             <div class="content-card">
               <div class="page-header">
-                <h1 class="page-title">Billing Service Combinations</h1>
-                <div class="table-search">
-                  <span class="table-search-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="11" cy="11" r="8" />
-                      <path d="m21 21-4.3-4.3" />
-                    </svg>
-                  </span>
-                  <input type="text" class="table-search-input" id="tableSearch" placeholder="Search combinations...">
+                <h1 class="page-title">Message Topics</h1>
+              </div>
+              <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
+
+              <div class="topics-header">
+                <span></span>
+                <span class="col-label">Topic</span>
+                <span class="col-label">Recipient <span class="req">*</span> <span class="col-hint">Required when enabled</span></span>
+                <span class="col-label">Display name <span class="col-hint">Optional — what patients see</span></span>
+              </div>
+
+              <div class="topics-list">
+                
+          <div class="topic-row" data-topic="medical">
+            <label class="toggle-label" title="Enabled">
+              <input type="checkbox" class="topic-toggle" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <div class="topic-name">Medical</div>
+            <div class="multi-wrap topic-recipients">
+              <button type="button" class="multi-trigger" data-multi="topic-medical">
+                <span class="multi-trigger-text">Sarah Rogers, James Morningstar</span>
+                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </button>
+              <div class="multi-dropdown" data-for="topic-medical">
+                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
+                <div class="multi-options">
+                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" checked/> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" checked/> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+
                 </div>
               </div>
-              <p class="page-desc">Define combinations to auto-populate Units and POS Code on claims. Each entry needs Units or POS. Blank fields match any value.</p>
+            </div>
+            <div class="topic-display-name">
+              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Clinical Team">
+            </div>
+          </div>
+          <div class="topic-row" data-topic="appointment">
+            <label class="toggle-label" title="Enabled">
+              <input type="checkbox" class="topic-toggle" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <div class="topic-name">Appointment</div>
+            <div class="multi-wrap topic-recipients">
+              <button type="button" class="multi-trigger" data-multi="topic-appointment">
+                <span class="multi-trigger-text">Angela Martinez, Front Desk</span>
+                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </button>
+              <div class="multi-dropdown" data-for="topic-appointment">
+                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
+                <div class="multi-options">
+                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" checked/> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" checked/> Front Desk <span class="staff-role">Staff</span></label>
 
-              <div class="combo-table-wrap">
-                <table class="combo-table">
-                  <colgroup>
-                    <col class="col-clinician">
-                    <col class="col-service">
-                    <col class="col-mod">
-                    <col class="col-mod">
-                    <col class="col-mod">
-                    <col class="col-mod">
-                    <col class="col-site">
-                    <col class="col-payer">
-                    <col class="col-from">
-                    <col class="col-to">
-                    <col class="col-units">
-                    <col class="col-pos">
-                    <col class="col-actions">
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th class="sortable" data-sort="clinician" onclick="sortTable('clinician')">Clinician <span style="color: hsl(0,65%,45%);">*</span><span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="sortable" data-sort="service" onclick="sortTable('service')">Service Code <span style="color: hsl(0,65%,45%);">*</span><span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th colspan="4" class="mod-group">Modifiers</th>
-                      <th class="sortable" data-sort="site" onclick="sortTable('site')">Site<span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="sortable" data-sort="payer" onclick="sortTable('payer')">Payer<span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="col-num sortable" data-sort="from" onclick="sortTable('from')">From<span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="col-num sortable" data-sort="to" onclick="sortTable('to')">To<span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="col-num sortable" data-sort="units" onclick="sortTable('units')">Units <span style="color: var(--neutral-50);">*</span><span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="col-num sortable" data-sort="pos" onclick="sortTable('pos')">POS <span style="color: var(--neutral-50);">*</span><span class="sort-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 16-4 4-4-4" />
-                            <path d="M17 20V4" />
-                            <path d="m3 8 4-4 4 4" />
-                            <path d="M7 4v16" />
-                          </svg></span></th>
-                      <th class="col-actions"><button class="btn-add" id="addBtn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14" />
-                            <path d="M12 5v14" />
-                          </svg> Add</button></th>
-                    </tr>
-                  </thead>
-                  <tbody id="comboRows"></tbody>
-                </table>
+                </div>
+              </div>
+            </div>
+            <div class="topic-display-name">
+              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Scheduling">
+            </div>
+          </div>
+          <div class="topic-row" data-topic="medication">
+            <label class="toggle-label" title="Enabled">
+              <input type="checkbox" class="topic-toggle" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <div class="topic-name">Medication</div>
+            <div class="multi-wrap topic-recipients">
+              <button type="button" class="multi-trigger" data-multi="topic-medication">
+                <span class="multi-trigger-text">Priya Patel</span>
+                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </button>
+              <div class="multi-dropdown" data-for="topic-medication">
+                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
+                <div class="multi-options">
+                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" checked/> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+
+                </div>
+              </div>
+            </div>
+            <div class="topic-display-name">
+              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
+            </div>
+          </div>
+          <div class="topic-row disabled" data-topic="billing">
+            <label class="toggle-label" title="Disabled">
+              <input type="checkbox" class="topic-toggle" >
+              <span class="toggle-track"></span>
+            </label>
+            <div class="topic-name">Billing</div>
+            <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4">
+              <button type="button" class="multi-trigger" data-multi="topic-billing">
+                <span class="multi-trigger-text">Choose recipient…</span>
+                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </button>
+              <div class="multi-dropdown" data-for="topic-billing">
+                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
+                <div class="multi-options">
+                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+
+                </div>
+              </div>
+            </div>
+            <div class="topic-display-name" style="pointer-events:none;opacity:0.4">
+              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
+            </div>
+          </div>
+          <div class="topic-row disabled" data-topic="other">
+            <label class="toggle-label" title="Disabled">
+              <input type="checkbox" class="topic-toggle" >
+              <span class="toggle-track"></span>
+            </label>
+            <div class="topic-name">Other</div>
+            <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4">
+              <button type="button" class="multi-trigger" data-multi="topic-other">
+                <span class="multi-trigger-text">Choose recipient…</span>
+                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+              </button>
+              <div class="multi-dropdown" data-for="topic-other">
+                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
+                <div class="multi-options">
+                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+
+                </div>
+              </div>
+            </div>
+            <div class="topic-display-name" style="pointer-events:none;opacity:0.4">
+              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
+            </div>
+          </div>
               </div>
 
-              <div id="statusMsg" class="status-msg" role="status"></div>
+              <div class="fallback-section">
+                <span class="fallback-label">When no recipient can be resolved, route to</span>
+                <select class="cell-select fallback-select">
+                  <option value="sarah-rogers" >Sarah Rogers (Principal Clinician)</option>
+<option value="james-morning" >James Morningstar (Clinician)</option>
+<option value="rachel-boyles" >Rachel Boyles (Clinician)</option>
+<option value="priya-patel" >Priya Patel (Clinician)</option>
+<option value="david-crowley" >David Crowley (Clinician)</option>
+<option value="lisa-barnard" >Lisa Barnard (Clinician)</option>
+<option value="tom-lindell" >Tom Lindell (Clinician)</option>
+<option value="angela-martinez" selected>Angela Martinez (Admin)</option>
+<option value="front-desk" >Front Desk (Staff)</option>
 
-              <div class="table-footer">
-                <div class="pagination"></div>
-                <span id="rowCount"></span>
+                </select>
+                <span class="fallback-hint">Fallback if a topic's recipient is deactivated or unresolvable.</span>
               </div>
 
+              <div class="form-actions">
+                <button class="btn btn-primary" id="saveTopics">Save changes</button>
+                <span class="status-msg" id="statusMsg"></span>
+              </div>
             </div>
           </div>
         </div>
@@ -1514,695 +1664,93 @@
 
     updateMeta();
   </script>
-  <script>
+    <script>
+    const $ = id => document.getElementById(id);
 
-    // === SVG Icons ===
-    const icons = {
-      pencil: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>`,
-      save: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>`,
-      trash: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
-      x: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`
-    };
-
-    // === Data ===
-    const clinicians = ['All clinicians', 'Danelyn Guatno', 'Jana Atallah', 'Janina Russian', 'John Doe', 'John Smith', 'Alex Cabrera'];
-    const serviceCodes = [
-      '90791 - Psychiatric Diagnostic Evaluation',
-      '90832 - Psychotherapy, 30 min',
-      '90834 - Psychotherapy, 45 min',
-      '90837 - Psychotherapy, 60 min',
-      '99214 - Office Visit'
-    ];
-    const modifiers = ['22', '25', '26', '51', '52', '59', '76', '77', '95', 'GT', 'HO', 'XE', 'XP', 'XS', 'XU'];
-    const sites = ['All Sites', 'Main Office', 'Telehealth', 'North Clinic'];
-    const payers = ['All payers', 'Aetna', 'Anthem', 'Blue Cross', 'Cigna', 'UnitedHealthcare', 'Medicare'];
-    const posCodes = [
-      { code: '', label: '–' },
-      { code: '02', label: '02 - Telehealth' },
-      { code: '03', label: '03 - School' },
-      { code: '04', label: '04 - Homeless Shelter' },
-      { code: '10', label: '10 - Telehealth in Home' },
-      { code: '11', label: '11 - Office' },
-      { code: '12', label: '12 - Home' },
-      { code: '13', label: '13 - Assisted Living' },
-      { code: '14', label: '14 - Group Home' },
-      { code: '18', label: '18 - Place of Employment' },
-      { code: '19', label: '19 - Off Campus Outpatient' },
-      { code: '20', label: '20 - Urgent Care' },
-      { code: '21', label: '21 - Inpatient Hospital' },
-      { code: '22', label: '22 - On Campus Outpatient' },
-      { code: '23', label: '23 - Emergency Room' },
-      { code: '31', label: '31 - Skilled Nursing' },
-      { code: '32', label: '32 - Nursing Facility' },
-      { code: '33', label: '33 - Custodial Care' },
-      { code: '49', label: '49 - Independent Clinic' },
-      { code: '50', label: '50 - FQHC' },
-      { code: '52', label: '52 - Psych Facility Partial' },
-      { code: '53', label: '53 - CMHC' },
-      { code: '55', label: '55 - Residential Substance' },
-      { code: '56', label: '56 - Psych Residential' },
-      { code: '57', label: '57 - Non-Res Substance' },
-      { code: '99', label: '99 - Other' }
-    ];
-
-    let data = [
-      { id: 1, clinician: ['Danelyn Guatno'], service: serviceCodes[2], mods: ['95', '', '', ''], site: 'Telehealth', payers: ['Aetna'], from: '38', to: '52', units: '1', pos: '02' },
-      { id: 2, clinician: ['Jana Atallah'], service: serviceCodes[3], mods: ['95', '', '', ''], site: 'Telehealth', payers: ['UnitedHealthcare'], from: '53', to: '99', units: '1', pos: '10' },
-      { id: 3, clinician: ['All clinicians'], service: serviceCodes[1], mods: ['', '', '', ''], site: 'All Sites', payers: ['All payers'], from: '16', to: '37', units: '1', pos: '' },
-      { id: 4, clinician: ['John Doe'], service: serviceCodes[4], mods: ['', '', '', ''], site: 'Main Office', payers: ['Aetna', 'Cigna'], from: '30', to: '39', units: '1', pos: '11' },
-      { id: 5, clinician: ['Alex Cabrera'], service: serviceCodes[0], mods: ['', '', '', ''], site: 'North Clinic', payers: ['Blue Cross'], from: '', to: '', units: '1', pos: '11' },
-      { id: 6, clinician: ['Janina Russian'], service: serviceCodes[2], mods: ['GT', '', '', ''], site: 'Telehealth', payers: ['Medicare'], from: '38', to: '52', units: '1', pos: '02' },
-      { id: 7, clinician: ['John Smith'], service: serviceCodes[3], mods: ['95', '', '', ''], site: 'Telehealth', payers: ['Anthem', 'Cigna'], from: '53', to: '99', units: '1', pos: '10' },
-      { id: 8, clinician: ['All clinicians'], service: serviceCodes[4], mods: ['', '', '', ''], site: 'Main Office', payers: ['All payers'], from: '30', to: '39', units: '1', pos: '11' },
-      { id: 9, clinician: ['Danelyn Guatno'], service: serviceCodes[1], mods: ['95', '', '', ''], site: 'Telehealth', payers: ['Aetna', 'Anthem'], from: '16', to: '37', units: '1', pos: '02' },
-      { id: 10, clinician: ['Jana Atallah'], service: serviceCodes[0], mods: ['', '', '', ''], site: 'North Clinic', payers: ['Medicare'], from: '', to: '', units: '1', pos: '11' },
-      { id: 11, clinician: ['John Doe'], service: serviceCodes[2], mods: ['GT', '', '', ''], site: 'Telehealth', payers: ['Medicare'], from: '38', to: '52', units: '1', pos: '02' },
-      { id: 12, clinician: ['Alex Cabrera'], service: serviceCodes[3], mods: ['95', '', '', ''], site: 'Telehealth', payers: ['Blue Cross', 'Cigna'], from: '53', to: '99', units: '1', pos: '10' }
-    ];
-
-    let nextId = 13;
-    let editingId = null;
-
-    const tbody = document.getElementById('comboRows');
-    const statusEl = document.getElementById('statusMsg');
-    const countEl = document.getElementById('rowCount');
-    const searchInput = document.getElementById('tableSearch');
-    const pageSizeSelect = document.getElementById('pageSizeSelect');
-    const paginationEl = document.querySelector('.pagination');
-
-    let searchQuery = '';
-    let currentPage = 1;
-    let pageSize = 10;
-    let sortColumn = null;
-    let sortDirection = 'asc';
-
-    // === Helpers ===
-    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-    function selectOpts(items, selected, placeholder = '–') {
-      return `<option value="">${placeholder}</option>` + items.map(i => `<option value="${esc(i)}" ${i === selected ? 'selected' : ''}>${esc(i)}</option>`).join('');
+    // ── Topbar meta ──
+    function updateMeta() {
+      const PRACTICE = 'Therhappy';
+      const now = new Date();
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+      const h12 = h%12||12, ampm = h>=12?'PM':'AM';
+      const dateStr = days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
+      const timeStr = h12+':'+m+' '+ampm;
+      const off = now.getTimezoneOffset();
+      const tz = off===300?' EST':off===240?' EDT':'';
+      const el = $('topbarMeta');
+      if(el) el.textContent = PRACTICE+' Associates \u00b7 '+dateStr+' \u00b7 '+timeStr+tz;
     }
+    setInterval(updateMeta, 60000);
+    updateMeta();
 
-    function posOpts(selected) {
-      return posCodes.map(p => `<option value="${p.code}" ${p.code === selected ? 'selected' : ''}>${esc(p.label)}</option>`).join('');
-    }
-
-    function formatClinician(arr) {
-      if (!arr.length) return 'Select…';
-      if (arr.includes('All clinicians')) return 'All clinicians';
-      return arr.join(', ');
-    }
-
-    function formatPayers(arr) {
-      if (!arr.length) return '–';
-      if (arr.includes('All payers')) return 'All payers';
-      return arr.join(', ');
-    }
-
-    function formatPos(code) {
-      if (!code) return '';
-      const pos = posCodes.find(p => p.code === code);
-      return pos ? pos.code : code;
-    }
-
-    function posDropdownOpts(selected) {
-      return posCodes.map(p =>
-        `<div class="pos-option${p.code === selected ? ' selected' : ''}" data-value="${p.code}">${esc(p.label) || ''}</div>`
-      ).join('');
-    }
-
-    // === Rendering ===
-    function renderRow(r) {
-      const isEditing = r.id === editingId;
-
-      if (!isEditing) {
-        return `<tr data-id="${r.id}">
-      <td><span class="cell-value">${esc(formatClinician(r.clinician))}</span></td>
-      <td><span class="cell-value">${esc(r.service)}</span></td>
-      <td class="col-mod"><span class="cell-value ${r.mods[0] ? '' : 'muted'}">${r.mods[0] || '–'}</span></td>
-      <td class="col-mod"><span class="cell-value ${r.mods[1] ? '' : 'muted'}">${r.mods[1] || '–'}</span></td>
-      <td class="col-mod"><span class="cell-value ${r.mods[2] ? '' : 'muted'}">${r.mods[2] || '–'}</span></td>
-      <td class="col-mod"><span class="cell-value ${r.mods[3] ? '' : 'muted'}">${r.mods[3] || '–'}</span></td>
-      <td><span class="cell-value">${r.site || 'All Sites'}</span></td>
-      <td><span class="cell-value">${esc(formatPayers(r.payers))}</span></td>
-      <td class="col-num"><span class="cell-value ${r.from ? '' : 'muted'}">${r.from || '–'}</span></td>
-      <td class="col-num"><span class="cell-value ${r.to ? '' : 'muted'}">${r.to || '–'}</span></td>
-      <td class="col-num"><span class="cell-value ${r.units ? '' : 'muted'}">${r.units || '–'}</span></td>
-      <td class="col-num"><span class="cell-value ${r.pos ? '' : 'muted'}">${r.pos || '–'}</span></td>
-      <td class="col-actions">
-        <div class="actions-cell">
-          <button class="icon-btn" data-edit="${r.id}" data-tooltip="Edit"><span class="sr-only">Edit</span>${icons.pencil}</button>
-          <button class="icon-btn danger" data-delete="${r.id}" data-tooltip="Delete"><span class="sr-only">Delete</span>${icons.trash}</button>
-        </div>
-      </td>
-    </tr>`;
-      }
-
-      // Edit mode
-      return `<tr data-id="${r.id}" class="editing">
-    <td>
-      <div class="multi-wrap">
-        <button type="button" class="multi-trigger" data-multi="clinician" data-id="${r.id}">
-          <span class="multi-trigger-text">${esc(formatClinician(r.clinician))}</span>
-          <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-        </button>
-        <div class="multi-dropdown" data-for="clinician-${r.id}">
-          <div class="multi-search"><input type="text" placeholder="Search clinicians..." /></div>
-          <div class="multi-options">
-            ${clinicians.map(c => `<label class="multi-option"><input type="checkbox" value="${esc(c)}" ${r.clinician.includes(c) ? 'checked' : ''} /> ${esc(c)}</label>`).join('')}
-          </div>
-        </div>
-      </div>
-    </td>
-    <td><select class="cell-select" data-field="service">${selectOpts(serviceCodes, r.service, 'Select...')}</select></td>
-    <td class="col-mod"><select class="cell-select mod-select" data-mod="0">${selectOpts(modifiers, r.mods[0], '–')}</select></td>
-    <td class="col-mod"><select class="cell-select mod-select" data-mod="1">${selectOpts(modifiers, r.mods[1], '–')}</select></td>
-    <td class="col-mod"><select class="cell-select mod-select" data-mod="2">${selectOpts(modifiers, r.mods[2], '–')}</select></td>
-    <td class="col-mod"><select class="cell-select mod-select" data-mod="3">${selectOpts(modifiers, r.mods[3], '–')}</select></td>
-    <td><select class="cell-select" data-field="site">${selectOpts(sites, r.site, '–')}</select></td>
-    <td>
-      <div class="multi-wrap">
-        <button type="button" class="multi-trigger" data-multi="payers" data-id="${r.id}">
-          <span class="multi-trigger-text">${esc(formatPayers(r.payers))}</span>
-          <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-        </button>
-        <div class="multi-dropdown" data-for="payers-${r.id}">
-          <div class="multi-search"><input type="text" placeholder="Search payers..." /></div>
-          <div class="multi-options">
-            ${payers.map(p => `<label class="multi-option"><input type="checkbox" value="${esc(p)}" ${r.payers.includes(p) ? 'checked' : ''} /> ${esc(p)}</label>`).join('')}
-          </div>
-        </div>
-      </div>
-    </td>
-    <td class="col-num"><input type="number" class="cell-input num" data-field="from" value="${esc(r.from)}" min="1" max="99" /></td>
-    <td class="col-num"><input type="number" class="cell-input num" data-field="to" value="${esc(r.to)}" min="1" max="99" /></td>
-    <td class="col-num"><input type="number" class="cell-input num" data-field="units" value="${esc(r.units)}" min="0" max="99" /></td>
-    <td class="col-num"><select class="cell-select pos-select" data-field="pos">${posOpts(r.pos)}</select></td>
-    <td class="col-actions">
-      <div class="actions-cell">
-        <button class="icon-btn" data-save="${r.id}" data-tooltip="Save"><span class="sr-only">Save</span>${icons.save}</button>
-        <button class="icon-btn danger" data-cancel="${r.id}" data-tooltip="Cancel"><span class="sr-only">Cancel</span>${icons.x}</button>
-      </div>
-    </td>
-  </tr>`;
-    }
-
-    function getFilteredData() {
-      if (!searchQuery) return data;
-      const q = searchQuery.toLowerCase();
-      return data.filter(r => {
-        const clinician = formatClinician(r.clinician).toLowerCase();
-        const service = r.service.toLowerCase();
-        const site = (r.site || '').toLowerCase();
-        const payers = formatPayers(r.payers).toLowerCase();
-        const mods = r.mods.join(' ').toLowerCase();
-        const pos = r.pos || '';
-        const from = r.from || '';
-        const to = r.to || '';
-        return clinician.includes(q) || service.includes(q) || site.includes(q) ||
-          payers.includes(q) || mods.includes(q) || pos.includes(q) ||
-          from.includes(q) || to.includes(q);
-      });
-    }
-
-    function getSortedData(filtered) {
-      if (!sortColumn) return filtered;
-      return [...filtered].sort((a, b) => {
-        let aVal, bVal;
-        switch (sortColumn) {
-          case 'clinician':
-            aVal = formatClinician(a.clinician).toLowerCase();
-            bVal = formatClinician(b.clinician).toLowerCase();
-            break;
-          case 'service':
-            aVal = a.service.toLowerCase();
-            bVal = b.service.toLowerCase();
-            break;
-          case 'site':
-            aVal = (a.site || '').toLowerCase();
-            bVal = (b.site || '').toLowerCase();
-            break;
-          case 'payer':
-            aVal = formatPayers(a.payers).toLowerCase();
-            bVal = formatPayers(b.payers).toLowerCase();
-            break;
-          case 'from':
-            aVal = a.from ? +a.from : -Infinity;
-            bVal = b.from ? +b.from : -Infinity;
-            break;
-          case 'to':
-            aVal = a.to ? +a.to : -Infinity;
-            bVal = b.to ? +b.to : -Infinity;
-            break;
-          case 'units':
-            aVal = a.units ? +a.units : -Infinity;
-            bVal = b.units ? +b.units : -Infinity;
-            break;
-          case 'pos':
-            aVal = a.pos || '';
-            bVal = b.pos || '';
-            break;
-          default:
-            return 0;
-        }
-        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
-    function sortTable(column) {
-      if (sortColumn === column) {
-        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortColumn = column;
-        sortDirection = 'asc';
-      }
-      updateSortHeaders();
-      render();
-    }
-
-    function updateSortHeaders() {
-      document.querySelectorAll('.combo-table th.sortable').forEach(th => {
-        th.classList.remove('sorted', 'asc', 'desc');
-        if (th.dataset.sort === sortColumn) {
-          th.classList.add('sorted', sortDirection);
+    // ── Toggle behavior ──
+    document.querySelectorAll('.topic-toggle').forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        const row = this.closest('.topic-row');
+        const recipients = row.querySelector('.topic-recipients');
+        const dn = row.querySelector('.topic-display-name');
+        if (this.checked) {
+          row.classList.remove('disabled');
+          recipients.style.pointerEvents = '';
+          recipients.style.opacity = '';
+          dn.style.pointerEvents = '';
+          dn.style.opacity = '';
+        } else {
+          row.classList.add('disabled');
+          recipients.style.pointerEvents = 'none';
+          recipients.style.opacity = '0.4';
+          dn.style.pointerEvents = 'none';
+          dn.style.opacity = '0.4';
         }
       });
-    }
+    });
 
-    function getPagedData(filtered) {
-      const start = (currentPage - 1) * pageSize;
-      const end = start + pageSize;
-      return filtered.slice(start, end);
-    }
-
-    function getTotalPages(filtered) {
-      return Math.ceil(filtered.length / pageSize) || 1;
-    }
-
-    function render() {
-      const filtered = getFilteredData();
-      const sorted = getSortedData(filtered);
-      const totalPages = getTotalPages(sorted);
-
-      // Clamp current page
-      if (currentPage > totalPages) currentPage = totalPages;
-      if (currentPage < 1) currentPage = 1;
-
-      const paged = getPagedData(sorted);
-
-      // Empty states
-      if (data.length === 0) {
-        // No data at all
-        tbody.innerHTML = `<tr><td colspan="13" class="empty-state">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v5.6"/><path d="m14.305 19.53.923-.382"/><path d="M15 3v7.6"/><path d="m15.229 16.852-.924-.383"/><path d="m16.852 15.228-.383-.923"/><path d="m16.852 20.772-.383.924"/><path d="m19.148 15.228.383-.923"/><path d="m19.53 21.696-.382-.924"/><path d="m20.773 16.852.922-.383"/><path d="m20.773 19.148.922.383"/><path d="M9 3v18"/><circle cx="18" cy="18" r="3"/></svg>
-        </div>
-        <div class="empty-state-title">No billing combinations configured</div>
-        <div class="empty-state-message">Click Add to get started.</div>
-      </td></tr>`;
-      } else if (sorted.length === 0) {
-        // No search results
-        tbody.innerHTML = `<tr><td colspan="13" class="empty-state">
-        <div class="empty-state-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        </div>
-        <div class="empty-state-title">No combinations match your search</div>
-      </td></tr>`;
-      } else {
-        tbody.innerHTML = paged.map(renderRow).join('');
-      }
-
-      // Update count
-      const start = (currentPage - 1) * pageSize + 1;
-      const end = Math.min(currentPage * pageSize, sorted.length);
-      countEl.textContent = sorted.length > 0
-        ? `${start} – ${end} of ${sorted.length} items`
-        : '0 items';
-
-      renderPagination(sorted.length, totalPages);
-      wireEvents();
-    }
-
-    function renderPagination(totalItems, totalPages) {
-      // Build page number buttons
-      let pageButtons = '';
-      for (let i = 1; i <= totalPages; i++) {
-        pageButtons += `<button class="page-btn${i === currentPage ? ' active' : ''}" data-page="${i}">${i}</button>`;
-      }
-
-      paginationEl.innerHTML = `
-      <button class="page-btn" data-page="first" ${currentPage === 1 ? 'disabled' : ''} title="First page">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 18-6-6 6-6"/><path d="M7 6v12"/></svg>
-      </button>
-      <button class="page-btn" data-page="prev" ${currentPage === 1 ? 'disabled' : ''} title="Previous page">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      ${pageButtons}
-      <button class="page-btn" data-page="next" ${currentPage === totalPages ? 'disabled' : ''} title="Next page">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-      <button class="page-btn" data-page="last" ${currentPage === totalPages ? 'disabled' : ''} title="Last page">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 18 6-6-6-6"/><path d="M17 6v12"/></svg>
-      </button>
-      <select class="page-size-select" id="pageSizeSelect">
-        <option value="10" ${pageSize === 10 ? 'selected' : ''}>10</option>
-        <option value="25" ${pageSize === 25 ? 'selected' : ''}>25</option>
-        <option value="50" ${pageSize === 50 ? 'selected' : ''}>50</option>
-      </select>
-      <span class="page-size-label">items per page</span>
-    `;
-
-      // Wire pagination events
-      paginationEl.querySelectorAll('[data-page]').forEach(btn => {
-        btn.onclick = () => {
-          const p = btn.dataset.page;
-          if (p === 'first') currentPage = 1;
-          else if (p === 'prev') currentPage = Math.max(1, currentPage - 1);
-          else if (p === 'next') currentPage = Math.min(totalPages, currentPage + 1);
-          else if (p === 'last') currentPage = totalPages;
-          else currentPage = +p;
-          render();
-        };
-      });
-
-      // Wire page size change
-      paginationEl.querySelector('.page-size-select').onchange = (e) => {
-        pageSize = +e.target.value;
-        currentPage = 1;
-        render();
-      };
-    }
-
-    // === Event Wiring ===
-    function wireEvents() {
-      // Edit buttons
-      tbody.querySelectorAll('[data-edit]').forEach(btn => {
-        btn.onclick = () => {
-          if (editingId !== null) {
-            showStatus('Save or cancel the current row first.', 'error');
-            return;
-          }
-          editingId = +btn.dataset.edit;
-          clearStatus();
-          render();
-        };
-      });
-
-      // Delete buttons
-      tbody.querySelectorAll('[data-delete]').forEach(btn => {
-        btn.onclick = () => {
-          data = data.filter(r => r.id !== +btn.dataset.delete);
-          if (editingId === +btn.dataset.delete) editingId = null;
-          render();
-        };
-      });
-
-      // Save buttons
-      tbody.querySelectorAll('[data-save]').forEach(btn => {
-        btn.onclick = () => saveRow(+btn.dataset.save);
-      });
-
-      // Cancel buttons
-      tbody.querySelectorAll('[data-cancel]').forEach(btn => {
-        btn.onclick = () => {
-          clearErrors();
-          const row = data.find(r => r.id === +btn.dataset.cancel);
-          if (row && row.__draft) {
-            data = data.filter(r => r.id !== row.id);
-          }
-          editingId = null;
-          clearStatus();
-          render();
-        };
-      });
-
-      // Field changes
-      tbody.querySelectorAll('[data-field]').forEach(el => {
-        el.onchange = () => {
-          el.classList.remove('error');
-          const row = data.find(r => r.id === editingId);
-          if (row) row[el.dataset.field] = el.value;
-        };
-      });
-
-      // Modifier changes
-      tbody.querySelectorAll('[data-mod]').forEach(el => {
-        el.onchange = () => {
-          const row = data.find(r => r.id === editingId);
-          if (row) row.mods[+el.dataset.mod] = el.value;
-        };
-      });
-
-      // Multi-select triggers
-      tbody.querySelectorAll('.multi-trigger').forEach(btn => {
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          btn.classList.remove('error');
-          const dropdown = btn.nextElementSibling;
-          const wasOpen = dropdown.classList.contains('open');
-          closeAllDropdowns();
-          if (!wasOpen) dropdown.classList.add('open');
-        };
-      });
-
-      // Multi-select search
-      tbody.querySelectorAll('.multi-search input').forEach(inp => {
-        inp.oninput = () => {
-          const q = inp.value.toLowerCase();
-          inp.closest('.multi-dropdown').querySelectorAll('.multi-option').forEach(opt => {
-            opt.style.display = opt.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
-          });
-        };
-      });
-
-      // Multi-select checkboxes
-      tbody.querySelectorAll('.multi-option input[type="checkbox"]').forEach(cb => {
-        cb.onchange = () => {
-          const dropdown = cb.closest('.multi-dropdown');
-          const forAttr = dropdown.dataset.for;
-          const [field, id] = forAttr.split('-');
-          const row = data.find(r => r.id === +id);
-          if (!row) return;
-
-          const allOption = field === 'clinician' ? 'All clinicians' : 'All payers';
-          let selected = [...dropdown.querySelectorAll('input[type="checkbox"]:checked')].map(x => x.value);
-
-          // "All" logic
-          if (cb.value === allOption && cb.checked) {
-            selected = [allOption];
-          } else if (cb.checked) {
-            selected = selected.filter(x => x !== allOption);
-          }
-
-          row[field === 'clinician' ? 'clinician' : 'payers'] = selected;
-          render();
-
-          // Re-open dropdown after render
-          const newDropdown = tbody.querySelector(`[data-for="${forAttr}"]`);
-          if (newDropdown) newDropdown.classList.add('open');
-        };
-      });
-
-      // POS dropdown triggers
-      tbody.querySelectorAll('.pos-trigger').forEach(btn => {
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          const dropdown = btn.nextElementSibling;
-          const wasOpen = dropdown.classList.contains('open');
-          closeAllDropdowns();
-          if (!wasOpen) dropdown.classList.add('open');
-        };
-      });
-
-      // POS dropdown options
-      tbody.querySelectorAll('.pos-option').forEach(opt => {
-        opt.onclick = (e) => {
-          e.stopPropagation();
-          const dropdown = opt.closest('.pos-dropdown');
-          const forAttr = dropdown.dataset.for;
-          const id = +forAttr.split('-')[1];
-          const row = data.find(r => r.id === id);
-          if (!row) return;
-
-          row.pos = opt.dataset.value;
-          closeAllDropdowns();
-          render();
-        };
-      });
-    }
-
+    // ── Multi-dropdown ──
     function closeAllDropdowns() {
-      document.querySelectorAll('.multi-dropdown.open, .pos-dropdown.open').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.multi-dropdown.open').forEach(d => d.classList.remove('open'));
     }
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.multi-wrap') && !e.target.closest('.pos-wrap')) closeAllDropdowns();
+    document.querySelectorAll('.multi-trigger').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const dd = btn.nextElementSibling;
+        const wasOpen = dd.classList.contains('open');
+        closeAllDropdowns();
+        if (!wasOpen) { dd.classList.add('open'); dd.querySelector('input[type=text]')?.focus(); }
+      });
     });
 
-    // === Validation & Save ===
-    function clearErrors() {
-      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-    }
-
-    // Check if two duration ranges overlap (exclusive of endpoints)
-    function rangesOverlap(from1, to1, from2, to2) {
-      // Ranges overlap if one starts before the other ends
-      return from1 < to2 && to1 > from2;
-    }
-
-    // Check if modifiers arrays match (same values in same positions)
-    function modsMatch(mods1, mods2) {
-      return mods1.every((m, i) => m === mods2[i]);
-    }
-
-    // Check for duration overlap with existing combinations
-    function checkDurationOverlap(row) {
-      // Skip if no duration defined
-      if (row.from === '' || row.to === '') return null;
-
-      const rowFrom = +row.from;
-      const rowTo = +row.to;
-
-      // Find other rows with same clinician + service + modifiers
-      for (const other of data) {
-        if (other.id === row.id) continue; // Skip self
-        if (other.from === '' || other.to === '') continue; // Skip rows without duration
-
-        // Check if clinician arrays have any overlap
-        const clinicianOverlap = row.clinician.some(c => other.clinician.includes(c));
-        if (!clinicianOverlap) continue;
-
-        // Check service code match
-        if (row.service !== other.service) continue;
-
-        // Check modifiers match
-        if (!modsMatch(row.mods, other.mods)) continue;
-
-        // Same combination — check for duration overlap
-        const otherFrom = +other.from;
-        const otherTo = +other.to;
-
-        if (rangesOverlap(rowFrom, rowTo, otherFrom, otherTo)) {
-          const overlappingClinician = row.clinician.find(c => other.clinician.includes(c));
-          return { clinician: overlappingClinician, service: row.service, from: other.from, to: other.to };
-        }
+    document.querySelectorAll('.multi-dropdown').forEach(dd => {
+      const search = dd.querySelector('input[type=text]');
+      if (search) {
+        search.addEventListener('input', () => {
+          const q = search.value.toLowerCase();
+          dd.querySelectorAll('.multi-option').forEach(opt => {
+            opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+          });
+        });
       }
-      return null;
-    }
-
-    function saveRow(id) {
-      const row = data.find(r => r.id === id);
-      if (!row) return;
-
-      clearErrors();
-      const editingRow = tbody.querySelector(`tr[data-id="${id}"]`);
-
-      // Required: clinician
-      if (!row.clinician.length) {
-        showStatus('Clinician is required.', 'error');
-        const trigger = editingRow?.querySelector('.multi-trigger[data-multi="clinician"]');
-        if (trigger) trigger.classList.add('error');
-        return;
-      }
-
-      // Required: service code
-      if (!row.service) {
-        showStatus('Service Code is required.', 'error');
-        const select = editingRow?.querySelector('[data-field="service"]');
-        if (select) select.classList.add('error');
-        return;
-      }
-
-      // Duration: if one is set, both required
-      const hasFrom = row.from !== '';
-      const hasTo = row.to !== '';
-      if (hasFrom !== hasTo) {
-        showStatus('Duration requires both From and To values.', 'error');
-        return;
-      }
-      if (hasFrom && hasTo && row.from === row.to) {
-        showStatus('From and To must be different values.', 'error');
-        return;
-      }
-
-      // At least Units or POS required
-      if (!row.units && !row.pos) {
-        showStatus('Please enter Units, POS Code, or both.', 'error');
-        return;
-      }
-
-      // Check for duration overlap with same combination
-      const overlap = checkDurationOverlap(row);
-      if (overlap) {
-        showStatus(`Duration overlaps with existing ${overlap.service} (${overlap.from}–${overlap.to} min) for this combination.`, 'error');
-        const fromInput = editingRow?.querySelector('[data-field="from"]');
-        const toInput = editingRow?.querySelector('[data-field="to"]');
-        if (fromInput) fromInput.classList.add('error');
-        if (toInput) toInput.classList.add('error');
-        return;
-      }
-
-      delete row.__draft;
-      editingId = null;
-      clearErrors();
-      clearStatus();
-      render();
-    }
-
-    // === Add New ===
-    document.getElementById('addBtn').onclick = () => {
-      if (editingId !== null) {
-        showStatus('Save or cancel the current row first.', 'error');
-        return;
-      }
-      const newRow = {
-        id: nextId++,
-        clinician: [],
-        service: '',
-        mods: ['', '', '', ''],
-        site: '',
-        payers: [],
-        from: '',
-        to: '',
-        units: '',
-        pos: '',
-        __draft: true
-      };
-      data.unshift(newRow);
-      editingId = newRow.id;
-      currentPage = 1; // Go to first page where new row is
-      clearStatus();
-      render();
-      tbody.firstElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      // Focus clinician dropdown
-      setTimeout(() => {
-        const clinicianTrigger = tbody.querySelector('.multi-trigger[data-multi="clinician"]');
-        if (clinicianTrigger) clinicianTrigger.focus();
-      }, 50);
-    };
-
-    // === Status Messages ===
-    function showStatus(msg, type) {
-      statusEl.textContent = msg;
-      statusEl.className = 'status-msg ' + type;
-    }
-
-    function clearStatus() {
-      statusEl.textContent = '';
-      statusEl.className = 'status-msg';
-    }
-
-    // === Search ===
-    searchInput.addEventListener('input', () => {
-      searchQuery = searchInput.value.trim();
-      render();
+      dd.querySelectorAll('input[type=checkbox]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const trigger = dd.previousElementSibling;
+          const checked = [...dd.querySelectorAll('input[type=checkbox]:checked')].map(c => c.closest('.multi-option').textContent.trim().split('\n')[0].trim());
+          trigger.querySelector('.multi-trigger-text').textContent = checked.length ? checked.join(', ') : 'Choose recipient…';
+        });
+      });
+      dd.addEventListener('click', e => e.stopPropagation());
     });
 
-    // === Init ===
-    render();
+    document.addEventListener('click', closeAllDropdowns);
 
+    // ── Save ──
+    $('saveTopics')?.addEventListener('click', () => {
+      const msg = $('statusMsg');
+      msg.textContent = 'Changes saved.';
+      msg.style.color = 'hsl(130,55%,35%)';
+      setTimeout(() => { msg.textContent = ''; }, 3000);
+    });
   </script>
 </body>
 
