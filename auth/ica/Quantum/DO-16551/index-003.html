@@ -65,19 +65,19 @@
     .shell-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: var(--sp-2) var(--sp-4);
       background: #fff;
       border-bottom: 1px solid var(--border-light);
       height: 48px;
       flex-shrink: 0;
-      position: relative;
     }
 
     .shell-header-left {
-      flex: 1;
       display: flex;
       align-items: center;
       gap: 16px;
+      flex: 1;
     }
 
     .shell-header .wire-search {
@@ -85,11 +85,9 @@
     }
 
     .wire-header-right {
-      flex: 1;
       display: flex;
       gap: var(--sp-3);
       align-items: center;
-      justify-content: flex-end;
     }
 
     .shell-body {
@@ -1251,14 +1249,10 @@
     }
 
     .topbar-meta {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
       font-size: 12px;
       color: var(--neutral-40);
       white-space: nowrap;
       letter-spacing: 0.01em;
-      pointer-events: none;
     }
 
     .wire-meta-block {
@@ -2025,9 +2019,9 @@
           <div class="wire-logo-mark"></div>
           <div class="wire-logo-text"></div>
         </div>
+        <span class="topbar-meta" id="topbarMeta"></span>
       </div>
-      <span class="topbar-meta" id="topbarMeta"></span>
-      <div class="wire-search"></div>
+      <div class="wire-search" style="margin-left:auto"></div>
       <div class="wire-header-right">
         <div class="wire-icon"></div>
         <div class="wire-icon"></div>
