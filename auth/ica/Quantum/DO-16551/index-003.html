@@ -1378,20 +1378,25 @@
 
     .v1-sup {
       all: unset;
-      display: inline;
+      display: inline-flex;
+      align-items: center;
       font-size: 10px;
       font-weight: 600;
-      color: var(--n50);
+      color: #fff;
+      background: var(--primary-50);
+      padding: 1px 6px;
+      border-radius: 999px;
       cursor: pointer;
       vertical-align: super;
-      line-height: 0;
-      margin-left: 2px;
-      letter-spacing: 0;
-      transition: color 0.1s;
+      line-height: 1.4;
+      margin-left: 4px;
+      transition: background 0.1s;
+      letter-spacing: 0.02em;
     }
 
     .v1-sup:hover {
-      color: var(--primary-30);
+      color: #fff;
+      background: var(--primary-30);
     }
 
     .classic-overlay {
@@ -1409,19 +1414,25 @@
 
     .classic-v2-sup {
       all: unset;
+      display: inline-flex;
+      align-items: center;
       position: absolute;
-      top: 14px;
+      top: 12px;
       left: 16px;
       font-size: 10px;
       font-weight: 600;
-      color: var(--n50);
+      color: #fff;
+      background: var(--primary-50);
+      padding: 1px 6px;
+      border-radius: 999px;
       cursor: pointer;
-      transition: color 0.1s;
+      transition: background 0.1s;
+      letter-spacing: 0.02em;
       z-index: 1;
     }
 
     .classic-v2-sup:hover {
-      color: var(--primary-30);
+      background: var(--primary-30);
     }
 
     .classic-overlay img {
