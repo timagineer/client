@@ -1731,41 +1731,6 @@
       }
     }
 
-    /* Gradient fades for sticky edges */
-    td:nth-child(2)::after,
-    thead th:nth-child(2)::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 100%;
-      width: 24px;
-      height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    thead th::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 100%;
-      width: 100%;
-      height: 20px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.04), transparent);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* thead th:nth-child(2) has both — column fade takes priority */
-    thead th:nth-child(2)::after {
-      top: 0;
-      left: 100%;
-      width: 24px;
-      height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
-    }
-
     /* Sticky first 3 columns */
     th:nth-child(1),
     td:nth-child(1) {
