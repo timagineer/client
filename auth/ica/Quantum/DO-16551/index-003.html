@@ -1242,6 +1242,13 @@
       align-items: center;
     }
 
+    .topbar-meta {
+      font-size: 12px;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
     .wire-meta-block {
       height: 12px;
       background: var(--neutral-80);
@@ -2006,10 +2013,7 @@
           <div class="wire-logo-mark"></div>
           <div class="wire-logo-text"></div>
         </div>
-        <div class="wire-topbar-meta">
-          <div class="wire-meta-block" style="width:124px"></div>
-          <div class="wire-meta-block" style="width:92px"></div>
-        </div>
+        <span class="topbar-meta" id="topbarMeta"></span>
       </div>
       <div class="wire-search"></div>
       <div class="wire-header-right">
@@ -3390,11 +3394,26 @@
     lw.onclick = e => { const b = e.target.closest('.folder-btn'); if (!b) return; S.letters = b.dataset.v; S.page = 1; lw.querySelectorAll('.folder-btn').forEach(x => x.setAttribute('aria-pressed', x === b)); render() };
     document.querySelectorAll('[data-own]').forEach(b => b.onclick = () => { S.own = b.dataset.own; S.page = 1; document.querySelectorAll('[data-own]').forEach(x => x.setAttribute('aria-pressed', x === b)); render() });
     $('status').onchange = e => { S.status = e.target.value; S.page = 1; render() };
-    $('site').onchange = e => { S.site = e.target.value; S.page = 1; render() };
+    $('site').onchange = e => { S.site = e.target.value; S.page = 1; render(); updateMeta() };
     $('searchForm').onsubmit = e => { e.preventDefault(); S.q = $('q').value.trim().toLowerCase(); S.page = 1; render() };
     $('q').oninput = e => { S.q = e.target.value.trim().toLowerCase(); S.page = 1; render() };
 
-    function rows() {
+    function updateMeta() {
+      const now = new Date();
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
+      const h12 = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
+      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate() + ' ' + h12 + ':' + m + ' ' + ampm;
+      const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Good night';
+      const site = $('site') ? $('site').value : '';
+      const loc = site ? 'Therhappy at ' + site : 'Therhappy Associates';
+      const el = $('topbarMeta');
+      if (el) el.textContent = dateStr + ' · ' + greeting + ', James · ' + loc;
+    }
+    setInterval(updateMeta, 60000);
+
+        function rows() {
       const q = S.q, digits = q.replace(/\D/g, '');
       let r = D.filter(c => (S.own === 'all' || c.mine) && (!S.status || c.status === S.status) && (!S.letters || S.letters.includes(c.last[0].toUpperCase())) && (!S.site || c.site === S.site));
       if (q) r = r.filter(c => [c.first, c.last, c.id, c.mrn, c.email, c.status, c.clinician, c.site].some(v => v && v.toLowerCase().includes(q)) || fmt(c.dob).includes(q) || (digits.length > 2 && c.phone.replace(/\D/g, '').includes(digits)));
@@ -3426,6 +3445,7 @@
     $('pager').onchange = e => { if (e.target.id === 'size') { S.size = +e.target.value; S.page = 1; render() } };
     $('body').onclick = e => { e.preventDefault(); const tr = e.target.closest('tr'); if (tr) alert('Opening chart for ' + tr.dataset.n + '…') };
     render();
+    updateMeta();
   </script>
 </body>
 
