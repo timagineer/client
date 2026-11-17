@@ -7,9 +7,9 @@
   <title>Prototype: Patient portal message types/routing [DO-17044]</title>
   <style>
     :root {
-      --primary-20: oklch(33.5% .077 258.7);
-      --primary-30: oklch(43.3% .104 258.4);
-      --primary-50: oklch(49.2% .12 258.2);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
       --secondary-60: oklch(0.7169 0.2209 128.71);
       --neutral-15: oklch(0.245 0.009 234.74);
       --neutral-20: oklch(0.3008 0.0116 234.63);
@@ -25,7 +25,9 @@
       --neutral-85: oklch(0.9234 0.0059 233.18);
       --neutral-90: oklch(0.9542 0.0034 233.07);
       --neutral-95: oklch(0.9772 0.0008 232.96);
-      --border-btn: var(--neutral-70);
+      --primary-btn: var(--primary-50);
+      --primary-btn-hover: var(--primary-30);
+      --primary-btn-active: var(--primary-25);
       --border-light: var(--neutral-75);
       --rad: 6px;
       --sp-2: 8px;
@@ -39,6 +41,10 @@
       box-sizing: border-box;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -48,7 +54,7 @@
       background: oklch(0.965 0.006 234);
     }
 
-    /* Shell */
+    /* === SHELL === */
     .app-shell {
       display: flex;
       flex-direction: column;
@@ -73,10 +79,6 @@
       align-items: center;
     }
 
-    .shell-header .wire-search {
-      flex-shrink: 0;
-    }
-
     .wire-header-right {
       flex: 1;
       display: flex;
@@ -84,96 +86,6 @@
       align-items: center;
       justify-content: flex-end;
     }
-
-    .shell-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .shell-sidebar {
-      width: 80px;
-      background: #fff;
-      border-right: 1px solid var(--border-light);
-      padding: var(--sp-3) var(--sp-2);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-      flex-shrink: 0;
-    }
-
-    .shell-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: oklch(0.965 0.006 234);
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    /* Wire elements */
-    .wire-logo {
-      display: flex;
-      gap: 2px;
-    }
-
-    .wire-logo-mark {
-      width: 32px;
-      height: 18px;
-      background: var(--primary-50);
-      border-radius: var(--rad);
-    }
-
-    .wire-logo-text {
-      width: 48px;
-      height: 18px;
-      background: var(--secondary-60);
-      border-radius: var(--rad);
-    }
-
-    .wire-search {
-      width: 320px;
-      height: 28px;
-      background: var(--neutral-90);
-      border-radius: var(--rad);
-    }
-
-    .wire-icon {
-      width: 24px;
-      height: 24px;
-      background: var(--neutral-80);
-      border-radius: var(--rad);
-    }
-
-    .wire-avatar {
-      width: 26px;
-      height: 26px;
-      background: var(--neutral-80);
-      border-radius: 50%;
-    }
-
-    .wire-nav-item {
-      width: 100%;
-      height: 56px;
-      background: var(--neutral-85);
-      border-radius: var(--rad);
-      flex-shrink: 0;
-    }
-
-    .wire-nav-item.active {
-      background: var(--neutral-75);
-    }
-
-    .sidebar-spacer {
-      flex: 1;
-    }
-
-    .wire-topbar-meta {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
-
 
     .topbar-meta {
       flex: 1;
@@ -184,70 +96,37 @@
       letter-spacing: 0.01em;
     }
 
-    .wire-meta-block {
-      height: 12px;
-      background: var(--neutral-80);
-      border-radius: 3px;
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
     }
 
-    :root {
-      /* Color palette */
-      --primary-25: oklch(38.052% 0.0888 258.539);
-      --primary-30: oklch(43.332% 0.10422 258.384);
-      --primary-50: oklch(49.153% 0.12057 258.167);
-      --secondary-60: oklch(0.7169 0.2209 128.71);
-      --neutral-20: oklch(0.3008 0.0116 234.63);
-      --neutral-25: oklch(0.3608 0.0139 234.51);
-      --neutral-30: oklch(0.4089 0.0157 234.40);
-      --neutral-40: oklch(0.5192 0.0178 234.18);
-      --neutral-50: oklch(0.6068 0.0178 233.96);
-      --neutral-60: oklch(0.6996 0.0160 233.74);
-      --neutral-70: oklch(0.7974 0.0127 233.51);
-      --neutral-75: oklch(0.8373 0.0106 233.40);
-      --neutral-80: oklch(0.8845 0.0083 233.29);
-      --neutral-85: oklch(0.9234 0.0059 233.18);
-      --neutral-90: oklch(0.9542 0.0034 233.07);
-      --neutral-95: oklch(0.9772 0.0008 232.96);
-      --primary-btn: var(--primary-50);
-      --primary-btn-hover: var(--primary-30);
-      --primary-btn-active: var(--primary-25);
-
-      --border-light: var(--neutral-75);
-      --rad: 6px;
-      --sp-2: 8px;
-      --sp-3: 12px;
-      --sp-4: 16px;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--neutral-95);
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    .app-shell {
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      gap: var(--sp-3);
+      flex-shrink: 0;
     }
 
-    /* ========== Header ========== */
-    .shell-header {
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--sp-2) var(--sp-4);
+      flex-direction: column;
       background: #fff;
-      border-bottom: 1px solid var(--border-light);
-      height: 48px;
+      overflow: hidden;
+      position: relative;
     }
 
+    /* === WIRE ELEMENTS === */
     .wire-logo {
       display: flex;
       gap: 2px;
@@ -272,12 +151,7 @@
       height: 28px;
       background: var(--neutral-90);
       border-radius: var(--rad);
-    }
-
-    .wire-header-right {
-      display: flex;
-      gap: var(--sp-3);
-      align-items: center;
+      flex-shrink: 0;
     }
 
     .wire-icon {
@@ -294,54 +168,29 @@
       border-radius: 50%;
     }
 
-    /* ========== Body ========== */
-    .shell-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    /* ========== Sidebar ========== */
-    .shell-sidebar {
-      width: 80px;
-      background: hsl(0, 0%, 97%);
-      border-right: 1px solid var(--border-light);
-      padding: var(--sp-3) var(--sp-2);
-      display: flex;
-      flex-direction: column;
-      gap: var(--sp-3);
-    }
-
     .wire-nav-item {
       width: 100%;
       height: 56px;
       background: var(--neutral-85);
       border-radius: var(--rad);
+      flex-shrink: 0;
     }
 
     .wire-nav-item.active {
       background: var(--neutral-75);
     }
 
-    .sidebar-spacer {
-      flex: 1;
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      width: 100%;
     }
 
-    /* ========== Main ========== */
-    .shell-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* ========== Top Tabs ========== */
+    /* === TOP TABS === */
     .top-tabs {
       display: flex;
       align-items: center;
-      gap: 0;
       padding: 0 var(--sp-4);
       background: #fff;
       border-bottom: 1px solid var(--border-light);
@@ -378,7 +227,6 @@
       background: var(--primary-30);
     }
 
-    /* Wire tab placeholders */
     .wire-top-tab {
       padding: 10px 20px;
       background: transparent;
@@ -387,73 +235,11 @@
       align-items: center;
     }
 
-    .wire-top-tab .wire-text {
-      height: 10px;
-      background: var(--neutral-80);
-      border-radius: 2px;
-    }
-
     .wire-top-tab.active .wire-text {
       background: var(--neutral-60);
     }
 
-    /* ========== Sub Tabs ========== */
-    .sub-tabs {
-      display: flex;
-      align-items: baseline;
-      gap: var(--sp-4);
-      padding: var(--sp-2) var(--sp-4);
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .sub-tab {
-      font-size: 13px;
-      color: var(--neutral-50);
-      text-decoration: none;
-      padding: 4px 0;
-      border-bottom: 2px solid transparent;
-    }
-
-    .sub-tab:hover {
-      color: var(--neutral-30);
-    }
-
-    .sub-tab.active {
-      color: var(--primary-30);
-      border-bottom-color: var(--primary-30);
-    }
-
-    /* Wire sub tabs */
-    .wire-sub-tab {
-      padding: 4px 0;
-    }
-
-    .wire-sub-tab .wire-text {
-      height: 10px;
-      background: var(--neutral-80);
-      border-radius: 2px;
-    }
-
-    .wire-sub-tab.active .wire-text {
-      background: var(--neutral-60);
-    }
-
-    /* Wire table elements */
-    .wire-text {
-      height: 10px;
-      background: var(--neutral-80);
-      border-radius: 2px;
-      width: 100%;
-    }
-
-    /* ========== Pagination ========== */
-    .pagination {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ========== Settings Layout ========== */
+    /* === SETTINGS LAYOUT === */
     .settings-content {
       flex: 1;
       display: flex;
@@ -467,11 +253,6 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 0;
-    }
-
-    .settings-sidebar .wire-text {
-      margin: 10px var(--sp-4);
     }
 
     .settings-nav-item {
@@ -518,13 +299,7 @@
       min-height: 100%;
     }
 
-    .page-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--neutral-20);
-      margin: 0;
-    }
-
+    /* === PAGE HEADER === */
     .page-header {
       display: flex;
       align-items: center;
@@ -533,44 +308,11 @@
       margin-bottom: 4px;
     }
 
-    .table-search {
-      position: relative;
-      width: 220px;
-    }
-
-    .table-search-input {
-      width: 100%;
-      padding: 7px 10px 7px 32px;
-      border: 1px solid var(--neutral-70);
-      border-radius: 4px;
-      font-size: 13px;
-      background: #fff;
-    }
-
-    .table-search-input:focus {
-      outline: none;
-      border-color: var(--primary-30);
-      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
-    }
-
-    .table-search-input::placeholder {
-      color: var(--neutral-60);
-    }
-
-    .table-search-icon {
-      position: absolute;
-      left: 10px;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: center;
-      color: var(--neutral-50);
-      pointer-events: none;
-    }
-
-    .table-search-icon svg {
-      width: 16px;
-      height: 16px;
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
     }
 
     .page-desc {
@@ -580,262 +322,7 @@
       line-height: 1.5;
     }
 
-    /* ========== Toolbar ========== */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: var(--sp-3);
-      margin-bottom: var(--sp-3);
-    }
-
-    .btn-primary {
-      padding: 8px 14px;
-      background: var(--primary-btn);
-      color: #fff;
-      border: none;
-      border-radius: var(--rad);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-btn-hover);
-    }
-
-    .btn-primary:active {
-      background: var(--primary-btn-active);
-      transform: scale(0.97);
-    }
-
-    .toolbar-note {
-      font-size: 12px;
-      color: var(--neutral-50);
-    }
-
-    .btn-add {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 5px 10px;
-      background: var(--primary-btn);
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-add:hover {
-      background: var(--primary-btn-hover);
-    }
-
-    .btn-add:active {
-      background: var(--primary-btn-active);
-      transform: scale(0.97);
-    }
-
-    .btn-add:focus {
-      outline: 2px solid var(--primary-30);
-      outline-offset: 2px;
-    }
-
-    .btn-add svg {
-      flex-shrink: 0;
-    }
-
-    /* ========== Combo Table ========== */
-    .combo-table-wrap {
-      overflow-x: auto;
-      margin: 0 calc(-1 * var(--sp-4));
-      padding: 0 var(--sp-4);
-    }
-
-    .combo-table thead th {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 10;
-    }
-
-    .combo-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      font-family: inherit;
-      font-variant-numeric: tabular-nums lining-nums;
-      border: none;
-      table-layout: fixed;
-    }
-
-    /* Column widths - tuned for no layout shift between read/edit modes */
-    .combo-table colgroup col.col-clinician {
-      width: 140px;
-    }
-
-    .combo-table colgroup col.col-service {
-      width: 150px;
-    }
-
-    .combo-table colgroup col.col-mod {
-      width: 52px;
-    }
-
-    .combo-table colgroup col.col-site {
-      width: 110px;
-    }
-
-    .combo-table colgroup col.col-payer {
-      width: 140px;
-    }
-
-    .combo-table colgroup col.col-from,
-    .combo-table colgroup col.col-to,
-    .combo-table colgroup col.col-units {
-      width: 48px;
-    }
-
-    .combo-table colgroup col.col-pos {
-      width: 64px;
-    }
-
-    .combo-table colgroup col.col-actions {
-      width: 90px;
-    }
-
-    .combo-table th {
-      text-align: left;
-      padding: 8px 4px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--neutral-40);
-      border-bottom: 1.5px solid var(--neutral-80);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .combo-table th.col-actions {
-      overflow: visible;
-      text-overflow: clip;
-    }
-
-    /* Sort button in headers */
-    .combo-table th.sortable {
-      cursor: pointer;
-    }
-
-    .combo-table th.sortable:hover {
-      color: var(--neutral-30);
-    }
-
-    .combo-table th.sorted {
-      color: var(--neutral-20);
-    }
-
-    .combo-table th .sort-icon {
-      margin-inline-start: 4px;
-      display: inline-flex;
-      align-items: center;
-      color: var(--neutral-50);
-      vertical-align: middle;
-    }
-
-    .combo-table th .sort-icon svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .combo-table th.sortable:hover .sort-icon {
-      color: var(--neutral-40);
-    }
-
-    .combo-table th.sorted .sort-icon {
-      color: var(--neutral-30);
-    }
-
-    /* Right-align numeric column headers */
-    .combo-table th.col-num {
-      text-align: right;
-    }
-
-    /* Center-align modifier column headers */
-    .combo-table th.mod-sub {
-      text-align: center;
-    }
-
-    /* Modifiers group header spanning all 4 mod columns */
-    .combo-table th.mod-group {
-      text-align: center;
-    }
-
-    .combo-table td {
-      padding: 6px 4px;
-      border-bottom: 1px solid var(--neutral-90);
-      color: var(--neutral-30);
-      vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Right-align numeric columns (From, To, Units) */
-    .combo-table td.col-num {
-      text-align: right;
-    }
-
-    /* Center-align modifier columns */
-    .combo-table td.col-mod {
-      text-align: center;
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-    /* Tighter padding on modifier header too */
-    .combo-table th.mod-group {
-      padding-left: 4px;
-      padding-right: 4px;
-    }
-
-    /* Actions column needs visible overflow for tooltips */
-    .combo-table td.col-actions {
-      overflow: visible;
-      padding-left: 24px;
-      padding-right: 10px;
-    }
-
-    .combo-table th.col-actions {
-      padding-left: 24px;
-      padding-right: 10px;
-    }
-
-    .combo-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    .combo-table tbody tr:hover td {
-      background: var(--neutral-95);
-    }
-
-    .combo-table tbody tr.editing td {
-      background: hsl(218, 50%, 97%);
-      overflow: visible;
-    }
-
-    /* Cell values (read mode) */
-    .cell-value {
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .cell-value.muted {
-      color: var(--neutral-60);
-    }
-
-    /* Form controls - sized to fit columns without causing layout shift */
+    /* === FORM CONTROLS (BT-3435) === */
     .cell-select,
     .cell-input {
       width: 100%;
@@ -850,6 +337,13 @@
       box-sizing: border-box;
     }
 
+    .cell-select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;
+    }
+
     .cell-select:focus,
     .cell-input:focus {
       outline: none;
@@ -857,57 +351,68 @@
       box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
     }
 
-    .cell-select:disabled,
-    .cell-input:disabled {
-      background: var(--neutral-90);
-      color: var(--neutral-60);
-      cursor: not-allowed;
-    }
-
-    /* Error state for required fields */
-    .cell-select.error,
-    .cell-input.error,
-    .multi-trigger.error {
-      border-color: hsl(0, 65%, 50%);
-      box-shadow: 0 0 0 2px hsla(0, 65%, 50%, 0.15);
-    }
-
-    /* Numeric inputs - right aligned, no spinners */
-    .cell-input.num {
-      text-align: right;
-      width: 100%;
-      -moz-appearance: textfield;
-    }
-
-    .cell-input.num::-webkit-outer-spin-button,
-    .cell-input.num::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* Numeric select (POS) - right aligned */
-    .cell-select.num {
-      text-align: right;
-      text-align-last: right;
-    }
-
-    /* POS select - left aligned */
-    .cell-select.pos-select {
-      text-align: left;
-      text-align-last: left;
-    }
-
-    /* Modifier select - centered text */
-    .mod-select {
-      width: 100%;
+    /* === ICON BUTTONS (BT-3435) === */
+    .icon-btn {
+      width: 28px;
       height: 28px;
-      padding: 4px 2px;
-      font-size: 12px;
-      text-align: center;
-      text-align-last: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--neutral-50);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
     }
 
-    /* Multi-select trigger button - fixed to column width */
+    .icon-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .icon-btn:focus {
+      outline: 2px solid var(--primary-30);
+      outline-offset: 2px;
+    }
+
+    .icon-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 150ms, visibility 150ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .icon-btn:hover::after,
+    .icon-btn:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .icon-btn.danger:hover {
+      background: hsl(0, 70%, 95%);
+      color: hsl(0, 65%, 45%);
+    }
+
+    .icon-btn.success:hover {
+      background: hsl(140, 50%, 92%);
+      color: hsl(140, 50%, 30%);
+    }
+
+    /* === MULTI-SELECT === */
     .multi-trigger {
       display: flex;
       align-items: center;
@@ -919,7 +424,7 @@
       border: 1px solid var(--neutral-70);
       border-radius: 4px;
       background: #fff;
-      font-size: 12px;
+      font-size: 13px;
       text-align: left;
       color: var(--neutral-25);
       cursor: pointer;
@@ -941,11 +446,12 @@
     }
 
     .multi-trigger-icon {
-      color: var(--neutral-50);
-      font-size: 10px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
     }
 
-    /* Multi-select dropdown */
     .multi-wrap {
       position: relative;
     }
@@ -1007,169 +513,65 @@
     }
 
     .multi-option input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
       margin: 0;
-      accent-color: var(--primary-30);
-    }
-
-    /* POS single-select dropdown */
-    .pos-wrap {
-      position: relative;
-    }
-
-    .pos-trigger {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      width: 100%;
-      height: 28px;
-      padding: 4px 6px;
-      border: 1px solid var(--neutral-70);
-      border-radius: 4px;
+      border-radius: 3px;
+      border: 2px solid var(--neutral-70);
       background: #fff;
-      font-size: 12px;
-      text-align: left;
-      color: var(--neutral-25);
       cursor: pointer;
-      box-sizing: border-box;
+      position: relative;
+      transition: background 100ms, border-color 100ms;
     }
 
-    .pos-trigger:focus {
-      outline: none;
-      border-color: var(--primary-30);
-      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    .multi-option input[type="checkbox"]:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
     }
 
-    .pos-trigger-text {
-      flex: 1;
-      text-align: left;
-    }
-
-    .pos-trigger-icon {
-      color: var(--neutral-50);
-      display: flex;
-      align-items: center;
-    }
-
-    .pos-dropdown {
+    .multi-option input[type="checkbox"]:checked::after {
+      content: '';
       position: absolute;
-      top: calc(100% + 4px);
-      right: 0;
-      z-index: 300;
-      width: 200px;
-      max-height: 240px;
-      overflow-y: auto;
-      background: #fff;
-      border: 1px solid var(--neutral-70);
-      border-radius: var(--rad);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-      display: none;
-      flex-direction: column;
-      padding: 4px 0;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      background-size: 10px 8px;
     }
 
-    .pos-dropdown.open {
-      display: flex;
-    }
-
-    .pos-option {
-      padding: 6px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .pos-option:hover {
-      background: var(--neutral-95);
-    }
-
-    .pos-option.selected {
-      background: hsl(218, 50%, 95%);
-      font-weight: 500;
-    }
-
-    /* Action buttons */
-    .actions-cell {
-      display: flex;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    /* Custom tooltips */
-    .icon-btn {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
-      color: var(--neutral-50);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      position: relative;
-    }
-
-    .icon-btn:hover {
-      background: var(--neutral-90);
-      color: var(--neutral-30);
-    }
-
-    .icon-btn:focus {
+    .multi-option input[type="checkbox"]:focus-visible {
       outline: 2px solid var(--primary-30);
       outline-offset: 2px;
     }
 
-    .icon-btn .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    .staff-role {
+      font-size: 10px;
+      color: var(--neutral-50);
+      margin-left: 4px;
     }
 
-    .icon-btn::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: calc(100% + 6px);
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 4px 8px;
-      background: var(--neutral-25);
+    /* === BUTTON === */
+    .btn-primary {
+      padding: 8px 14px;
+      background: var(--primary-btn);
       color: #fff;
-      font-size: 11px;
+      border: none;
+      border-radius: var(--rad);
+      font-size: 13px;
       font-weight: 500;
-      border-radius: 4px;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 150ms, visibility 150ms;
-      pointer-events: none;
-      z-index: 100;
+      cursor: pointer;
     }
 
-    .icon-btn:hover::after,
-    .icon-btn:focus::after {
-      opacity: 1;
-      visibility: visible;
+    .btn-primary:hover {
+      background: var(--primary-btn-hover);
     }
 
-    .icon-btn.danger:hover {
-      background: hsl(0, 70%, 95%);
-      color: hsl(0, 65%, 45%);
+    .btn-primary:active {
+      background: var(--primary-btn-active);
+      transform: scale(0.97);
     }
 
-    .icon-btn.success:hover {
-      background: hsl(140, 50%, 92%);
-      color: hsl(140, 50%, 30%);
-    }
-
-    /* Status message */
     .status-msg {
       min-height: 20px;
       padding: var(--sp-2) 0;
@@ -1181,195 +583,281 @@
       padding: 0;
     }
 
-    .status-msg.error {
-      color: hsl(0, 65%, 45%);
-    }
-
     .status-msg.success {
       color: hsl(140, 50%, 30%);
     }
 
-    /* Footer / pagination */
-    .table-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--sp-3) 0;
-      font-size: 12px;
-      color: var(--neutral-50);
-      border-top: none;
-    }
-
-    .pagination {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .page-btn {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-      border: 1px solid var(--neutral-75);
-      border-radius: 4px;
-      background: #fff;
-      font-size: 13px;
-      color: var(--neutral-40);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .page-btn svg {
-      display: block;
-    }
-
-    .page-btn:hover:not(:disabled) {
-      background: var(--neutral-95);
-      border-color: var(--neutral-60);
-    }
-
-    .page-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .page-btn.active {
-      background: var(--neutral-90);
-      border-color: var(--neutral-60);
-      color: var(--neutral-25);
-    }
-
-    .page-size-select {
-      height: 28px;
-      padding: 0 24px 0 8px;
-      border: 1px solid var(--neutral-75);
-      border-radius: 4px;
-      font-size: 12px;
-      color: var(--neutral-30);
-      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center;
-      appearance: none;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-
-    .page-size-select:focus {
-      outline: none;
-      border-color: var(--primary-30);
-    }
-
-    .page-size-label {
-      font-size: 12px;
-      color: var(--neutral-50);
-      margin-left: 6px;
-    }
-
-    .table-tip {
-      font-size: 11px;
-      color: var(--neutral-50);
-      margin-top: var(--sp-3);
-      line-height: 1.5;
-    }
-
-    /* Empty state */
-    .empty-state {
-      padding: 56px 24px 48px !important;
-      text-align: center;
-      border-bottom: none !important;
-    }
-
-    .empty-state-icon {
-      margin-bottom: 16px;
-      color: var(--neutral-60);
-    }
-
-    .empty-state-icon svg {
-      width: 56px;
-      height: 56px;
-    }
-
-    .empty-state-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--neutral-30);
-      margin-bottom: 6px;
-    }
-
-    .empty-state-message {
-      font-size: 13px;
-      color: var(--neutral-50);
-    }
-
-    /* ── Message Topics ── */
+    /* === MESSAGE TOPICS — 4-col grid matching BT-3435 th/td rhythm === */
     .topics-header {
       display: grid;
-      grid-template-columns: 160px 1fr 180px;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
       gap: 12px;
-      padding: 8px 0;
       border-bottom: 1.5px solid var(--neutral-80);
       align-items: end;
     }
-    .col-label {
-      font-size: 13px; font-weight: 500; color: var(--neutral-40);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .col-hint { display: none; }
 
-    .topics-list { display: block; width: 100%; }
+    .col-label {
+      /* matches BT-3435 th: padding: 8px 4px */
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      padding: 8px 4px;
+    }
+
+    .topics-list {
+      display: block;
+      width: 100%;
+    }
+
     .topic-row {
       display: grid;
-      grid-template-columns: 160px 1fr 180px;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
       gap: 12px;
       align-items: center;
       padding: 10px 0;
       border-bottom: 1px solid var(--neutral-90);
-      transition: opacity 0.15s;
+      transition: background 0.1s, opacity 0.15s;
     }
-    .topic-row:last-child { border-bottom: none; }
-    .topic-row.disabled { opacity: 0.55; }
 
+    .topic-row:last-child {
+      border-bottom: none;
+    }
+
+    .topic-row.disabled:not(.editing) {
+      background: var(--neutral-95);
+    }
+
+    .topic-row.disabled:not(.editing) .type-label {
+      color: var(--neutral-50);
+    }
+
+    .topic-row.editing {
+      background: hsl(218, 50%, 97%);
+      border-radius: 4px;
+    }
+
+    /* Allow overflow on editing row so dropdown doesn't clip */
+    .topic-row>* {
+      overflow: hidden;
+    }
+
+    .topic-row.editing>* {
+      overflow: visible;
+    }
+
+    /* Toggle — BT-3523 pattern */
     .type-toggle-cell {
       display: flex;
       align-items: center;
       gap: 10px;
+      justify-content: space-between;
       cursor: pointer;
       user-select: none;
+      padding: 0 4px;
     }
+
     .type-label {
       font-size: 13px;
       font-weight: 500;
       color: var(--neutral-20);
     }
 
-    /* Toggle — BT-3523 pattern */
     .toggle-switch {
-      width: 36px; height: 20px; background: var(--neutral-75); border-radius: 10px;
-      position: relative; cursor: pointer; transition: background 150ms; flex-shrink: 0;
+      width: 36px;
+      height: 20px;
+      background: var(--neutral-75);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms;
+      flex-shrink: 0;
     }
-    .toggle-switch.on { background: var(--secondary-60); }
-    .toggle-switch::after {
-      content: ''; position: absolute; top: 2px; left: 2px;
-      width: 16px; height: 16px; background: #fff; border-radius: 50%;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: transform 150ms;
-    }
-    .toggle-switch.on::after { transform: translateX(16px); }
 
-    .topic-display-name input { width: 100%; }
-    .staff-role { font-size: 10px; color: var(--neutral-50); margin-left: 4px; }
+    .toggle-switch.on {
+      background: var(--secondary-60);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      transition: transform 150ms;
+    }
+
+    .toggle-switch.on::after {
+      transform: translateX(16px);
+    }
+
+    /* Recipient + display name cells */
+    .recipient-cell,
+    .dn-cell,
+    .desc-cell {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0 4px;
+    }
+
+    .read-val {
+      display: block;
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .read-val.muted {
+      color: var(--neutral-55);
+    }
+
+    .edit-ctrl {
+      width: 100%;
+    }
+
+    /* Actions column */
+    .topic-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      justify-content: flex-end;
+      padding: 0 4px;
+      overflow: visible;
+    }
 
     /* Fallback */
     .fallback-section {
-      margin-top: 16px; padding: 12px 16px; background: var(--neutral-95);
-      border: 1px solid var(--neutral-85); border-radius: 6px;
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--neutral-95);
+      border: 1px solid var(--neutral-85);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    .fallback-label { font-size: 12px; color: var(--neutral-30); white-space: nowrap; }
-    .fallback-select { width: auto; }
-    .fallback-hint { font-size: 11px; color: var(--neutral-55); }
 
-    .form-actions { margin-top: 20px; display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--neutral-90); }
-    .req { color: hsl(0,65%,50%); margin-left: 2px; }
+    .fallback-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    .fallback-combo-wrap {
+      position: relative;
+    }
+
+    .fallback-combo-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      height: 28px;
+      padding: 4px 8px;
+      min-width: 200px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--neutral-25);
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .fallback-combo-trigger:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .fallback-combo-text {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fallback-combo-icon {
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .fallback-combo-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 300;
+      width: 220px;
+      max-height: 280px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+    }
+
+    .fallback-combo-dropdown.open {
+      display: flex;
+    }
+
+    .fallback-combo-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .fallback-combo-option {
+      padding: 7px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .fallback-combo-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .fallback-combo-option.selected {
+      background: var(--neutral-90);
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .fallback-select {
+      width: auto;
+    }
+
+    .fallback-hint {
+      font-size: 11px;
+      color: var(--neutral-55);
+    }
+
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--neutral-90);
+    }
+
+    .req {
+      color: hsl(0, 65%, 50%);
+      margin-left: 2px;
+    }
   </style>
 </head>
 
@@ -1393,6 +881,7 @@
         <div class="wire-avatar"></div>
       </div>
     </header>
+
     <div class="shell-body">
       <nav class="shell-sidebar">
         <div class="wire-nav-item"></div>
@@ -1404,10 +893,9 @@
         <div class="sidebar-spacer"></div>
         <div class="wire-nav-item active"></div>
       </nav>
+
       <main class="shell-main">
-
-
-        <!-- Settings Top Tabs (wire blocks, active = text) -->
+        <!-- Top Tabs: 10 tabs, 4th active = Portal -->
         <div class="top-tabs">
           <div class="wire-top-tab">
             <div class="wire-text" style="width:80px"></div>
@@ -1439,9 +927,7 @@
           </div>
         </div>
 
-        <!-- Settings Content Area (sidebar + main) -->
         <div class="settings-content">
-          <!-- Settings Sidebar (wire lines, active = text) -->
           <aside class="settings-sidebar">
             <div class="settings-nav-item">General</div>
             <div class="settings-nav-item">Portal Invitation Email</div>
@@ -1451,7 +937,6 @@
             <div class="settings-nav-item active">Message Topics</div>
           </aside>
 
-          <!-- Main Content Card -->
           <div class="settings-main">
             <div class="content-card">
               <div class="page-header">
@@ -1459,125 +944,333 @@
               </div>
               <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
 
-                                                        <div class="topics-header">
-                <span class="col-label">Type</span>
+              <div class="topics-header">
+                <span class="col-label">Topic</span>
                 <span class="col-label">Recipient <span class="req">*</span></span>
                 <span class="col-label">Display (To:) name</span>
+                <span class="col-label">Description</span>
+                <span class="col-label"></span>
               </div>
 
               <div class="topics-list">
-              <div class="topic-row" data-topic="appointment">
-                <div class="type-toggle-cell" data-toggle="topic-appointment">
-                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                  <span class="type-label">Appointment</span>
+
+                <!-- Appointment — ON -->
+                <div class="topic-row" data-topic="appointment">
+                  <div class="type-toggle-cell">
+                    <span class="type-label">Appointment</span>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Front Desk</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-appointment">
+                        <span class="multi-trigger-text">Front Desk</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-appointment">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk" checked> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Scheduling</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Scheduling">
+                    </div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Schedule, change, or cancel an appointment</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Schedule, change, or cancel an appointment">
+                    </div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Appointment"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
                 </div>
-                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-appointment"><span class="multi-trigger-text">Angela Martinez, Front Desk</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-appointment"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" checked/> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" checked/> Front Desk <span class="staff-role">Staff</span></label>
-</div></div></div>
-                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Scheduling"></div>
-              </div>
-              <div class="topic-row disabled" data-topic="billing">
-                <div class="type-toggle-cell" data-toggle="topic-billing">
-                  <div class="toggle-switch" role="switch" aria-checked="false"></div>
-                  <span class="type-label">Billing</span>
+
+                <!-- Billing — OFF -->
+                <div class="topic-row" data-topic="billing">
+                  <div class="type-toggle-cell">
+                    <span class="type-label">Billing</span>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Angela Martinez</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-billing">
+                        <span class="multi-trigger-text">Angela Martinez</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-billing">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez" checked> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk"> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val muted">—</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-dn" placeholder="Display name…" value="">
+                    </div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Questions about charges, payments, or insurance</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Questions about charges, payments, or insurance">
+                    </div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Billing"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
                 </div>
-                <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-billing"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-billing"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-</div></div></div>
-                <div class="topic-display-name" style="pointer-events:none;opacity:0.4"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
-              </div>
-              <div class="topic-row" data-topic="medical">
-                <div class="type-toggle-cell" data-toggle="topic-medical">
-                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                  <span class="type-label">Medical</span>
+
+                <!-- Medical — ON -->
+                <div class="topic-row" data-topic="medical">
+                  <div class="type-toggle-cell">
+                    <span class="type-label">Medical</span>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Sarah Rogers, James Morningstar</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-medical">
+                        <span class="multi-trigger-text">Sarah Rogers, James Morningstar</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-medical">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk"> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning" checked> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers" checked> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Clinical Team</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Clinical Team">
+                    </div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Questions about your care or symptoms</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Questions about your care or symptoms">
+                    </div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Medical"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
                 </div>
-                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medical"><span class="multi-trigger-text">Sarah Rogers, James Morningstar</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medical"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" checked/> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" checked/> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-</div></div></div>
-                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Clinical Team"></div>
-              </div>
-              <div class="topic-row" data-topic="medication">
-                <div class="type-toggle-cell" data-toggle="topic-medication">
-                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                  <span class="type-label">Medication</span>
+
+                <!-- Medication — ON -->
+                <div class="topic-row" data-topic="medication">
+                  <div class="type-toggle-cell">
+                    <span class="type-label">Medication</span>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Priya Patel</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-medication">
+                        <span class="multi-trigger-text">Priya Patel</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-medication">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk"> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel" checked> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Pharmacy</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Pharmacy">
+                    </div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Refills and questions about your medications</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Refills and questions about your medications">
+                    </div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Medication"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
                 </div>
-                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medication"><span class="multi-trigger-text">Priya Patel</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medication"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" checked/> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-</div></div></div>
-                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
-              </div>
-              <div class="topic-row disabled" data-topic="other">
-                <div class="type-toggle-cell" data-toggle="topic-other">
-                  <div class="toggle-switch" role="switch" aria-checked="false"></div>
-                  <span class="type-label">Other</span>
+
+                <!-- Other — OFF -->
+                <div class="topic-row disabled" data-topic="other">
+                  <div class="type-toggle-cell">
+                    <span class="type-label">Other</span>
+                    <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val muted">—</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-other">
+                        <span class="multi-trigger-text">Choose recipient…</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-other">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk"> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val muted">—</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-dn" placeholder="Display name…" value="">
+                    </div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Anything that doesn't fit the topics above</span>
+                    <div class="edit-ctrl" hidden>
+                      <input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Anything that doesn't fit the topics above">
+                    </div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Other"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
                 </div>
-                <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-other"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-other"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-</div></div></div>
-                <div class="topic-display-name" style="pointer-events:none;opacity:0.4"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
-              </div>
-              </div>
+
+              </div><!-- .topics-list -->
 
               <div class="fallback-section">
                 <span class="fallback-label">When no recipient can be resolved, route to</span>
-                <select class="cell-select fallback-select">
-                  <option value="sarah-rogers" >Sarah Rogers (Principal Clinician)</option>
-<option value="james-morning" >James Morningstar (Clinician)</option>
-<option value="rachel-boyles" >Rachel Boyles (Clinician)</option>
-<option value="priya-patel" >Priya Patel (Clinician)</option>
-<option value="david-crowley" >David Crowley (Clinician)</option>
-<option value="lisa-barnard" >Lisa Barnard (Clinician)</option>
-<option value="tom-lindell" >Tom Lindell (Clinician)</option>
-<option value="angela-martinez" selected>Angela Martinez (Admin)</option>
-<option value="front-desk" >Front Desk (Staff)</option>
+                <div class="fallback-combo-wrap">
+                  <button type="button" class="fallback-combo-trigger" id="fallbackTrigger">
+                    <span class="fallback-combo-text">Angela Martinez</span>
+                    <span class="fallback-combo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></span>
+                  </button>
+                  <div class="fallback-combo-dropdown" id="fallbackDropdown">
+                    <div class="multi-search"><input type="text" id="fallbackSearch" placeholder="Search staff…"></div>
+                    <div class="fallback-combo-options">
+                      <div class="fallback-combo-option selected" data-value="angela-martinez">Angela Martinez</div>
+                      <div class="fallback-combo-option" data-value="david-crowley">David Crowley</div>
+                      <div class="fallback-combo-option" data-value="front-desk">Front Desk</div>
+                      <div class="fallback-combo-option" data-value="james-morning">James Morningstar</div>
+                      <div class="fallback-combo-option" data-value="lisa-barnard">Lisa Barnard</div>
+                      <div class="fallback-combo-option" data-value="priya-patel">Priya Patel</div>
+                      <div class="fallback-combo-option" data-value="rachel-boyles">Rachel Boyles</div>
+                      <div class="fallback-combo-option" data-value="sarah-rogers">Sarah Rogers</div>
+                      <div class="fallback-combo-option" data-value="tom-lindell">Tom Lindell</div>
+                    </div>
+                  </div>
+                </div>
 
-                </select>
-                <span class="fallback-hint">Fallback if a topic's recipient is deactivated or unresolvable.</span>
               </div>
 
-              <div class="form-actions">
-                <button class="btn btn-primary" id="saveTopics">Save changes</button>
-                <span class="status-msg" id="statusMsg"></span>
-              </div>
             </div>
           </div>
         </div>
-
       </main>
     </div>
   </div>
@@ -1585,6 +1278,19 @@
   <script>
     const $ = id => document.getElementById(id);
 
+    const STAFF_NAMES = {
+      'sarah-rogers': 'Sarah Rogers',
+      'james-morning': 'James Morningstar',
+      'rachel-boyles': 'Rachel Boyles',
+      'priya-patel': 'Priya Patel',
+      'david-crowley': 'David Crowley',
+      'lisa-barnard': 'Lisa Barnard',
+      'tom-lindell': 'Tom Lindell',
+      'angela-martinez': 'Angela Martinez',
+      'front-desk': 'Front Desk'
+    };
+
+    // ── Topbar meta ──
     function updateMeta() {
       const PRACTICE = 'Therhappy';
       const now = new Date();
@@ -1596,69 +1302,128 @@
       const timeStr = h12 + ':' + m + ' ' + ampm;
       const off = now.getTimezoneOffset();
       const tz = off === 300 ? ' EST' : off === 240 ? ' EDT' : '';
-      const site = $('site') ? $('site').value : '';
-      const loc = site ? PRACTICE + ' at ' + site : PRACTICE + ' Associates';
       const el = $('topbarMeta');
-      if (el) el.textContent = loc + ' · ' + dateStr + ' · ' + timeStr + tz;
-    }
-    setInterval(updateMeta, 60000);
-
-    updateMeta();
-  </script>
-    <script>
-    const $ = id => document.getElementById(id);
-
-    // ── Topbar meta ──
-    function updateMeta() {
-      const PRACTICE = 'Therhappy';
-      const now = new Date();
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
-      const h12 = h%12||12, ampm = h>=12?'PM':'AM';
-      const dateStr = days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
-      const timeStr = h12+':'+m+' '+ampm;
-      const off = now.getTimezoneOffset();
-      const tz = off===300?' EST':off===240?' EDT':'';
-      const el = $('topbarMeta');
-      if(el) el.textContent = PRACTICE+' Associates \u00b7 '+dateStr+' \u00b7 '+timeStr+tz;
+      if (el) el.textContent = PRACTICE + ' Associates \u00b7 ' + dateStr + ' \u00b7 ' + timeStr + tz;
     }
     setInterval(updateMeta, 60000);
     updateMeta();
 
-    // ── Toggle behavior — BT-3523 pattern ──
+    // ── Toggle — BT-3523 pattern ──
     function applyToggle(sw) {
       sw.classList.toggle('on');
       const isOn = sw.classList.contains('on');
-      sw.setAttribute('aria-checked', isOn);
+      sw.setAttribute('aria-checked', String(isOn));
       const row = sw.closest('.topic-row');
       if (!row) return;
-      const recipients = row.querySelector('.topic-recipients');
-      const dn = row.querySelector('.topic-display-name');
       if (isOn) {
         row.classList.remove('disabled');
-        if (recipients) { recipients.style.pointerEvents = ''; recipients.style.opacity = ''; }
-        if (dn) { dn.style.pointerEvents = ''; dn.style.opacity = ''; }
       } else {
         row.classList.add('disabled');
-        if (recipients) { recipients.style.pointerEvents = 'none'; recipients.style.opacity = '0.4'; }
-        if (dn) { dn.style.pointerEvents = 'none'; dn.style.opacity = '0.4'; }
+        // Exit edit mode without saving if toggling off mid-edit
+        if (row.classList.contains('editing')) exitEditMode(row, false);
       }
     }
+
+    // Click anywhere on the toggle cell fires the toggle
     document.querySelectorAll('.type-toggle-cell').forEach(cell => {
-      cell.addEventListener('click', function() {
+      cell.addEventListener('click', function () {
         applyToggle(this.querySelector('.toggle-switch'));
       });
     });
+    // The switch itself calls applyToggle and stops propagation so the cell handler doesn't double-fire
     document.querySelectorAll('.toggle-switch').forEach(sw => {
-      sw.addEventListener('click', function() {
-        applyToggle(this); return;
-      });
+      sw.addEventListener('click', e => { e.stopPropagation(); applyToggle(sw); });
     });
 
-    // ── Multi-dropdown ──
+    // ── Edit mode ──
+    function getCheckedNames(row) {
+      return [...row.querySelectorAll('.multi-option input[type=checkbox]:checked')]
+        .map(cb => STAFF_NAMES[cb.value] || cb.value);
+    }
+
+    function enterEditMode(row) {
+      // Snapshot current state so Cancel can restore
+      row._snapshot = {
+        recipients: [...row.querySelectorAll('.multi-option input[type=checkbox]:checked')].map(cb => cb.value),
+        dn: row.querySelector('.topic-dn')?.value || '',
+        desc: row.querySelector('.topic-desc')?.value || ''
+      };
+      row.querySelectorAll('.read-val').forEach(el => { el.hidden = true; });
+      row.querySelectorAll('.edit-ctrl').forEach(el => { el.removeAttribute('hidden'); });
+      row.querySelector('.edit-btn').hidden = true;
+      row.querySelector('.save-btn').removeAttribute('hidden');
+      row.querySelector('.cancel-btn').removeAttribute('hidden');
+      row.classList.add('editing');
+    }
+
+    function exitEditMode(row, save) {
+      if (save) {
+        // Commit recipient read value
+        const names = getCheckedNames(row);
+        const recipVal = names.length ? names.join(', ') : '—';
+        const recipEl = row.querySelector('.recipient-read-val');
+        if (recipEl) { recipEl.textContent = recipVal; recipEl.classList.toggle('muted', !names.length); }
+        const trigEl = row.querySelector('.multi-trigger-text');
+        if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
+
+        // Commit display name read value
+        const dnInput = row.querySelector('.topic-dn');
+        const dnEl = row.querySelector('.dn-read-val');
+        if (dnInput && dnEl) {
+          dnEl.textContent = dnInput.value || '—';
+          dnEl.classList.toggle('muted', !dnInput.value);
+        }
+
+        // Commit description read value
+        const descInput = row.querySelector('.topic-desc');
+        const descEl = row.querySelector('.desc-read-val');
+        if (descInput && descEl) {
+          descEl.textContent = descInput.value || '—';
+          descEl.classList.toggle('muted', !descInput.value);
+        }
+      } else {
+        // Restore from snapshot
+        if (row._snapshot) {
+          row.querySelectorAll('.multi-option input[type=checkbox]').forEach(cb => {
+            cb.checked = row._snapshot.recipients.includes(cb.value);
+          });
+          const dnInput = row.querySelector('.topic-dn');
+          if (dnInput) dnInput.value = row._snapshot.dn;
+          const descInput = row.querySelector('.topic-desc');
+          if (descInput) descInput.value = row._snapshot.desc;
+          // Restore trigger text
+          const names = getCheckedNames(row);
+          const trigEl = row.querySelector('.multi-trigger-text');
+          if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
+        }
+      }
+
+      row.querySelectorAll('.read-val').forEach(el => { el.removeAttribute('hidden'); });
+      row.querySelectorAll('.edit-ctrl').forEach(el => { el.hidden = true; });
+      row.querySelector('.edit-btn').removeAttribute('hidden');
+      row.querySelector('.save-btn').hidden = true;
+      row.querySelector('.cancel-btn').hidden = true;
+      row.classList.remove('editing');
+      closeAllDropdowns();
+    }
+
+    // Delegate edit/save/cancel clicks on the list
+    document.querySelector('.topics-list').addEventListener('click', function (e) {
+      const editBtn = e.target.closest('.edit-btn');
+      const saveBtn = e.target.closest('.save-btn');
+      const cancelBtn = e.target.closest('.cancel-btn');
+      if (editBtn) {
+        enterEditMode(editBtn.closest('.topic-row'));
+      } else if (saveBtn) {
+        exitEditMode(saveBtn.closest('.topic-row'), true);
+      } else if (cancelBtn) {
+        exitEditMode(cancelBtn.closest('.topic-row'), false);
+      }
+    });
+
+    // ── Multi-select dropdown ──
     function closeAllDropdowns() {
-      document.querySelectorAll('.multi-dropdown.open').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.multi-dropdown.open, .fallback-combo-dropdown.open').forEach(d => d.classList.remove('open'));
     }
 
     document.querySelectorAll('.multi-trigger').forEach(btn => {
@@ -1683,9 +1448,10 @@
       }
       dd.querySelectorAll('input[type=checkbox]').forEach(cb => {
         cb.addEventListener('change', () => {
-          const trigger = dd.previousElementSibling;
-          const checked = [...dd.querySelectorAll('input[type=checkbox]:checked')].map(c => c.closest('.multi-option').textContent.trim().split('\n')[0].trim());
-          trigger.querySelector('.multi-trigger-text').textContent = checked.length ? checked.join(', ') : 'Choose recipient…';
+          const row = cb.closest('.topic-row');
+          const names = getCheckedNames(row);
+          const trigEl = dd.previousElementSibling.querySelector('.multi-trigger-text');
+          if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
         });
       });
       dd.addEventListener('click', e => e.stopPropagation());
@@ -1693,13 +1459,43 @@
 
     document.addEventListener('click', closeAllDropdowns);
 
-    // ── Save ──
-    $('saveTopics')?.addEventListener('click', () => {
-      const msg = $('statusMsg');
-      msg.textContent = 'Changes saved.';
-      msg.style.color = 'hsl(130,55%,35%)';
-      setTimeout(() => { msg.textContent = ''; }, 3000);
+    // ── Fallback combobox ──
+    const fallbackTrigger = $('fallbackTrigger');
+    const fallbackDropdown = $('fallbackDropdown');
+    const fallbackSearch = $('fallbackSearch');
+
+    fallbackTrigger?.addEventListener('click', e => {
+      e.stopPropagation();
+      const wasOpen = fallbackDropdown.classList.contains('open');
+      closeAllDropdowns();
+      if (!wasOpen) {
+        fallbackDropdown.classList.add('open');
+        fallbackSearch.value = '';
+        fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(o => o.style.display = '');
+        fallbackSearch.focus();
+      }
     });
+
+    fallbackSearch?.addEventListener('input', () => {
+      const q = fallbackSearch.value.toLowerCase();
+      fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(opt => {
+        opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    fallbackDropdown?.querySelectorAll('.fallback-combo-option').forEach(opt => {
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        fallbackTrigger.querySelector('.fallback-combo-text').textContent = opt.textContent;
+        fallbackDropdown.classList.remove('open');
+      });
+    });
+
+    fallbackDropdown?.addEventListener('click', e => e.stopPropagation());
+
+
   </script>
 </body>
 
