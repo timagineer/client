@@ -1304,7 +1304,7 @@
     /* ── Message Topics ── */
     .topics-header {
       display: grid;
-      grid-template-columns: 44px auto 1fr 180px;
+      grid-template-columns: 160px 1fr 180px;
       gap: 12px;
       padding: 8px 0;
       border-bottom: 1.5px solid var(--neutral-80);
@@ -1319,7 +1319,7 @@
     .topics-list { display: block; width: 100%; }
     .topic-row {
       display: grid;
-      grid-template-columns: 44px auto 1fr 180px;
+      grid-template-columns: 160px 1fr 180px;
       gap: 12px;
       align-items: center;
       padding: 10px 0;
@@ -1329,7 +1329,18 @@
     .topic-row:last-child { border-bottom: none; }
     .topic-row.disabled { opacity: 0.55; }
 
-    .topic-name { font-size: 13px; font-weight: 500; color: var(--neutral-20); }
+    .type-toggle-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .type-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
 
     /* Toggle — BT-3523 pattern */
     .toggle-switch {
@@ -1448,8 +1459,7 @@
               </div>
               <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
 
-                                          <div class="topics-header">
-                <span></span>
+                                                        <div class="topics-header">
                 <span class="col-label">Type</span>
                 <span class="col-label">Recipient <span class="req">*</span></span>
                 <span class="col-label">Display (To:) name</span>
@@ -1457,8 +1467,10 @@
 
               <div class="topics-list">
               <div class="topic-row" data-topic="appointment">
-                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                <div class="topic-name">Appointment</div>
+                <div class="type-toggle-cell" data-toggle="topic-appointment">
+                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  <span class="type-label">Appointment</span>
+                </div>
                 <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-appointment"><span class="multi-trigger-text">Angela Martinez, Front Desk</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-appointment"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
@@ -1472,8 +1484,10 @@
                 <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Scheduling"></div>
               </div>
               <div class="topic-row disabled" data-topic="billing">
-                <div class="toggle-switch" role="switch" aria-checked="false"></div>
-                <div class="topic-name">Billing</div>
+                <div class="type-toggle-cell" data-toggle="topic-billing">
+                  <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                  <span class="type-label">Billing</span>
+                </div>
                 <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-billing"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-billing"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
@@ -1487,8 +1501,10 @@
                 <div class="topic-display-name" style="pointer-events:none;opacity:0.4"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
               </div>
               <div class="topic-row" data-topic="medical">
-                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                <div class="topic-name">Medical</div>
+                <div class="type-toggle-cell" data-toggle="topic-medical">
+                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  <span class="type-label">Medical</span>
+                </div>
                 <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medical"><span class="multi-trigger-text">Sarah Rogers, James Morningstar</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medical"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" checked/> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" checked/> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
@@ -1502,8 +1518,10 @@
                 <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Clinical Team"></div>
               </div>
               <div class="topic-row" data-topic="medication">
-                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
-                <div class="topic-name">Medication</div>
+                <div class="type-toggle-cell" data-toggle="topic-medication">
+                  <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  <span class="type-label">Medication</span>
+                </div>
                 <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medication"><span class="multi-trigger-text">Priya Patel</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medication"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
@@ -1517,8 +1535,10 @@
                 <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
               </div>
               <div class="topic-row disabled" data-topic="other">
-                <div class="toggle-switch" role="switch" aria-checked="false"></div>
-                <div class="topic-name">Other</div>
+                <div class="type-toggle-cell" data-toggle="topic-other">
+                  <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                  <span class="type-label">Other</span>
+                </div>
                 <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-other"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-other"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
@@ -1607,24 +1627,32 @@
     updateMeta();
 
     // ── Toggle behavior — BT-3523 pattern ──
+    function applyToggle(sw) {
+      sw.classList.toggle('on');
+      const isOn = sw.classList.contains('on');
+      sw.setAttribute('aria-checked', isOn);
+      const row = sw.closest('.topic-row');
+      if (!row) return;
+      const recipients = row.querySelector('.topic-recipients');
+      const dn = row.querySelector('.topic-display-name');
+      if (isOn) {
+        row.classList.remove('disabled');
+        if (recipients) { recipients.style.pointerEvents = ''; recipients.style.opacity = ''; }
+        if (dn) { dn.style.pointerEvents = ''; dn.style.opacity = ''; }
+      } else {
+        row.classList.add('disabled');
+        if (recipients) { recipients.style.pointerEvents = 'none'; recipients.style.opacity = '0.4'; }
+        if (dn) { dn.style.pointerEvents = 'none'; dn.style.opacity = '0.4'; }
+      }
+    }
+    document.querySelectorAll('.type-toggle-cell').forEach(cell => {
+      cell.addEventListener('click', function() {
+        applyToggle(this.querySelector('.toggle-switch'));
+      });
+    });
     document.querySelectorAll('.toggle-switch').forEach(sw => {
       sw.addEventListener('click', function() {
-        this.classList.toggle('on');
-        const isOn = this.classList.contains('on');
-        this.setAttribute('aria-checked', isOn);
-        const row = this.closest('.topic-row');
-        if (!row) return;
-        const recipients = row.querySelector('.topic-recipients');
-        const dn = row.querySelector('.topic-display-name');
-        if (isOn) {
-          row.classList.remove('disabled');
-          if (recipients) { recipients.style.pointerEvents = ''; recipients.style.opacity = ''; }
-          if (dn) { dn.style.pointerEvents = ''; dn.style.opacity = ''; }
-        } else {
-          row.classList.add('disabled');
-          if (recipients) { recipients.style.pointerEvents = 'none'; recipients.style.opacity = '0.4'; }
-          if (dn) { dn.style.pointerEvents = 'none'; dn.style.opacity = '0.4'; }
-        }
+        applyToggle(this); return;
       });
     });
 
