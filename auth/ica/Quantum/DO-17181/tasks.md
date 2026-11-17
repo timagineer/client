@@ -20,6 +20,13 @@
 - [x] Chart Room <sup>+v1 ᐧ +v2,</sup> - Plus v1/v2 toggle
 - [x] better/more realistic mock data + pressure testing https://anthonyhobday.com/blog/20260112
 - [x] sticky table header
+- [x] +v1/v2 link style
+- [x] topbar copy edit
+- [x] load and table motion
+- [x] filter scroll collapse
+- [x] filter scroll collapse bug
+- [x] filter affordance
+- [x] clear filters
 ---
 - [ ] mock font size tests
 - [ ] (uifont app (separate project) mini/card table shows >=n=2 borders, badges, bts, >=2 font weights, surfaces)
