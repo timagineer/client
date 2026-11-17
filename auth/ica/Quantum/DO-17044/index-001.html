@@ -1304,19 +1304,22 @@
     /* ── Message Topics ── */
     .topics-header {
       display: grid;
-      grid-template-columns: 44px 110px 1fr 200px;
+      grid-template-columns: 44px auto 1fr 180px;
       gap: 12px;
-      padding: 6px 0 8px;
-      border-bottom: 2px solid var(--neutral-85);
+      padding: 8px 0;
+      border-bottom: 1.5px solid var(--neutral-80);
       align-items: end;
     }
-    .col-label { font-size: 11px; font-weight: 600; color: var(--neutral-50); text-transform: uppercase; letter-spacing: 0.05em; }
-    .col-hint { font-size: 10px; font-weight: 400; color: var(--neutral-60); text-transform: none; letter-spacing: 0; display: block; margin-top: 2px; }
+    .col-label {
+      font-size: 13px; font-weight: 500; color: var(--neutral-40);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .col-hint { display: none; }
 
-    .topics-list { display: flex; flex-direction: column; }
+    .topics-list { display: block; width: 100%; }
     .topic-row {
       display: grid;
-      grid-template-columns: 44px 110px 1fr 200px;
+      grid-template-columns: 44px auto 1fr 180px;
       gap: 12px;
       align-items: center;
       padding: 10px 0;
@@ -1325,29 +1328,28 @@
     }
     .topic-row:last-child { border-bottom: none; }
     .topic-row.disabled { opacity: 0.55; }
+
     .topic-name { font-size: 13px; font-weight: 500; color: var(--neutral-20); }
 
-    /* Toggle */
-    .toggle-label { position: relative; display: inline-flex; cursor: pointer; user-select: none; }
-    .topic-toggle { position: absolute; opacity: 0; width: 0; height: 0; }
-    .toggle-track {
+    /* Toggle — BT-3523 pattern */
+    .toggle-switch {
       width: 36px; height: 20px; background: var(--neutral-75); border-radius: 10px;
-      transition: background 0.15s; position: relative; flex-shrink: 0;
+      position: relative; cursor: pointer; transition: background 150ms; flex-shrink: 0;
     }
-    .toggle-track::after {
+    .toggle-switch.on { background: var(--secondary-60); }
+    .toggle-switch::after {
       content: ''; position: absolute; top: 2px; left: 2px;
       width: 16px; height: 16px; background: #fff; border-radius: 50%;
-      transition: transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: transform 150ms;
     }
-    .topic-toggle:checked + .toggle-track { background: hsl(130,55%,42%); }
-    .topic-toggle:checked + .toggle-track::after { transform: translateX(16px); }
+    .toggle-switch.on::after { transform: translateX(16px); }
 
     .topic-display-name input { width: 100%; }
     .staff-role { font-size: 10px; color: var(--neutral-50); margin-left: 4px; }
 
     /* Fallback */
     .fallback-section {
-      margin-top: 16px; padding: 12px 14px; background: var(--neutral-95);
+      margin-top: 16px; padding: 12px 16px; background: var(--neutral-95);
       border: 1px solid var(--neutral-85); border-radius: 6px;
       display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     }
@@ -1446,61 +1448,18 @@
               </div>
               <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
 
-              <div class="topics-header">
+                                          <div class="topics-header">
                 <span></span>
-                <span class="col-label">Topic</span>
-                <span class="col-label">Recipient <span class="req">*</span> <span class="col-hint">Required when enabled</span></span>
-                <span class="col-label">Display name <span class="col-hint">Optional — what patients see</span></span>
+                <span class="col-label">Type</span>
+                <span class="col-label">Recipient <span class="req">*</span></span>
+                <span class="col-label">Display (To:) name</span>
               </div>
 
               <div class="topics-list">
-                
-          <div class="topic-row" data-topic="medical">
-            <label class="toggle-label" title="Enabled">
-              <input type="checkbox" class="topic-toggle" checked>
-              <span class="toggle-track"></span>
-            </label>
-            <div class="topic-name">Medical</div>
-            <div class="multi-wrap topic-recipients">
-              <button type="button" class="multi-trigger" data-multi="topic-medical">
-                <span class="multi-trigger-text">Sarah Rogers, James Morningstar</span>
-                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </button>
-              <div class="multi-dropdown" data-for="topic-medical">
-                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
-                <div class="multi-options">
-                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" checked/> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" checked/> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-
-                </div>
-              </div>
-            </div>
-            <div class="topic-display-name">
-              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Clinical Team">
-            </div>
-          </div>
-          <div class="topic-row" data-topic="appointment">
-            <label class="toggle-label" title="Enabled">
-              <input type="checkbox" class="topic-toggle" checked>
-              <span class="toggle-track"></span>
-            </label>
-            <div class="topic-name">Appointment</div>
-            <div class="multi-wrap topic-recipients">
-              <button type="button" class="multi-trigger" data-multi="topic-appointment">
-                <span class="multi-trigger-text">Angela Martinez, Front Desk</span>
-                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </button>
-              <div class="multi-dropdown" data-for="topic-appointment">
-                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
-                <div class="multi-options">
-                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+              <div class="topic-row" data-topic="appointment">
+                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                <div class="topic-name">Appointment</div>
+                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-appointment"><span class="multi-trigger-text">Angela Martinez, Front Desk</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-appointment"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
@@ -1509,29 +1468,43 @@
 <label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="angela-martinez" checked/> Angela Martinez <span class="staff-role">Admin</span></label>
 <label class="multi-option"><input type="checkbox" value="front-desk" checked/> Front Desk <span class="staff-role">Staff</span></label>
-
-                </div>
+</div></div></div>
+                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Scheduling"></div>
               </div>
-            </div>
-            <div class="topic-display-name">
-              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Scheduling">
-            </div>
-          </div>
-          <div class="topic-row" data-topic="medication">
-            <label class="toggle-label" title="Enabled">
-              <input type="checkbox" class="topic-toggle" checked>
-              <span class="toggle-track"></span>
-            </label>
-            <div class="topic-name">Medication</div>
-            <div class="multi-wrap topic-recipients">
-              <button type="button" class="multi-trigger" data-multi="topic-medication">
-                <span class="multi-trigger-text">Priya Patel</span>
-                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </button>
-              <div class="multi-dropdown" data-for="topic-medication">
-                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
-                <div class="multi-options">
-                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+              <div class="topic-row disabled" data-topic="billing">
+                <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                <div class="topic-name">Billing</div>
+                <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-billing"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-billing"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+</div></div></div>
+                <div class="topic-display-name" style="pointer-events:none;opacity:0.4"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
+              </div>
+              <div class="topic-row" data-topic="medical">
+                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                <div class="topic-name">Medical</div>
+                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medical"><span class="multi-trigger-text">Sarah Rogers, James Morningstar</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medical"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" checked/> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="james-morning" checked/> James Morningstar <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
+<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
+<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
+</div></div></div>
+                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="Clinical Team"></div>
+              </div>
+              <div class="topic-row" data-topic="medication">
+                <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                <div class="topic-name">Medication</div>
+                <div class="multi-wrap topic-recipients"><button type="button" class="multi-trigger" data-multi="topic-medication"><span class="multi-trigger-text">Priya Patel</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-medication"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="priya-patel" checked/> Priya Patel <span class="staff-role">Clinician</span></label>
@@ -1540,29 +1513,13 @@
 <label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
 <label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-
-                </div>
+</div></div></div>
+                <div class="topic-display-name"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
               </div>
-            </div>
-            <div class="topic-display-name">
-              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
-            </div>
-          </div>
-          <div class="topic-row disabled" data-topic="billing">
-            <label class="toggle-label" title="Disabled">
-              <input type="checkbox" class="topic-toggle" >
-              <span class="toggle-track"></span>
-            </label>
-            <div class="topic-name">Billing</div>
-            <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4">
-              <button type="button" class="multi-trigger" data-multi="topic-billing">
-                <span class="multi-trigger-text">Choose recipient…</span>
-                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </button>
-              <div class="multi-dropdown" data-for="topic-billing">
-                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
-                <div class="multi-options">
-                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
+              <div class="topic-row disabled" data-topic="other">
+                <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                <div class="topic-name">Other</div>
+                <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4"><button type="button" class="multi-trigger" data-multi="topic-other"><span class="multi-trigger-text">Choose recipient…</span><span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button><div class="multi-dropdown" data-for="topic-other"><div class="multi-search"><input type="text" placeholder="Search staff…"/></div><div class="multi-options"><label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
@@ -1571,45 +1528,9 @@
 <label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
 <label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
 <label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-
-                </div>
+</div></div></div>
+                <div class="topic-display-name" style="pointer-events:none;opacity:0.4"><input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value=""></div>
               </div>
-            </div>
-            <div class="topic-display-name" style="pointer-events:none;opacity:0.4">
-              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
-            </div>
-          </div>
-          <div class="topic-row disabled" data-topic="other">
-            <label class="toggle-label" title="Disabled">
-              <input type="checkbox" class="topic-toggle" >
-              <span class="toggle-track"></span>
-            </label>
-            <div class="topic-name">Other</div>
-            <div class="multi-wrap topic-recipients" style="pointer-events:none;opacity:0.4">
-              <button type="button" class="multi-trigger" data-multi="topic-other">
-                <span class="multi-trigger-text">Choose recipient…</span>
-                <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
-              </button>
-              <div class="multi-dropdown" data-for="topic-other">
-                <div class="multi-search"><input type="text" placeholder="Search staff…"/></div>
-                <div class="multi-options">
-                  <label class="multi-option"><input type="checkbox" value="sarah-rogers" /> Sarah Rogers <span class="staff-role">Principal Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="james-morning" /> James Morningstar <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="rachel-boyles" /> Rachel Boyles <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="priya-patel" /> Priya Patel <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="david-crowley" /> David Crowley <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="lisa-barnard" /> Lisa Barnard <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="tom-lindell" /> Tom Lindell <span class="staff-role">Clinician</span></label>
-<label class="multi-option"><input type="checkbox" value="angela-martinez" /> Angela Martinez <span class="staff-role">Admin</span></label>
-<label class="multi-option"><input type="checkbox" value="front-desk" /> Front Desk <span class="staff-role">Staff</span></label>
-
-                </div>
-              </div>
-            </div>
-            <div class="topic-display-name" style="pointer-events:none;opacity:0.4">
-              <input type="text" class="cell-input topic-dn" placeholder="e.g. Clinical Team" value="">
-            </div>
-          </div>
               </div>
 
               <div class="fallback-section">
@@ -1685,24 +1606,24 @@
     setInterval(updateMeta, 60000);
     updateMeta();
 
-    // ── Toggle behavior ──
-    document.querySelectorAll('.topic-toggle').forEach(toggle => {
-      toggle.addEventListener('change', function() {
+    // ── Toggle behavior — BT-3523 pattern ──
+    document.querySelectorAll('.toggle-switch').forEach(sw => {
+      sw.addEventListener('click', function() {
+        this.classList.toggle('on');
+        const isOn = this.classList.contains('on');
+        this.setAttribute('aria-checked', isOn);
         const row = this.closest('.topic-row');
+        if (!row) return;
         const recipients = row.querySelector('.topic-recipients');
         const dn = row.querySelector('.topic-display-name');
-        if (this.checked) {
+        if (isOn) {
           row.classList.remove('disabled');
-          recipients.style.pointerEvents = '';
-          recipients.style.opacity = '';
-          dn.style.pointerEvents = '';
-          dn.style.opacity = '';
+          if (recipients) { recipients.style.pointerEvents = ''; recipients.style.opacity = ''; }
+          if (dn) { dn.style.pointerEvents = ''; dn.style.opacity = ''; }
         } else {
           row.classList.add('disabled');
-          recipients.style.pointerEvents = 'none';
-          recipients.style.opacity = '0.4';
-          dn.style.pointerEvents = 'none';
-          dn.style.opacity = '0.4';
+          if (recipients) { recipients.style.pointerEvents = 'none'; recipients.style.opacity = '0.4'; }
+          if (dn) { dn.style.pointerEvents = 'none'; dn.style.opacity = '0.4'; }
         }
       });
     });
