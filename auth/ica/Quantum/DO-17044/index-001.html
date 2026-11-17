@@ -7,6 +7,7 @@
   <title>Prototype: Patient portal message types/routing [DO-17044]</title>
   <style>
     :root {
+      --status-red: oklch(0.5141 0.2047 23.40);
       --primary-25: oklch(38.052% 0.0888 258.539);
       --primary-30: oklch(43.332% 0.10422 258.384);
       --primary-50: oklch(49.153% 0.12057 258.167);
@@ -432,10 +433,14 @@
       overflow: hidden;
     }
 
-    .multi-trigger:focus {
-      outline: none;
-      border-color: var(--primary-30);
-      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    .multi-trigger.error {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.12);
+    }
+
+    outline: none;
+    border-color: var(--primary-30);
+    box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
     }
 
     .multi-trigger-text {
@@ -630,6 +635,12 @@
 
     .topic-row.disabled:not(.editing) .type-label {
       color: var(--neutral-50);
+    }
+
+    .topic-row.disabled:not(.editing) .edit-btn {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     .topic-row.editing {
@@ -1358,6 +1369,14 @@
 
     function exitEditMode(row, save) {
       if (save) {
+        // Validate: recipient required when topic is ON
+        const isOn = row.querySelector('.toggle-switch')?.classList.contains('on');
+        const hasRecipients = row.querySelectorAll('.multi-option input[type=checkbox]:checked').length > 0;
+        if (isOn && !hasRecipients) {
+          row.querySelector('.multi-trigger')?.classList.add('error');
+          return; // Stay in edit mode
+        }
+        row.querySelector('.multi-trigger')?.classList.remove('error');
         // Commit recipient read value
         const names = getCheckedNames(row);
         const recipVal = names.length ? names.join(', ') : '—';
@@ -1413,7 +1432,9 @@
       const saveBtn = e.target.closest('.save-btn');
       const cancelBtn = e.target.closest('.cancel-btn');
       if (editBtn) {
-        enterEditMode(editBtn.closest('.topic-row'));
+        const row = editBtn.closest('.topic-row');
+        if (row.classList.contains('disabled')) return;
+        enterEditMode(row);
       } else if (saveBtn) {
         exitEditMode(saveBtn.closest('.topic-row'), true);
       } else if (cancelBtn) {
@@ -1448,6 +1469,7 @@
       }
       dd.querySelectorAll('input[type=checkbox]').forEach(cb => {
         cb.addEventListener('change', () => {
+          if (cb.checked) dd.previousElementSibling?.classList.remove('error');
           const row = cb.closest('.topic-row');
           const names = getCheckedNames(row);
           const trigEl = dd.previousElementSibling.querySelector('.multi-trigger-text');
