@@ -693,6 +693,27 @@
     }
 
     /* Disclaimer badge tooltip (DO-17181 pattern, scoped to badge only) */
+    .disclaimer-badge::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      top: auto;
+      left: 0;
+      transform: none;
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 400;
+    }
+
     .disclaimer-badge:hover::after {
       opacity: 1;
       visibility: visible;
@@ -707,13 +728,6 @@
       overflow: visible;
     }
 
-    /* Left-align disclaimer tooltip so it doesn't clip off left edge; above icon to avoid card bottom clip */
-    .disclaimer-badge::after {
-      top: auto;
-      bottom: calc(100% + 6px);
-      left: 0;
-      transform: none;
-    }
 
     .toggle-switch {
       width: 36px;
