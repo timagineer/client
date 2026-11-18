@@ -805,16 +805,24 @@
     }
 
     /* Fallback */
-    .fallback-section {
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: var(--neutral-95);
-      border: 1px solid var(--neutral-85);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+    .fallback-section.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .fallback-section.disabled .fallback-combo-trigger {
+      cursor: not-allowed;
+    }
+
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--neutral-95);
+    border: 1px solid var(--neutral-85);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
     }
 
     .fallback-label {
@@ -2058,7 +2066,15 @@
       const topic = row.dataset.topic;
       const portalOpt = document.querySelector(`.topic-option[data-topic="${topic}"]`);
       if (portalOpt) portalOpt.style.display = isOn ? '' : 'none';
+      updateFallbackState();
     }
+
+    function updateFallbackState() {
+      const anyOn = [...document.querySelectorAll('.topic-row .toggle-switch')].some(sw => sw.classList.contains('on'));
+      const section = document.querySelector('.fallback-section');
+      if (section) section.classList.toggle('disabled', !anyOn);
+    }
+    updateFallbackState();
     document.querySelectorAll('.type-toggle-cell').forEach(cell => {
       cell.addEventListener('click', function () { applyToggle(this.querySelector('.toggle-switch')); });
     });
