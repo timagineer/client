@@ -817,6 +817,11 @@
       flex-wrap: wrap;
     }
 
+    .fallback-section.disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
     .fallback-label {
       font-size: 13px;
       color: var(--neutral-30);
@@ -2058,6 +2063,10 @@
       const topic = row.dataset.topic;
       const portalOpt = document.querySelector(`.topic-option[data-topic="${topic}"]`);
       if (portalOpt) portalOpt.style.display = isOn ? '' : 'none';
+      // Disable fallback if all topics are OFF
+      const anyOn = [...document.querySelectorAll('.topic-row .toggle-switch')].some(s => s.classList.contains('on'));
+      const fb = document.querySelector('.fallback-section');
+      if (fb) fb.classList.toggle('disabled', !anyOn);
     }
     document.querySelectorAll('.type-toggle-cell').forEach(cell => {
       cell.addEventListener('click', function () { applyToggle(this.querySelector('.toggle-switch')); });
