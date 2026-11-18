@@ -647,7 +647,10 @@
       color: var(--neutral-50);
     }
 
-    .topic-row.disabled:not(.editing) .edit-btn::after { display: none; }
+    .topic-row.disabled:not(.editing) .edit-btn::after {
+      display: none;
+    }
+
     .topic-row.disabled:not(.editing) .edit-btn {
       opacity: 0.35;
       cursor: not-allowed;
@@ -820,6 +823,7 @@
     .fallback-section.disabled {
       opacity: 0.55;
     }
+
     .fallback-section.disabled .fallback-combo-trigger {
       cursor: not-allowed;
     }
@@ -1098,6 +1102,12 @@
 
     .btn-send:hover {
       background: #163450;
+    }
+
+    .btn-send:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: #1e3c5f;
     }
 
     .compose-body {
@@ -2033,7 +2043,7 @@
     document.addEventListener('click', () => {
       topicDropdown.classList.remove('open');
       topicTrigger.classList.remove('open');
-        document.querySelector('.btn-send').disabled = false;
+      document.querySelector('.btn-send').disabled = false;
       closeAllDropdowns();
     });
     topicDropdown.addEventListener('click', e => e.stopPropagation());
