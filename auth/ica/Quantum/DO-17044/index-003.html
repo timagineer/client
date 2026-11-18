@@ -650,7 +650,6 @@
     .topic-row.disabled:not(.editing) .edit-btn {
       opacity: 0.35;
       cursor: not-allowed;
-      pointer-events: none;
     }
 
     .topic-row.editing {
@@ -1843,7 +1842,7 @@
           <span class="compose-title">Compose Message</span>
           <div class="compose-btns">
             <button class="btn-cancel-portal" id="cancelComposeBtn">Cancel</button>
-            <button class="btn-send">Send</button>
+            <button class="btn-send" id="sendBtn" disabled>Send</button>
           </div>
         </div>
         <div class="compose-body">
@@ -1980,6 +1979,7 @@
       $('ehrView').hidden = true;
       $('previewBtn').hidden = true;
       $('composeView').removeAttribute('hidden');
+      document.querySelector('.btn-send').disabled = true;
       // Reset compose state
       $('topicTriggerText').textContent = 'Select a topic…';
       $('topicTriggerText').className = 'topic-trigger-text placeholder';
@@ -2023,12 +2023,14 @@
         // Close dropdown
         topicDropdown.classList.remove('open');
         topicTrigger.classList.remove('open');
+        document.querySelector('.btn-send').disabled = false;
       });
     });
 
     document.addEventListener('click', () => {
       topicDropdown.classList.remove('open');
       topicTrigger.classList.remove('open');
+        document.querySelector('.btn-send').disabled = false;
       closeAllDropdowns();
     });
     topicDropdown.addEventListener('click', e => e.stopPropagation());
