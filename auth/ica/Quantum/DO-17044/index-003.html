@@ -1965,7 +1965,7 @@
       const off = now.getTimezoneOffset();
       const tz = off === 300 ? ' EST' : off === 240 ? ' EDT' : '';
       const el = $('topbarMeta');
-      if (el) el.textContent = dateStr + ' \u00b7 ' + timeStr;
+      if (el) el.textContent = PRACTICE + ' Associates \u00b7 ' + dateStr + ' \u00b7 ' + timeStr;
     }
     setInterval(updateMeta, 60000);
     updateMeta();
