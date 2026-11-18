@@ -727,8 +727,10 @@
       overflow: visible;
     }
 
-    /* Left-align disclaimer tooltip so it doesn't clip off left edge */
+    /* Left-align disclaimer tooltip so it doesn't clip off left edge; above icon to avoid card bottom clip */
     .disclaimer-badge::after {
+      top: auto;
+      bottom: calc(100% + 6px);
       left: 0;
       transform: none;
     }
