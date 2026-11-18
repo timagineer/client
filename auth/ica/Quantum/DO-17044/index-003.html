@@ -727,6 +727,12 @@
       overflow: visible;
     }
 
+    /* Left-align disclaimer tooltip so it doesn't clip off left edge */
+    .disclaimer-badge::after {
+      left: 0;
+      transform: none;
+    }
+
     .toggle-switch {
       width: 36px;
       height: 20px;
@@ -1462,7 +1468,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Appointment</span>
-                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
@@ -1522,7 +1528,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Billing</span>
-                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
@@ -1672,7 +1678,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Other</span>
-                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
