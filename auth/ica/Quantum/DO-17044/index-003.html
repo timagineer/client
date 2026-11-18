@@ -2054,6 +2054,10 @@
         row.classList.add('disabled');
         if (row.classList.contains('editing')) exitEditMode(row, false);
       }
+      // Sync portal compose dropdown visibility
+      const topic = row.dataset.topic;
+      const portalOpt = document.querySelector(`.topic-option[data-topic="${topic}"]`);
+      if (portalOpt) portalOpt.style.display = isOn ? '' : 'none';
     }
     document.querySelectorAll('.type-toggle-cell').forEach(cell => {
       cell.addEventListener('click', function () { applyToggle(this.querySelector('.toggle-switch')); });
