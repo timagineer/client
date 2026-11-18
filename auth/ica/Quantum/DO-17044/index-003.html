@@ -647,6 +647,7 @@
       color: var(--neutral-50);
     }
 
+    .topic-row.disabled:not(.editing) .edit-btn::after { display: none; }
     .topic-row.disabled:not(.editing) .edit-btn {
       opacity: 0.35;
       cursor: not-allowed;
@@ -818,7 +819,9 @@
 
     .fallback-section.disabled {
       opacity: 0.55;
-      pointer-events: none;
+    }
+    .fallback-section.disabled .fallback-combo-trigger {
+      cursor: not-allowed;
     }
 
     .fallback-label {
