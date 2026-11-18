@@ -688,6 +688,43 @@
       color: hsl(38, 85%, 38%);
       flex-shrink: 0;
       display: flex;
+      position: relative;
+      cursor: default;
+    }
+
+    /* Tooltip — DO-17181 pattern */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
+    }
+
+    .topic-row .type-toggle-cell {
+      overflow: visible;
     }
 
     .toggle-switch {
@@ -1425,7 +1462,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Appointment</span>
-                      <span class="disclaimer-badge" title="Shows disclaimer to patient"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
@@ -1485,7 +1522,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Billing</span>
-                      <span class="disclaimer-badge" title="Shows disclaimer to patient"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
@@ -1635,7 +1672,7 @@
                   <div class="type-toggle-cell">
                     <div class="type-label-wrap">
                       <span class="type-label">Other</span>
-                      <span class="disclaimer-badge" title="Shows disclaimer to patient"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <span class="disclaimer-badge" data-tooltip="Patients see a disclaimer for this topic"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
                           <path d="M12 9v4" />
                           <path d="M12 17h.01" />
