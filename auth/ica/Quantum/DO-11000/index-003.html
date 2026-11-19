@@ -1429,6 +1429,15 @@
         }
 
         /* == DO-11000 feature == */
+        /* Override app-main to fill wire shell-main */
+        .shell-main>.app-main {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            border-radius: 0;
+            border-block-start: none;
+            border-inline-start: none;
+        }
 
         /* * {
             outline: .5px dashed deeppink
@@ -3939,10 +3948,7 @@
                 <div class="sidebar-spacer"></div>
                 <div class="wire-nav-item"></div>
             </nav>
-            <main class="shell-main" style="overflow:auto;flex:1;">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-search" />
-                </svg>
+            <main class="shell-main" style="overflow:auto;flex:1;display:flex;flex-direction:column;">
                 <main class="app-main" id="main-content">
 
                     <div class="page-body">
