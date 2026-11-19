@@ -1992,7 +1992,7 @@
       const off = now.getTimezoneOffset();
       const tz = ' ' + (Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName')?.value || '');
       const el = $('topbarMeta');
-      if (el) el.innerHTML = '<span class="topbar-meta-name">' + PRACTICE + ' Associates</span><span class="topbar-meta-secondary"> \u00b7 ' + timeStr + tz + ' \u00b7 ' + dateStr + '</span>';
+      if (el) el.textContent = PRACTICE + ' Associates \u00b7 ' + timeStr + tz + ' \u00b7 ' + dateStr;
     }
     setInterval(updateMeta, 60000);
     updateMeta();
