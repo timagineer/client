@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="aidxApp">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3881,7 +3881,7 @@
         }
       </style>
 </head>
-<body>
+<body ng-controller="AidxCtrl as vm">
   <div class="app-shell">
     <header class="shell-header">
       <div class="shell-header-left">
@@ -3889,11 +3889,7 @@
           <div class="wire-logo-mark"></div>
           <div class="wire-logo-text"></div>
         </div>
-        <div class="topbar-context">
-                <p class="topbar-context-primary">Progress Note 03/16/2026 &middot; Maria Johnson &middot; <abbr>DOB</abbr> 06/01/1980 (45) &middot; <abbr>ID</abbr> 0482</p>
-                <p class="topbar-context-secondary"><a href="#">Chart</a><a href="#">Docs</a><a href="#">Orders</a><a href="#">Schedule</a><a href="#">Forms</a><a href="#">Messages</a><a href="#">Insurance</a><a href="#">Account</a><a href="#">Info</a></p>
-            </div>
-      </div>
+        </div>
       <div class="wire-search"></div>
       <div class="wire-header-right">
         <div class="wire-icon"></div>
@@ -5076,5 +5072,26 @@
             }
         });
     </script>
+
+  <script>
+    (function() {
+      var PRACTICE = 'Therhappy';
+      function updateMeta() {
+        var now = new Date();
+        var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var h=now.getHours(), m=String(now.getMinutes()).padStart(2,'0');
+        var h12=h%12||12, ampm=h>=12?'PM':'AM';
+        var timeStr=h12+':'+m+' '+ampm;
+        var tzPart=Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(function(p){return p.type==='timeZoneName';});
+        var tz=' '+(tzPart?tzPart.value:'');
+        var dateStr=days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
+        var el=document.getElementById('topbarMeta');
+        if(el) el.innerHTML=PRACTICE+' Associates<span class="topbar-sep"> · </span>'+timeStr+tz+'<span class="topbar-sep"> · </span>'+dateStr;
+      }
+      setInterval(updateMeta,60000);
+      updateMeta();
+    })();
+  </script>
 </body>
 </html>
