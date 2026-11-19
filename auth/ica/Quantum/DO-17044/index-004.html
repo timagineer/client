@@ -1468,21 +1468,21 @@
             <div class="settings-nav-item">Form Package Email</div>
             <div class="settings-nav-item">Single Form Email</div>
             <div class="settings-nav-item">New Message Email</div>
-            <div class="settings-nav-item active">Message Topics</div>
+            <div class="settings-nav-item active">Message Categories</div>
           </aside>
           <div class="settings-main">
             <div class="content-card">
 
               <div class="page-header">
-                <h1 class="page-title">Message Topics</h1>
+                <h1 class="page-title">Message Categories</h1>
               </div>
-              <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
+              <p class="page-desc">Message categories clients can choose from when sending a portal message. Each category's designated recipient receives the message. If no recipient is configured, the message goes to the client's Principal Clinician.</p>
 
               <div class="topics-header">
-                <span class="col-label">Topic</span>
+                <span class="col-label">Category</span>
                 <span class="col-label">Recipient <span class="req">*</span></span>
-                <span class="col-label">To: name</span>
-                <span class="col-label">Description</span>
+                <span class="col-label">Display Name</span>
+                <span class="col-label">Description clients will see when composing a message</span>
                 <span class="col-label"></span>
               </div>
 
@@ -1611,7 +1611,7 @@
                 <!-- Medical — ON, no disclaimer -->
                 <div class="topic-row" data-topic="medical">
                   <div class="type-toggle-cell">
-                    <div class="type-label-wrap"><span class="type-label">Medical</span></div>
+                    <div class="type-label-wrap"><span class="type-label">Clinical</span></div>
                     <div class="toggle-switch on" role="switch" aria-checked="true"></div>
                   </div>
                   <div class="recipient-cell">
@@ -1741,8 +1741,8 @@
                     <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Front Office"></div>
                   </div>
                   <div class="desc-cell">
-                    <span class="read-val desc-read-val">Anything that doesn't fit the topics above</span>
-                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Anything that doesn't fit the topics above"></div>
+                    <span class="read-val desc-read-val">Anything that doesn't fit the message categories above</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Anything that doesn't fit the message categories above"></div>
                   </div>
                   <div class="topic-actions">
                     <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Other"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1868,10 +1868,10 @@
 
           <!-- Topic -->
           <div class="compose-field">
-            <label class="compose-label">Topic <span class="req-star">*</span></label>
+            <label class="compose-label">What is your message about? <span class="req-star">*</span></label>
             <div class="topic-select-wrap">
               <button type="button" class="topic-trigger" id="topicTrigger" aria-haspopup="listbox">
-                <span class="topic-trigger-text placeholder" id="topicTriggerText">Select a topic…</span>
+                <span class="topic-trigger-text placeholder" id="topicTriggerText">Select a message category…</span>
                 <span class="topic-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m6 9 6 6 6-6" />
                   </svg></span>
@@ -1895,7 +1895,7 @@
                 </div>
                 <div class="topic-option" data-topic="other" style="display:none" data-to="Front Office" data-disclaimer="true" role="option">
                   <div class="topic-option-name">Other</div>
-                  <div class="topic-option-desc">Anything that doesn't fit the topics above</div>
+                  <div class="topic-option-desc">Anything that doesn't fit the message categories above</div>
                 </div>
               </div>
             </div>
@@ -1914,7 +1914,7 @@
           <!-- To -->
           <div class="compose-field">
             <label class="compose-label">To</label>
-            <input type="text" class="compose-input readonly" id="toField" value="" placeholder="Recipient is determined by the topic you select" readonly>
+            <input type="text" class="compose-input readonly" id="toField" value="" placeholder="Recipient is determined by the category you select." readonly>
           </div>
 
           <!-- Subject -->
@@ -2000,7 +2000,7 @@
       $('composeView').removeAttribute('hidden');
       document.querySelector('.btn-send').classList.add('is-disabled');
       // Reset compose state
-      $('topicTriggerText').textContent = 'Select a topic…';
+      $('topicTriggerText').textContent = 'Select a message category…';
       $('topicTriggerText').className = 'topic-trigger-text placeholder';
       $('toField').value = '';
       $('composeDisclaimer').classList.remove('visible');
