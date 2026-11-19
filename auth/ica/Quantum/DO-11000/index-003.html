@@ -1,14 +1,1402 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="aidxApp">
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Prototype: AI-suggested diagnosis (AIDx) [DO-11000]</title>
-    <link rel="preconnect" href="https://ajax.googleapis.com">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-sanitize.min.js"></script>
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: AI-suggested diagnosis (AIDx) [DO-11000]</title>
+  <style>
+    /* == DO-17044 shell == */
+
+    :root {
+      --status-red: oklch(0.5141 0.2047 23.40);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-55: oklch(0.653 0.017 233.85);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --primary-btn: var(--primary-50);
+      --primary-btn-hover: var(--primary-30);
+      --primary-btn-active: var(--primary-25);
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
+
+    /* ═══════════════════════════════════════
+       EHR SHELL
+    ═══════════════════════════════════════ */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .shell-header-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-header-right {
+      flex: 1;
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .topbar-meta {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .topbar-sep {
+      color: var(--neutral-55);
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Wire elements */
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      width: 100%;
+    }
+
+    /* Top tabs */
+    .top-tabs {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .top-tab {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .top-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .top-tab.active {
+      color: var(--neutral-20);
+    }
+
+    .top-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-30);
+    }
+
+    .wire-top-tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Settings layout */
+    .settings-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .settings-sidebar {
+      width: 200px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-nav-item {
+      font-size: 13px;
+      color: var(--neutral-50);
+      padding: 10px var(--sp-4);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .settings-nav-item:hover {
+      background: var(--neutral-95);
+      color: var(--neutral-30);
+    }
+
+    .settings-nav-item.active {
+      background: var(--neutral-90);
+      color: var(--neutral-20);
+      font-weight: 500;
+    }
+
+    .settings-nav-item.active::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--primary-30);
+    }
+
+    .settings-main {
+      flex: 1;
+      background: var(--neutral-90);
+      padding: var(--sp-3);
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      padding: 18px var(--sp-4) 80px;
+      flex: 1;
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      margin-bottom: 4px;
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .page-desc {
+      font-size: 13px;
+      color: var(--neutral-40);
+      margin: 0 0 var(--sp-4);
+      line-height: 1.5;
+    }
+
+    /* Preview FAB */
+    .fab-preview {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px 10px 14px;
+      background: #1e3c5f;
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: background 0.1s, box-shadow 0.1s;
+    }
+
+    .fab-preview:hover {
+      background: #163450;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .fab-preview svg {
+      flex-shrink: 0;
+    }
+
+    /* Form controls */
+    .cell-select,
+    .cell-input {
+      width: 100%;
+      height: 28px;
+      padding: 4px 6px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: inherit;
+      font-family: inherit;
+      background: #fff;
+      color: var(--neutral-25);
+      box-sizing: border-box;
+    }
+
+    .cell-select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;
+    }
+
+    .cell-select:focus,
+    .cell-input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    /* Icon buttons */
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--neutral-40);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .icon-btn:focus {
+      outline: 2px solid var(--primary-30);
+      outline-offset: 2px;
+    }
+
+    .icon-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 150ms, visibility 150ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .icon-btn:hover::after,
+    .icon-btn:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .icon-btn.danger:hover {
+      background: hsl(0, 70%, 95%);
+      color: hsl(0, 65%, 45%);
+    }
+
+    .icon-btn.success:hover {
+      background: hsl(140, 50%, 92%);
+      color: hsl(140, 50%, 30%);
+    }
+
+    /* Multi-select */
+    .multi-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+      height: 28px;
+      padding: 4px 6px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      text-align: left;
+      color: var(--neutral-25);
+      cursor: pointer;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .multi-trigger.error {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.12);
+    }
+
+    .multi-trigger:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .multi-trigger-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .multi-trigger-icon {
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .multi-wrap {
+      position: relative;
+    }
+
+    .multi-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 300;
+      width: 220px;
+      max-height: 240px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+    }
+
+    .multi-dropdown.open {
+      display: flex;
+    }
+
+    .multi-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .multi-search input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .multi-search input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+    }
+
+    .multi-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .multi-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .multi-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .multi-option input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin: 0;
+      border-radius: 3px;
+      border: 2px solid var(--neutral-70);
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      transition: background 100ms, border-color 100ms;
+    }
+
+    .multi-option input[type="checkbox"]:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .multi-option input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      background-size: 10px 8px;
+    }
+
+    .multi-option input[type="checkbox"]:focus-visible {
+      outline: 2px solid var(--primary-30);
+      outline-offset: 2px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      padding: 8px 14px;
+      background: var(--primary-btn);
+      color: #fff;
+      border: none;
+      border-radius: var(--rad);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-btn-hover);
+    }
+
+    /* Message Topics grid */
+    .topics-header {
+      display: grid;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
+      gap: 12px;
+      border-bottom: 1.5px solid var(--neutral-80);
+      align-items: end;
+    }
+
+    .col-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      padding: 8px 4px;
+    }
+
+    .topics-list {
+      display: block;
+      width: 100%;
+    }
+
+    .topic-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--neutral-90);
+      transition: background 0.1s, opacity 0.15s;
+    }
+
+    .topic-row:last-child {
+      border-bottom: none;
+    }
+
+    .topic-row:not(.disabled):not(.editing):hover {
+      background: var(--neutral-95);
+    }
+
+    .topic-row.disabled:not(.editing) {
+      background: var(--neutral-95);
+    }
+
+    .topic-row.disabled:not(.editing) .type-label {
+      color: var(--neutral-50);
+    }
+
+    .topic-row.disabled:not(.editing) .edit-btn::after,
+    .topic-row.disabled:not(.editing) .disclaimer-badge::after {
+      display: none;
+    }
+
+    .topic-row.disabled:not(.editing) .edit-btn {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .topic-row.editing {
+      background: hsl(218, 50%, 97%);
+      border-radius: 4px;
+    }
+
+    .topic-row>* {
+      overflow: hidden;
+    }
+
+    .topic-row.editing>* {
+      overflow: visible;
+    }
+
+    /* Type toggle cell */
+    .type-toggle-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 4px;
+    }
+
+    .type-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .type-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .disclaimer-badge {
+      color: hsl(38, 85%, 38%);
+      flex-shrink: 0;
+      display: flex;
+      position: relative;
+      cursor: default;
+    }
+
+    /* Disclaimer badge tooltip (DO-17181 pattern, scoped to badge only) */
+    .disclaimer-badge::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      top: auto;
+      left: 0;
+      transform: none;
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    .disclaimer-badge:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
+    }
+
+    .topic-row .type-toggle-cell {
+      overflow: visible;
+    }
+
+    .topic-row .topic-actions {
+      overflow: visible;
+    }
+
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--neutral-75);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.on {
+      background: var(--secondary-60);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      transition: transform 150ms;
+    }
+
+    .toggle-switch.on::after {
+      transform: translateX(16px);
+    }
+
+    /* Cells */
+    .recipient-cell,
+    .dn-cell,
+    .desc-cell {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0 4px;
+    }
+
+    .read-val {
+      display: block;
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .read-val.muted {
+      color: var(--neutral-55);
+    }
+
+    .edit-ctrl {
+      width: 100%;
+    }
+
+    .topic-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      justify-content: flex-end;
+      padding: 0 4px;
+      overflow: visible;
+    }
+
+    /* Fallback */
+    .fallback-section {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--neutral-95);
+      border: 1px solid var(--neutral-85);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fallback-section.disabled {
+      opacity: 0.55;
+    }
+
+    .fallback-section.disabled .fallback-combo-trigger {
+      cursor: not-allowed;
+    }
+
+    .fallback-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    .fallback-combo-wrap {
+      position: relative;
+    }
+
+    .fallback-combo-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      height: 28px;
+      padding: 4px 8px;
+      min-width: 200px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--neutral-25);
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .fallback-combo-trigger:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .fallback-combo-text {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fallback-combo-icon {
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .fallback-combo-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 300;
+      width: 220px;
+      max-height: 280px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+    }
+
+    .fallback-combo-dropdown.open {
+      display: flex;
+    }
+
+    .fallback-combo-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .fallback-combo-option {
+      padding: 7px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .fallback-combo-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .fallback-combo-option.selected {
+      background: var(--neutral-90);
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .req {
+      color: hsl(0, 65%, 50%);
+      margin-left: 2px;
+    }
+
+    /* ═══════════════════════════════════════
+       PATIENT PORTAL SHELL
+    ═══════════════════════════════════════ */
+    .portal-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      background: oklch(0.965 0.006 234);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: #1a2332;
+    }
+
+    /* Portal nav */
+    .portal-nav {
+      background: #fff;
+      border-bottom: 1px solid #dde3ec;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 24px;
+      height: 56px;
+      flex-shrink: 0;
+    }
+
+    .portal-brand {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a2332;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    .portal-nav-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .portal-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 14px;
+      height: 56px;
+      font-size: 13px;
+      color: #5a6a7e;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: color 0.1s;
+    }
+
+    .portal-nav-link:hover {
+      color: #1a2332;
+    }
+
+    .portal-nav-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .portal-nav-link.active {
+      background: #1e3c5f;
+      color: #fff;
+      border-radius: 6px;
+      height: 32px;
+      margin: auto 4px;
+      padding: 0 14px;
+      border-bottom: none;
+    }
+
+    .portal-nav-link.active:hover {
+      background: #163450;
+    }
+
+    .msg-badge {
+      background: #e53e3e;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portal-avatar {
+      width: 32px;
+      height: 32px;
+      background: #2d4a7a;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      justify-self: end;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Portal content */
+    .portal-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+      overflow-y: auto;
+    }
+
+    /* Compose card */
+    .compose-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 760px;
+      height: fit-content;
+    }
+
+    .compose-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e8edf3;
+    }
+
+    .compose-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a2332;
+    }
+
+    .compose-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cancel-portal {
+      padding: 7px 16px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #4a5568;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.1s;
+    }
+
+    .btn-cancel-portal:hover {
+      background: #f7fafc;
+    }
+
+    .btn-send {
+      padding: 7px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #1e3c5f;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.1s;
+    }
+
+    .btn-send:hover {
+      background: #163450;
+    }
+
+    .btn-send.is-disabled,
+    .btn-send.is-disabled:hover {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #4a6080;
+    }
+
+    .compose-body {
+      padding: 20px;
+    }
+
+    /* Form fields */
+    .compose-field {
+      margin-bottom: 16px;
+    }
+
+    .compose-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+
+    .compose-label .req-star {
+      color: #e53e3e;
+    }
+
+    .compose-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #1a2332;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .compose-input:focus {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+    }
+
+    .compose-input::placeholder {
+      color: #9eaab8;
+    }
+
+    .compose-input.readonly {
+      background: #f7fafc;
+      cursor: default;
+      color: #4a5568;
+    }
+
+    /* Topic custom select */
+    .topic-select-wrap {
+      position: relative;
+    }
+
+    .topic-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 14px;
+      color: #1a2332;
+      cursor: pointer;
+      text-align: left;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .topic-trigger:focus,
+    .topic-trigger.open {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+    }
+
+    .topic-trigger-text {
+      flex: 1;
+    }
+
+    .topic-trigger-text.placeholder {
+      color: #9eaab8;
+    }
+
+    .topic-trigger-icon {
+      color: #9eaab8;
+      display: flex;
+      align-items: center;
+    }
+
+    .topic-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      z-index: 200;
+      display: none;
+      overflow: hidden;
+    }
+
+    .topic-dropdown.open {
+      display: block;
+    }
+
+    .topic-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f4f8;
+      transition: background 0.1s;
+    }
+
+    .topic-option:last-child {
+      border-bottom: none;
+    }
+
+    .topic-option:hover {
+      background: #f7fafc;
+    }
+
+    .topic-option.selected {
+      background: #eef3f9;
+    }
+
+    .topic-option-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a2332;
+    }
+
+    .topic-option-desc {
+      font-size: 12px;
+      color: #7a8a9e;
+      margin-top: 2px;
+    }
+
+    /* Disclaimer banner — BT-3523 amber */
+    .compose-disclaimer {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: hsl(45, 100%, 93%);
+      border: 1px solid hsl(45, 65%, 78%);
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    .compose-disclaimer.visible {
+      display: flex;
+    }
+
+    .compose-disclaimer svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: hsl(38, 85%, 35%);
+    }
+
+    .compose-disclaimer-text {
+      font-size: 13px;
+      color: hsl(38, 85%, 28%);
+      line-height: 1.5;
+    }
+
+    /* Message area */
+    .msg-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 8px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px 6px 0 0;
+      border-bottom: none;
+      background: #f7fafc;
+    }
+
+    .tb-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #5a6a7e;
+    }
+
+    .tb-btn:hover {
+      background: #e8edf3;
+    }
+
+    .tb-btn.bold {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .tb-btn.italic {
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    .tb-btn.underline {
+      text-decoration: underline;
+      font-size: 13px;
+    }
+
+    .tb-sep {
+      width: 1px;
+      height: 18px;
+      background: #c8d2de;
+      margin: 0 4px;
+    }
+
+    .msg-body {
+      min-height: 180px;
+      padding: 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 0 0 6px 6px;
+      font-size: 14px;
+      color: #9eaab8;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+    }
+
+    .msg-body:focus {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+      color: #1a2332;
+    }
+
+    /* Attach */
+    .attach-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #5a6a7e;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 12px;
+      transition: background 0.1s;
+    }
+
+    .attach-btn:hover {
+      background: #f7fafc;
+    }
+
+    /* Portal footer */
+    .portal-footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #9eaab8;
+      flex-shrink: 0;
+    }
+
+    .portal-footer a {
+      color: #4a90d9;
+      text-decoration: none;
+    }
+
+    .portal-footer a:hover {
+      text-decoration: underline;
+    }
+      /* == DO-11000 feature == */
+
         /* * {
             outline: .5px dashed deeppink
         } */
@@ -2891,49 +4279,41 @@
                 }
             }
         }
-    </style>
+      </style>
 </head>
-
-<body ng-controller="AidxCtrl as vm">
-
-    <div id="live-region" aria-live="polite" aria-atomic="true" role="status" class="visually-hidden"></div>
-    <a class="skip-link" href="#main-content">Skip to main content</a>
-
-    <div class="app-shell">
-
-        <!-- ── Topbar ── -->
-        <header class="topbar">
-            <div style="display:flex;align-items:center;gap:8px;">
-                <div class="wire-logo">
-                    <div class="wire-logo-mark"></div>
-                    <div class="wire-logo-text"></div>
-                </div>
-            </div>
-            <span class="topbar-meta-wire" id="topbarMeta"></span>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <div class="wire-search"></div>
-                <div class="wire-icon"></div>
-                <div class="wire-icon"></div>
-                <div class="wire-icon"></div>
-                <div class="wire-icon"></div>
-                <div class="wire-avatar"></div>
-            </div>
-        </header>
-
-        <!-- ── Sidenav ── -->
-        <nav class="sidenav" aria-label="Main navigation" style="display:flex;flex-direction:column;gap:8px;padding:12px 8px;overflow:hidden;">
-            <div class="wire-nav-item"></div>
-            <div class="wire-nav-item"></div>
-            <div class="wire-nav-item active"></div>
-            <div class="wire-nav-item"></div>
-            <div class="wire-nav-item"></div>
-            <div class="wire-nav-item"></div>
-            <div style="flex:1;"></div>
-            <div class="wire-nav-item"></div>
-        </nav>
-
-        <!-- ── Main ── -->
-        <main class="app-main" id="main-content">
+<body>
+  <div class="app-shell">
+    <header class="shell-header">
+      <div class="shell-header-left">
+        <div class="wire-logo">
+          <div class="wire-logo-mark"></div>
+          <div class="wire-logo-text"></div>
+        </div>
+        <span class="topbar-meta" id="topbarMeta"></span>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+    <div class="shell-body">
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item active"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item"></div>
+      </nav>
+      <main class="shell-main" style="overflow:auto;">
+<main class="app-main" id="main-content">
 
             <div class="page-body">
 
@@ -3002,249 +4382,14 @@
 
             </div><!-- /.page-body -->
 
-        </main><!-- /.app-main -->
-
-        <!-- ── Dx Modal ── -->
-        <dialog id="dx-modal" class="dx-modal">
-            <header>
-                <h2>Diagnosis Codes</h2>
-                <button type="button" ng-click="vm.closeDxModal()" aria-label="Close">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#icon-close" />
-                    </svg>
-                </button>
-            </header>
-            <div>
-                <div class="dx-modal-search-row">
-                    <div class="dx-modal-search">
-                        <svg viewBox="0 0 24 24" class="dx-modal-search-icon" aria-hidden="true">
-                            <use href="#icon-search" />
-                        </svg>
-                        <input type="search" placeholder="Search by ICD, DSM, or description…" ng-model="vm.modalSearch" ng-change="vm.onModalSearchChange()" ng-model-options="{ debounce: 200 }" ng-keydown="vm.onModalSearchKeydown($event)" autocomplete="off">
-                        <button ng-if="vm.modalSearch" class="dx-modal-search-clear" ng-click="vm.clearModalSearch()" aria-label="Clear search">
-                            <svg viewBox="0 0 24 24" stroke-width="2.5">
-                                <use href="#icon-close" />
-                            </svg>
-                        </button>
-                        <div class="search-results" ng-if="vm.modalSearchResults.length > 0 && vm.modalSearch.length >= 2">
-                            <div class="search-result-item" ng-class="{'is-active': vm.isDxActive(r.code), 'kb-active': vm.modalSearchIndex === $index}" ng-repeat="r in vm.modalSearchResults track by r.code" ng-click="vm.onModalResultClick(r)" ng-mouseenter="vm.modalSearchIndex = $index">
-                                <span class="search-result-code">{{r.code}}</span>
-                                <span class="search-result-description">{{r.description}}</span>
-                                <span class="search-result-add" ng-if="!vm.isDxActive(r.code)">&plus; Add</span>
-                                <span class="search-result-exists" ng-if="vm.isDxActive(r.code)">Added</span>
-                                <span class="search-result-remove" ng-if="vm.isDxActive(r.code)">&minus; Remove</span>
-                            </div>
-                        </div>
-                        <div class="search-results" ng-if="vm.modalSearch.length >= 2 && vm.modalSearchResults.length === 0">
-                            <div class="search-no-results">No codes matching "{{vm.modalSearch}}"</div>
-                        </div>
-                    </div>
-                    <label class="dx-modal-dsm-toggle"><input type="checkbox" ng-model="vm.dsmOnly" ng-change="vm.onModalSearchChange()"> <span><abbr>DSM</abbr> only</span></label>
-                </div>
-                <nav class="dx-modal-tabs" aria-label="Code sources">
-                    <div class="dx-modal-tab-group">
-                        <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'shortlist'}" ng-click="vm.modalTab = 'shortlist'">Shortlist</button>
-                        <button class="dx-modal-tab-icon" aria-label="Shortlist settings" data-tooltip-dark="Settings">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <use href="#icon-gear" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="dx-modal-tab-group">
-                        <!-- <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AIDx<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button> -->
-                        <button class="dx-modal-tab" ng-class="{active: vm.modalTab === 'aidx'}" ng-click="vm.modalTab = 'aidx'; vm.aidxUnseen = false">AI-suggested<span class="notif-badge" ng-class="{visible: vm.aidxUnseen}" aria-hidden="true"></span></button>
-                        <button class="dx-modal-tab-icon" ng-click="vm.reAnalyze()" ng-class="{spinning: vm.analyzing}" ng-disabled="vm.analyzing" aria-label="Reanalyze note" data-tooltip-dark="Reanalyze" style="margin-inline:0;padding:0;">
-                            <svg viewBox="0 0 24 24" aria-hidden="true" style="opacity:0 !important">
-                                <use href="#icon-refresh" />
-                            </svg>
-                        </button>
-                    </div>
-                    <button class="dx-icon-btn dx-modal-info-btn" popovertarget="ai-info-popover" aria-label="How AI suggestions work">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-info" />
-                        </svg>
-                    </button>
-                </nav>
-
-                <div ng-if="vm.modalTab === 'shortlist'">
-                    <div class="dx-modal-shortlist" ng-if="vm.favorites.length > 0">
-                        <div class="favorite-chip" ng-repeat="fav in vm.favorites track by fav.code" ng-class="{'already-added': vm.isDxActive(fav.code)}" title="{{fav.code}} {{fav.fullDescription}}">
-                            <span class="favorite-chip-add" ng-click="!vm.isDxActive(fav.code) && vm.addFromFavorite(fav)">
-                                <span class="favorite-chip-code">{{fav.code}}</span>
-                                <span class="favorite-chip-name" ng-bind-html="fav.shortName | abbrWrap"></span>
-                            </span>
-                            <button class="favorite-chip-remove" ng-click="vm.removeFavorite(fav, $event)" aria-label="Remove {{fav.shortName}} from shortlist">
-                                <svg viewBox="0 0 24 24" stroke-width="2.5">
-                                    <use href="#icon-close" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <p class="dx-modal-empty" ng-if="vm.favorites.length === 0">No favorites saved</p>
-                </div>
-
-                <div ng-if="vm.modalTab === 'aidx'">
-                    <div class="ai-analyzing-wrap" ng-class="{'is-analyzing': vm.analyzing}">
-                        <div class="ai-analyzing">
-                            <div class="ai-analyzing-bar">
-                                <div class="ai-analyzing-bar-inner"></div>
-                            </div>
-                            <p class="ai-analyzing-text">Analyzing clinical data…</p>
-                        </div>
-
-                        <div class="dx-modal-suggestions-list" ng-if="vm.visibleSuggestions().length > 0">
-                            <div class="dx-modal-suggestion" ng-repeat="s in vm.visibleSuggestions() track by $index" ng-class="{dismissed: s.dismissed, leaving: s.leaving}" style="animation-delay: {{$index * 60}}ms">
-                                <span class="dx-modal-suggestion-code">{{s.code}}</span>
-                                <span class="dx-modal-suggestion-desc" title="{{s.description}}">{{s.description}}</span>
-                                <span class="badge dx-modal-suggestion-badge" ng-class="{'badge-positive': s.confidence === 'high', 'badge-notice': s.confidence === 'moderate', 'badge-neutral': s.confidence === 'low'}" ng-show="!s.dismissed">{{s.confidenceLabel}}</span>
-                                <div class="dx-modal-suggestion-actions" ng-show="!s.dismissed">
-                                    <button ng-click="vm.addSuggestion(s)" aria-label="Add {{s.code}}">Add</button>
-                                    <button ng-click="vm.dismissSuggestion(s)" aria-label="Skip {{s.code}}">Skip</button>
-                                </div>
-                                <div class="dx-modal-suggestion-feedback" ng-show="s.dismissed && s.showFeedback">
-                                    <button ng-repeat="r in vm.dismissReasons" ng-click="vm.quickFeedback(s, r)">{{r}}</button>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div><!-- /.ai-analyzing-wrap -->
-
-                    <p class="dx-modal-empty" ng-if="!vm.analyzing && vm.visibleSuggestions().length === 0 && vm.suggestionsLoaded">
-                        <span ng-if="vm.suggestions.length === 0">Not enough clinical detail to suggest codes</span>
-                        <span ng-if="vm.suggestions.length > 0">All suggestions have been added or dismissed</span>
-                    </p>
-                </div>
-
-                <section class="dx-modal-active" aria-labelledby="dx-modal-active-heading">
-                    <header class="dx-modal-active-header">
-                        <h3 class="dx-modal-active-title" id="dx-modal-active-heading">Active Codes <span class="badge badge-neutral">{{vm.activeDx.length}}</span></h3>
-                        <button class="dx-icon-btn" popovertarget="dx-fields-info" aria-label="About Omit and Rule Out">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <use href="#icon-info" />
-                            </svg>
-                        </button>
-                    </header>
-                    <div class="dx-modal-active-list" ng-if="vm.activeDx.length > 0">
-                        <div class="dx-modal-active-row" ng-repeat="dx in vm.activeDx track by dx.code" draggable="true" ng-dragstart="vm.dragStart($event, $index)" ng-dragover="vm.dragOver($event, $index)" ng-dragend="vm.dragEnd($event)" ng-drop="vm.drop($event, $index)">
-                            <span class="dx-drag-handle" aria-label="Reorder">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <use href="#icon-grip" />
-                                </svg>
-                            </span>
-                            <span class="dx-modal-active-code">{{dx.code}}</span>
-                            <span class="dx-modal-active-desc" title="{{dx.code}} {{dx.description}}">{{dx.description}}</span>
-                            <select class="dx-main-status" ng-model="dx.status">
-                                <option ng-repeat="s in vm.dxStatuses" value="{{s}}">{{s}}</option>
-                            </select>
-                            <label class="dx-modal-check"><input type="checkbox" ng-model="dx.omit"> Omit</label>
-                            <label class="dx-modal-check"><input type="checkbox" ng-model="dx.ruleOut"> Rule Out</label>
-                            <button class="dx-remove-btn" ng-click="vm.removeDx(dx)" aria-label="Remove {{dx.code}}">
-                                <svg viewBox="0 0 24 24">
-                                    <use href="#icon-close" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <p class="dx-modal-empty" ng-if="vm.activeDx.length === 0">No diagnoses assigned</p>
-                </section>
-            </div>
-            <footer>
-                <button class="btn-primary dx-modal-save" ng-click="vm.closeDxModal()">Done</button>
-            </footer>
-        </dialog>
-
-        <div id="tt-scripts" popover>Rx</div>
-        <div id="tt-labs" popover>Labs</div>
-        <div id="tt-inbox" popover>Messages</div>
-        <div id="tt-notifications" popover>Notifications</div>
-        <div id="tt-create" popover>Create new…</div>
-
-        <div id="tt-user" popover>User menu</div>
-
-        <div id="create-menu" class="create-menu" popover="manual" role="menu">
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-charts" />
-                </svg>
-                Chart
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-note" />
-                </svg>
-                Note
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-prescription" />
-                </svg>
-                Prescription
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-test-tube" />
-                </svg>
-                Lab Order
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-calendar" />
-                </svg>
-                Appointment
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-mail" />
-                </svg>
-                Message
-            </button>
-            <button type="button" role="menuitem">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <use href="#icon-chart-line" />
-                </svg>
-                Report
-            </button>
-        </div>
-
-    </div><!-- /.app-shell -->
-
-    <!-- AI Info Popover -->
-    <div id="ai-info-popover" class="ai-info-popover" popover="auto">
-        <dl class="ai-info-dl">
-            <dt>How AI Suggestions Work</dt>
-            <dd>ICD-10 code suggestions are ranked by relevance to your note and the patient's history. Non-billable codes are automatically filtered out.</dd>
-        </dl>
-        <div class="ai-info-notice"><strong>AI suggestions require your review</strong><br>Nothing is saved or pre-filled automatically.</div>
+        </main>
+      </main>
     </div>
+  </div>
 
-    <div id="dx-fields-info" class="ai-info-popover" popover="auto">
-        <dl class="ai-info-dl">
-            <dt>Omit</dt>
-            <dd>Excluded from note and claim</dd>
-            <dt>Rule Out</dt>
-            <dd>Documented as ruled out and not billed</dd>
-        </dl>
-    </div>
-
-    <div id="dx-rationale-tip" class="ai-info-popover" popover="auto">
-        <p id="dx-rationale-tip-title" class="rationale-tip-title"></p>
-        <p id="dx-rationale-tip-text"></p>
-    </div>
-
-    <div id="dx-dark-tip" popover="auto"><span id="dx-dark-tip-text"></span></div>
-
-    <!-- Toasts -->
-    <div class="toast-container">
-        <output class="toast" ng-class="toast.type" ng-repeat="toast in vm.toasts track by toast.id">
-            <svg viewBox="0 0 24 24" ng-if="toast.type === 'success'">
-                <use href="#icon-check-circle" />
-            </svg>
-            {{toast.message}}
-        </output>
-    </div>
-
-    <script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-sanitize.min.js"></script>
+<script>
         angular.module('aidxApp', ['ngSanitize'])
             .filter('abbrWrap', function () {
                 return function (text) {
@@ -4191,8 +5336,7 @@
                 }, 3000);
             }]);
     </script>
-
-    <script>
+<script>
         document.addEventListener('mouseover', function (e) {
             // Skip if we're just moving between children of the same trigger
             var related = e.relatedTarget;
@@ -4325,203 +5469,6 @@
                 menu.hidePopover();
             }
         });
-    
-        // ── Topbar meta ──
-        (function() {
-            var PRACTICE = 'Therhappy';
-            function updateMeta() {
-                var now = new Date();
-                var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                var h=now.getHours(),m=String(now.getMinutes()).padStart(2,'0');
-                var h12=h%12||12,ampm=h>=12?'PM':'AM';
-                var timeStr=h12+':'+m+' '+ampm;
-                var tz=' '+(Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(function(p){return p.type==='timeZoneName';})||{value:''}).value;
-                var dateStr=days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
-                var el=document.getElementById('topbarMeta');
-                if(el) el.innerHTML=PRACTICE+' Associates<span class="topbar-sep"> · </span>'+timeStr+tz+'<span class="topbar-sep"> · </span>'+dateStr;
-            }
-            setInterval(updateMeta,60000);
-            updateMeta();
-        })();
-</script>
-
-    <!-- SVG Symbols -->
-    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-        <symbol id="icon-search">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </symbol>
-        <symbol id="icon-grip" class="fill-icon">
-            <circle cx="9" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="9" cy="5" r="1.5" fill="currentColor" />
-            <circle cx="9" cy="19" r="1.5" fill="currentColor" />
-            <circle cx="15" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="15" cy="5" r="1.5" fill="currentColor" />
-            <circle cx="15" cy="19" r="1.5" fill="currentColor" />
-        </symbol>
-        <symbol id="icon-close">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-        </symbol>
-        <symbol id="icon-check-circle">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-        </symbol>
-        <symbol id="icon-info">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="8" />
-            <line x1="12" y1="12" x2="12" y2="16" />
-        </symbol>
-        <symbol id="icon-list">
-            <line x1="8" y1="6" x2="21" y2="6" />
-            <line x1="8" y1="12" x2="21" y2="12" />
-            <line x1="8" y1="18" x2="21" y2="18" />
-            <line x1="3" y1="6" x2="3.01" y2="6" />
-            <line x1="3" y1="12" x2="3.01" y2="12" />
-            <line x1="3" y1="18" x2="3.01" y2="18" />
-        </symbol>
-        <symbol id="icon-wand">
-            <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" />
-            <path d="m14 7 3 3" />
-            <path d="M5 6v4" />
-            <path d="M19 14v4" />
-            <path d="M10 2v2" />
-            <path d="M7 8H3" />
-            <path d="M21 16h-4" />
-            <path d="M11 3H9" />
-        </symbol>
-        <symbol id="icon-refresh">
-            <polyline points="23 4 23 10 17 10" />
-            <polyline points="1 20 1 14 7 14" />
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-        </symbol>
-        <symbol id="icon-thumbs-down">
-            <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
-            <path d="M17 14V2" />
-        </symbol>
-        <symbol id="icon-file-text">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-        </symbol>
-        <symbol id="icon-sparkles">
-            <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
-            <path d="M20 2v4" />
-            <path d="M22 4h-4" />
-            <circle cx="4" cy="20" r="2" />
-        </symbol>
-        <symbol id="icon-pencil">
-            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-            <path d="m15 5 4 4" />
-        </symbol>
-        <symbol id="icon-trash">
-            <path d="M10 11v6" />
-            <path d="M14 11v6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-            <path d="M3 6h18" />
-            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-        </symbol>
-        <symbol id="icon-circle-question">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <path d="M12 17h.01" />
-        </symbol>
-        <symbol id="icon-thumbs-up">
-            <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-            <path d="M7 10v12" />
-        </symbol>
-        <symbol id="icon-file-symlink">
-            <path d="M4 11V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h7" />
-            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-            <path d="m10 18 3-3-3-3" />
-        </symbol>
-        <symbol id="icon-chevron-down">
-            <path d="m6 9 6 6 6-6" />
-        </symbol>
-        <symbol id="icon-chevron-right">
-            <path d="m9 18 6-6-6-6" />
-        </symbol>
-        <symbol id="icon-plus">
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-        </symbol>
-        <symbol id="icon-gear">
-            <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-            <circle cx="12" cy="12" r="3" />
-        </symbol>
-        <symbol id="icon-prescription">
-            <path d="M18 11h-4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h4" />
-            <path d="M6 7v13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7" />
-            <rect width="16" height="5" x="4" y="2" rx="1" />
-        </symbol>
-        <symbol id="icon-test-tube">
-            <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
-            <path d="M6.453 15h11.094" />
-            <path d="M8.5 2h7" />
-        </symbol>
-        <symbol id="icon-inbox">
-            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-            <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-        </symbol>
-        <symbol id="icon-bell">
-            <path d="M10.268 21a2 2 0 0 0 3.464 0" />
-            <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
-        </symbol>
-        <symbol id="icon-dashboard">
-            <rect width="7" height="9" x="3" y="3" rx="1" />
-            <rect width="7" height="5" x="14" y="3" rx="1" />
-            <rect width="7" height="9" x="14" y="12" rx="1" />
-            <rect width="7" height="5" x="3" y="16" rx="1" />
-        </symbol>
-        <symbol id="icon-calendar">
-            <path d="M8 2v4" />
-            <path d="M16 2v4" />
-            <rect width="18" height="18" x="3" y="4" rx="2" />
-            <path d="M3 10h18" />
-        </symbol>
-        <symbol id="icon-charts">
-            <path d="M20 5a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2.5a1.5 1.5 0 0 1 1.2.6l.6.8a1.5 1.5 0 0 0 1.2.6z" />
-            <path d="M3 8.268a2 2 0 0 0-1 1.738V19a2 2 0 0 0 2 2h11a2 2 0 0 0 1.732-1" />
-        </symbol>
-        <symbol id="icon-group">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <circle cx="9" cy="7" r="4" />
-        </symbol>
-        <symbol id="icon-dollar">
-            <line x1="12" x2="12" y1="2" y2="22" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </symbol>
-        <symbol id="icon-chart-line">
-            <path d="M3 3v16a2 2 0 0 0 2 2h16" />
-            <path d="m19 9-5 5-4-4-3 3" />
-        </symbol>
-        <symbol id="icon-question">
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <path d="M12 17h.01" />
-        </symbol>
-        <symbol id="icon-note">
-            <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
-            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
-            <path d="M10 9H8" />
-            <path d="M16 13H8" />
-            <path d="M16 17H8" />
-        </symbol>
-        <symbol id="icon-mail">
-            <rect width="20" height="16" x="2" y="4" rx="2" />
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-        </symbol>
-        <symbol id="icon-chevron-down-fill" viewBox="0 0 16 16" class="fill-icon">
-            <path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z" fill="currentColor" />
-        </symbol>
-        <symbol id="icon-chevron-right-sm" viewBox="0 0 16 16">
-            <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-        </symbol>
-    </svg>
+    </script>
 </body>
-
 </html>
