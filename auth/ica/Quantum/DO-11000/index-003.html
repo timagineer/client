@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="aidxApp">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototype: AI-suggested diagnosis (AIDx) [DO-11000]</title>
-  <style>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype: AI-suggested diagnosis (AIDx) [DO-11000]</title>
+    <style>
         /* * {
             outline: .5px dashed deeppink
         } */
@@ -2888,138 +2888,255 @@
                 }
             }
         }
-    
-    /* ═══ WIRE SHELL OVERRIDES ═══ */
-    .wire-logo { display: flex !important; gap: 2px !important; }
-    .wire-logo-mark { width: 32px !important; height: 18px !important; background: oklch(0.4915 0.1206 258.17) !important; border-radius: 6px !important; }
-    .wire-logo-text { width: 48px !important; height: 18px !important; background: oklch(0.7169 0.2209 128.71) !important; border-radius: 6px !important; }
-    .wire-search { width: 220px !important; height: 28px !important; background: #d8dde3 !important; border-radius: 6px !important; flex-shrink: 0 !important; }
-    .wire-icon { width: 24px !important; height: 24px !important; background: #d8dde3 !important; border-radius: 6px !important; }
-    .wire-avatar { width: 26px !important; height: 26px !important; background: #d8dde3 !important; border-radius: 50% !important; }
-    .wire-nav-item { width: 100% !important; height: 56px !important; background: #e8ecf0 !important; border-radius: 6px !important; }
-    .wire-nav-item.active { background: #d0d7de !important; }
-    .topbar-meta { flex: 1 !important; text-align: center !important; font-size: 12px !important; color: #6a7585 !important; white-space: nowrap !important; letter-spacing: 0.01em !important; }
-    .topbar-sep { color: #9aa5b0 !important; }
-    .app-shell { display: flex !important; flex-direction: column !important; height: 100vh !important; }
-    .shell-header { display: flex !important; align-items: center !important; justify-content: space-between !important; height: 48px !important; background: #fff !important; border-bottom: 1px solid #d0d7de !important; padding: 0 16px !important; flex-shrink: 0 !important; }
-    .shell-header-left { flex: 1 !important; display: flex !important; align-items: center !important; gap: 8px !important; }
-    .wire-header-right { flex: 1 !important; display: flex !important; gap: 8px !important; align-items: center !important; justify-content: flex-end !important; }
-    .shell-body { display: flex !important; flex: 1 !important; overflow: hidden !important; }
-    .shell-sidebar { width: 80px !important; background: #fff !important; border-right: 1px solid #d0d7de !important; padding: 12px 8px !important; display: flex !important; flex-direction: column !important; gap: 12px !important; flex-shrink: 0 !important; overflow: hidden !important; }
-    .sidebar-spacer { flex: 1 !important; }
-    .shell-main { flex: 1 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; padding: 12px !important; background: oklch(0.965 0.006 234) !important; }
-    .shell-main > .app-main { flex: 1 !important; min-height: 0 !important; border-radius: var(--radius-lg, 8px) !important; overflow: hidden !important; border: none !important; }
-  </style>
+
+        /* ═══ WIRE SHELL OVERRIDES ═══ */
+        .wire-logo {
+            display: flex !important;
+            gap: 2px !important;
+        }
+
+        .wire-logo-mark {
+            width: 32px !important;
+            height: 18px !important;
+            background: oklch(0.4915 0.1206 258.17) !important;
+            border-radius: 6px !important;
+        }
+
+        .wire-logo-text {
+            width: 48px !important;
+            height: 18px !important;
+            background: oklch(0.7169 0.2209 128.71) !important;
+            border-radius: 6px !important;
+        }
+
+        .wire-search {
+            width: 220px !important;
+            height: 28px !important;
+            background: oklch(0.9542 0.0034 233.07) !important;
+            border-radius: 6px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .wire-icon {
+            width: 24px !important;
+            height: 24px !important;
+            background: #d8dde3 !important;
+            border-radius: 6px !important;
+        }
+
+        .wire-avatar {
+            width: 26px !important;
+            height: 26px !important;
+            background: #d8dde3 !important;
+            border-radius: 50% !important;
+        }
+
+        .wire-nav-item {
+            width: 100% !important;
+            height: 56px !important;
+            background: #e8ecf0 !important;
+            border-radius: 6px !important;
+        }
+
+        .wire-nav-item.active {
+            background: #d0d7de !important;
+        }
+
+        .topbar-meta {
+            flex: 1 !important;
+            text-align: center !important;
+            font-size: 12px !important;
+            color: #6a7585 !important;
+            white-space: nowrap !important;
+            letter-spacing: 0.01em !important;
+        }
+
+        .topbar-sep {
+            color: #9aa5b0 !important;
+        }
+
+        .app-shell {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100vh !important;
+        }
+
+        .shell-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 48px !important;
+            background: #fff !important;
+            border-bottom: 1px solid #d0d7de !important;
+            padding: 0 16px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .shell-header-left {
+            flex: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .wire-header-right {
+            flex: 1 !important;
+            display: flex !important;
+            gap: 8px !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+        }
+
+        .shell-body {
+            display: flex !important;
+            flex: 1 !important;
+            overflow: hidden !important;
+        }
+
+        .shell-sidebar {
+            width: 80px !important;
+            background: #fff !important;
+            border-right: 1px solid #d0d7de !important;
+            padding: 12px 8px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            flex-shrink: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .sidebar-spacer {
+            flex: 1 !important;
+        }
+
+        .shell-main {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            padding: 12px !important;
+            background: oklch(0.965 0.006 234) !important;
+        }
+
+        .shell-main>.app-main {
+            flex: 1 !important;
+            min-height: 0 !important;
+            border-radius: var(--radius-lg, 8px) !important;
+            overflow: hidden !important;
+            border: none !important;
+        }
+    </style>
 </head>
+
 <body ng-controller="AidxCtrl as vm">
-  <div class="app-shell">
-    <header class="shell-header">
-      <div class="shell-header-left">
-        <div class="wire-logo">
-          <div class="wire-logo-mark"></div>
-          <div class="wire-logo-text"></div>
-        </div>
-        <span class="topbar-meta" id="topbarMeta"></span>
-      </div>
-      <div class="wire-search"></div>
-      <div class="wire-header-right">
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-icon"></div>
-        <div class="wire-avatar"></div>
-      </div>
-    </header>
-    <div class="shell-body">
-      <nav class="shell-sidebar">
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item active"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="wire-nav-item"></div>
-        <div class="sidebar-spacer"></div>
-        <div class="wire-nav-item"></div>
-      </nav>
-      <main class="shell-main">
-<main class="app-main" id="main-content">
+    <div class="app-shell">
+        <header class="shell-header">
+            <div class="shell-header-left">
+                <div class="wire-logo">
+                    <div class="wire-logo-mark"></div>
+                    <div class="wire-logo-text"></div>
+                </div>
+                <span class="topbar-meta" id="topbarMeta"></span>
+            </div>
+            <div class="wire-search"></div>
+            <div class="wire-header-right">
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-avatar"></div>
+            </div>
+        </header>
+        <div class="shell-body">
+            <nav class="shell-sidebar">
+                <div class="wire-nav-item"></div>
+                <div class="wire-nav-item"></div>
+                <div class="wire-nav-item active"></div>
+                <div class="wire-nav-item"></div>
+                <div class="wire-nav-item"></div>
+                <div class="wire-nav-item"></div>
+                <div class="sidebar-spacer"></div>
+                <div class="wire-nav-item"></div>
+            </nav>
+            <main class="shell-main">
+                <main class="app-main" id="main-content">
 
-            <div class="page-body">
+                    <div class="page-body">
 
-                <!-- ── Left: form column ── -->
-                <aside class="pn-left">
+                        <!-- ── Left: form column ── -->
+                        <aside class="pn-left">
 
-                    <!-- ── Main Dx View ── -->
-                    <section class="dx-main" aria-labelledby="dx-main-heading">
-                        <header class="dx-main-header">
-                            <h3 class="dx-main-title" id="dx-main-heading">Diagnosis Codes <span class="badge badge-neutral">{{vm.activeDx.length}}</span></h3>
-                            <label class="dx-main-toggle"><span>Add to note</span><input type="checkbox" ng-model="vm.includeInNote"></label>
-                            <button class="btn-xs btn-primary" ng-click="vm.openDxModal()">
-                                <svg viewBox="0 0 24 24" stroke-width="2.5" class="btn-icon-sm">
-                                    <use href="#icon-plus" />
-                                </svg>
-                                Add
-                            </button>
-                        </header>
+                            <!-- ── Main Dx View ── -->
+                            <section class="dx-main" aria-labelledby="dx-main-heading">
+                                <header class="dx-main-header">
+                                    <h3 class="dx-main-title" id="dx-main-heading">Diagnosis Codes <span class="badge badge-neutral">{{vm.activeDx.length}}</span></h3>
+                                    <label class="dx-main-toggle"><span>Add to note</span><input type="checkbox" ng-model="vm.includeInNote"></label>
+                                    <button class="btn-xs btn-primary" ng-click="vm.openDxModal()">
+                                        <svg viewBox="0 0 24 24" stroke-width="2.5" class="btn-icon-sm">
+                                            <use href="#icon-plus" />
+                                        </svg>
+                                        Add
+                                    </button>
+                                </header>
 
-                        <div class="dx-main-list" ng-if="vm.activeDx.length > 0">
-                            <div class="dx-main-row" ng-repeat="dx in vm.activeDx | limitTo: (vm.dxExpanded ? vm.activeDx.length : 3) track by dx.code" ng-class="{'just-added': dx.justAdded}" draggable="true" ng-dragstart="vm.dragStart($event, $index)" ng-dragover="vm.dragOver($event, $index)" ng-dragend="vm.dragEnd($event)" ng-drop="vm.drop($event, $index)">
-                                <span class="dx-drag-handle" aria-label="Reorder">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <use href="#icon-grip" />
-                                    </svg>
-                                </span>
-                                <span class="dx-main-code">{{dx.code}}</span>
-                                <span class="dx-main-desc" title="{{dx.code}} {{dx.description}}">{{dx.description}}</span>
-                                <select class="dx-main-status" ng-model="dx.status">
-                                    <option ng-repeat="s in vm.dxStatuses" value="{{s}}">{{s}}</option>
-                                </select>
-                                <button class="dx-remove-btn" ng-click="vm.removeDx(dx)" aria-label="Remove {{dx.code}}">
-                                    <svg viewBox="0 0 24 24">
-                                        <use href="#icon-close" />
-                                    </svg>
-                                </button>
+                                <div class="dx-main-list" ng-if="vm.activeDx.length > 0">
+                                    <div class="dx-main-row" ng-repeat="dx in vm.activeDx | limitTo: (vm.dxExpanded ? vm.activeDx.length : 3) track by dx.code" ng-class="{'just-added': dx.justAdded}" draggable="true" ng-dragstart="vm.dragStart($event, $index)" ng-dragover="vm.dragOver($event, $index)" ng-dragend="vm.dragEnd($event)" ng-drop="vm.drop($event, $index)">
+                                        <span class="dx-drag-handle" aria-label="Reorder">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <use href="#icon-grip" />
+                                            </svg>
+                                        </span>
+                                        <span class="dx-main-code">{{dx.code}}</span>
+                                        <span class="dx-main-desc" title="{{dx.code}} {{dx.description}}">{{dx.description}}</span>
+                                        <select class="dx-main-status" ng-model="dx.status">
+                                            <option ng-repeat="s in vm.dxStatuses" value="{{s}}">{{s}}</option>
+                                        </select>
+                                        <button class="dx-remove-btn" ng-click="vm.removeDx(dx)" aria-label="Remove {{dx.code}}">
+                                            <svg viewBox="0 0 24 24">
+                                                <use href="#icon-close" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <button class="dx-main-expand" ng-if="vm.activeDx.length > 3" ng-click="vm.dxExpanded = !vm.dxExpanded">
+                                        {{vm.dxExpanded ? 'Show less' : 'Show all'}}
+                                    </button>
+                                </div>
+
+                                <p class="dx-main-empty" ng-if="vm.activeDx.length === 0">
+                                    No diagnoses assigned
+                                </p>
+                                <span class="pn-legend pn-legend-blue" data-tooltip-dark="Carries forward to next note"></span>
+                            </section>
+                            <div class="pn-card"><span class="pn-legend pn-legend-yellow" data-tooltip-dark="Specific to this note"></span></div>
+                            <div class="pn-btn-grid">
+                                <div class="pn-btn-placeholder"></div>
+                                <div class="pn-btn-placeholder"></div>
+                                <div class="pn-btn-placeholder"></div>
+                                <div class="pn-btn-placeholder"></div>
+                                <div class="pn-btn-placeholder"></div>
+                                <div class="pn-btn-placeholder"></div>
                             </div>
-                            <button class="dx-main-expand" ng-if="vm.activeDx.length > 3" ng-click="vm.dxExpanded = !vm.dxExpanded">
-                                {{vm.dxExpanded ? 'Show less' : 'Show all'}}
-                            </button>
-                        </div>
-
-                        <p class="dx-main-empty" ng-if="vm.activeDx.length === 0">
-                            No diagnoses assigned
-                        </p>
-                        <span class="pn-legend pn-legend-blue" data-tooltip-dark="Carries forward to next note"></span>
-                    </section>
-                    <div class="pn-card"><span class="pn-legend pn-legend-yellow" data-tooltip-dark="Specific to this note"></span></div>
-                    <div class="pn-btn-grid">
-                        <div class="pn-btn-placeholder"></div>
-                        <div class="pn-btn-placeholder"></div>
-                        <div class="pn-btn-placeholder"></div>
-                        <div class="pn-btn-placeholder"></div>
-                        <div class="pn-btn-placeholder"></div>
-                        <div class="pn-btn-placeholder"></div>
-                    </div>
-                    <div class="pn-pink-grid">
-                        <div class="pn-card-pink"><span class="pn-legend pn-legend-pink" data-tooltip-dark="For all notes"></span></div>
-                        <div class="pn-card-pink"><span class="pn-legend pn-legend-pink" data-tooltip-dark="For all notes"></span></div>
-                    </div>
-                </aside><!-- /.pn-left -->
+                            <div class="pn-pink-grid">
+                                <div class="pn-card-pink"><span class="pn-legend pn-legend-pink" data-tooltip-dark="For all notes"></span></div>
+                                <div class="pn-card-pink"><span class="pn-legend pn-legend-pink" data-tooltip-dark="For all notes"></span></div>
+                            </div>
+                        </aside><!-- /.pn-left -->
 
 
-                <!-- ── Right: note panel ── -->
-                <section class="pn-right"><span class="pn-legend pn-legend-yellow" data-tooltip-dark="Specific to this note"></span></section><!-- /.pn-right -->
+                        <!-- ── Right: note panel ── -->
+                        <section class="pn-right"><span class="pn-legend pn-legend-yellow" data-tooltip-dark="Specific to this note"></span></section><!-- /.pn-right -->
 
-            </div><!-- /.page-body -->
+                    </div><!-- /.page-body -->
 
-        </main>
-      </main>
+                </main>
+            </main>
+        </div>
     </div>
-  </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-sanitize.min.js"></script>
-<script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-sanitize.min.js"></script>
+    <script>
         angular.module('aidxApp', ['ngSanitize'])
             .filter('abbrWrap', function () {
                 return function (text) {
@@ -3966,7 +4083,7 @@
                 }, 3000);
             }]);
     </script>
-<script>
+    <script>
         document.addEventListener('mouseover', function (e) {
             // Skip if we're just moving between children of the same trigger
             var related = e.relatedTarget;
@@ -4100,25 +4217,26 @@
             }
         });
     </script>
-  <script>
-    (function() {
-      var PRACTICE = 'Therhappy';
-      function updateMeta() {
-        var now = new Date();
-        var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var h=now.getHours(), m=String(now.getMinutes()).padStart(2,'0');
-        var h12=h%12||12, ampm=h>=12?'PM':'AM';
-        var timeStr=h12+':'+m+' '+ampm;
-        var tzPart=Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(function(p){return p.type==='timeZoneName';});
-        var tz=' '+(tzPart?tzPart.value:'');
-        var dateStr=days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
-        var el=document.getElementById('topbarMeta');
-        if(el) el.innerHTML=PRACTICE+' Associates<span class="topbar-sep"> · </span>'+timeStr+tz+'<span class="topbar-sep"> · </span>'+dateStr;
-      }
-      setInterval(updateMeta,60000);
-      updateMeta();
-    })();
-  </script>
+    <script>
+        (function () {
+            var PRACTICE = 'Therhappy';
+            function updateMeta() {
+                var now = new Date();
+                var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var h = now.getHours(), m = String(now.getMinutes()).padStart(2, '0');
+                var h12 = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
+                var timeStr = h12 + ':' + m + ' ' + ampm;
+                var tzPart = Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(now).find(function (p) { return p.type === 'timeZoneName'; });
+                var tz = ' ' + (tzPart ? tzPart.value : '');
+                var dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
+                var el = document.getElementById('topbarMeta');
+                if (el) el.innerHTML = PRACTICE + ' Associates<span class="topbar-sep"> · </span>' + timeStr + tz + '<span class="topbar-sep"> · </span>' + dateStr;
+            }
+            setInterval(updateMeta, 60000);
+            updateMeta();
+        })();
+    </script>
 </body>
+
 </html>
