@@ -1395,7 +1395,14 @@
     .portal-footer a:hover {
       text-decoration: underline;
     }
-      /* == DO-11000 feature == */
+  
+    .topbar-context { flex: 1; min-width: 0; padding: 0 16px; }
+    .topbar-context-primary { font-size: 13px; font-weight: 500; color: #1a2332; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-context-secondary { display: flex; gap: 12px; margin-top: 2px; }
+    .topbar-context-secondary a { font-size: 11px; color: #5a6a7e; text-decoration: none; }
+    .topbar-context-secondary a:hover { text-decoration: underline; }
+
+    /* == DO-11000 feature == */
 
         /* * {
             outline: .5px dashed deeppink
@@ -1893,132 +1900,9 @@
                 box-sizing: border-box;
             }
 
-            html {
-                font-size: 100%;
-                /* scrollbar-gutter: stable; */
-                -webkit-text-size-adjust: none;
-                text-size-adjust: none;
-                line-height: 1.5;
-            }
-
-            :where(input, button, textarea, select) {
-                font: inherit;
-            }
-
-            :where(button, label[for], select, summary, [role="button"]) {
-                cursor: pointer;
-            }
-
-            :where(p, h1, h2, h3, h4, h5, h6) {
-                overflow-wrap: break-word;
-            }
-
-            :where(img, video, canvas) {
-                display: block;
-                max-width: 100%;
-                height: auto;
-            }
-
-            svg {
-                display: block;
-                max-width: 100%;
-                height: auto;
-            }
-
-            :where(symbol:not(.fill-icon)) {
-                fill: none;
-                stroke: currentColor;
-                stroke-width: 2;
-                stroke-linecap: round;
-                stroke-linejoin: round;
-            }
-
-            :where(ul, ol) {
-                list-style: none;
-            }
-
-            table {
-                border-collapse: collapse;
-            }
-
-            [hidden] {
-                display: none !important;
-            }
-
-            body {
-                animation: var(--voila);
-                background: var(--bg);
-                color: var(--text);
-                font-family: var(--font-sans);
-                font-size: var(--text-base);
-                line-height: var(--leading-normal);
-                font-optical-sizing: auto;
-                font-kerning: normal;
-                font-variant-ligatures: common-ligatures no-discretionary-ligatures no-historical-ligatures contextual;
-                text-decoration-skip-ink: auto;
-                /* hanging-punctuation: first allow-end last; — enable for prose content */
-            }
-
-            h1,
-            h2,
-            h3 {
-                font-weight: var(--font-weight-semibold);
-                line-height: var(--leading-tight);
-            }
-
-            h1 {
-                font-size: var(--text-heading-lg);
-            }
-
-            h2 {
-                font-size: var(--text-heading-sm);
-                margin-block-end: var(--space-35);
-            }
-
-            h3 {
-                color: var(--gray-150);
-            }
-
-            button {
-                font: inherit;
-                cursor: pointer;
-            }
-
-            abbr {
-                letter-spacing: var(--tracking-wide);
-                text-decoration: none;
-            }
-
-            a {
-                color: var(--primary-350);
-                text-decoration: none;
-                font-weight: var(--font-weight-semibold);
-                border-radius: 0.125rem;
-            }
-
-            a:hover {
-                text-decoration: underline;
-                color: var(--primary-300);
-            }
-
-            a:focus-visible {
-                outline: none;
-                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
-            }
-        }
-
         @layer components {
 
             /* ── Page shell ── */
-            .app-shell {
-                display: grid;
-                grid-template-columns: var(--sidenav-width) 1fr;
-                grid-template-rows: var(--topbar-height) 1fr;
-                grid-template-areas: "topbar topbar" "sidenav main";
-                min-block-size: 100dvh;
-                background: var(--surface);
-            }
-
             .skip-link {
                 position: absolute;
                 inset-block-start: var(--space-15);
@@ -2042,72 +1926,6 @@
             }
 
             /* ── Topbar ── */
-            .topbar {
-                grid-area: topbar;
-                background: var(--surface);
-                display: flex;
-                align-items: center;
-                gap: var(--space-25);
-                position: sticky;
-                inset-block-start: 0;
-                z-index: 60;
-                padding-inline-end: var(--space-35);
-            }
-
-            .topbar-logo-slot {
-                inline-size: var(--sidenav-width);
-                block-size: 100%;
-                flex-shrink: 0;
-                display: flex;
-                align-items: center;
-                padding-inline-start: var(--space-30);
-                overflow: visible;
-            }
-
-            .topbar-logo {
-                font-size: 22px;
-                font-weight: 800;
-                letter-spacing: var(--tracking-tight);
-                white-space: nowrap;
-            }
-
-            .topbar-logo-ica {
-                color: hsl(201, 100%, 24%);
-                color: oklch(0.3971 0.1093 234.33);
-            }
-
-            .topbar-logo-notes {
-                color: hsl(81, 100%, 37%);
-                color: oklch(0.7169 0.2209 128.71);
-            }
-
-            .topbar-logo sup {
-                font-size: 1em;
-                vertical-align: 0.175em;
-                line-height: var(--leading-none);
-                margin-inline-start: -0.05em;
-            }
-
-            .topbar-logo-symbol {
-                position: relative;
-                display: inline-block;
-                vertical-align: baseline;
-                line-height: var(--leading-none);
-            }
-
-            .topbar-logo-symbol-plus,
-            .topbar-logo-symbol-times {
-                display: inline-block;
-                line-height: 1;
-                transform-origin: 50% 58%;
-            }
-
-            .topbar-logo-symbol-times {
-                position: absolute;
-                inset: 0;
-                opacity: 0;
-            }
-
             @media (prefers-reduced-motion: no-preference) {
 
                 /* Plus spins and fades out */
@@ -2211,21 +2029,6 @@
 
 
 
-                .topbar-logo-symbol.is-spinning .topbar-logo-symbol-plus {
-                    animation:
-                        logoWindUp var(--duration-9) linear forwards,
-                        logoPlusSpin var(--duration-9) var(--ease-spring-1) var(--duration-9) forwards;
-                }
-
-                .topbar-logo-symbol.is-spinning .topbar-logo-symbol-times {
-                    animation: logoTimesSpin var(--duration-9) var(--ease-spring-1) var(--duration-9) forwards;
-                }
-
-                .topbar-logo-symbol.is-spinning {
-                    animation: logoRise var(--duration-8) var(--ease-spring-2) calc(var(--duration-9) + var(--duration-5)) forwards;
-                }
-            }
-
             .search-wrap {
                 position: relative;
                 inline-size: 24rem;
@@ -2264,70 +2067,6 @@
                 outline: none;
                 border-color: var(--focus-ring);
                 box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
-            }
-
-            .topbar-context {
-                display: flex;
-                flex-direction: column;
-                gap: var(--space-15);
-                flex: 1;
-                align-items: center;
-                text-align: center;
-            }
-
-            .topbar-context-primary {
-                font-size: var(--text-ui-sm);
-                font-weight: var(--font-weight-medium);
-                color: var(--text);
-                line-height: var(--leading-slight);
-            }
-
-            .topbar-context-secondary {
-                font-size: var(--text-ui-xs);
-                color: var(--text-secondary);
-                line-height: var(--leading-slight);
-                display: flex;
-                gap: 0;
-                justify-content: center;
-            }
-
-            .topbar-context-secondary a {
-                color: var(--text-secondary);
-                font-weight: var(--font-weight-normal);
-                text-decoration: none;
-            }
-
-            .topbar-context-secondary a+a::before {
-                content: '\2758';
-                padding-inline: var(--space-20);
-                color: var(--gray-400);
-                pointer-events: none;
-                font-size: var(--font-size-10);
-            }
-
-            .topbar-context-secondary a:hover {
-                text-decoration: underline;
-                text-decoration-skip-ink: auto;
-            }
-
-            .topbar-context-secondary a:hover::before {
-                display: inline-block;
-                color: var(--gray-400);
-                text-decoration: none;
-            }
-
-            .topbar-actions {
-                display: flex;
-                align-items: center;
-                gap: var(--space-25);
-                margin-inline-start: auto;
-            }
-
-            .topbar-divider {
-                inline-size: 1px;
-                block-size: 1.25rem;
-                background: var(--border-subtle);
-                flex-shrink: 0;
             }
 
             .btn-create {
@@ -2434,101 +2173,7 @@
             }
 
             /* ── Sidenav ── */
-            .sidenav {
-                grid-area: sidenav;
-                background: var(--surface);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                position: sticky;
-                inset-block-start: 0;
-                block-size: calc(100dvh - var(--topbar-height));
-                inline-size: var(--sidenav-width);
-                overflow-y: auto;
-                scrollbar-width: none;
-            }
-
-            .sidenav::-webkit-scrollbar {
-                display: none;
-            }
-
-            .sidenav-nav {
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                inline-size: 100%;
-                padding-block-start: var(--space-35);
-                flex: 1;
-                gap: var(--space-30);
-            }
-
-            .sidenav-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: var(--space-15);
-                inline-size: 100%;
-                padding-block: var(--space-35);
-                padding-inline: 0;
-                background: none;
-                border: none;
-                border-radius: 0;
-                color: var(--text);
-                font-size: var(--text-nav-item-sm);
-                font-weight: var(--font-weight-medium);
-                letter-spacing: var(--tracking-normal);
-                text-align: center;
-                text-decoration: none;
-                position: relative;
-            }
-
-            .sidenav-item svg {
-                inline-size: 1.5rem;
-                block-size: 1.5rem;
-                color: var(--text-tertiary);
-            }
-
-            .sidenav-item:hover svg {
-                color: var(--text-secondary);
-            }
-
-            .sidenav-item span {
-                line-height: var(--leading-slight);
-            }
-
             @media (prefers-reduced-motion: no-preference) {
-                .sidenav-item {
-                    transition: color var(--duration-2) var(--ease-hover), background-color var(--duration-2) var(--ease-hover);
-                }
-            }
-
-            .sidenav-item:hover {
-                color: var(--text);
-                background: var(--hover-bg);
-                box-shadow: inset -3px 0 0 var(--secondary-350);
-                text-decoration: none;
-            }
-
-            .sidenav-item.active {
-                color: var(--text);
-                background: var(--hover-bg);
-                box-shadow: inset -3px 0 0 var(--secondary-350);
-            }
-
-            .sidenav-item:focus-visible {
-                outline: none;
-                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
-            }
-
-            .sidenav-bottom {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                inline-size: 100%;
-                padding-block-end: var(--space-15);
-            }
-
             .create-menu {
                 padding: var(--space-15) 0;
                 min-inline-size: 11rem;
@@ -2573,52 +2218,7 @@
                 color: var(--text-secondary);
             }
 
-            .fab-support {
-                position: fixed;
-                inset-block-end: var(--space-35);
-                inset-inline-end: var(--space-35);
-                z-index: 50;
-                border-radius: 50%;
-                background: var(--surface);
-                color: var(--text-tertiary);
-                border: 2px solid var(--border);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1);
-                padding: var(--space-10);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .fab-support svg {
-                inline-size: 2.25rem;
-                block-size: 2.25rem;
-            }
-
-            .fab-support:active {
-                transform: scale(0.98);
-            }
-
-            /* FAB — special case: blue icon on hover is intentional, not a system pattern */
-            .fab-support:hover {
-                background: var(--hover-bg);
-                color: var(--primary-300);
-                border-color: var(--secondary-350);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1);
-            }
-
             @media (prefers-reduced-motion: no-preference) {
-                .fab-support {
-                    transition: color var(--duration-2) var(--ease-hover), background-color var(--duration-2) var(--ease-hover), box-shadow var(--duration-2) var(--ease-hover);
-                }
-            }
-
-            .fab-support:focus-visible {
-                outline: none;
-                box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring);
-                border-radius: 50%;
-            }
-
-            /* ── App main ── */
             .app-main {
                 grid-area: main;
                 display: flex;
@@ -4289,7 +3889,10 @@
           <div class="wire-logo-mark"></div>
           <div class="wire-logo-text"></div>
         </div>
-        <span class="topbar-meta" id="topbarMeta"></span>
+        <div class="topbar-context">
+                <p class="topbar-context-primary">Progress Note 03/16/2026 &middot; Maria Johnson &middot; <abbr>DOB</abbr> 06/01/1980 (45) &middot; <abbr>ID</abbr> 0482</p>
+                <p class="topbar-context-secondary"><a href="#">Chart</a><a href="#">Docs</a><a href="#">Orders</a><a href="#">Schedule</a><a href="#">Forms</a><a href="#">Messages</a><a href="#">Insurance</a><a href="#">Account</a><a href="#">Info</a></p>
+            </div>
       </div>
       <div class="wire-search"></div>
       <div class="wire-header-right">
@@ -4312,7 +3915,10 @@
         <div class="sidebar-spacer"></div>
         <div class="wire-nav-item"></div>
       </nav>
-      <main class="shell-main" style="overflow:auto;">
+      <main class="shell-main" style="overflow:auto;flex:1;">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="#icon-search" />
+                    </svg>
 <main class="app-main" id="main-content">
 
             <div class="page-body">
