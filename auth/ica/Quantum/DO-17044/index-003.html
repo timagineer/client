@@ -99,6 +99,10 @@
       letter-spacing: 0.01em;
     }
 
+    .topbar-sep {
+      color: oklch(0.748 0.0143 233.63);
+    }
+
     .shell-body {
       display: flex;
       flex: 1;
@@ -1984,7 +1988,7 @@
       const off = now.getTimezoneOffset();
       const tz = ' ' + (Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName')?.value || '');
       const el = $('topbarMeta');
-      if (el) el.textContent = PRACTICE + ' Associates \u00b7 ' + timeStr + tz + ' \u00b7 ' + dateStr;
+      if (el) el.innerHTML = PRACTICE + ' Associates<span class="topbar-sep"> \u00b7 </span>' + timeStr + tz + '<span class="topbar-sep"> \u00b7 </span>' + dateStr;
     }
     setInterval(updateMeta, 60000);
     updateMeta();
