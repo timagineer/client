@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Patient portal message types/routing [DO-17044]</title>
+  <style>
+    :root {
+      --status-red: oklch(0.5141 0.2047 23.40);
+      --primary-25: oklch(38.052% 0.0888 258.539);
+      --primary-30: oklch(43.332% 0.10422 258.384);
+      --primary-50: oklch(49.153% 0.12057 258.167);
+      --secondary-60: oklch(0.7169 0.2209 128.71);
+      --neutral-15: oklch(0.245 0.009 234.74);
+      --neutral-20: oklch(0.3008 0.0116 234.63);
+      --neutral-25: oklch(0.3608 0.0139 234.51);
+      --neutral-30: oklch(0.4089 0.0157 234.40);
+      --neutral-40: oklch(0.5192 0.0178 234.18);
+      --neutral-50: oklch(0.6068 0.0178 233.96);
+      --neutral-55: oklch(0.653 0.017 233.85);
+      --neutral-60: oklch(0.6996 0.0160 233.74);
+      --neutral-70: oklch(0.7974 0.0127 233.51);
+      --neutral-75: oklch(0.8373 0.0106 233.40);
+      --neutral-80: oklch(0.8845 0.0083 233.29);
+      --neutral-85: oklch(0.9234 0.0059 233.18);
+      --neutral-90: oklch(0.9542 0.0034 233.07);
+      --neutral-95: oklch(0.9772 0.0008 232.96);
+      --primary-btn: var(--primary-50);
+      --primary-btn-hover: var(--primary-30);
+      --primary-btn-active: var(--primary-25);
+      --border-light: var(--neutral-75);
+      --rad: 6px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-20);
+      background: oklch(0.965 0.006 234);
+    }
+
+    /* ═══════════════════════════════════════
+       EHR SHELL
+    ═══════════════════════════════════════ */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-2) var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      height: 48px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .shell-header-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .wire-header-right {
+      flex: 1;
+      display: flex;
+      gap: var(--sp-3);
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .topbar-meta {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .topbar-sep {
+      color: var(--neutral-55);
+    }
+
+    .shell-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .shell-sidebar {
+      width: 80px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: var(--sp-3) var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      flex-shrink: 0;
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Wire elements */
+    .wire-logo {
+      display: flex;
+      gap: 2px;
+    }
+
+    .wire-logo-mark {
+      width: 32px;
+      height: 18px;
+      background: var(--primary-50);
+      border-radius: var(--rad);
+    }
+
+    .wire-logo-text {
+      width: 48px;
+      height: 18px;
+      background: var(--secondary-60);
+      border-radius: var(--rad);
+    }
+
+    .wire-search {
+      width: 320px;
+      height: 28px;
+      background: var(--neutral-90);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--neutral-80);
+      border-radius: var(--rad);
+    }
+
+    .wire-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--neutral-80);
+      border-radius: 50%;
+    }
+
+    .wire-nav-item {
+      width: 100%;
+      height: 56px;
+      background: var(--neutral-85);
+      border-radius: var(--rad);
+      flex-shrink: 0;
+    }
+
+    .wire-nav-item.active {
+      background: var(--neutral-75);
+    }
+
+    .wire-text {
+      height: 10px;
+      background: var(--neutral-80);
+      border-radius: 2px;
+      width: 100%;
+    }
+
+    /* Top tabs */
+    .top-tabs {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--sp-4);
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .top-tab {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-50);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .top-tab:hover {
+      color: var(--neutral-30);
+    }
+
+    .top-tab.active {
+      color: var(--neutral-20);
+    }
+
+    .top-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-30);
+    }
+
+    .wire-top-tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Settings layout */
+    .settings-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .settings-sidebar {
+      width: 200px;
+      background: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-nav-item {
+      font-size: 13px;
+      color: var(--neutral-50);
+      padding: 10px var(--sp-4);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .settings-nav-item:hover {
+      background: var(--neutral-95);
+      color: var(--neutral-30);
+    }
+
+    .settings-nav-item.active {
+      background: var(--neutral-90);
+      color: var(--neutral-20);
+      font-weight: 500;
+    }
+
+    .settings-nav-item.active::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--primary-30);
+    }
+
+    .settings-main {
+      flex: 1;
+      background: var(--neutral-90);
+      padding: var(--sp-3);
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--rad);
+      padding: 18px var(--sp-4) 80px;
+      flex: 1;
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      margin-bottom: 4px;
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--neutral-20);
+      margin: 0;
+    }
+
+    .page-desc {
+      font-size: 13px;
+      color: var(--neutral-40);
+      margin: 0 0 var(--sp-4);
+      line-height: 1.5;
+    }
+
+    /* Preview FAB */
+    .fab-preview {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px 10px 14px;
+      background: #1e3c5f;
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: background 0.1s, box-shadow 0.1s;
+    }
+
+    .fab-preview:hover {
+      background: #163450;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .fab-preview svg {
+      flex-shrink: 0;
+    }
+
+    /* Form controls */
+    .cell-select,
+    .cell-input {
+      width: 100%;
+      height: 28px;
+      padding: 4px 6px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      font-size: inherit;
+      font-family: inherit;
+      background: #fff;
+      color: var(--neutral-25);
+      box-sizing: border-box;
+    }
+
+    .cell-select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 24px;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center;
+    }
+
+    .cell-select:focus,
+    .cell-input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    /* Icon buttons */
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--neutral-40);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: var(--neutral-90);
+      color: var(--neutral-30);
+    }
+
+    .icon-btn:focus {
+      outline: 2px solid var(--primary-30);
+      outline-offset: 2px;
+    }
+
+    .icon-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 150ms, visibility 150ms;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .icon-btn:hover::after,
+    .icon-btn:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .icon-btn.danger:hover {
+      background: hsl(0, 70%, 95%);
+      color: hsl(0, 65%, 45%);
+    }
+
+    .icon-btn.success:hover {
+      background: hsl(140, 50%, 92%);
+      color: hsl(140, 50%, 30%);
+    }
+
+    /* Multi-select */
+    .multi-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+      height: 28px;
+      padding: 4px 6px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      text-align: left;
+      color: var(--neutral-25);
+      cursor: pointer;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .multi-trigger.error {
+      border-color: var(--status-red);
+      box-shadow: 0 0 0 2px hsla(5, 65%, 50%, 0.12);
+    }
+
+    .multi-trigger:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .multi-trigger-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .multi-trigger-icon {
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .multi-wrap {
+      position: relative;
+    }
+
+    .multi-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 300;
+      width: 220px;
+      max-height: 240px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+    }
+
+    .multi-dropdown.open {
+      display: flex;
+    }
+
+    .multi-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--neutral-85);
+    }
+
+    .multi-search input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid var(--neutral-75);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .multi-search input:focus {
+      outline: none;
+      border-color: var(--primary-30);
+    }
+
+    .multi-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .multi-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .multi-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .multi-option input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin: 0;
+      border-radius: 3px;
+      border: 2px solid var(--neutral-70);
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      transition: background 100ms, border-color 100ms;
+    }
+
+    .multi-option input[type="checkbox"]:checked {
+      background: var(--secondary-60);
+      border-color: var(--secondary-60);
+    }
+
+    .multi-option input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      background-size: 10px 8px;
+    }
+
+    .multi-option input[type="checkbox"]:focus-visible {
+      outline: 2px solid var(--primary-30);
+      outline-offset: 2px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      padding: 8px 14px;
+      background: var(--primary-btn);
+      color: #fff;
+      border: none;
+      border-radius: var(--rad);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-btn-hover);
+    }
+
+    /* Message Topics grid */
+    .topics-header {
+      display: grid;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
+      gap: 12px;
+      border-bottom: 1.5px solid var(--neutral-80);
+      align-items: end;
+    }
+
+    .col-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-40);
+      white-space: nowrap;
+      padding: 8px 4px;
+    }
+
+    .topics-list {
+      display: block;
+      width: 100%;
+    }
+
+    .topic-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 160px 1fr 68px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--neutral-90);
+      transition: background 0.1s, opacity 0.15s;
+    }
+
+    .topic-row:last-child {
+      border-bottom: none;
+    }
+
+    .topic-row:not(.disabled):not(.editing):hover {
+      background: var(--neutral-95);
+    }
+
+    .topic-row.disabled:not(.editing) {
+      background: var(--neutral-95);
+    }
+
+    .topic-row.disabled:not(.editing) .type-label {
+      color: var(--neutral-50);
+    }
+
+    .topic-row.disabled:not(.editing) .edit-btn::after,
+    .topic-row.disabled:not(.editing) .disclaimer-badge::after {
+      display: none;
+    }
+
+    .topic-row.disabled:not(.editing) .edit-btn {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .topic-row.editing {
+      background: hsl(218, 50%, 97%);
+      border-radius: 4px;
+    }
+
+    .topic-row>* {
+      overflow: hidden;
+    }
+
+    .topic-row.editing>* {
+      overflow: visible;
+    }
+
+    /* Type toggle cell */
+    .type-toggle-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 4px;
+    }
+
+    .type-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .type-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .disclaimer-badge {
+      color: hsl(38, 85%, 38%);
+      flex-shrink: 0;
+      display: flex;
+      position: relative;
+      cursor: default;
+    }
+
+    /* Disclaimer badge tooltip (DO-17181 pattern, scoped to badge only) */
+    .disclaimer-badge::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      top: auto;
+      left: 0;
+      transform: none;
+      padding: 4px 8px;
+      background: var(--neutral-25);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 100ms, visibility 100ms;
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    .disclaimer-badge:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 120ms 240ms, visibility 120ms 240ms;
+    }
+
+    .topic-row .type-toggle-cell {
+      overflow: visible;
+    }
+
+    .topic-row .topic-actions {
+      overflow: visible;
+    }
+
+
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--neutral-75);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.on {
+      background: var(--secondary-60);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      transition: transform 150ms;
+    }
+
+    .toggle-switch.on::after {
+      transform: translateX(16px);
+    }
+
+    /* Cells */
+    .recipient-cell,
+    .dn-cell,
+    .desc-cell {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0 4px;
+    }
+
+    .read-val {
+      display: block;
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .read-val.muted {
+      color: var(--neutral-55);
+    }
+
+    .edit-ctrl {
+      width: 100%;
+    }
+
+    .topic-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      justify-content: flex-end;
+      padding: 0 4px;
+      overflow: visible;
+    }
+
+    /* Fallback */
+    .fallback-section {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--neutral-95);
+      border: 1px solid var(--neutral-85);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fallback-section.disabled {
+      opacity: 0.55;
+    }
+
+    .fallback-section.disabled .fallback-combo-trigger {
+      cursor: not-allowed;
+    }
+
+    .fallback-label {
+      font-size: 13px;
+      color: var(--neutral-30);
+      white-space: nowrap;
+    }
+
+    .fallback-combo-wrap {
+      position: relative;
+    }
+
+    .fallback-combo-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      height: 28px;
+      padding: 4px 8px;
+      min-width: 200px;
+      border: 1px solid var(--neutral-70);
+      border-radius: 4px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--neutral-25);
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .fallback-combo-trigger:focus {
+      outline: none;
+      border-color: var(--primary-30);
+      box-shadow: 0 0 0 2px hsla(218, 50%, 50%, 0.15);
+    }
+
+    .fallback-combo-text {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fallback-combo-icon {
+      color: #666;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .fallback-combo-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 300;
+      width: 220px;
+      max-height: 280px;
+      background: #fff;
+      border: 1px solid var(--neutral-70);
+      border-radius: var(--rad);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      display: none;
+      flex-direction: column;
+    }
+
+    .fallback-combo-dropdown.open {
+      display: flex;
+    }
+
+    .fallback-combo-options {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .fallback-combo-option {
+      padding: 7px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .fallback-combo-option:hover {
+      background: var(--neutral-95);
+    }
+
+    .fallback-combo-option.selected {
+      background: var(--neutral-90);
+      font-weight: 500;
+      color: var(--neutral-20);
+    }
+
+    .req {
+      color: hsl(0, 65%, 50%);
+      margin-left: 2px;
+    }
+
+    /* ═══════════════════════════════════════
+       PATIENT PORTAL SHELL
+    ═══════════════════════════════════════ */
+    .portal-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      background: oklch(0.965 0.006 234);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: #1a2332;
+    }
+
+    /* Portal nav */
+    .portal-nav {
+      background: #fff;
+      border-bottom: 1px solid #dde3ec;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 24px;
+      height: 56px;
+      flex-shrink: 0;
+    }
+
+    .portal-brand {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a2332;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    .portal-nav-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .portal-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 14px;
+      height: 56px;
+      font-size: 13px;
+      color: #5a6a7e;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: color 0.1s;
+    }
+
+    .portal-nav-link:hover {
+      color: #1a2332;
+    }
+
+    .portal-nav-link svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .portal-nav-link.active {
+      background: #1e3c5f;
+      color: #fff;
+      border-radius: 6px;
+      height: 32px;
+      margin: auto 4px;
+      padding: 0 14px;
+      border-bottom: none;
+    }
+
+    .portal-nav-link.active:hover {
+      background: #163450;
+    }
+
+    .msg-badge {
+      background: #e53e3e;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portal-avatar {
+      width: 32px;
+      height: 32px;
+      background: #2d4a7a;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      justify-self: end;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Portal content */
+    .portal-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+      overflow-y: auto;
+    }
+
+    /* Compose card */
+    .compose-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 760px;
+      height: fit-content;
+    }
+
+    .compose-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e8edf3;
+    }
+
+    .compose-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a2332;
+    }
+
+    .compose-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cancel-portal {
+      padding: 7px 16px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #4a5568;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.1s;
+    }
+
+    .btn-cancel-portal:hover {
+      background: #f7fafc;
+    }
+
+    .btn-send {
+      padding: 7px 18px;
+      border: none;
+      border-radius: 6px;
+      background: #1e3c5f;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.1s;
+    }
+
+    .btn-send:hover {
+      background: #163450;
+    }
+
+    .btn-send.is-disabled,
+    .btn-send.is-disabled:hover {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #4a6080;
+    }
+
+    .compose-body {
+      padding: 20px;
+    }
+
+    /* Form fields */
+    .compose-field {
+      margin-bottom: 16px;
+    }
+
+    .compose-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+
+    .compose-label .req-star {
+      color: #e53e3e;
+    }
+
+    .compose-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #1a2332;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .compose-input:focus {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+    }
+
+    .compose-input::placeholder {
+      color: #9eaab8;
+    }
+
+    .compose-input.readonly {
+      background: #f7fafc;
+      cursor: default;
+      color: #4a5568;
+    }
+
+    /* Topic custom select */
+    .topic-select-wrap {
+      position: relative;
+    }
+
+    .topic-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 14px;
+      color: #1a2332;
+      cursor: pointer;
+      text-align: left;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .topic-trigger:focus,
+    .topic-trigger.open {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+    }
+
+    .topic-trigger-text {
+      flex: 1;
+    }
+
+    .topic-trigger-text.placeholder {
+      color: #9eaab8;
+    }
+
+    .topic-trigger-icon {
+      color: #9eaab8;
+      display: flex;
+      align-items: center;
+    }
+
+    .topic-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      z-index: 200;
+      display: none;
+      overflow: hidden;
+    }
+
+    .topic-dropdown.open {
+      display: block;
+    }
+
+    .topic-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f4f8;
+      transition: background 0.1s;
+    }
+
+    .topic-option:last-child {
+      border-bottom: none;
+    }
+
+    .topic-option:hover {
+      background: #f7fafc;
+    }
+
+    .topic-option.selected {
+      background: #eef3f9;
+    }
+
+    .topic-option-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a2332;
+    }
+
+    .topic-option-desc {
+      font-size: 12px;
+      color: #7a8a9e;
+      margin-top: 2px;
+    }
+
+    /* Disclaimer banner — BT-3523 amber */
+    .compose-disclaimer {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: hsl(45, 100%, 93%);
+      border: 1px solid hsl(45, 65%, 78%);
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    .compose-disclaimer.visible {
+      display: flex;
+    }
+
+    .compose-disclaimer svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: hsl(38, 85%, 35%);
+    }
+
+    .compose-disclaimer-text {
+      font-size: 13px;
+      color: hsl(38, 85%, 28%);
+      line-height: 1.5;
+    }
+
+    /* Message area */
+    .msg-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 8px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px 6px 0 0;
+      border-bottom: none;
+      background: #f7fafc;
+    }
+
+    .tb-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #5a6a7e;
+    }
+
+    .tb-btn:hover {
+      background: #e8edf3;
+    }
+
+    .tb-btn.bold {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .tb-btn.italic {
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    .tb-btn.underline {
+      text-decoration: underline;
+      font-size: 13px;
+    }
+
+    .tb-sep {
+      width: 1px;
+      height: 18px;
+      background: #c8d2de;
+      margin: 0 4px;
+    }
+
+    .msg-body {
+      min-height: 180px;
+      padding: 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 0 0 6px 6px;
+      font-size: 14px;
+      color: #9eaab8;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+    }
+
+    .msg-body:focus {
+      border-color: #1e3c5f;
+      box-shadow: 0 0 0 2px rgba(30, 60, 95, 0.1);
+      color: #1a2332;
+    }
+
+    /* Attach */
+    .attach-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid #c8d2de;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #5a6a7e;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 12px;
+      transition: background 0.1s;
+    }
+
+    .attach-btn:hover {
+      background: #f7fafc;
+    }
+
+    /* Portal footer */
+    .portal-footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #9eaab8;
+      flex-shrink: 0;
+    }
+
+    .portal-footer a {
+      color: #4a90d9;
+      text-decoration: none;
+    }
+
+    .portal-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ EHR VIEW ═══ -->
+  <div id="ehrView" class="app-shell">
+    <header class="shell-header">
+      <div class="shell-header-left">
+        <div class="wire-logo">
+          <div class="wire-logo-mark"></div>
+          <div class="wire-logo-text"></div>
+        </div>
+        <span class="topbar-meta" id="topbarMeta"></span>
+      </div>
+      <div class="wire-search"></div>
+      <div class="wire-header-right">
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-icon"></div>
+        <div class="wire-avatar"></div>
+      </div>
+    </header>
+    <div class="shell-body">
+      <nav class="shell-sidebar">
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="wire-nav-item"></div>
+        <div class="sidebar-spacer"></div>
+        <div class="wire-nav-item active"></div>
+      </nav>
+      <main class="shell-main">
+        <div class="top-tabs">
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:80px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:95px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:70px"></div>
+          </div>
+          <button class="top-tab active">Portal</button>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:105px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:90px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:75px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:100px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:85px"></div>
+          </div>
+          <div class="wire-top-tab">
+            <div class="wire-text" style="width:95px"></div>
+          </div>
+        </div>
+        <div class="settings-content">
+          <aside class="settings-sidebar">
+            <div class="settings-nav-item">General</div>
+            <div class="settings-nav-item">Portal Invitation Email</div>
+            <div class="settings-nav-item">Form Package Email</div>
+            <div class="settings-nav-item">Single Form Email</div>
+            <div class="settings-nav-item">New Message Email</div>
+            <div class="settings-nav-item active">Message Topics</div>
+          </aside>
+          <div class="settings-main">
+            <div class="content-card">
+
+              <div class="page-header">
+                <h1 class="page-title">Message Topics</h1>
+              </div>
+              <p class="page-desc">Topics patients can choose when sending a portal message. Each topic's recipient receives the message; if none is set, it goes to the patient's Principal Clinician.</p>
+
+              <div class="topics-header">
+                <span class="col-label">Topic</span>
+                <span class="col-label">Recipient <span class="req">*</span></span>
+                <span class="col-label">To: name</span>
+                <span class="col-label">Description</span>
+                <span class="col-label"></span>
+              </div>
+
+              <div class="topics-list">
+
+                <!-- Appointment — ON, disclaimer -->
+                <div class="topic-row" data-topic="appointment">
+                  <div class="type-toggle-cell">
+                    <div class="type-label-wrap">
+                      <span class="type-label">Appointment</span>
+                      <span class="disclaimer-badge" data-tooltip="Client disclaimer: Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+                          <path d="M12 9v4" />
+                          <path d="M12 17h.01" />
+                        </svg></span>
+                    </div>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Front Desk</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-appointment">
+                        <span class="multi-trigger-text">Front Desk</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-appointment">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk" checked> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Scheduling</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Scheduling"></div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Schedule, change, or cancel an appointment</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Schedule, change, or cancel an appointment"></div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Appointment"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
+                </div>
+
+                <!-- Billing — ON, disclaimer -->
+                <div class="topic-row" data-topic="billing">
+                  <div class="type-toggle-cell">
+                    <div class="type-label-wrap">
+                      <span class="type-label">Billing</span>
+                      <span class="disclaimer-badge" data-tooltip="Client disclaimer: Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+                          <path d="M12 9v4" />
+                          <path d="M12 17h.01" />
+                        </svg></span>
+                    </div>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Angela Martinez</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-billing">
+                        <span class="multi-trigger-text">Angela Martinez</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-billing">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez" checked> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk"> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val muted">—</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value=""></div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Questions about charges, payments, or insurance</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Questions about charges, payments, or insurance"></div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Billing"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
+                </div>
+
+                <!-- Medical — ON, no disclaimer -->
+                <div class="topic-row" data-topic="medical">
+                  <div class="type-toggle-cell">
+                    <div class="type-label-wrap"><span class="type-label">Medical</span></div>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Clinical Team</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-medical">
+                        <span class="multi-trigger-text">Clinical Team</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-medical">
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="principal-clinician"> Principal Clinician</label>
+                          <label class="multi-option"><input type="checkbox" value="clinical-team" checked> Clinical Team</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Clinical Team</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Clinical Team"></div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Questions about your care or symptoms</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Questions about your care or symptoms"></div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Medical"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
+                </div>
+
+                <!-- Medication — ON, no disclaimer -->
+                <div class="topic-row" data-topic="medication">
+                  <div class="type-toggle-cell">
+                    <div class="type-label-wrap"><span class="type-label">Medication</span></div>
+                    <div class="toggle-switch on" role="switch" aria-checked="true"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Principal Clinician, Clinical Team</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-medication">
+                        <span class="multi-trigger-text">Principal Clinician, Clinical Team</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-medication">
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="principal-clinician" checked> Principal Clinician</label>
+                          <label class="multi-option"><input type="checkbox" value="clinical-team" checked> Clinical Team</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Pharmacy</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Pharmacy"></div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Refills and questions about your medications</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Refills and questions about your medications"></div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Medication"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
+                </div>
+
+                <!-- Other — OFF, disclaimer -->
+                <div class="topic-row disabled" data-topic="other">
+                  <div class="type-toggle-cell">
+                    <div class="type-label-wrap">
+                      <span class="type-label">Other</span>
+                      <span class="disclaimer-badge" data-tooltip="Client disclaimer: Office staff will read this message. Please don't include symptoms or clinical details."><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+                          <path d="M12 9v4" />
+                          <path d="M12 17h.01" />
+                        </svg></span>
+                    </div>
+                    <div class="toggle-switch" role="switch" aria-checked="false"></div>
+                  </div>
+                  <div class="recipient-cell">
+                    <span class="read-val recipient-read-val">Front Desk</span>
+                    <div class="edit-ctrl multi-wrap" hidden>
+                      <button type="button" class="multi-trigger" data-multi="topic-other">
+                        <span class="multi-trigger-text">Front Desk</span>
+                        <span class="multi-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6" />
+                          </svg></span>
+                      </button>
+                      <div class="multi-dropdown" data-for="topic-other">
+                        <div class="multi-search"><input type="text" placeholder="Search staff…"></div>
+                        <div class="multi-options">
+                          <label class="multi-option"><input type="checkbox" value="angela-martinez"> Angela Martinez</label>
+                          <label class="multi-option"><input type="checkbox" value="david-crowley"> David Crowley</label>
+                          <label class="multi-option"><input type="checkbox" value="front-desk" checked> Front Desk</label>
+                          <label class="multi-option"><input type="checkbox" value="james-morning"> James Morningstar</label>
+                          <label class="multi-option"><input type="checkbox" value="lisa-barnard"> Lisa Barnard</label>
+                          <label class="multi-option"><input type="checkbox" value="priya-patel"> Priya Patel</label>
+                          <label class="multi-option"><input type="checkbox" value="rachel-boyles"> Rachel Boyles</label>
+                          <label class="multi-option"><input type="checkbox" value="sarah-rogers"> Sarah Rogers</label>
+                          <label class="multi-option"><input type="checkbox" value="tom-lindell"> Tom Lindell</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="dn-cell">
+                    <span class="read-val dn-read-val">Front Office</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-dn" placeholder="Display name…" value="Front Office"></div>
+                  </div>
+                  <div class="desc-cell">
+                    <span class="read-val desc-read-val">Anything that doesn't fit the topics above</span>
+                    <div class="edit-ctrl" hidden><input type="text" class="cell-input topic-desc" placeholder="Patient-facing hint…" value="Anything that doesn't fit the topics above"></div>
+                  </div>
+                  <div class="topic-actions">
+                    <button class="icon-btn edit-btn" data-tooltip="Edit" aria-label="Edit Other"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                        <path d="m15 5 4 4" />
+                      </svg></button>
+                    <button class="icon-btn save-btn" data-tooltip="Save" aria-label="Save" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg></button>
+                    <button class="icon-btn danger cancel-btn" data-tooltip="Cancel" aria-label="Cancel" hidden><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                      </svg></button>
+                  </div>
+                </div>
+
+              </div><!-- .topics-list -->
+
+              <div class="fallback-section">
+                <span class="fallback-label">When no recipient can be resolved, route to</span>
+                <div class="fallback-combo-wrap">
+                  <button type="button" class="fallback-combo-trigger" id="fallbackTrigger">
+                    <span class="fallback-combo-text">Angela Martinez</span>
+                    <span class="fallback-combo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg></span>
+                  </button>
+                  <div class="fallback-combo-dropdown" id="fallbackDropdown">
+                    <div class="multi-search"><input type="text" id="fallbackSearch" placeholder="Search staff…"></div>
+                    <div class="fallback-combo-options">
+                      <div class="fallback-combo-option selected" data-value="angela-martinez">Angela Martinez</div>
+                      <div class="fallback-combo-option" data-value="david-crowley">David Crowley</div>
+                      <div class="fallback-combo-option" data-value="front-desk">Front Desk</div>
+                      <div class="fallback-combo-option" data-value="james-morning">James Morningstar</div>
+                      <div class="fallback-combo-option" data-value="lisa-barnard">Lisa Barnard</div>
+                      <div class="fallback-combo-option" data-value="priya-patel">Priya Patel</div>
+                      <div class="fallback-combo-option" data-value="rachel-boyles">Rachel Boyles</div>
+                      <div class="fallback-combo-option" data-value="sarah-rogers">Sarah Rogers</div>
+                      <div class="fallback-combo-option" data-value="tom-lindell">Tom Lindell</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <!-- FAB: Preview patient compose -->
+    <button class="fab-preview" id="previewBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        <path d="M8 12h.01" />
+        <path d="M12 12h.01" />
+        <path d="M16 12h.01" />
+      </svg>
+      Patient compose
+    </button>
+  </div><!-- #ehrView -->
+
+  <!-- ═══ PATIENT PORTAL COMPOSE VIEW ═══ -->
+  <div id="composeView" class="portal-shell" hidden>
+    <nav class="portal-nav">
+      <span class="portal-brand">Therhappy Associates</span>
+      <div class="portal-nav-links">
+        <a class="portal-nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Dashboard
+        </a>
+        <a class="portal-nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+            <path d="M10 9H8" />
+            <path d="M16 13H8" />
+            <path d="M16 17H8" />
+          </svg>
+          My Documents
+        </a>
+        <a class="portal-nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
+          </svg>
+          Appointments
+        </a>
+        <a class="portal-nav-link active" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+            <path d="M8 12h.01" />
+            <path d="M12 12h.01" />
+            <path d="M16 12h.01" />
+          </svg>
+          Messages
+          <span class="msg-badge">1</span>
+        </a>
+        <a class="portal-nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="5" rx="2" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+          </svg>
+          My Account
+        </a>
+      </div>
+      <div class="portal-avatar">T</div>
+    </nav>
+
+    <div class="portal-content">
+      <div class="compose-card">
+        <div class="compose-header">
+          <span class="compose-title">Compose Message</span>
+          <div class="compose-btns">
+            <button class="btn-cancel-portal" id="cancelComposeBtn">Cancel</button>
+            <button class="btn-send is-disabled" id="sendBtn">Send</button>
+          </div>
+        </div>
+        <div class="compose-body">
+
+          <!-- Topic -->
+          <div class="compose-field">
+            <label class="compose-label">Topic <span class="req-star">*</span></label>
+            <div class="topic-select-wrap">
+              <button type="button" class="topic-trigger" id="topicTrigger" aria-haspopup="listbox">
+                <span class="topic-trigger-text placeholder" id="topicTriggerText">Select a topic…</span>
+                <span class="topic-trigger-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg></span>
+              </button>
+              <div class="topic-dropdown" id="topicDropdown" role="listbox">
+                <div class="topic-option" data-topic="appointment" data-to="Scheduling" data-disclaimer="true" role="option">
+                  <div class="topic-option-name">Appointment</div>
+                  <div class="topic-option-desc">Schedule, change, or cancel an appointment</div>
+                </div>
+                <div class="topic-option" data-topic="billing" data-to="Angela Martinez" data-disclaimer="true" role="option">
+                  <div class="topic-option-name">Billing</div>
+                  <div class="topic-option-desc">Questions about charges, payments, or insurance</div>
+                </div>
+                <div class="topic-option" data-topic="medical" data-to="Clinical Team" data-disclaimer="false" role="option">
+                  <div class="topic-option-name">Medical</div>
+                  <div class="topic-option-desc">Questions about your care or symptoms</div>
+                </div>
+                <div class="topic-option" data-topic="medication" data-to="Pharmacy" data-disclaimer="false" role="option">
+                  <div class="topic-option-name">Medication</div>
+                  <div class="topic-option-desc">Refills and questions about your medications</div>
+                </div>
+                <div class="topic-option" data-topic="other" style="display:none" data-to="Front Office" data-disclaimer="true" role="option">
+                  <div class="topic-option-name">Other</div>
+                  <div class="topic-option-desc">Anything that doesn't fit the topics above</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Disclaimer banner — hidden until non-clinical topic selected -->
+          <div class="compose-disclaimer" id="composeDisclaimer" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+            <span class="compose-disclaimer-text">Office staff will read this message. Please don't include symptoms or clinical details.</span>
+          </div>
+
+          <!-- To -->
+          <div class="compose-field">
+            <label class="compose-label">To</label>
+            <input type="text" class="compose-input readonly" id="toField" value="" placeholder="Recipient is determined by the topic you select" readonly>
+          </div>
+
+          <!-- Subject -->
+          <div class="compose-field">
+            <label class="compose-label">Subject</label>
+            <input type="text" class="compose-input" placeholder="Enter message subject">
+          </div>
+
+          <!-- Message -->
+          <div class="compose-field">
+            <label class="compose-label">Message</label>
+            <div class="msg-toolbar">
+              <button class="tb-btn bold" title="Bold">B</button>
+              <button class="tb-btn italic" title="Italic">I</button>
+              <button class="tb-btn underline" title="Underline">U</button>
+              <span class="tb-sep"></span>
+              <button class="tb-btn" title="Undo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7v6h6" />
+                  <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                </svg>
+              </button>
+              <button class="tb-btn" title="Redo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 7v6h-6" />
+                  <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+                </svg>
+              </button>
+            </div>
+            <div class="msg-body" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Message body">Type your message here…</div>
+          </div>
+
+          <button class="attach-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+            Attach Files
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="portal-footer">
+      © 2026 ICANotes LLC. All rights reserved. &nbsp;·&nbsp; <a href="#">Privacy Policy</a>
+    </footer>
+  </div><!-- #composeView -->
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const STAFF_NAMES = {
+      'principal-clinician': 'Principal Clinician', 'clinical-team': 'Clinical Team',
+      'sarah-rogers': 'Sarah Rogers', 'james-morning': 'James Morningstar',
+      'rachel-boyles': 'Rachel Boyles', 'priya-patel': 'Priya Patel',
+      'david-crowley': 'David Crowley', 'lisa-barnard': 'Lisa Barnard',
+      'tom-lindell': 'Tom Lindell', 'angela-martinez': 'Angela Martinez',
+      'front-desk': 'Front Desk'
+    };
+
+    // ── Topbar meta ──
+    function updateMeta() {
+      const PRACTICE = 'Therhappy';
+      const now = new Date();
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const h = now.getHours(), m = String(now.getMinutes()).padStart(2, '0');
+      const h12 = h % 12 || 12, ampm = h >= 12 ? 'PM' : 'AM';
+      const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
+      const timeStr = h12 + ':' + m + ' ' + ampm;
+      const off = now.getTimezoneOffset();
+      const tz = ' ' + (Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName')?.value || '');
+      const el = $('topbarMeta');
+      if (el) el.innerHTML = PRACTICE + ' Associates<span class="topbar-sep"> \u00b7 </span>' + timeStr + tz + '<span class="topbar-sep"> \u00b7 </span>' + dateStr;
+    }
+    setInterval(updateMeta, 60000);
+    updateMeta();
+
+    // ── View switching ──
+    $('previewBtn').addEventListener('click', () => {
+      $('ehrView').hidden = true;
+      $('previewBtn').hidden = true;
+      $('composeView').removeAttribute('hidden');
+      document.querySelector('.btn-send').classList.add('is-disabled');
+      // Reset compose state
+      $('topicTriggerText').textContent = 'Select a topic…';
+      $('topicTriggerText').className = 'topic-trigger-text placeholder';
+      $('toField').value = '';
+      $('composeDisclaimer').classList.remove('visible');
+      document.querySelectorAll('.topic-option').forEach(o => o.classList.remove('selected'));
+    });
+
+    $('cancelComposeBtn').addEventListener('click', () => {
+      $('composeView').hidden = true;
+      $('ehrView').removeAttribute('hidden');
+      $('previewBtn').removeAttribute('hidden');
+    });
+
+    // ── Topic select ──
+    const topicTrigger = $('topicTrigger');
+    const topicDropdown = $('topicDropdown');
+
+    topicTrigger.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = topicDropdown.classList.contains('open');
+      topicDropdown.classList.toggle('open', !isOpen);
+      topicTrigger.classList.toggle('open', !isOpen);
+    });
+
+    topicDropdown.querySelectorAll('.topic-option').forEach(opt => {
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        // Update selection
+        topicDropdown.querySelectorAll('.topic-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        // Update trigger
+        const name = opt.querySelector('.topic-option-name').textContent;
+        $('topicTriggerText').textContent = name;
+        $('topicTriggerText').className = 'topic-trigger-text';
+        // Update To: field
+        $('toField').value = opt.dataset.to;
+        // Show/hide disclaimer
+        const showDisclaimer = opt.dataset.disclaimer === 'true';
+        $('composeDisclaimer').classList.toggle('visible', showDisclaimer);
+        // Close dropdown
+        topicDropdown.classList.remove('open');
+        topicTrigger.classList.remove('open');
+        document.querySelector('.btn-send').classList.remove('is-disabled');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      topicDropdown.classList.remove('open');
+      topicTrigger.classList.remove('open');
+      closeAllDropdowns();
+    });
+    topicDropdown.addEventListener('click', e => e.stopPropagation());
+
+    // Clear placeholder on msg-body focus
+    document.querySelector('.msg-body').addEventListener('focus', function () {
+      if (this.textContent === 'Type your message here…') {
+        this.textContent = '';
+        this.style.color = '#1a2332';
+      }
+    });
+    document.querySelector('.msg-body').addEventListener('blur', function () {
+      if (!this.textContent.trim()) {
+        this.textContent = 'Type your message here…';
+        this.style.color = '';
+      }
+    });
+
+    // ── EHR: Toggle ──
+    function applyToggle(sw) {
+      sw.classList.toggle('on');
+      const isOn = sw.classList.contains('on');
+      sw.setAttribute('aria-checked', String(isOn));
+      const row = sw.closest('.topic-row');
+      if (!row) return;
+      if (isOn) { row.classList.remove('disabled'); }
+      else {
+        row.classList.add('disabled');
+        if (row.classList.contains('editing')) exitEditMode(row, false);
+      }
+      // Sync portal compose dropdown visibility
+      const topic = row.dataset.topic;
+      const portalOpt = document.querySelector(`.topic-option[data-topic="${topic}"]`);
+      if (portalOpt) portalOpt.style.display = isOn ? '' : 'none';
+      // Disable fallback if all topics are OFF
+      const anyOn = [...document.querySelectorAll('.topic-row .toggle-switch')].some(s => s.classList.contains('on'));
+      const fb = document.querySelector('.fallback-section');
+      if (fb) fb.classList.toggle('disabled', !anyOn);
+    }
+    document.querySelectorAll('.type-toggle-cell').forEach(cell => {
+      cell.addEventListener('click', function () { applyToggle(this.querySelector('.toggle-switch')); });
+    });
+    document.querySelectorAll('.toggle-switch').forEach(sw => {
+      sw.addEventListener('click', e => { e.stopPropagation(); applyToggle(sw); });
+    });
+
+    // ── EHR: Edit mode ──
+    function getCheckedNames(row) {
+      return [...row.querySelectorAll('.multi-option input[type=checkbox]:checked')]
+        .map(cb => STAFF_NAMES[cb.value] || cb.value);
+    }
+
+    function enterEditMode(row) {
+      row._snapshot = {
+        recipients: [...row.querySelectorAll('.multi-option input[type=checkbox]:checked')].map(cb => cb.value),
+        dn: row.querySelector('.topic-dn')?.value || '',
+        desc: row.querySelector('.topic-desc')?.value || ''
+      };
+      row.querySelectorAll('.read-val').forEach(el => { el.hidden = true; });
+      row.querySelectorAll('.edit-ctrl').forEach(el => { el.removeAttribute('hidden'); });
+      row.querySelector('.edit-btn').hidden = true;
+      row.querySelector('.save-btn').removeAttribute('hidden');
+      row.querySelector('.cancel-btn').removeAttribute('hidden');
+      row.classList.add('editing');
+    }
+
+    function exitEditMode(row, save) {
+      if (save) {
+        const isOn = row.querySelector('.toggle-switch')?.classList.contains('on');
+        const hasRecipients = row.querySelectorAll('.multi-option input[type=checkbox]:checked').length > 0;
+        if (isOn && !hasRecipients) {
+          row.querySelector('.multi-trigger')?.classList.add('error');
+          return;
+        }
+        row.querySelector('.multi-trigger')?.classList.remove('error');
+        const names = getCheckedNames(row);
+        const recipEl = row.querySelector('.recipient-read-val');
+        if (recipEl) { recipEl.textContent = names.length ? names.join(', ') : '—'; recipEl.classList.toggle('muted', !names.length); }
+        const trigEl = row.querySelector('.multi-trigger-text');
+        if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
+        const dnInput = row.querySelector('.topic-dn');
+        const dnEl = row.querySelector('.dn-read-val');
+        if (dnInput && dnEl) { dnEl.textContent = dnInput.value || '—'; dnEl.classList.toggle('muted', !dnInput.value); }
+        const descInput = row.querySelector('.topic-desc');
+        const descEl = row.querySelector('.desc-read-val');
+        if (descInput && descEl) { descEl.textContent = descInput.value || '—'; descEl.classList.toggle('muted', !descInput.value); }
+      } else {
+        if (row._snapshot) {
+          row.querySelectorAll('.multi-option input[type=checkbox]').forEach(cb => { cb.checked = row._snapshot.recipients.includes(cb.value); });
+          const dnInput = row.querySelector('.topic-dn'); if (dnInput) dnInput.value = row._snapshot.dn;
+          const descInput = row.querySelector('.topic-desc'); if (descInput) descInput.value = row._snapshot.desc;
+          const names = getCheckedNames(row);
+          const trigEl = row.querySelector('.multi-trigger-text');
+          if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
+        }
+      }
+      row.querySelectorAll('.read-val').forEach(el => { el.removeAttribute('hidden'); });
+      row.querySelectorAll('.edit-ctrl').forEach(el => { el.hidden = true; });
+      row.querySelector('.edit-btn').removeAttribute('hidden');
+      row.querySelector('.save-btn').hidden = true;
+      row.querySelector('.cancel-btn').hidden = true;
+      row.classList.remove('editing');
+      closeAllDropdowns();
+    }
+
+    document.querySelector('.topics-list').addEventListener('click', function (e) {
+      const editBtn = e.target.closest('.edit-btn');
+      const saveBtn = e.target.closest('.save-btn');
+      const cancelBtn = e.target.closest('.cancel-btn');
+      if (editBtn) {
+        const row = editBtn.closest('.topic-row');
+        if (row.classList.contains('disabled')) return;
+        enterEditMode(row);
+      } else if (saveBtn) { exitEditMode(saveBtn.closest('.topic-row'), true); }
+      else if (cancelBtn) { exitEditMode(cancelBtn.closest('.topic-row'), false); }
+    });
+
+    // ── Multi-select ──
+    function closeAllDropdowns() {
+      document.querySelectorAll('.multi-dropdown.open, .fallback-combo-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+    document.querySelectorAll('.multi-trigger').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const dd = btn.nextElementSibling;
+        const wasOpen = dd.classList.contains('open');
+        closeAllDropdowns();
+        if (!wasOpen) { dd.classList.add('open'); dd.querySelector('input[type=text]')?.focus(); }
+      });
+    });
+    document.querySelectorAll('.multi-dropdown').forEach(dd => {
+      const search = dd.querySelector('input[type=text]');
+      if (search) {
+        search.addEventListener('input', () => {
+          const q = search.value.toLowerCase();
+          dd.querySelectorAll('.multi-option').forEach(opt => { opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+        });
+      }
+      dd.querySelectorAll('input[type=checkbox]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) dd.previousElementSibling?.classList.remove('error');
+          const row = cb.closest('.topic-row');
+          const names = getCheckedNames(row);
+          const trigEl = dd.previousElementSibling.querySelector('.multi-trigger-text');
+          if (trigEl) trigEl.textContent = names.length ? names.join(', ') : 'Choose recipient…';
+        });
+      });
+      dd.addEventListener('click', e => e.stopPropagation());
+    });
+
+    // ── Fallback combobox ──
+    const fallbackTrigger = $('fallbackTrigger');
+    const fallbackDropdown = $('fallbackDropdown');
+    const fallbackSearch = $('fallbackSearch');
+    fallbackTrigger?.addEventListener('click', e => {
+      e.stopPropagation();
+      const wasOpen = fallbackDropdown.classList.contains('open');
+      closeAllDropdowns();
+      if (!wasOpen) { fallbackDropdown.classList.add('open'); fallbackSearch.value = ''; fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(o => o.style.display = ''); fallbackSearch.focus(); }
+    });
+    fallbackSearch?.addEventListener('input', () => {
+      const q = fallbackSearch.value.toLowerCase();
+      fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(opt => { opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+    });
+    fallbackDropdown?.querySelectorAll('.fallback-combo-option').forEach(opt => {
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        fallbackDropdown.querySelectorAll('.fallback-combo-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        fallbackTrigger.querySelector('.fallback-combo-text').textContent = opt.textContent;
+        fallbackDropdown.classList.remove('open');
+      });
+    });
+    fallbackDropdown?.addEventListener('click', e => e.stopPropagation());
+  </script>
+</body>
+
+</html>
