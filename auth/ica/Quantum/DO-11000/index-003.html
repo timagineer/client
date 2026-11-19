@@ -2903,89 +2903,33 @@
 
         <!-- ── Topbar ── -->
         <header class="topbar">
-            <div class="topbar-logo-slot">
+            <div style="display:flex;align-items:center;gap:8px;">
                 <div class="wire-logo">
-                  <div class="wire-logo-mark"></div>
-                  <div class="wire-logo-text"></div>
+                    <div class="wire-logo-mark"></div>
+                    <div class="wire-logo-text"></div>
                 </div>
             </div>
-
-            <div class="topbar-context">
-                <p class="topbar-context-primary">Progress Note 03/16/2026 &middot; Maria Johnson &middot; <abbr>DOB</abbr> 06/01/1980 (45) &middot; <abbr>ID</abbr> 0482</p>
-                <p class="topbar-context-secondary"><a href="#">Chart</a><a href="#">Docs</a><a href="#">Orders</a><a href="#">Schedule</a><a href="#">Forms</a><a href="#">Messages</a><a href="#">Insurance</a><a href="#">Account</a><a href="#">Info</a></p>
-            </div>
-
-            <div class="topbar-actions">
-                <div class="search-wrap" role="search">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-search" />
-                    </svg>
-                    <label for="global-search" class="visually-hidden">Search</label>
-                    <input type="search" id="global-search" class="search-input" placeholder="Search…" autocomplete="off">
-                </div>
-                <div class="topbar-divider" aria-hidden="true"></div>
-                <button type="button" class="btn-create" aria-label="Create new" aria-haspopup="true" data-tooltip="tt-create">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-plus" />
-                    </svg>
-                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="chevron">
-                        <use href="#icon-chevron-down-fill" />
-                    </svg>
-                </button>
-                <button type="button" class="btn-topbar" aria-label="Scripts" popovertarget="tt-scripts">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-prescription" />
-                    </svg>
-                </button>
-                <button type="button" class="btn-topbar" aria-label="Labs" popovertarget="tt-labs">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-test-tube" />
-                    </svg>
-                </button>
-                <button type="button" class="btn-topbar" aria-label="Inbox" popovertarget="tt-inbox">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-inbox" />
-                    </svg>
-                    <span class="notif-badge" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn-topbar" aria-label="Notifications" popovertarget="tt-notifications">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-bell" />
-                    </svg>
-                    <span class="notif-badge" aria-hidden="true"></span>
-                </button>
-
-                <button type="button" class="user-avatar" aria-label="User menu for logged in user" popovertarget="tt-user">I</button>
+            <span class="topbar-meta-wire" id="topbarMeta"></span>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <div class="wire-search"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-icon"></div>
+                <div class="wire-avatar"></div>
             </div>
         </header>
 
         <!-- ── Sidenav ── -->
-        <nav class="sidenav" aria-label="Main navigation">
-            <ul class="sidenav-nav" role="list">
-                <li><a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-dashboard" />
-                        </svg><span>Dock</span></a></li>
-                <li><a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-calendar" />
-                        </svg><span>Schedule</span></a></li>
-                <li><a href="#" class="sidenav-item active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-charts" />
-                        </svg><span>Charts</span></a></li>
-                <li><a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-group" />
-                        </svg><span>Group</span></a></li>
-                <li><a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-dollar" />
-                        </svg><span>Billing</span></a></li>
-                <li><a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <use href="#icon-chart-line" />
-                        </svg><span>Reports</span></a></li>
-            </ul>
-            <div class="sidenav-bottom">
-                <a href="#" class="sidenav-item"><svg viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#icon-gear" />
-                    </svg><span>Settings</span></a>
-            </div>
+        <nav class="sidenav" aria-label="Main navigation" style="display:flex;flex-direction:column;gap:8px;padding:12px 8px;overflow:hidden;">
+            <div class="wire-nav-item"></div>
+            <div class="wire-nav-item"></div>
+            <div class="wire-nav-item active"></div>
+            <div class="wire-nav-item"></div>
+            <div class="wire-nav-item"></div>
+            <div class="wire-nav-item"></div>
+            <div style="flex:1;"></div>
+            <div class="wire-nav-item"></div>
         </nav>
 
         <!-- ── Main ── -->
@@ -3059,12 +3003,6 @@
             </div><!-- /.page-body -->
 
         </main><!-- /.app-main -->
-
-        <button type="button" class="fab-support" aria-label="Support" data-tooltip="tt-support">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#icon-question" />
-            </svg>
-        </button>
 
         <!-- ── Dx Modal ── -->
         <dialog id="dx-modal" class="dx-modal">
@@ -3221,7 +3159,6 @@
         <div id="tt-inbox" popover>Messages</div>
         <div id="tt-notifications" popover>Notifications</div>
         <div id="tt-create" popover>Create new…</div>
-        <div id="tt-support" popover>Support</div>
 
         <div id="tt-user" popover>User menu</div>
 
@@ -4388,7 +4325,26 @@
                 menu.hidePopover();
             }
         });
-    </script>
+    
+        // ── Topbar meta ──
+        (function() {
+            var PRACTICE = 'Therhappy';
+            function updateMeta() {
+                var now = new Date();
+                var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var h=now.getHours(),m=String(now.getMinutes()).padStart(2,'0');
+                var h12=h%12||12,ampm=h>=12?'PM':'AM';
+                var timeStr=h12+':'+m+' '+ampm;
+                var tz=' '+(Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(now).find(function(p){return p.type==='timeZoneName';})||{value:''}).value;
+                var dateStr=days[now.getDay()]+' '+months[now.getMonth()]+' '+now.getDate();
+                var el=document.getElementById('topbarMeta');
+                if(el) el.innerHTML=PRACTICE+' Associates<span class="topbar-sep"> · </span>'+timeStr+tz+'<span class="topbar-sep"> · </span>'+dateStr;
+            }
+            setInterval(updateMeta,60000);
+            updateMeta();
+        })();
+</script>
 
     <!-- SVG Symbols -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
