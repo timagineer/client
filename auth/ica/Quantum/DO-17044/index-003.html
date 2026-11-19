@@ -1982,7 +1982,7 @@
       const dateStr = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate();
       const timeStr = h12 + ':' + m + ' ' + ampm;
       const off = now.getTimezoneOffset();
-      const tz = off === 300 ? ' EST' : off === 240 ? ' EDT' : '';
+      const tz = ' ' + (Intl.DateTimeFormat('en-US', { timeZoneName: 'short' }).formatToParts(now).find(p => p.type === 'timeZoneName')?.value || '');
       const el = $('topbarMeta');
       if (el) el.textContent = PRACTICE + ' Associates \u00b7 ' + timeStr + tz + ' \u00b7 ' + dateStr;
     }
