@@ -3206,7 +3206,7 @@ actvity widget, notes area/scroll/content pressure testing, .../view/go icons, h
               <span class="cmd-palette-item-action">Open →</span>
             </div>
           </div>
-        </div>        <!-- Next column -->
+        </div> <!-- Next column -->
         <div class="cmd-palette-col">
           <div class="cmd-palette-col-header">Next</div>
           <div class="cmd-palette-list">
@@ -3722,11 +3722,52 @@ actvity widget, notes area/scroll/content pressure testing, .../view/go icons, h
             backdrop.classList.toggle('open');
             if (backdrop.classList.contains('open')) {
               input?.focus();
+              // Clear any previous selection
+              items.forEach(i => i.classList.remove('selected'));
             }
           }
           // Close on Escape
           if (e.key === 'Escape' && backdrop.classList.contains('open')) {
             backdrop.classList.remove('open');
+            items.forEach(i => i.classList.remove('selected'));
+          }
+
+          // Arrow key navigation within command palette
+          if (backdrop.classList.contains('open')) {
+            const cols = [...backdrop.querySelectorAll('.cmd-palette-col')];
+            const selected = backdrop.querySelector('.cmd-palette-item.selected');
+
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+              e.preventDefault();
+
+              if (!selected) {
+                // No selection yet — ArrowDown starts at first item of first col
+                if (e.key === 'ArrowDown') {
+                  cols[0]?.querySelectorAll('.cmd-palette-item')[0]?.classList.add('selected');
+                }
+                return;
+              }
+
+              const currentCol = selected.closest('.cmd-palette-col');
+              const colItems = [...currentCol.querySelectorAll('.cmd-palette-item')];
+              const idx = colItems.indexOf(selected);
+
+              if (e.key === 'ArrowDown') {
+                selected.classList.remove('selected');
+                (colItems[idx + 1] || colItems[0]).classList.add('selected');
+              } else if (e.key === 'ArrowUp') {
+                selected.classList.remove('selected');
+                (colItems[idx - 1] || colItems[colItems.length - 1]).classList.add('selected');
+              } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const colIdx = cols.indexOf(currentCol);
+                const targetCol = cols[e.key === 'ArrowRight' ? (colIdx + 1) % cols.length : (colIdx - 1 + cols.length) % cols.length];
+                const targetItems = [...targetCol.querySelectorAll('.cmd-palette-item')];
+                selected.classList.remove('selected');
+                (targetItems[Math.min(idx, targetItems.length - 1)]).classList.add('selected');
+              } else if (e.key === 'Enter') {
+                selected.click();
+              }
+            }
           }
         });
 
