@@ -2944,17 +2944,12 @@
         }
 
         .topbar-meta {
-            position: absolute !important;
-            inset: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            pointer-events: none !important;
+            flex: 1 !important;
+            text-align: center !important;
             font-size: 12px !important;
             color: oklch(0.5192 0.0178 234.18) !important;
             white-space: nowrap !important;
             letter-spacing: 0.01em !important;
-            z-index: 0 !important;
         }
 
         .topbar-sep {
@@ -2976,8 +2971,6 @@
             border-bottom: 1px solid oklch(0.8373 0.0106 233.40) !important;
             padding: 0 16px !important;
             flex-shrink: 0 !important;
-          position: relative !important;
-    }
 
         .shell-header-left {
             flex: 1 !important;
@@ -3041,8 +3034,8 @@
                     <div class="wire-logo-mark"></div>
                     <div class="wire-logo-text"></div>
                 </div>
+                <span class="topbar-meta" id="topbarMeta"></span>
             </div>
-            <div class="topbar-meta" id="topbarMeta"></div>
             <div class="wire-search"></div>
             <div class="wire-header-right">
                 <div class="wire-icon"></div>
