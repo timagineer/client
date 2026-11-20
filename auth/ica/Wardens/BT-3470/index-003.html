@@ -2423,13 +2423,32 @@
       text-align: center;
     }
 
-    .activity-body.resolving > * { animation: actIn 0.4s ease-out both; }
-    .activity-body.resolving > *:nth-child(2) { animation-delay: 0.05s; }
-    .activity-body.resolving > *:nth-child(3) { animation-delay: 0.1s; }
-    .activity-body.resolving > *:nth-child(4) { animation-delay: 0.15s; }
+    .activity-body.resolving>* {
+      animation: actIn 0.4s ease-out both;
+    }
+
+    .activity-body.resolving>*:nth-child(2) {
+      animation-delay: 0.05s;
+    }
+
+    .activity-body.resolving>*:nth-child(3) {
+      animation-delay: 0.1s;
+    }
+
+    .activity-body.resolving>*:nth-child(4) {
+      animation-delay: 0.15s;
+    }
+
     @keyframes actIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
   <!-- <link rel="stylesheet" href="color.css"> -->
@@ -3000,6 +3019,10 @@
           body.innerHTML = '<div class="activity-loader"><div class="loader"></div></div>';
           setTimeout(function () {
             body.innerHTML = activityContent[id] || '';
+            requestAnimationFrame(function () {
+              body.classList.add('resolving');
+              setTimeout(function () { body.classList.remove('resolving'); }, 800);
+            });
             activityLoaded[id] = true;
           }, 1200);
         }
@@ -3011,7 +3034,7 @@
       'activity2': '<div class="activity-empty">No activity yet. Updates will appear here as this claim is processed.</div>',
       'activity3': '<div class="activity-item"><div class="activity-meta">08/01/2026 3:00 PM · System</div><div class="activity-desc">$150.00 insurance payment posted from Aetna</div></div><div class="activity-item"><div class="activity-meta">07/15/2026 10:00 AM · Dr. Sarah Martinez</div><div class="activity-desc">Claim submitted to Aetna</div></div><div class="activity-item"><div class="activity-meta">07/09/2026 9:00 AM · Dr. Sarah Martinez</div><div class="activity-desc">Charge of $150.00 entered</div></div>'
     };
-        var activityLoaded = {};
+    var activityLoaded = {};
   </script>
 </body>
 
