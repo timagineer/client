@@ -1966,262 +1966,262 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Add secondary insurance -->
-          <button class="btn-add-secondary" id="addSecInsBtn" onclick="toggleSecIns(true)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Add secondary insurance
-          </button>
+            <!-- Add secondary insurance -->
+            <button class="btn-add-secondary" id="addSecInsBtn" onclick="toggleSecIns(true)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add secondary insurance
+            </button>
 
-          <!-- Secondary insurance section -->
-          <div id="secInsSection">
-            <div class="form-section">
-              <div class="form-section-action-row">
-                <h3 class="form-section-title">Secondary Insurance</h3>
-                <div class="form-section-action-right">
-                  <span class="eligibility-badge" id="s2_eligBadge" style="display:none;"></span>
-                  <button class="btn btn-ghost btn-sm" onclick="toggleSecIns(false)" style="color:var(--neutral-50);">Remove</button>
-                  <button class="btn btn-outline btn-sm" onclick="checkEligibility2()" id="s2_eligBtn" disabled>Check eligibility</button>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field" style="grid-column: span 6;">
-                  <label for="s2_insCompany" class="form-label">Insurance company</label>
-                  <div class="combobox-wrap">
-                    <input type="text" class="form-input" id="s2_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'s2InsCboList','s2_insCompany'); checkEligibilityReady2();" onfocus="filterCombobox(this.value,'s2InsCboList','s2_insCompany')" onkeydown="comboboxKey(event,'s2InsCboList','s2_insCompany')">
-                  </div>
-                </div>
-                <div class="form-field" style="grid-column: span 6;">
-                  <label for="s2_insType" class="form-label">Insurance type</label>
-                  <select class="form-select" id="s2_insType">
-                    <option value="">Select...</option>
-                    <option>Black Lung</option>
-                    <option>Blue Cross/Blue Shield</option>
-                    <option>CHAMPVA</option>
-                    <option>FECA</option>
-                    <option>Federal Employees Program</option>
-                    <option>Group Health Plan</option>
-                    <option>HMO Medicare Risk</option>
-                    <option>Health Maintenance Organization (HMO)</option>
-                    <option>Medicaid</option>
-                    <option>Medicare A</option>
-                    <option>Medicare B</option>
-                    <option>No Insurance</option>
-                    <option>Other</option>
-                    <option>TRICARE</option>
-                    <option>Workers Compensation</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field" style="grid-column: span 6;">
-                  <label for="s2_memberId" class="form-label">Member ID / Policy number</label>
-                  <input type="text" class="form-input" id="s2_memberId" placeholder="" oninput="checkEligibilityReady2()">
-                </div>
-                <div class="form-field" style="grid-column: span 6;">
-                  <label for="s2_insStart" class="form-label">Start date</label>
-                  <input type="date" class="form-input" id="s2_insStart">
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field">
-                  <label for="s2_primaryInsured" class="form-label">Primary insured</label>
-                  <select class="form-select" id="s2_primaryInsured" onchange="onInsuredChange2(this.value)">
-                    <option value="self" id="s2_selfOption">Self</option>
-                    <option value="new">New contact...</option>
-                  </select>
-                </div>
-              </div>
-              <div id="s2_newContactFields">
-                <div class="form-row">
-                  <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insFirst" class="form-label">Legal first name</label>
-                    <input type="text" class="form-input" id="s2_insFirst">
-                  </div>
-                  <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insLast" class="form-label">Legal last name</label>
-                    <input type="text" class="form-input" id="s2_insLast">
+            <!-- Secondary insurance section -->
+            <div id="secInsSection">
+              <div class="form-section">
+                <div class="form-section-action-row">
+                  <h3 class="form-section-title">Secondary Insurance</h3>
+                  <div class="form-section-action-right">
+                    <span class="eligibility-badge" id="s2_eligBadge" style="display:none;"></span>
+                    <button class="btn btn-ghost btn-sm" onclick="toggleSecIns(false)" style="color:var(--neutral-50);">Remove</button>
+                    <button class="btn btn-outline btn-sm" onclick="checkEligibility2()" id="s2_eligBtn" disabled>Check eligibility</button>
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insRel" class="form-label" id="s2_relLabel">Relationship</label>
-                    <select class="form-select" id="s2_insRel" onchange="onRelChange2(this.value)">
-                      <option value="">Select...</option>
-                      <optgroup label="Immediate Family">
-                        <option>Spouse</option>
-                        <option>Domestic Partner</option>
-                        <option>Significant Other</option>
-                        <option>Mother</option>
-                        <option>Father</option>
-                        <option>Adoptive Parent</option>
-                        <option>Foster Parent</option>
-                        <option>Stepparent</option>
-                        <option>Son</option>
-                        <option>Daughter</option>
-                        <option>Child</option>
-                        <option>Stepchild</option>
-                        <option>Brother</option>
-                        <option>Sister</option>
-                        <option>Stepsibling</option>
-                      </optgroup>
-                      <optgroup label="Extended Family">
-                        <option>Grandparent</option>
-                        <option>Grandchild</option>
-                        <option>Aunt</option>
-                        <option>Uncle</option>
-                        <option>Niece</option>
-                        <option>Nephew</option>
-                        <option>Cousin</option>
-                        <option>In-law (Parent/Child/Sibling)</option>
-                      </optgroup>
-                      <optgroup label="Legal / Authorized">
-                        <option>Legal Guardian</option>
-                        <option>Power of Attorney</option>
-                        <option>Healthcare Proxy/Agent</option>
-                        <option>Conservator</option>
-                        <option>Court-Appointed Representative</option>
-                        <option>Responsible Party</option>
-                        <option>Emergency Contact</option>
-                        <option>Next of Kin</option>
-                      </optgroup>
-                      <optgroup label="Care Network">
-                        <option>Friend</option>
-                        <option>Neighbor</option>
-                        <option>Caregiver (Paid)</option>
-                        <option>Caregiver (Unpaid)</option>
-                        <option>Clergy/Spiritual Advisor</option>
-                        <option>Case Manager/Social Worker</option>
-                      </optgroup>
-                      <optgroup label="Other">
-                        <option>Employer</option>
-                        <option>Self</option>
-                        <option>Other (please specify)</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insRelOther" class="form-label" id="s2_specifyRelLabel">Specify relationship</label>
-                    <input type="text" class="form-input" id="s2_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insSex" class="form-label">Legal sex</label>
-                    <select class="form-select" id="s2_insSex">
-                      <option value="">Select...</option>
-                      <option>Male</option>
-                      <option>Female</option>
-                      <option>Unknown</option>
-                    </select>
-                  </div>
-                  <div class="form-field" style="grid-column: span 6;">
-                    <label for="s2_insDob" class="form-label">Date of birth</label>
-                    <input type="date" class="form-input" id="s2_insDob">
-                  </div>
-                </div>
-                <button class="addr-toggle" onclick="toggleS2InsAddr()" id="s2_insAddrToggle">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                  Add different address
-                </button>
-                <div id="s2_insAddrWrap">
-                  <div class="form-row">
-                    <div class="form-field">
-                      <div class="form-label-row">
-                        <label for="s2_insAddr1" class="form-label">Street address 1</label>
-                        <button class="form-label-action" onclick="toggleS2InsAddr2()" id="s2_insAddr2Toggle">+ Add line 2</button>
-                      </div>
-                      <input type="text" class="form-input" id="s2_insAddr1" placeholder="123 Main St">
+                    <label for="s2_insCompany" class="form-label">Insurance company</label>
+                    <div class="combobox-wrap">
+                      <input type="text" class="form-input" id="s2_insCompany" placeholder="Search..." autocomplete="off" oninput="filterCombobox(this.value,'s2InsCboList','s2_insCompany'); checkEligibilityReady2();" onfocus="filterCombobox(this.value,'s2InsCboList','s2_insCompany')" onkeydown="comboboxKey(event,'s2InsCboList','s2_insCompany')">
                     </div>
                   </div>
-                  <div id="s2_insAddr2Wrap" style="display:none;" class="form-row">
-                    <div class="form-field">
-                      <div class="form-label-row">
-                        <label class="form-label" for="s2_insAddr2">Street address 2</label>
-                        <button class="form-label-action" onclick="toggleS2InsAddr2()">- Remove</button>
-                      </div>
-                      <input type="text" class="form-input" id="s2_insAddr2" placeholder="Apt, suite, floor...">
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="s2_insType" class="form-label">Insurance type</label>
+                    <select class="form-select" id="s2_insType">
+                      <option value="">Select...</option>
+                      <option>Black Lung</option>
+                      <option>Blue Cross/Blue Shield</option>
+                      <option>CHAMPVA</option>
+                      <option>FECA</option>
+                      <option>Federal Employees Program</option>
+                      <option>Group Health Plan</option>
+                      <option>HMO Medicare Risk</option>
+                      <option>Health Maintenance Organization (HMO)</option>
+                      <option>Medicaid</option>
+                      <option>Medicare A</option>
+                      <option>Medicare B</option>
+                      <option>No Insurance</option>
+                      <option>Other</option>
+                      <option>TRICARE</option>
+                      <option>Workers Compensation</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="s2_memberId" class="form-label">Member ID / Policy number</label>
+                    <input type="text" class="form-input" id="s2_memberId" placeholder="" oninput="checkEligibilityReady2()">
+                  </div>
+                  <div class="form-field" style="grid-column: span 6;">
+                    <label for="s2_insStart" class="form-label">Start date</label>
+                    <input type="date" class="form-input" id="s2_insStart">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="s2_primaryInsured" class="form-label">Primary insured</label>
+                    <select class="form-select" id="s2_primaryInsured" onchange="onInsuredChange2(this.value)">
+                      <option value="self" id="s2_selfOption">Self</option>
+                      <option value="new">New contact...</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="s2_newContactFields">
+                  <div class="form-row">
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="s2_insFirst" class="form-label">Legal first name</label>
+                      <input type="text" class="form-input" id="s2_insFirst">
+                    </div>
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="s2_insLast" class="form-label">Legal last name</label>
+                      <input type="text" class="form-input" id="s2_insLast">
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-field" style="grid-column: span 6;">
-                      <label for="s2_insCity" class="form-label">City</label>
-                      <input type="text" class="form-input" id="s2_insCity">
-                    </div>
-                    <div class="form-field" style="grid-column: span 3;">
-                      <label for="s2_insState" class="form-label">State</label>
-                      <select class="form-select" id="s2_insState">
-                        <option value="">–</option>
-                        <option>Alabama</option>
-                        <option>Alaska</option>
-                        <option>Arizona</option>
-                        <option>Arkansas</option>
-                        <option>California</option>
-                        <option>Colorado</option>
-                        <option>Connecticut</option>
-                        <option>Delaware</option>
-                        <option>District of Columbia</option>
-                        <option>Florida</option>
-                        <option>Georgia</option>
-                        <option>Hawaii</option>
-                        <option>Idaho</option>
-                        <option>Illinois</option>
-                        <option>Indiana</option>
-                        <option>Iowa</option>
-                        <option>Kansas</option>
-                        <option>Kentucky</option>
-                        <option>Louisiana</option>
-                        <option>Maine</option>
-                        <option>Maryland</option>
-                        <option>Massachusetts</option>
-                        <option>Michigan</option>
-                        <option>Minnesota</option>
-                        <option>Mississippi</option>
-                        <option>Missouri</option>
-                        <option>Montana</option>
-                        <option>Nebraska</option>
-                        <option>Nevada</option>
-                        <option>New Hampshire</option>
-                        <option>New Jersey</option>
-                        <option>New Mexico</option>
-                        <option>New York</option>
-                        <option>North Carolina</option>
-                        <option>North Dakota</option>
-                        <option>Ohio</option>
-                        <option>Oklahoma</option>
-                        <option>Oregon</option>
-                        <option>Pennsylvania</option>
-                        <option>Puerto Rico</option>
-                        <option>Rhode Island</option>
-                        <option>South Carolina</option>
-                        <option>South Dakota</option>
-                        <option>Tennessee</option>
-                        <option>Texas</option>
-                        <option>Utah</option>
-                        <option>U.S. Virgin Islands</option>
-                        <option>Vermont</option>
-                        <option>Virginia</option>
-                        <option>Washington</option>
-                        <option>West Virginia</option>
-                        <option>Wisconsin</option>
-                        <option>Wyoming</option>
+                      <label for="s2_insRel" class="form-label" id="s2_relLabel">Relationship</label>
+                      <select class="form-select" id="s2_insRel" onchange="onRelChange2(this.value)">
+                        <option value="">Select...</option>
+                        <optgroup label="Immediate Family">
+                          <option>Spouse</option>
+                          <option>Domestic Partner</option>
+                          <option>Significant Other</option>
+                          <option>Mother</option>
+                          <option>Father</option>
+                          <option>Adoptive Parent</option>
+                          <option>Foster Parent</option>
+                          <option>Stepparent</option>
+                          <option>Son</option>
+                          <option>Daughter</option>
+                          <option>Child</option>
+                          <option>Stepchild</option>
+                          <option>Brother</option>
+                          <option>Sister</option>
+                          <option>Stepsibling</option>
+                        </optgroup>
+                        <optgroup label="Extended Family">
+                          <option>Grandparent</option>
+                          <option>Grandchild</option>
+                          <option>Aunt</option>
+                          <option>Uncle</option>
+                          <option>Niece</option>
+                          <option>Nephew</option>
+                          <option>Cousin</option>
+                          <option>In-law (Parent/Child/Sibling)</option>
+                        </optgroup>
+                        <optgroup label="Legal / Authorized">
+                          <option>Legal Guardian</option>
+                          <option>Power of Attorney</option>
+                          <option>Healthcare Proxy/Agent</option>
+                          <option>Conservator</option>
+                          <option>Court-Appointed Representative</option>
+                          <option>Responsible Party</option>
+                          <option>Emergency Contact</option>
+                          <option>Next of Kin</option>
+                        </optgroup>
+                        <optgroup label="Care Network">
+                          <option>Friend</option>
+                          <option>Neighbor</option>
+                          <option>Caregiver (Paid)</option>
+                          <option>Caregiver (Unpaid)</option>
+                          <option>Clergy/Spiritual Advisor</option>
+                          <option>Case Manager/Social Worker</option>
+                        </optgroup>
+                        <optgroup label="Other">
+                          <option>Employer</option>
+                          <option>Self</option>
+                          <option>Other (please specify)</option>
+                        </optgroup>
                       </select>
                     </div>
-                    <div class="form-field" style="grid-column: span 3;">
-                      <label for="s2_insZip" class="form-label">Zip code</label>
-                      <input type="text" class="form-input" id="s2_insZip" placeholder="00000" maxlength="10">
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="s2_insRelOther" class="form-label" id="s2_specifyRelLabel">Specify relationship</label>
+                      <input type="text" class="form-input" id="s2_insRelOther" placeholder="Describe relationship" disabled style="background:var(--neutral-95); color:var(--neutral-50);">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="s2_insSex" class="form-label">Legal sex</label>
+                      <select class="form-select" id="s2_insSex">
+                        <option value="">Select...</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Unknown</option>
+                      </select>
+                    </div>
+                    <div class="form-field" style="grid-column: span 6;">
+                      <label for="s2_insDob" class="form-label">Date of birth</label>
+                      <input type="date" class="form-input" id="s2_insDob">
+                    </div>
+                  </div>
+                  <button class="addr-toggle" onclick="toggleS2InsAddr()" id="s2_insAddrToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Add different address
+                  </button>
+                  <div id="s2_insAddrWrap">
+                    <div class="form-row">
+                      <div class="form-field">
+                        <div class="form-label-row">
+                          <label for="s2_insAddr1" class="form-label">Street address 1</label>
+                          <button class="form-label-action" onclick="toggleS2InsAddr2()" id="s2_insAddr2Toggle">+ Add line 2</button>
+                        </div>
+                        <input type="text" class="form-input" id="s2_insAddr1" placeholder="123 Main St">
+                      </div>
+                    </div>
+                    <div id="s2_insAddr2Wrap" style="display:none;" class="form-row">
+                      <div class="form-field">
+                        <div class="form-label-row">
+                          <label class="form-label" for="s2_insAddr2">Street address 2</label>
+                          <button class="form-label-action" onclick="toggleS2InsAddr2()">- Remove</button>
+                        </div>
+                        <input type="text" class="form-input" id="s2_insAddr2" placeholder="Apt, suite, floor...">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-field" style="grid-column: span 6;">
+                        <label for="s2_insCity" class="form-label">City</label>
+                        <input type="text" class="form-input" id="s2_insCity">
+                      </div>
+                      <div class="form-field" style="grid-column: span 3;">
+                        <label for="s2_insState" class="form-label">State</label>
+                        <select class="form-select" id="s2_insState">
+                          <option value="">–</option>
+                          <option>Alabama</option>
+                          <option>Alaska</option>
+                          <option>Arizona</option>
+                          <option>Arkansas</option>
+                          <option>California</option>
+                          <option>Colorado</option>
+                          <option>Connecticut</option>
+                          <option>Delaware</option>
+                          <option>District of Columbia</option>
+                          <option>Florida</option>
+                          <option>Georgia</option>
+                          <option>Hawaii</option>
+                          <option>Idaho</option>
+                          <option>Illinois</option>
+                          <option>Indiana</option>
+                          <option>Iowa</option>
+                          <option>Kansas</option>
+                          <option>Kentucky</option>
+                          <option>Louisiana</option>
+                          <option>Maine</option>
+                          <option>Maryland</option>
+                          <option>Massachusetts</option>
+                          <option>Michigan</option>
+                          <option>Minnesota</option>
+                          <option>Mississippi</option>
+                          <option>Missouri</option>
+                          <option>Montana</option>
+                          <option>Nebraska</option>
+                          <option>Nevada</option>
+                          <option>New Hampshire</option>
+                          <option>New Jersey</option>
+                          <option>New Mexico</option>
+                          <option>New York</option>
+                          <option>North Carolina</option>
+                          <option>North Dakota</option>
+                          <option>Ohio</option>
+                          <option>Oklahoma</option>
+                          <option>Oregon</option>
+                          <option>Pennsylvania</option>
+                          <option>Puerto Rico</option>
+                          <option>Rhode Island</option>
+                          <option>South Carolina</option>
+                          <option>South Dakota</option>
+                          <option>Tennessee</option>
+                          <option>Texas</option>
+                          <option>Utah</option>
+                          <option>U.S. Virgin Islands</option>
+                          <option>Vermont</option>
+                          <option>Virginia</option>
+                          <option>Washington</option>
+                          <option>West Virginia</option>
+                          <option>Wisconsin</option>
+                          <option>Wyoming</option>
+                        </select>
+                      </div>
+                      <div class="form-field" style="grid-column: span 3;">
+                        <label for="s2_insZip" class="form-label">Zip code</label>
+                        <input type="text" class="form-input" id="s2_insZip" placeholder="00000" maxlength="10">
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
       </div><!-- /p2 body -->
       <div class="modal-footer" id="s2footer" style="display:none;">
