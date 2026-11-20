@@ -1052,6 +1052,8 @@
     /* Secondary insurance section — height-animated shell */
     #secInsSection {
       grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
       overflow: hidden;
       height: 0;
       transition: height 240ms cubic-bezier(0.40, 0.02, 0.48, 0.98);
@@ -1981,8 +1983,8 @@
                 <h3 class="form-section-title">Secondary Insurance</h3>
                 <div class="form-section-action-right">
                   <span class="eligibility-badge" id="s2_eligBadge" style="display:none;"></span>
-                  <button class="btn btn-outline btn-sm" onclick="checkEligibility2()" id="s2_eligBtn" disabled>Check eligibility</button>
                   <button class="btn btn-ghost btn-sm" onclick="toggleSecIns(false)" style="color:var(--neutral-50);">Remove</button>
+                  <button class="btn btn-outline btn-sm" onclick="checkEligibility2()" id="s2_eligBtn" disabled>Check eligibility</button>
                 </div>
               </div>
               <div class="form-row">
