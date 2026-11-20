@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototype: Account ledger activity history v3 [BT-3470]</title>
+  <title>Prototype: Account ledger activity history v2 [BT-3470]</title>
   <style>
     /* ── Tokens (source: CLIN-3386) ── */
     :root {
@@ -2385,36 +2385,11 @@
     }
 
     /* ── Dots loader ── */
-    .activity-loader {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px 0;
-    }
-    .loader {
-      width: 40px;
-      aspect-ratio: 4;
-      --_g: no-repeat radial-gradient(circle closest-side, var(--neutral-60) 90%, #0000);
-      background:
-        var(--_g) 0%   50%,
-        var(--_g) 50%  50%,
-        var(--_g) 100% 50%;
-      background-size: calc(100%/3) 100%;
-      animation: l7 1s infinite linear;
-    }
-    @keyframes l7 {
-      33% { background-size: calc(100%/3) 0%,   calc(100%/3) 100%, calc(100%/3) 100% }
-      50% { background-size: calc(100%/3) 100%, calc(100%/3) 0%,   calc(100%/3) 100% }
-      66% { background-size: calc(100%/3) 100%, calc(100%/3) 100%, calc(100%/3) 0%   }
-    }
-
-    /* ── Activity empty state ── */
-    .activity-empty {
-      padding: 14px 16px;
-      font-size: 12px;
-      color: var(--neutral-55);
-      text-align: center;
-    }
+    .activity-loader { display:flex; align-items:center; justify-content:center; padding:14px 0; }
+    .loader { width:40px; aspect-ratio:4; --_g:no-repeat radial-gradient(circle closest-side,var(--neutral-60) 90%,#0000); background:var(--_g) 0% 50%,var(--_g) 50% 50%,var(--_g) 100% 50%; background-size:calc(100%/3) 100%; animation:l7 1s infinite linear; }
+    @keyframes l7 { 33%{background-size:calc(100%/3) 0%,calc(100%/3) 100%,calc(100%/3) 100%} 50%{background-size:calc(100%/3) 100%,calc(100%/3) 0%,calc(100%/3) 100%} 66%{background-size:calc(100%/3) 100%,calc(100%/3) 100%,calc(100%/3) 0%} }
+    /* ── Empty state ── */
+    .activity-empty { padding:14px 16px; font-size:12px; color:var(--neutral-55); text-align:center; }
   </style>
   <!-- <link rel="stylesheet" href="color.css"> -->
 
@@ -2715,7 +2690,39 @@
                               <span class="activity-label">Activity Log</span>
                             </div>
                             <div class="activity-body scrollable" id="activity1-body">
-                              <div class="activity-loader"><div class="loader"></div></div>
+                              <div class="activity-item">
+                                <div class="activity-meta">10/15/2026 2:14 PM · System</div>
+                                <div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">10/05/2026 9:30 AM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Claim resubmitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div>
+                                </div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/28/2026 4:15 PM · Jordan Torres</div>
+                                <div class="activity-desc">$50.00 client payment posted</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/15/2026 11:22 AM · System</div>
+                                <div class="activity-desc">Claim status updated: Pending additional info</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/10/2026 3:45 PM · Jordan Torres</div>
+                                <div class="activity-desc">Insurance adjustment applied: $0.00</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/05/2026 9:00 AM · System</div>
+                                <div class="activity-desc">Claim submitted to Aetna (initial submission)</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/01/2026 2:30 PM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Service line 90791 added: Psychiatric Diagnostic Evaluation</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/20/2026 11:00 AM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Charge of $180.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -2791,7 +2798,14 @@
                               <span class="activity-label">Activity Log</span>
                             </div>
                             <div class="activity-body" id="activity2-body">
-                              <div class="activity-loader"><div class="loader"></div></div>
+                              <div class="activity-item">
+                                <div class="activity-meta">09/01/2026 10:00 AM · System</div>
+                                <div class="activity-desc">$120.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">08/14/2026 9:00 AM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -2866,8 +2880,19 @@
                                 </svg></span>
                               <span class="activity-label">Activity Log</span>
                             </div>
-                            <div class="activity-body" id="activity3-body">
-                              <div class="activity-loader"><div class="loader"></div></div>
+        <div class="activity-body" id="activity3-body">ass="activity-body">
+                              <div class="activity-item">
+                                <div class="activity-meta">08/01/2026 3:00 PM · System</div>
+                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">07/15/2026 10:00 AM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Claim submitted to Aetna</div>
+                              </div>
+                              <div class="activity-item">
+                                <div class="activity-meta">07/09/2026 9:00 AM · Dr. Sarah Martinez</div>
+                                <div class="activity-desc">Charge of $150.00 entered</div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -2924,14 +2949,6 @@
       if (row) row.classList.toggle('open', opening);
     }
 
-<script>
-    var activityContent = {
-      'activity1': '',
-      'activity2': '<div class="activity-empty">No activity yet. Updates will appear here as this claim is processed.</div>',
-      'activity3': '<div class="activity-item">\n                                <div class="activity-meta">08/01/2026 3:00 PM · System</div>\n                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">07/15/2026 10:00 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Claim submitted to Aetna</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">07/09/2026 9:00 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Charge of $150.00 entered</div>\n                              </div>'
-    };
-    var activityLoaded = {};
-
     function toggleActivity(id) {
       var section = document.getElementById(id);
       var opening = !section.classList.contains('open');
@@ -2947,10 +2964,14 @@
         }
       }
     }
-  </script>
-  </script>
 
-
+    var activityContent = {
+      'activity1': '<div class="activity-item">\n                                <div class="activity-meta">10/15/2026 2:14 PM · System</div>\n                                <div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">10/05/2026 9:30 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Claim resubmitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div>\n                                </div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/28/2026 4:15 PM · Jordan Torres</div>\n                                <div class="activity-desc">$50.00 client payment posted</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/15/2026 11:22 AM · System</div>\n                                <div class="activity-desc">Claim status updated: Pending additional info</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/10/2026 3:45 PM · Jordan Torres</div>\n                                <div class="activity-desc">Insurance adjustment applied: $0.00</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/05/2026 9:00 AM · System</div>\n                                <div class="activity-desc">Claim submitted to Aetna (initial submission)</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/01/2026 2:30 PM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Service line 90791 added: Psychiatric Diagnostic Evaluation</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">09/20/2026 11:00 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Charge of $180.00 entered</div>\n                              </div>',
+      'activity2': '<div class="activity-empty">No activity yet. Updates will appear here as this claim is processed.</div>',
+      'activity3': 'ass="activity-body">\n                              <div class="activity-item">\n                                <div class="activity-meta">08/01/2026 3:00 PM · System</div>\n                                <div class="activity-desc">$150.00 insurance payment posted from Aetna</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">07/15/2026 10:00 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Claim submitted to Aetna</div>\n                              </div>\n                              <div class="activity-item">\n                                <div class="activity-meta">07/09/2026 9:00 AM · Dr. Sarah Martinez</div>\n                                <div class="activity-desc">Charge of $150.00 entered</div>\n                              </div>'
+    };
+    var activityLoaded = {};
+  </script>
 </body>
 
 </html>
