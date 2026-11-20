@@ -2915,6 +2915,7 @@
             background: oklch(0.9542 0.0034 233.07) !important;
             border-radius: 6px !important;
             flex-shrink: 0 !important;
+            position: relative !important;
         }
 
         .wire-icon {
@@ -2943,17 +2944,14 @@
         }
 
         .topbar-meta {
-            flex: 1 !important;
-            text-align: center !important;
+            position: absolute !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
             font-size: 12px !important;
             color: oklch(0.5192 0.0178 234.18) !important;
             white-space: nowrap !important;
             letter-spacing: 0.01em !important;
-          position: absolute !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    flex: unset !important;
-    }
+        }
 
         .topbar-sep {
             color: oklch(0.6996 0.0160 233.74) !important;
