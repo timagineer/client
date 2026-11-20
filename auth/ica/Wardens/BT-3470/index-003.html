@@ -3013,7 +3013,7 @@
       var section = document.getElementById(id);
       var opening = !section.classList.contains('open');
       section.classList.toggle('open', opening);
-      if (opening && !activityLoaded[id]) {
+      if (opening) {
         var body = document.getElementById(id + '-body');
         if (body) {
           body.innerHTML = '<div class="activity-loader"><div class="loader"></div></div>';
@@ -3023,7 +3023,6 @@
               body.classList.add('resolving');
               setTimeout(function () { body.classList.remove('resolving'); }, 800);
             });
-            activityLoaded[id] = true;
           }, 1200);
         }
       }
