@@ -2945,12 +2945,16 @@
 
         .topbar-meta {
             position: absolute !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
+            inset: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
             font-size: 12px !important;
             color: oklch(0.5192 0.0178 234.18) !important;
             white-space: nowrap !important;
             letter-spacing: 0.01em !important;
+            z-index: 0 !important;
         }
 
         .topbar-sep {
