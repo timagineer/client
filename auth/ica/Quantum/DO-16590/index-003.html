@@ -972,8 +972,23 @@
     /* Conditional content wrappers — subgrid pass-through */
     #newContactFields,
     #insAddrWrap,
+    /* Contact disclosure panels — display toggle so all rows measure correctly */
+    #newContactFields,
+    #s2_newContactFields {
+      display: none;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      row-gap: 10px;
+    }
+
+    #newContactFields.open,
+    #s2_newContactFields.open {
+      display: grid;
+    }
+
+    /* Address disclosure panels — height toggle */
+    #insAddrWrap,
     #billAddrWrap,
-    #s2_newContactFields,
     #s2_insAddrWrap {
       display: grid;
       grid-template-columns: subgrid;
@@ -983,10 +998,8 @@
       height: 0;
     }
 
-    #newContactFields.open,
     #insAddrWrap.open,
     #billAddrWrap.open,
-    #s2_newContactFields.open,
     #s2_insAddrWrap.open {
       height: auto;
     }
