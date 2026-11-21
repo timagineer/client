@@ -506,6 +506,7 @@
       overflow-y: auto;
       scrollbar-gutter: stable;
       flex: 1;
+      min-height: 0;
       display: grid;
       grid-template-columns: repeat(12, 1fr);
       column-gap: 10px;
@@ -1073,6 +1074,7 @@
 
     #secInsSection.open {
       height: auto;
+      overflow: visible;
     }
 
     /* form-section inside secInsSection can't use subgrid (parent isn't a grid),
