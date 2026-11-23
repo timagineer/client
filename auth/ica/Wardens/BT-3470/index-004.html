@@ -3037,6 +3037,15 @@
       if (row) row.classList.toggle('open', opening);
     }
 
+    function appendActivityFooter(body) {
+      if (!body.querySelector('.activity-empty')) {
+        var footer = document.createElement('div');
+        footer.className = 'activity-footer';
+        footer.innerHTML = 'End of activity <span class="activity-footer-sep">·</span> <button class="activity-footer-top" onclick="this.closest(\'.activity-body\').scrollTop=0">Back to top ↑</button>';
+        body.appendChild(footer);
+      }
+    }
+
     function toggleActivity(id) {
       var section = document.getElementById(id);
       var opening = !section.classList.contains('open');
@@ -3047,12 +3056,7 @@
           body.innerHTML = '<div class="activity-loader"><div class="loader"></div></div>';
           setTimeout(function () {
             body.innerHTML = activityContent[id] || '';
-            if (!body.querySelector('.activity-empty')) {
-              var footer = document.createElement('div');
-              footer.className = 'activity-footer';
-              footer.innerHTML = 'End of activity <span class="activity-footer-sep">·</span> <button class="activity-footer-top" onclick="this.closest(\'.activity-body\').scrollTop=0">Back to top ↑</button>';
-              body.appendChild(footer);
-            }
+            appendActivityFooter(body);
             requestAnimationFrame(function () {
               body.classList.add('resolving');
               setTimeout(function () { body.classList.remove('resolving'); }, 800);
@@ -3061,6 +3065,13 @@
         }
       }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.activity-section.open').forEach(function (section) {
+        var body = document.getElementById(section.id + '-body');
+        if (body) appendActivityFooter(body);
+      });
+    });
 
     var activityContent = {
       'activity1': '<div class="activity-item"><div class="activity-meta">10/15/2026 2:14 PM · System</div><div class="activity-desc">ERA auto-posted $130.00 payment from Aetna (EFT #882741)</div></div><div class="activity-item"><div class="activity-meta">10/05/2026 9:30 AM · Dr. Sarah Martinez</div><div class="activity-desc">Claim resubmitted to Aetna<div class="activity-note">"Submitted after eligibility confirmed"</div></div></div><div class="activity-item"><div class="activity-meta">09/28/2026 4:15 PM · Jordan Torres</div><div class="activity-desc">$50.00 client payment posted</div></div><div class="activity-item"><div class="activity-meta">09/20/2026 11:00 AM · Dr. Sarah Martinez</div><div class="activity-desc">Charge of $180.00 entered</div></div><div class="activity-item"><div class="activity-meta">09/15/2026 11:22 AM · System</div><div class="activity-desc">Claim status updated: Pending additional info</div></div><div class="activity-item"><div class="activity-meta">09/10/2026 3:45 PM · Jordan Torres</div><div class="activity-desc">Insurance adjustment applied: $0.00</div></div><div class="activity-item"><div class="activity-meta">09/05/2026 9:00 AM · System</div><div class="activity-desc">Claim submitted to Aetna (initial submission)</div></div><div class="activity-item"><div class="activity-meta">09/01/2026 2:30 PM · Dr. Sarah Martinez</div><div class="activity-desc">Service line 90791 added: Psychiatric Diagnostic Evaluation</div></div><div class="activity-item"><div class="activity-meta">08/28/2026 10:15 AM · System</div><div class="activity-desc">Eligibility verified: Active Aetna PPO coverage confirmed</div></div><div class="activity-item"><div class="activity-meta">08/20/2026 3:00 PM · Jordan Torres</div><div class="activity-desc">Prior authorization #PA-44821 attached to claim</div></div><div class="activity-item"><div class="activity-meta">08/15/2026 11:30 AM · Dr. Sarah Martinez</div><div class="activity-desc">Diagnosis F32.1 added: Major depressive disorder, moderate</div></div><div class="activity-item"><div class="activity-meta">08/10/2026 9:00 AM · System</div><div class="activity-desc">ERA received: $0.00 — claim denied (missing information)</div></div><div class="activity-item"><div class="activity-meta">08/05/2026 2:45 PM · Jordan Torres</div><div class="activity-desc">Denial appeal submitted to Aetna</div></div><div class="activity-item"><div class="activity-meta">07/30/2026 11:00 AM · System</div><div class="activity-desc">Claim forwarded to secondary payer: Blue Cross</div></div><div class="activity-item"><div class="activity-meta">07/22/2026 9:30 AM · Dr. Sarah Martinez</div><div class="activity-desc">Service line 90837 added: Psychotherapy, 60 min</div></div><div class="activity-item"><div class="activity-meta">07/15/2026 4:00 PM · Jordan Torres</div><div class="activity-desc">Copay $30.00 collected at time of service</div></div><div class="activity-item"><div class="activity-meta">07/08/2026 10:00 AM · System</div><div class="activity-desc">Patient deductible met — full coverage active</div></div><div class="activity-item"><div class="activity-meta">06/30/2026 3:30 PM · Dr. Sarah Martinez</div><div class="activity-desc">Initial assessment completed</div></div><div class="activity-item"><div class="activity-meta">06/25/2026 11:00 AM · Jordan Torres</div><div class="activity-desc">Chart opened for billing</div></div><div class="activity-item"><div class="activity-meta">06/18/2026 9:00 AM · System</div><div class="activity-desc">Insurance verified: Aetna PPO, Group #A44821</div></div>',
