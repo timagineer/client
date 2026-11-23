@@ -3045,7 +3045,7 @@
       if (!body.querySelector('.activity-empty')) {
         var footer = document.createElement('div');
         footer.className = 'activity-footer';
-        footer.innerHTML = 'End of activity <span class="activity-footer-sep">·</span> <button class="activity-footer-top" onclick="this.closest(\'.activity-body\').scrollTop=0"><span class="activity-footer-top-text">Back to top</span> ↑</button>';
+        footer.innerHTML = 'End of activity <span class="activity-footer-sep">·</span> <button class="activity-footer-top" onclick="this.closest(\'.activity-body\').scrollTo({top:0,behavior:\'smooth\'})"><span class="activity-footer-top-text">Back to top</span> ↑</button>';
         body.appendChild(footer);
       }
     }
