@@ -3073,7 +3073,10 @@
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.activity-section.open').forEach(function (section) {
         var body = document.getElementById(section.id + '-body');
-        if (body) appendActivityFooter(body);
+        if (body && activityContent[section.id]) {
+          body.innerHTML = activityContent[section.id];
+          appendActivityFooter(body);
+        }
       });
     });
 
